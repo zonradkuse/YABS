@@ -1,0 +1,13 @@
+{
+  "name": "YABS",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "^4.2.0",
+    "moment": "^2.7.0",
+    "morgan": "^1.4.1",
+    "mysql": "git://github.com/felixge/node-mysql",
+    "passport": "^0.2.1",
+    "socket.io": "^1.2.0"
+  }
+}
