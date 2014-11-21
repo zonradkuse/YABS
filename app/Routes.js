@@ -9,9 +9,8 @@ module.exports = function(pExpressApp, pPassportAuth){
   var passport = pPassportAuth;
   console.log('initialized routes!');
   app.post('/login', function(req,res){
-    
-    req.session.currentUser = req.body.username;
-    res.redirect("/sessiontest");
+    var auth = require('./Authentication.js');
+    auth.loginLocal(req, res, function(res){res.redirect("/sessiontest")}, function(res){res.redirect("/")});
   });
 	/*
   FOR LATER!
@@ -20,20 +19,16 @@ module.exports = function(pExpressApp, pPassportAuth){
 	  failureRedirect: '/login',
 	  failureFlash: true }*/
 
-  /*! A short sessiondemo
+  /*! A short sessiontest
   */
   app.get('/sessiontest', function(req, res, next){
     var sess = req.session
-    if (sess.views) {
-      sess.views++
-      res.setHeader('Content-Type', 'text/html')
-      res.write('<p>views: ' + sess.views + '</p>')
-      res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's (' + (sess.cookie.maxAge/60 / 1000) + ' min)</p>')
-      res.write('<p>logged in as ' + sess.currentUser + '<p>')
-      res.end()
-    } else {
-      sess.views = 1
-      res.end('welcome to the session demo. refresh!')
-    }
+    res.setHeader('Content-Type', 'text/html')
+    res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's (' + (sess.cookie.maxAge/60 / 1000) + ' min)</p>')
+    res.write('<p>logged in with Session ID ' + sess.sessionId + '<p>')
+    if (sess.sessionId == undefined) {
+      res.write('login? <a href="/Tests/logintest.html">Login!</a>')
+    };
+    res.end()
   });
 } 

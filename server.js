@@ -11,7 +11,7 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 //app.set('trust proxy', 1); // will be needed for production use with nginx
 app.use(session({
-  currentUser: 'Guest',
+  sessionId: "",
   secret: 'schubidubiduuuuu',
   cookie: { 
     maxAge: 7200000
@@ -28,7 +28,7 @@ app.use(passport.session());
 
 var db = require('./app/DatabaseConnection.js').pool;
 var routes = require('./app/Routes.js')(app,passport);
-var auth = require('./app/Authentication.js')(passport, LocalStrategy, db);
+//var auth = require('./app/Authentication.js')(passport, LocalStrategy, db);
 console.log('Now running on 8080!')
 
 app.listen(8080);
