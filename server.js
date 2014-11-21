@@ -11,7 +11,7 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 //app.set('trust proxy', 1); // will be needed for production use with nginx
 app.use(session({
-  currentUser: 'schubidubiduuuuu'
+  currentUser: 'Guest',
   secret: 'schubidubiduuuuu',
   cookie: { 
     maxAge: 7200000
