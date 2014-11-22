@@ -12,16 +12,20 @@ exports.loginLocal = function(req, res, success, fail){
   
   /*
   if (UserController.findOne(req.body.username).getPassword() == req.body.password) {
-    success();
+    require('crypto').randomBytes(32, function(ex, buf) {
+      var token = buf.toString('hex');
+      console.log('[USER] > LOGIN: ' + req.body.username + ' ' + token);
+      req.session.sessionId = token;
+      success(res);
+    });
   } else {
     fail();
   }
   */
 
   //genereate a token
-  var token;
   require('crypto').randomBytes(32, function(ex, buf) {
-    token = buf.toString('hex');
+    var token = buf.toString('hex');
     console.log('[USER] > LOGIN: ' + req.body.username + ' ' + token);
     req.session.sessionId = token;
     success(res);

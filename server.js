@@ -12,9 +12,8 @@ app.use(cookieParser());
 //app.set('trust proxy', 1); // will be needed for production use with nginx
 app.use(session({
   sessionId: "",
-  secret: 'schubidubiduuuuu',
   cookie: { 
-    maxAge: 7200000
+    maxAge: 8035200000 //about 3 month
   },
   resave: true,
   saveUninitialized: true

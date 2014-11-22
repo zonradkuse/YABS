@@ -1,3 +1,5 @@
+var redis = require('node-redis');
+
 var mysql = require('mysql');
 var config = require('../config.json');
 var pool  = mysql.createPool({
