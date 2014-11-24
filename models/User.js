@@ -5,5 +5,5 @@
 
 exports = function(pName, pAccess){
   this.name = pName;
-  this.sessionId = pSessId; 
+  this.access = pAccess; 
 }
