@@ -29,3 +29,7 @@ node_modules
 
 # OS/IDE stuff
 .DS_store
+*.sublime-*
+
+# public
+public
