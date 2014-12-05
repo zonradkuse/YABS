@@ -19,3 +19,6 @@
     var controllers = angular.module('clientControllers', []);
     window.clientControllers = controllers;
 })();
+
+/** Test */
+function test() {}

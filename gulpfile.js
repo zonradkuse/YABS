@@ -6,6 +6,7 @@ var gulp = require('gulp'),
     minifyCss = require('gulp-minify-css'),
     flatten = require('gulp-flatten'),
     del = require('del');
+    jsdoc = require('gulp-jsdoc');
 
 gulp.task('build', function() {
     del.sync('public/*');
@@ -44,4 +45,12 @@ gulp.task('release-build', function () {
         .pipe(assets.restore())
         .pipe(useref())
         .pipe(gulp.dest('public'));
+});
+
+gulp.task('doc', function() {
+    del.sync('doc/*');
+    gulp.src(['app/**/*.js', 'models/**/*.js'])
+        .pipe(jsdoc('doc/server'));
+    gulp.src(['client/**/*.js', '!client/bower_components/**/*.js'])
+        .pipe(jsdoc('doc/client'));
 });
