@@ -31,4 +31,11 @@ module.exports = function(pExpressApp, pPassportAuth){
     };
     res.end()
   });
+  app.get('/course/*', function(req, res, next){
+    var path = require('path');
+    path.exists(path.resolve(__dirname, '../', req.originalUrl), function(exists) {
+        if (!exists)
+            res.sendFile(path.resolve(__dirname, '../', 'public/index.html'));
+    });
+  });
 } 

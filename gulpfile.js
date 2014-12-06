@@ -14,11 +14,16 @@ gulp.task('build', function() {
         '!client/bower_components/jquery/src/**/*.{css,js}',
         '!client/bower_components/bootstrap/{grunt,js}/*.{css,js}',
         '!client/bower_components/angular-ui-bootstrap/{docs,misc,node_modules,src,template,dist/assets}/**/*.{css,js}',
+        '!client/bower_components/bootstrap-switch/{src,dist/**/bootstrap2}/**/*.{css,js}',
         '!client/bower_components/**/{grunt,gruntfile,Gruntfile,npm,karma.conf}.{css,js}',
         '!client/bower_components/**/*.min.{css,js}'])
         .pipe(flatten())
         .pipe(gulp.dest('public/'));
-
+    
+    gulp.src(['client/bower_components/bootstrap/fonts/*.*'])
+        .pipe(flatten())
+        .pipe(gulp.dest('public/fonts/'));
+        
     gulp.src(['client/html/**/*.html'])
         .pipe(flatten())
         .pipe(gulp.dest('public/'));
@@ -33,7 +38,11 @@ gulp.task('build', function() {
 
     gulp.src(['client/css/**/*.css'])
         .pipe(flatten())
-        .pipe(gulp.dest('public/'));                     
+        .pipe(gulp.dest('public/'));
+    
+    gulp.src(['client/img/**/*.jpg'])
+        .pipe(flatten())
+        .pipe(gulp.dest('public/'));           
 });
 
 gulp.task('release-build', function () {

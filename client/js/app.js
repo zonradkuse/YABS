@@ -5,20 +5,22 @@
         ]);
     window.client = client;
 
-    client.config(['$routeProvider', function($routeProvider) {
+    client.config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
+        $locationProvider.html5Mode(true);
         $routeProvider.
+            when('/course/:courseid', {
+                templateUrl: 'course.html',
+                controller: 'courseController'
+            }).
             when('/', {
                 templateUrl: 'frontpage.html',
                 controller: 'frontpageController'
-            }).
+            }).            
             otherwise({
-                redirectTo: '/frontpage.html'
+                redirectTo: '/404'
         });
     }]);
 
     var controllers = angular.module('clientControllers', []);
     window.clientControllers = controllers;
 })();
-
-/** Test */
-function test() {}

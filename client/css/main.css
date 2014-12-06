@@ -1,0 +1,31 @@
+body {
+    padding-top: 50px; /* Required since navbar is fixed */
+    background-color: #ddd;
+    line-height: 1.6;
+}
+
+.background-course {
+    background-size: cover;
+    height: 400px;
+    background-image: url('/hkw-background.jpg');
+    background-position: center;
+}
+
+.background-course > .container > div.row {
+    background-color: #fff;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.background-course > .container > h1 {
+    color: #fff;
+    text-align: center;
+    padding-top: 70px;
+    padding-bottom: 70px;
+    font-size: 48px;
+}
+
+.container-course {
+    padding-right: 0;
+    padding-left: 0;
+}
