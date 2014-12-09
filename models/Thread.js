@@ -1,0 +1,1 @@
+/** Model of a Thread. A Thread will contain questions with a list of answers. */

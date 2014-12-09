@@ -4,5 +4,15 @@
 		"user" : "",
 		"password" : "",
 		"db" : ""
-	}
+	},
+   "login" : {
+      "local" : true,
+      "l2p" : {
+         "clientID" : "",
+         "scopes" : ""
+      }
+   },
+   "general" : {
+      "https" : true
+   }
 }
