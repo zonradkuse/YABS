@@ -1,16 +1,17 @@
 /*! Model of Question
-* @param {Number} uid The user identifier.
+* @param {Number} author The user identifier.
 * @param {Timestamp} time Timestamp of creation
 * @param {Number} vote Number of votes
 * @param {String} content The content of this question
 * @param {Answers[]} answers The list of answers
 */
 
-Question.idCreator = 0;
 
-function Question(uid, time, votes, content, answers){
-	this.id = this.idCreator++;
-	this.uid = uid;
+Question.idCreator = 0; /*Baaaaaad :D*/
+
+function Question(author, time, votes, content, answers){
+	this.id = Question.idCreator++;
+	this.author = author;
 	this.time = time;
 	this.content = content;
 	this.votes = votes;
@@ -18,9 +19,9 @@ function Question(uid, time, votes, content, answers){
 	this.visible = true;
 }
 
-function Question(uid, content){
-	this.id = this.idCreator++;
-	this.uid = uid;
+function Question(author, content){
+	this.id = Question.idCreator++;
+	this.author = author;
 	this.time = Date.now();
 	this.content = content;
 	this.votes = 0;
