@@ -9,7 +9,7 @@
       "local" : true,
       "l2p" : {
          "clientID" : "",
-         "scopes" : ""
+         "scopes" : "l2p.rwth userinfo.rwth"
       }
    },
    "general" : {
