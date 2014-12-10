@@ -16,16 +16,22 @@ module.exports = function(pExpressApp){
     auth.loginLocal(req, res, function(res){res.redirect("/sessiontest")}, function(res){res.redirect("/")});
   });
   app.get('/l2plogin', function(req, res){
-    //1. get a client id by post req to l2p server
-    //2. redirect user to l2p auth
-    //3. poll for user auth
+    //1. get a client id by post req to l2p server 
+    //2. redirect user to l2p auth 
+    //3. poll for user auth 
     postreqToL2P(function(response){
       //check the answer from the oauth server
       if(response != null){
         if(response.user_code == null){
           //huston, we have a problem
           res.write("error on authentication: " + response);
+        }else{
+          // we have a user code. post request must be successful - redirect user to rwth auth.
+          res.redirect(response.verification_url + "/?q=verify&d=" + response.user_code);
+          // now begin to poll until we get access
         }
+      }else{
+        res.write("error on authentication: the response object is null");
       }
       res.end();
     });
@@ -55,7 +61,10 @@ module.exports = function(pExpressApp){
 
 
 } 
-
+/**
+  This funtion does the post request to the rwth oauth module.
+  @param next This is a callback function with one parameter which gets the response object.
+*/
 function postreqToL2P(next){
   var data = querystring.stringify({
     "client_id" : config.login.l2p.clientID,
@@ -82,3 +91,6 @@ function postreqToL2P(next){
   postRequest.write(data);
   postRequest.end();
 }
+
+
+
