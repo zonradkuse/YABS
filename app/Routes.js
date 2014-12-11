@@ -41,11 +41,17 @@ module.exports = function(pExpressApp){
   */
   app.get('/sessiontest', function(req, res, next){
     var sess = req.session
-    res.setHeader('Content-Type', 'text/html')
+    res.setHeader('Content-Type', 'text/html');
     res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's (' + (sess.cookie.maxAge/60 / 1000) + ' min)</p>')
     res.write('<p>logged in with Session ID ' + sess.sessionId + '<p>')
     if (sess.sessionId == undefined) {
-      res.write('login? <a href="/Tests/logintest.html">Login!</a>')
+      res.write('login? \
+      <form action="/login" method="post"> \
+      First name:<br> \
+      <input type="text" name="username" value="Username"> \
+      <br><br> \
+      <input type="submit" value="Submit"> \
+      </form>')
     };
     res.end()
   });
