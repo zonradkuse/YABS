@@ -1,4 +1,4 @@
-/*! Model of Question
+/** Model of Question
 * @param {Number} author The user identifier.
 * @param {Timestamp} time Timestamp of creation
 * @param {Number} vote Number of votes

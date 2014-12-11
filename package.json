@@ -12,8 +12,8 @@
     "moment": "^2.7.0",
     "morgan": "^1.4.1",
     "mysql": "git://github.com/felixge/node-mysql",
-    "node-redis": "^0.1.7",
     "querystring": "^0.2.0",
+    "redis": "^0.12.1",
     "winston": "^0.8.3",
     "ws": "^0.5.0"
   },

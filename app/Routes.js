@@ -29,6 +29,7 @@ module.exports = function(pExpressApp){
           // we have a user code. post request must be successful - redirect user to rwth auth.
           res.redirect(response.verification_url + "/?q=verify&d=" + response.user_code);
           // now begin to poll until we get access
+          
         }
       }else{
         res.write("error on authentication: the response object is null");

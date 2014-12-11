@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var bodyParser   = require('body-parser');
 var sessionStore = require('connect-redis')(session);
+var config = require('./config.json');
+var fs = require('fs');
 
 var Thread = require('./models/Thread.js');
 var Question = require('./models/Question.js');
@@ -49,6 +51,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var routes = require('./app/Routes.js')(app);
 //var auth = require('./app/Authentication.js')(passport, LocalStrategy, db);  // TODO: Replace this?
 
-console.log('Now running on 8080!')
-
-app.listen(8080);
+/*
+   Start the real server. If ssl is enabled start it too! http should not be used!
+*/
+if (config.general.https){
+   var https = require('https');
+   https.createServer({
+      "key" : fs.readFileSync(config.general.https.key),
+      "cert" : fs.readFileSync(config.general.https.crt)
+   }, app).listen(config.general.https.port);
+   console.log('Now running on ssl ' + config.general.https.port + '!');
+}
+require('http').createServer(app).listen(config.general.http.port);
+console.log('Now running on ' + config.general.http.port + '!');
