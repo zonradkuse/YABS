@@ -7,7 +7,7 @@ function Thread(time){
 
 function Thread(){
 	this.time = Date.now();
-	thissc.questions = [];
+	this.questions = [];
 }
 
 Thread.prototype.addQuestion = function(question){

@@ -4,12 +4,13 @@ var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var bodyParser   = require('body-parser');
-var msql = require('mysql');
 
 
 var Thread = require('./models/Thread.js');
 var Question = require('./models/Question.js');
 
+
+// TODO auslagern in eigene testsuite??
 var t = new Thread();
 for(i=0; i<10; i++)
 	t.addQuestion(new Question(i,i));
@@ -17,7 +18,7 @@ filters = { "id":function(prop){ if(prop == 0 || prop == 5) return true; return 
 			/*"content":function(prop){ if(prop == 5) return true; return false;} };*/
 var res = t.filterProp(filters);
 
-console.log(res.length);
+console.log("[TEST Thread] Number of Questions after filter: " + res.length);
 
 
 
@@ -39,7 +40,7 @@ app.use(express.static(__dirname + '/public'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-var db = require('./app/DatabaseConnection.js').pool;
+/* TODO var db = require('./app/DatabaseConnection.js').pool; */
 var routes = require('./app/Routes.js')(app);
 //var auth = require('./app/Authentication.js')(passport, LocalStrategy, db);  // TODO: Replace this?
 
