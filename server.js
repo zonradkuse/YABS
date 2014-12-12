@@ -7,6 +7,7 @@ var bodyParser   = require('body-parser');
 var sessionStore = require('connect-redis')(session);
 var config = require('./config.json');
 var fs = require('fs');
+var compression = require('compression');
 
 var Thread = require('./models/Thread.js');
 var Question = require('./models/Question.js');
@@ -30,6 +31,9 @@ console.log("[TEST Thread] Number of Questions after filter: " + res.length);
 
 
 app.use(morgan('dev'));
+app.use(compression({
+  threshold: 1024
+}));
 app.use(cookieParser());
 //app.set('trust proxy', 1); // will be needed for production use with nginx
 app.use(session({
