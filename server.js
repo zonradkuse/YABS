@@ -14,19 +14,17 @@ var Question = require('./models/Question.js');
 
 
 // TODO auslagern in eigene testsuite??
-var t = new Thread();
+/*var t = new Thread();
 for(i=0; i<10; i++)
-	t.addQuestion(new Question(i,i));
+	t.addQuestion(new Question(i,i%3,i));
 filters = { 
    "id": function(prop){
       if(prop == 0 || prop == 5) return true; 
       return false;
    }};
-			/*"content":function(prop){ if(prop == 5) return true; return false;} };*/
 var res = t.filterProp(filters);
 
-console.log("[TEST Thread] Number of Questions after filter: " + res.length);
-
+console.log("[TEST Thread] Number of Questions after filter: " + res.length);*/
 
 
 

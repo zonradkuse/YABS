@@ -5,18 +5,16 @@
 * @param {String} content The content of this question
 */
 
-Answer.idCreator = 0;
-
-function Answer(qid, author, time, content){
-	this.id = Answer.idCreator++;
+function Answer(aid, qid, author, time, content){
+	this.id = aid;
 	this.qid = qid;
 	this.author = author;
 	this.time = time;
 	this.content = content;
 }
 
-function Answer(qid, author, content){
-	this.id = Answer.idCreator++;
+function Answer(aid, qid, author, content){
+	this.id = aid;
 	this.qid = qid;
 	this.author = author;
 	this.time = Date.now();
