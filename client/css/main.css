@@ -29,3 +29,9 @@ body {
     padding-right: 0;
     padding-left: 0;
 }
+
+.text-panicdescription {
+    display: block;
+    color: #999;
+    margin-top: 20px;
+}
