@@ -6,8 +6,8 @@ exports = function(pLogger){
     this.logger = pLogger;
 }
 
-exports.addNewQuestion = addNewQuestion;
-exports.addNewThread = addNewThread;
+module.exports.addNewQuestion = addNewQuestion;
+module.exports.addNewThread = addNewThread;
 //todo more functions
 
 client.on('error', function(err){
@@ -15,7 +15,7 @@ client.on('error', function(err){
 });
 
 function addNewThread(thread){
-    client.hset('system:thread:' + thread.id, function(err, result){
+    client.hmset('system:thread', 'id', thread.id, 'time', thread.time, function(err, result){
         if(err) throw err;
         console.log(result);
     });
