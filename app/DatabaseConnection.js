@@ -8,24 +8,67 @@ exports = function(pLogger){
 
 module.exports.addNewQuestion = addNewQuestion;
 module.exports.addNewThread = addNewThread;
+module.exports.addNewQuestion = addNewQuestion;
+module.exports.addNewUser = addNewUser;
+
 //todo more functions
 
 client.on('error', function(err){
-        //do some fancy error handling
+        throw err;
 });
 
-function addNewThread(thread){
-    client.hmset('system:thread', 'id', thread.id, 'time', thread.time, function(err, result){
-        if(err) throw err;
-        console.log(result);
-    });
+/** addNewThread calls a callback function with the new ThreadId
+
+    @param {Thread} thread is the thread object. The Id will be set by redis. Then it will
+        passed to your callback.
+    @param {function} callback Your callback function. function(err, reply){...}.
+*/
+
+function addNewThread(thread, callback){
+    if (thread === null || thread === null){
+        callback(new Error("The passed thread is not initialized."), -1);
+    } else {
+        client.incr('system:curThreadId', function(err, reply){
+            if(err) throw err;
+            client.hmset('system:thread:' + reply, 'id', reply, 'time', thread.time, function(err, queryResult){
+                callback(err, reply, queryResult);
+            });
+            
+        });     
+    }
+    
 }
 
-function addNewQuestion(thread, question){
-    client.hmset('system:question', 'threadId', thread.id, 'qId', question.qid, 'qContent', q.content);
+/** addNewQuestion calls a callback function with the new ThreadId
+
+    @param {Thread} thread is the thread object. The id needs to be set.
+    @param {Question} question is the question object. The id will be generated
+    @param {function} callback Your callback function. function(err, questionId, queryString){...}.
+        queryString should be "OK".
+*/
+
+function addNewQuestion(thread, question, callback){
+    if(thread.id === null || thread.id === undefined){
+        callback(new Error("thread.id is not set"), -1);
+    } else {
+        client.incr('system:thread:' + thread.id + ':questions:curQuestionId', function(err, reply){
+            if(err) throw err;
+            //I smell code injection
+            client.hmset("system:thread:" + thread.id + ":questions:question:" + reply, {
+                "threadId" : thread.id,
+                "qId" : reply,
+                "qContent": question.content,
+                "qTime" : question.time,
+                "qAuthor": question.author,
+                "qVisible" : question.visible 
+                }, function(err, queryResult){
+                    callback(err, reply, queryResult);
+                });
+        });
+    }
 }
 
-function addNewUser(user){
+function addNewUser(user, callback){
 
 }
 

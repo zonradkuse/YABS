@@ -33,7 +33,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test" : "node_modules/mocha/bin/mocha"
+    "test" : "node_modules/mocha/bin/mocha --reporter nyan"
   },
   "description": "YABS ====",
   "main": "server.js",
