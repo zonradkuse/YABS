@@ -10,7 +10,11 @@ system:rooms:room:{roomId}:threads:{curThreadId}
 system:rooms:room:{roomId}:threads:thread:{threadId}
 system:rooms:room:{roomId}:threads:thread:{threadId}:questions:curQuestionId
 system:rooms:room:{roomId}:threads:thread:{threadId}:questions:question:{questionId}
-
+system:rooms:room:{roomId}:threads:thread:{threadId}:questions:question:{questionId}:answers:curAnswerId
+system:rooms:room:{roomId}:threads:thread:{threadId}:questions:question:{questionId}:answers:answer:{answerId}
+system:relation:map:answer:{uniqueId} [{qId}, {tId}, {rId}]
+system:relation:map:question:{uniqueId} [{tId}, {rId}]
+system:relation:map:thread:{uniqueId} rId - as this thread belongs to rId
 system:users:curUserId
 system:users:user:{id}
 */
@@ -43,15 +47,17 @@ client.on('error', function(err){
 
 function addNewThread(room, thread, callback){
     if (thread === null || thread === null){
-        callback(new Error("The passed thread is not initialized."), -1);
+        throw new Error("The passed thread is not initialized.");
     } else {
         client.incr('system:rooms:room:' + room.id + ':threads:curThreadId', function(err, reply){
             if(err) throw err;
+            var uniqueId = "t:" + room.id + ":" + reply;
             client.hmset('system:rooms:room:' + room.id + ':threads:thread:' + reply,{
+                'uniqueId' : uniqueId,
                 'id': reply,
                 'time': thread.time
             }, function(err, queryResult){
-                callback(err, reply, queryResult);
+                callback(err, uniqueId, queryResult);
             });
             
         });     
@@ -66,16 +72,19 @@ function addNewThread(room, thread, callback){
     @param {Question} question is the question object. The id will be generated
     @param {function} callback Your callback function. function(err, questionId, queryString){...}.
         queryString should be "OK".
+
+    @return returns the uniqueId as a String.
 */
 
 function addNewQuestion(room, thread, question, callback){
     if(thread.id === null || thread.id === undefined){
-        callback(new Error("thread.id is not set"), -1);
+        throw new Error("thread.id is not set");
     } else {
         client.incr('system:rooms:room:' + room.id + ':threads:thread:' + thread.id + ':questions:curQuestionId', function(err, reply){
             if(err) throw err;
-            //I smell code injection
+            var uniqueId = "q:" +room.id + ":" + thread.id + ":" + reply;
             client.hmset('system:rooms:room:' + room.id + ':threads:thread:' + thread.id + ":questions:question:" + reply, {
+                "uniqueId" : uniqueId,
                 "threadId" : thread.id,
                 "qId" : reply,
                 "qContent": question.content,
@@ -83,7 +92,7 @@ function addNewQuestion(room, thread, question, callback){
                 "qAuthor": question.author,
                 "qVisible" : question.visible 
                 }, function(err, queryResult){
-                    callback(err, reply, queryResult);
+                    callback(err, uniqueId, queryResult);
                 });
         });
     }
@@ -98,15 +107,17 @@ function addNewQuestion(room, thread, question, callback){
 
 function addNewUser(user, callback){
     if(user === undefined || user === null){
-        callback(new Error("the user cannot be undefined or null"));    
+        throw new Error("the user cannot be undefined or null");    
     } else {
         client.incr('system:users:curUserId', function(err, userId){
+            var uniqueId = "u:" + userId;
             client.hmset('system:users:user:' + userId, {
+                "uniqueId" : uniqueId,
                 "uId" : userId,
                 "l2pApi" : user.l2pAPIKey,
                 "uName" : user.name
             }, function(err, res){
-                callback(err, userId, res);
+                callback(err, uniqueId, res);
             });
         });
     }
@@ -125,7 +136,9 @@ function addNewRoom(room, callback){
         callback(new Error("the room cannot be undefined or null"));    
     } else {
         client.incr('system:rooms:curRoomId', function(err, roomId){
+            var uniqueId = "r:" + roomId;
             client.hmset('system:rooms:' + roomId, {
+                "uniqueId" : uniqueId, 
                 "rId" : userId,
                 "rName" : room.name
             }, function(err, res){
@@ -137,7 +150,23 @@ function addNewRoom(room, callback){
 
 
 function addNewAnswer(room, thread, question, answer, callback){
-
+    if(thread.id === null || thread.id === undefined){
+        throw new Error("thread.id is not set");
+    } else {
+        client.incr('system:rooms:room:' + room.id + ':threads:thread:' + thread.id + ':questions:curQuestionId', function(err, reply){
+            if(err) throw err;
+            var uniqueId = "a:" +room.id + ":" + thread.id + ":" + question.id + ":" + reply;
+            client.hmset('system:rooms:room:' + room.id + ':threads:thread:' + thread.id + ":questions:question:" + reply, {
+                "uniqueId" : uniqueId,
+                "qId" : question.id,
+                "aContent": answer.content,
+                "aTime" : answer.time,
+                "aAuthor": answer.author
+                }, function(err, queryResult){
+                    callback(err, uniqueId, queryResult);
+                });
+        });
+    }
 }
 
 function getThreadById(id){

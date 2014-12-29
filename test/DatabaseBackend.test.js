@@ -3,6 +3,7 @@ var db = require('../app/DatabaseConnection.js');
 var Thread = require('../models/Thread.js');
 var Question = require('../models/Thread.js');
 var User = require('../models/User.js');
+var Room = require('../models/Room.js');
 
 describe('The Redis Databasebackend Testsuite: ', function(){
     describe('Method Tests', function(){
@@ -13,7 +14,7 @@ describe('The Redis Databasebackend Testsuite: ', function(){
            assert.equal(typeof db.addNewThread, 'function');
         });
         it('addNewThread should write some thread to Redis', function(){
-            db.addNewThread(new Thread(), function(err, reply){
+            db.addNewThread(new Room("1", "name"), new Thread(), function(err, reply){
                 assert.equal(typeof reply, 'number');
             });
         });
@@ -21,7 +22,7 @@ describe('The Redis Databasebackend Testsuite: ', function(){
             var t = new Thread();
             var q = new Question(0, "me", "some content");
             t.id = 1;
-            db.addNewQuestion(t, q, function(err, result, res){
+            db.addNewQuestion(new Room(), t, q, function(err, result, res){
                 assert.equal(typeof result, 'number');
                 assert.equal(res, "OK");
             });
@@ -33,7 +34,7 @@ describe('The Redis Databasebackend Testsuite: ', function(){
                 assert.equal(queryString, "OK");
             });
         });
-        
+
 
     });
 });
