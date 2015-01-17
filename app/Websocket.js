@@ -22,6 +22,10 @@ module.exports = function (app){
 
     wss.on('connection', function(ws){
         ws.send("Welcome");
+        parseCookie(ws.upgradeReq, null, function(err) {
+            var sessionID = ws.upgradeReq.cookies['sid'];
+            ws.send("Your Session ID is: " + sessionID);
+        }); 
         //check for binary data
         //parse message string and call the attached functions in the interface
         ws.on('message', function(message){

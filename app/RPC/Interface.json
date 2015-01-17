@@ -1,11 +1,34 @@
 {
     "data": [
         {
-            "uri": "testMe",
-            "parameters": {
-                "message" : ""
+            "uri" : "getQuestions",
+            "parameters" : {
+                "threadId" : ""
             },
             "func": ""
+        },
+        {
+          "uri" : "getAnswers",
+          "parameters": {
+            "questionId": ""
+          },
+          "func" : ""
+        },
+        {
+            "uri" : "vote",
+            "parameters" : {
+                "question" : "true",
+                "questionId" : ""
+            },
+            "func" : ""
+        },
+        {
+            "uri" : "getRooms",
+            "parameters" : {
+                "userId" : "",
+                "sessionCookie" : ""
+            },
+            "func" : ""
         }
     ]
 }
