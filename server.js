@@ -66,15 +66,16 @@ logger.info('initialized routes!');
 /*
 *   Start the real server. If ssl is enabled start it too! http should not be used!
 */
+var server = require('http').createServer(app);
 if (config.general.https){
    var https = require('https');
-   /*https.createServer({
+   https.createServer({
       "key" : fs.readFileSync(config.general.https.key),
       "cert" : fs.readFileSync(config.general.https.crt)
-   }, app).listen(config.general.https.port);*/
+   }, app).listen(config.general.https.port);
    logger.info('Server now running on ssl ' + config.general.https.port + '!');
 }
-var server = require('http').createServer(app);
+
 server.listen(config.general.http.port || 8080);
 logger.info('Server now running on ' + config.general.http.port + '!');
 

@@ -31,7 +31,7 @@ module.exports = function (app){
                 cmd = JSON.parse(message);
             }catch(e){
                 logger.info(e + "\n'" + message + "' is not valid json.");
-                cmd = "";
+                cmd = {};
             }
 
             /*
@@ -41,13 +41,20 @@ module.exports = function (app){
             if(cmd.parameters != undefined && cmd.uri != undefined){
                 rpc.call(cmd.uri, cmd.parameters, function(error, data){
                     if(error){
-                        logger.error(error);
-                        throw error;
+                        logger.error(error.message);
+                        dt = {
+                            'data' : '',
+                            'error' : error.message,
+                            'refId' : cmd.refId
+                        }
+                        ws.send(JSON.stringify(dt)); //send the data
                     }else{
                         dt = {
                             'data' : data,
-                            'refId' : message.refId
+                            'error' : '',
+                            'refId' : cmd.refId
                         }
+                        logger.info('sending ' + dt);
                         ws.send(JSON.stringify(dt)); //send the data
                     }
                 });
