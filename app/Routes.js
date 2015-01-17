@@ -1,4 +1,4 @@
-/*! Module to handle all incoming requests.
+  /*! Module to handle all incoming requests.
 
   Note: the static folder is already set. Here are all needed routes like
   the login post request. 
@@ -6,11 +6,21 @@
 var https = require('https');
 var querystring = require('querystring');
 var config = require('../config.json');
+var logger = require('./Logger.js');
+var app;
 
 module.exports = function(pExpressApp){
-  var app = pExpressApp;
+  app = pExpressApp;
+} 
 
-  console.log('initialized routes!');
+
+module.exports.routes = function(){
+  /**
+  *
+  * UNDER CONSTRUCTION UNTIL WE GET THE API KEY - USE FACEBOOK INSTEAD.
+  *
+  */
+
   app.post('/login', function(req,res){
     var auth = require('./Authentication.js');
     auth.loginLocal(req, res, function(res){res.redirect("/sessiontest")}, function(res){res.redirect("/")});
@@ -67,11 +77,15 @@ module.exports = function(pExpressApp){
   });
 
 
-} 
+}
+
+
+
 /**
   This funtion does the post request to the rwth oauth module.
   @param next This is a callback function with one parameter which gets the response object.
 */
+
 function postreqToL2P(next){
   var data = querystring.stringify({
     "client_id" : config.login.l2p.clientID,
@@ -97,6 +111,10 @@ function postreqToL2P(next){
 
   postRequest.write(data);
   postRequest.end();
+}
+
+exports.facebookLogin = function(){
+
 }
 
 

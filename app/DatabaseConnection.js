@@ -186,7 +186,7 @@ function getUserByName(name){
 }
 
 function getRoomById(id){
-
+    
 }
 
 function getRoomByName(name){

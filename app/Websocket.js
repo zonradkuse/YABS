@@ -1,23 +1,62 @@
 /**
    Websocket.js manages 
 */
-
-
-var websocket = require('ws');
-var ws = new websocket();
-
-module.exports = init;
-
-}
+var logger = require('./Logger.js');
+var app = require('../server.js').app;
+var rpc = require('./RPC/RPCHandler.js');
+var WebSocketServer = require('ws').Server
 
 
 /**
-   this function will be called for initialization.
+   this function will be called on initialization.
 */
-function init(){
-   // TODO
+module.exports = function (app){
+    var wss = new WebSocketServer({ server:app });
+    logger.info('Initializing Websockets');
+    var inter = rpc.getInterface();
+    inter.data[0].func = function(params, callback){
+        callback(null, {"data": "value"});
+    }
+    rpc.setInterface(inter);
+
+
+    wss.on('connection', function(ws){
+        ws.send("Welcome");
+        //check for binary data
+        //parse message string and call the attached functions in the interface
+        ws.on('message', function(message){
+            logger.info('received: ' + message);
+            var cmd;
+            try{
+                cmd = JSON.parse(message);
+            }catch(e){
+                logger.info(e + "\n'" + message + "' is not valid json.");
+                cmd = "";
+            }
+
+            /*
+            *   sanity check
+            *       let's look for parameters object and uri
+            */
+            if(cmd.parameters != undefined && cmd.uri != undefined){
+                rpc.call(cmd.uri, cmd.parameters, function(error, data){
+                    if(error){
+                        logger.error(error);
+                        throw error;
+                    }else{
+                        dt = {
+                            'data' : data,
+                            'refId' : message.refId
+                        }
+                        ws.send(JSON.stringify(dt)); //send the data
+                    }
+                });
+            }
+        });
+
+    });
+
+
+
 }
 
-ws.on('getme', function(){
-
-});

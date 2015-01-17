@@ -1,0 +1,11 @@
+{
+    "data": [
+        {
+            "uri": "testMe",
+            "parameters": {
+                "message" : ""
+            },
+            "func": ""
+        }
+    ]
+}
