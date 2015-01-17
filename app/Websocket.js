@@ -41,7 +41,7 @@ module.exports = function (app){
             if(cmd.parameters != undefined && cmd.uri != undefined){
                 rpc.call(cmd.uri, cmd.parameters, function(error, data){
                     if(error){
-                        logger.error(error.message);
+                        logger.warn('RPC: ' + error.message);
                         dt = {
                             'data' : '',
                             'error' : error.message,

@@ -32,24 +32,19 @@ function call(invoke, params, callback){
     }
 }
 
-function ParamsOfURI(uri, params, callback){
+function ParamsOfURI(uri){
     //get params for uri
     if(Interface.data == undefined || Interface.data == null){
-        callback(new Error('Interface Data unset or undefined.'));
+        throw new Error('Interface data not set or undefined.');
     }else{
-        var set = false;
         var data = Interface.data;
         for (var i = data.length - 1; i >= 0; i--) {
             if (data[i].uri === uri){
-                callback(null, parameters);
-                set = true;
-                break;
+                return data[i].parameters
             }
-        };
-        if(!set){
-            callback(null,null);
         }
     }
+    return null;
 }
 
 module.exports.call = call;
