@@ -14,6 +14,7 @@
     "express-winston": "^0.2.11",
     "moment": "^2.7.0",
     "mongoose": "^3.8.21",
+    "mongoose-deep-populate": "0.0.7",
     "morgan": "^1.4.1",
     "mysql": "git://github.com/felixge/node-mysql",
     "passport": "^0.2.1",

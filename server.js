@@ -9,8 +9,6 @@ var config = require('./config.json');
 var fs = require('fs');
 var compression = require('compression');
 var logger = require('./app/Logger.js');
-var Thread = require('./models/Thread.js');
-var Question = require('./models/Question.js');
 
 
 //var expressWinston = require('express-winston');
