@@ -3,11 +3,17 @@
 * @param {String[]} pAccess This holds the access rights.
 */
 
-function User(pName, pAccess, pID, pApi){
-  this.name = pName;
-  this.access = pAccess; 
-  this.id = pID;
-  this.l2pAPIKey = pApi;
-}
+var mongoose = require('mongoose');
+var deepPopulate = require('mongoose-deep-populate');
+var ObjectId = mongoose.Schema.ObjectId;
 
-module.exports = User;
+var UserSchema = mongoose.Schema({
+	name: { type: String, unique: true },
+    creationTime: { type: Date, default: Date.now },
+    access: [{ type: ObjectId, ref: 'Room' }],
+    l2pAPIKey: String
+});
+
+UserSchema.plugin(deepPopulate);
+module.exports.User = mongoose.model('User',UserSchema);
+module.exports.UserSchema = UserSchema;

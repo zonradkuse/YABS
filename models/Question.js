@@ -6,49 +6,57 @@
 * @param {Answers[]} answers The list of answers
 */
 
-function Question(qid, author, time, votes, content, answers){
-	this.id = qid;
-	this.author = author;
-	this.time = time;
-	this.content = content;
-	this.votes = votes;
-	this.answers = answers;
-	this.visible = true;
+var mongoose = require('mongoose');
+var deepPopulate = require('mongoose-deep-populate');
+var ObjectId = mongoose.Schema.ObjectId;
+
+var QuestionSchema = mongoose.Schema({
+    author: { type : ObjectId, ref: 'User' },
+    creationTime: { type: Date, default: Date.now },
+    updateTime: { type: Date, default: Date.now },
+    content: String,
+    votes: [{ type : ObjectId, ref: 'User', unique: true }],
+    answers: [{ type : ObjectId, ref: 'Answer' }],
+    visible: { type: Boolean, default: true }
+});
+
+QuestionSchema.methods.addAnswer = function(answer){
+	this.answers.push(answer._id);
+	this.updateTime = Date.now();
 }
 
-function Question(qid, author, content){
-	this.id = qid;
-	this.author = author;
-	this.time = Date.now();
-	this.content = content;
-	this.votes = [];
-	this.answers = [];
-	this.visible = true;
-}
-
-Question.prototype.addAnswer = function(answer){
-	this.answers.push(answer);
-}
-
-Question.prototype.getAnswer = function(aid){
+QuestionSchema.methods.getAnswer = function(aid){
 	for(var i = 0; i < this.answers.length; i++)
-		if(this.answers[i].id == aid)
+		if(this.answers[i]._id == aid)
 			return this.answers[i];
 	return null;
 }
 
-Question.prototype.deleteAnswer = function(aid){
+QuestionSchema.methods.deleteAnswer = function(aid){
 	var index = this.indexOfAnswer(aid);
-	if(index != -1)
+	if(index != -1){
 		delete this.answers.splice(index,1);
+		updateTime = Date.now();
+	}
 	return index != -1;
 }
 
-Question.prototype.indexOfAnswer = function(aid){
+QuestionSchema.methods.indexOfAnswer = function(aid){
 	for(var i = 0; i < this.answers.length; i++)
-		if(this.answers[i].id == aid) return i;
+		if(this.answers[i]._id == aid) return i;
 	return -1;
 }
 
-module.exports = Question;
+QuestionSchema.methods.vote = function(uid){
+	if(this.votes.indexOf(uid) != -1){
+		this.votes.push(uid);
+		updateTime = Date.now();
+		return true;
+	}
+	return false;
+}
+
+QuestionSchema.plugin(deepPopulate);
+module.exports.Question = mongoose.model('Question',QuestionSchema);
+module.exports.QuestionSchema = QuestionSchema;
 
