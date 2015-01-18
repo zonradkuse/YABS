@@ -24,56 +24,60 @@ module.exports = function (app){
 
 
     wss.on('connection', function(ws){
-        //ws.send("Welcome " + ws.upgradeReq.headers['sid']);
+        
         cookieParser("schalala")(ws.upgradeReq, null, function(err) {
-            var sessionID = ws.upgradeReq.signedCookies["connect.sid"];
-            ws.send(sessionID);
-            console.log(sessionID);
+            var session;
+            sessionID = ws.upgradeReq.signedCookies["connect.sid"];
             sessionStore.get(sessionID, function(err, sess) {
-                if(err) ws.send(err);
-                console.log(sess);
+                if(err) ws.send(err); // TODO HANDLE ERROR CORRECTLY
+                session = sess;
+                
             });
-            //ws.send("Your Session ID is: " + sessionID);
-        }); 
-        //check for binary data
-        //parse message string and call the attached functions in the interface
-        ws.on('message', function(message){
-            logger.info('received: ' + message);
-            var cmd;
-            try{
-                cmd = JSON.parse(message);
-            }catch(e){
-                logger.info(e + "\n'" + message + "' is not valid json.");
-                cmd = {};
-            }
-
-            /*
-            *   sanity check
-            *       let's look for parameters object and uri
-            */
-            if(cmd.parameters != undefined && cmd.uri != undefined){
-                rpc.call(cmd.uri, cmd.parameters, function(error, data){
-                    if(error){
-                        logger.warn('RPC: ' + error.message);
-                        dt = {
-                            'data' : '',
-                            'error' : error.message,
-                            'refId' : cmd.refId
-                        }
-                        ws.send(JSON.stringify(dt)); //send the data
-                    }else{
-                        dt = {
-                            'data' : data,
-                            'error' : '',
-                            'refId' : cmd.refId
-                        }
-                        logger.info('sending ' + dt);
-                        ws.send(JSON.stringify(dt)); //send the data
+            
+            //check for binary data
+            //parse message string and call the attached functions in the interface
+            ws.on('message', function(message){
+                var cmd;
+                try{
+                    cmd = JSON.parse(message);
+                }catch(e){
+                    logger.info(e + "\n'" + message + "' is not valid json.");
+                    cmd = {};
+                }
+                
+                if(session && session.cookie && session.sessionId){
+                    logger.info('received : ' + message + ' from ' + session.sessionId);
+                    /*
+                    *   sanity check
+                    *       let's look for parameters object and uri
+                    */
+                    if(cmd.parameters != undefined && cmd.uri != undefined){
+                        rpc.call(cmd.uri, cmd.parameters, function(error, data){
+                            if(error){
+                                logger.warn('RPC: ' + error.message);
+                                dt = {
+                                    'data' : '',
+                                    'error' : error.message,
+                                    'refId' : cmd.refId
+                                }
+                                ws.send(JSON.stringify(dt)); //send the data
+                            }else{
+                                dt = {
+                                    'data' : data,
+                                    'error' : '',
+                                    'refId' : cmd.refId
+                                }
+                                logger.info('sending ' + dt);
+                                ws.send(JSON.stringify(dt)); //send the data
+                            }
+                        });
                     }
-                });
-            }
-        });
-
+                }else{
+                    ws.send(JSON.stringify({"data":"","error":"Not Authenticated","refId":cmd.refId ? cmd.refId : ""}))
+                }
+            });
+        
+        }); 
     });
 
 

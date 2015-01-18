@@ -45,10 +45,11 @@ app.use(session({
    sessionId: "",
    secret:"schalala",
    cookie: { 
-     maxAge: 8035200000 //about 3 month
+     expires: 1000*60*60*3,  
+     httpOnly: false
    },
    resave: true,
-   saveUninitialized: true
+   saveUninitialized: false
 }));
 
 app.use(express.static(__dirname + '/public', { maxAge: 86400000}));
