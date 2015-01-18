@@ -5,21 +5,19 @@
 * @param {String} content The content of this question
 */
 
-function Answer(aid, qid, author, time, content){
-	this.id = aid;
-	this.qid = qid;
-	this.author = author;
-	this.time = time;
-	this.content = content;
-}
+var mongoose = require('mongoose');
+var deepPopulate = require('mongoose-deep-populate');
+var ObjectId = mongoose.Schema.ObjectId;
 
-function Answer(aid, qid, author, content){
-	this.id = aid;
-	this.qid = qid;
-	this.author = author;
-	this.time = Date.now();
-	this.content = content;
-}
+var AnswerSchema = mongoose.Schema({
+    author: { type : ObjectId, ref: 'User' },
+    creationTime: { type: Date, default: Date.now },
+    updateTime: { type: Date, default: Date.now },
+    content: String,
+    visible: { type: Boolean, default: true }
+});
 
-module.exports = Answer;
+AnswerSchema.plugin(deepPopulate);
+module.exports.Answer = mongoose.model('Answer',AnswerSchema);
+module.exports.AnswerSchema = AnswerSchema;
 
