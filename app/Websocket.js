@@ -41,7 +41,7 @@ module.exports = function (app){
                 try{
                     cmd = JSON.parse(message);
                 }catch(e){
-                    logger.info(e + "\n'" + message + "' is not valid json.");
+                    logger.info(e + '  ' + message + " is not valid json.");
                     cmd = {};
                 }
                 
@@ -52,6 +52,7 @@ module.exports = function (app){
                     *       let's look for parameters object and uri
                     */
                     if(cmd.parameters != undefined && cmd.uri != undefined){
+                        //local calls by URI with Parameters.
                         rpc.call(cmd.uri, cmd.parameters, function(error, data){
                             if(error){
                                 logger.warn('RPC: ' + error.message);

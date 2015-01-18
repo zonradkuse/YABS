@@ -16,6 +16,8 @@
     "mongoose": "^3.8.21",
     "morgan": "^1.4.1",
     "mysql": "git://github.com/felixge/node-mysql",
+    "passport": "^0.2.1",
+    "passport-facebook": "^1.0.3",
     "querystring": "^0.2.0",
     "redis": "^0.12.1",
     "winston": "^0.8.3",

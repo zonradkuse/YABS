@@ -3,10 +3,15 @@
   Note: the static folder is already set. Here are all needed routes like
   the login post request. 
 */
+var FB_APP_ID = "client id";
+var FB_APP_SECRET = "client secret";
+var passport = require('passport')
+var FacebookStrategy = require('passport-facebook').Strategy;
 var https = require('https');
 var querystring = require('querystring');
 var config = require('../config.json');
 var logger = require('./Logger.js');
+var mainController = require('./MainController.js');
 var app;
 
 module.exports = function(pExpressApp){
@@ -113,8 +118,26 @@ function postreqToL2P(next){
   postRequest.end();
 }
 
-exports.facebookLogin = function(){
 
+passport.use(new FacebookStrategy({
+    clientID: FB_APP_ID,
+    clientSecret: FB_APP_SECRET,
+    callbackURL: "http://j0h.de:81/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    User.findOrCreate({}, function(err, user) {
+      if (err) { return done(err); }
+      done(null, user);
+    });
+  }
+));
+
+exports.facebookLogin = function(){
+  app.get('/auth/facebook', passport.authenticate('facebook'));
+
+  app.get('/auth/facebook/callback', 
+    passport.authenticate('facebook', { successRedirect: '/',
+                                      failureRedirect: '/login' }));
 }
 
 
