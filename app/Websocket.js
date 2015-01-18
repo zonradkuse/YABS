@@ -5,7 +5,10 @@ var logger = require('./Logger.js');
 var app = require('../server.js').app;
 var rpc = require('./RPC/RPCHandler.js');
 var WebSocketServer = require('ws').Server
-
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var sessionStore = require('connect-redis')(session);
+sessionStore = new sessionStore();
 
 /**
    this function will be called on initialization.
@@ -21,10 +24,16 @@ module.exports = function (app){
 
 
     wss.on('connection', function(ws){
-        ws.send("Welcome");
-        parseCookie(ws.upgradeReq, null, function(err) {
-            var sessionID = ws.upgradeReq.cookies['sid'];
-            ws.send("Your Session ID is: " + sessionID);
+        //ws.send("Welcome " + ws.upgradeReq.headers['sid']);
+        cookieParser("schalala")(ws.upgradeReq, null, function(err) {
+            var sessionID = ws.upgradeReq.signedCookies["connect.sid"];
+            ws.send(sessionID);
+            console.log(sessionID);
+            sessionStore.get(sessionID, function(err, sess) {
+                if(err) ws.send(err);
+                console.log(sess);
+            });
+            //ws.send("Your Session ID is: " + sessionID);
         }); 
         //check for binary data
         //parse message string and call the attached functions in the interface
