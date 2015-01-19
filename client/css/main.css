@@ -1,7 +1,10 @@
 body {
-    padding-top: 50px; /* Required since navbar is fixed */
     background-color: #ddd;
     line-height: 1.6;
+}
+
+.navbar-inverse {
+	background-image: none;
 }
 
 .background-course {
@@ -34,4 +37,22 @@ body {
     display: block;
     color: #999;
     margin-top: 20px;
+}
+
+
+/* Questionmodule */
+
+.question-pane {
+	position: relative;
+	margin-top: 70px; 
+}
+
+.question-pane  > .avatar {
+	position: absolute;
+	left: 10px;
+	top: -50px;
+}
+
+.question-pane > .panel-heading  > h3.panel-title {
+	margin-left: 100px;
 }
