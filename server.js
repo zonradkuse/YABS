@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+var config = require('./config.json');
 var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
@@ -9,23 +10,6 @@ var config = require('./config.json');
 var fs = require('fs');
 var compression = require('compression');
 var logger = require('./app/Logger.js');
-
-
-//var expressWinston = require('express-winston');
-
-// TODO auslagern in eigene testsuite??
-/*var t = new Thread();
-for(i=0; i<10; i++)
-	t.addQuestion(new Question(i,i%3,i));
-filters = { 
-   "id": function(prop){
-      if(prop == 0 || prop == 5) return true; 
-      return false;
-   }};
-var res = t.filterProp(filters);
-
-console.log("[TEST Thread] Number of Questions after filter: " + res.length);*/
-
 
 /*
 * Initiate Express.js Webserver with
@@ -41,7 +25,7 @@ app.use(cookieParser());
 app.use(session({
    store : new sessionStore(),
    sessionId: "",
-   secret:"schalala",
+   secret: config.general.cookie.secret,
    cookie: { 
      expires: 1000*60*60*3,  
      httpOnly: false

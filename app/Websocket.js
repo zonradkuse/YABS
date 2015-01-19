@@ -3,7 +3,8 @@
 */
 var logger = require('./Logger.js');
 var app = require('../server.js').app;
-var rpc = require('./RPC/RPCHandler.js');
+var interface = require('./RPC/InterfaceHandler.js');
+var config = require('../config.json');
 var WebSocketServer = require('ws').Server
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
@@ -16,16 +17,19 @@ sessionStore = new sessionStore();
 module.exports = function (app){
     var wss = new WebSocketServer({ server:app });
     logger.info('Initializing Websockets');
-    var inter = rpc.getInterface();
+    /*var inter = interface.getInterface();
     inter.data[0].func = function(params, callback){
         callback(null, {"data": "value"});
     }
-    rpc.setInterface(inter);
+    interface.setInterface(inter);*/
+    interface.attachFunction('vote',function(params, callback){
+            callback(null, {"data": "value"});
+        }, function(err){throw err} );
 
 
     wss.on('connection', function(ws){
         
-        cookieParser("schalala")(ws.upgradeReq, null, function(err) {
+        cookieParser(config.general.cookie.secret)(ws.upgradeReq, null, function(err) {
             var session;
             sessionID = ws.upgradeReq.signedCookies["connect.sid"];
             sessionStore.get(sessionID, function(err, sess) {
@@ -45,17 +49,18 @@ module.exports = function (app){
                     cmd = {};
                 }
                 
-                if(session && session.cookie && session.sessionId){
-                    logger.info('received : ' + message + ' from ' + session.sessionId);
+                if((session && session.cookie && session.sessionId) || cmd.sudo){
+                    logger.info('received : ' + message + ' from ' + ws.upgradeReq.connection.remoteAddress);
                     /*
                     *   sanity check
                     *       let's look for parameters object and uri
                     */
                     if(cmd.parameters != undefined && cmd.uri != undefined){
                         //local calls by URI with Parameters.
-                        rpc.call(cmd.uri, cmd.parameters, function(error, data){
+                        //standard request interface call.
+                        interface.call(cmd.uri, cmd.parameters, function(error, data){
                             if(error){
-                                logger.warn('RPC: ' + error.message);
+                                logger.warn('Incoming RPC with URI ' + cmd.uri + ' caused problem : ' + error.message);
                                 dt = {
                                     'data' : '',
                                     'error' : error.message,
@@ -68,8 +73,12 @@ module.exports = function (app){
                                     'error' : '',
                                     'refId' : cmd.refId
                                 }
-                                logger.info('sending ' + dt);
-                                ws.send(JSON.stringify(dt)); //send the data
+                                if (cmd.broadcast) { //F*CKING CHECK THAT!
+                                    wss.broadcast(JSON.stringify(dt));
+                                } else{
+                                    ws.send(JSON.stringify(dt)); //send the data
+                                }
+                                logger.info('Successful RPC Request ' + JSON.stringify(cmd) + ' and Response ' + JSON.stringify(dt));
                             }
                         });
                     }
@@ -80,8 +89,5 @@ module.exports = function (app){
         
         }); 
     });
-
-
-
 }
 

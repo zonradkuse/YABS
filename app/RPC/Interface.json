@@ -20,7 +20,8 @@
                 "question" : "true",
                 "questionId" : ""
             },
-            "func" : ""
+            "func" : "",
+            "broadcast" : true
         },
         {
             "uri" : "getRooms",

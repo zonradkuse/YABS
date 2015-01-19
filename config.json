@@ -21,6 +21,9 @@
       },
       "http" : {
          "port" : 8080 
+      },
+      "cookie" : {
+         "secret" : "s3cr37"
       } 
    }
 }

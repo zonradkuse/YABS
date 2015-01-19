@@ -1,3 +1,5 @@
+// TODO REPLACE LOGS WITH ASSERTIONS FOR REAL TESTING
+
 var assert = require('assert');
 var Question = require('../models/Question.js').Question;
 var Answer = require('../models/Answer.js').Answer;
