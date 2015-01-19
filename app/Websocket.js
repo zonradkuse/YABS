@@ -16,6 +16,11 @@ sessionStore = new sessionStore();
 */
 module.exports = function (app){
     var wss = new WebSocketServer({ server:app });
+    wss.broadcast = function broadcast(data) {
+        wss.clients.forEach(function each(client) {
+            client.send(data);
+        });
+    };      
     logger.info('Initializing Websockets');
     /*var inter = interface.getInterface();
     inter.data[0].func = function(params, callback){
