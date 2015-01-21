@@ -24,6 +24,9 @@
       },
       "cookie" : {
          "secret" : "s3cr37"
-      } 
+      }, 
+      "env" : {
+         "dev" : true
+      }
    }
 }

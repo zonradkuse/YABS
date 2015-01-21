@@ -1,4 +1,4 @@
-var Interface = require('./Interface.json');
+var Interface = require('./LocalInterface.json');
 
 function attachFunction(uri, funct, callback){
     if(typeof funct != 'function'){

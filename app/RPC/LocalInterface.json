@@ -15,10 +15,17 @@
           "func" : ""
         },
         {
+            "uri" : "getLogs",
+            "parameters" : {
+                "category" : ""
+            },
+            "func" : ""
+        },
+        {
             "uri" : "vote",
             "parameters" : {
                 "question" : "true",
-                "questionId" : ""
+                "Id" : ""
             },
             "func" : "",
             "broadcast" : true
