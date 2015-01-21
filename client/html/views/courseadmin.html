@@ -2,62 +2,66 @@
     <div class="background-course">
         <div class="container">
             <h1>Datenstrukturen und Algorithmen</h1>
-            <div style="background: none;" class="row row-panicbtn">
-                <div class="col-md-12 text-center">
-                    <button type="button" class="btn btn-danger btn-lg">Vorlesungstempo ist zu hoch!</button>
-                    <span class="text-panicdescription">
-                        Dieser Button informiert den Dozierenden sofort darüber, dass er zu schnell ist und Du dem Stoff nicht folgen kannst.
-                    </span>
-                </div>            
+            <div class="row row-panicbtn admin-quicklook">
+              <div class="col-xs-4"><span class="h2">235<span class="small center-block">aktive Studierende</span></span></div>
+              <div class="col-xs-4"><span class="h2">5%<span class="small center-block">geht es zu schnell</span></span></div>
+              <div class="col-xs-4"><span class="h2">0<span class="small center-block">wichtige Fragen</span></span></div>
             </div>
-            
-            <!--
-            <div class="row row-panicbtn">
-                <div class="col-md-12">
-                    <h2>Feedback zum Tempo der Vorlesung</h2>               
-                </div>
-                <div class="col-md-6">
-                    <p>
-                        Hier kannst Du dem Dozenten Rückmeldung darüber geben, ob das Tempo der Vorlesung angemessen ist, oder du den Erklärungen nicht mehr folgen kannst.
-                        Die Benachrichtigungen werden dem Dozenten sofort angezeigt und sind natürlich anonym.
-                    </p>
-                </div>
-                <div class="col-md-6 text-center">
-                    <button type="button" class="btn btn-danger btn-lg">Ich kann den Erklärungen nicht folgen!</button>
-                </div>
-                <div class="col-md-12 text-center">
-                    <p>
-                        <small class="text-muted">
-                            Bitte beachte, dass bei großen Vorlesungen das Tempo nicht immer angepasst werden kann, wenn nur wenige deiner Kommilitonen ebenfalls Probleme haben.
-                            In diesem Fall kannst du noch einmal einen Blick in das Skript und Sekundärliteratur werfen oder Tutorien und die Sprechstunde des Dozenten nutzen.
-                            Alternativ kann der Dozent einen Chat aktivieren, den Du unter diesem Block findest.
-                        </small>
-                    </p>
-                </div>                
-            </div>
-            -->
             <div class="row row-chat-heading shadowed">
                 <div class="col-md-12">
-                    <h2>Fragen stellen</h2>               
+                    <h2>Raumadministration</h2>               
+                </div>
+                <div class="col-md-6">
+                    <h3>Aktivierte Komponenten</h3>
+                        <form class="form-horizontal">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="" checked>
+                                    Diskussionsplattform
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="" checked>
+                                    Panicbutton
+                                </label>
+                            </div>    
+                        </form>    
+                </div>
+                <div class="col-md-6">
+                    <h3>Konfiguration</h3>
+                        <form class="form-horizontal">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="" checked>
+                                    Studenten dürfen auf Fragen antworten
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="" checked>
+                                    Der Fragensteller darf Antworten als richtig markieren
+                                </label>
+                            </div>
+                        </form>
+                        <form class="form-inline">    
+                            <div class="form-group">
+                                <label>
+                                    Eine Frage ist wichtig, wenn mehr als
+                                    <input type="input" value="5" checked>
+                                    Prozent der Studenten diese Frage haben.
+                                </label>
+                            </div>    
+                        </form>
                 </div>
                 <div class="col-md-12">
-                    <p>
-                        Du hast etwas nicht verstanden oder einen Fehler entdeckt? Dann kannst du hier deine Anmerkung loswerden.
-                        Bitte nutze diese Funktion nur, um über die aktuelle Vorlesung zu diskutieren, andernfalls können deine Beiträge gelöscht oder die Diskussion gesperrt werden.
-                        <form role="form">
-                            <div class="form-group">
-                                <div class="btn-group" role="group" aria-label="...">
-                                  <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></button>
-                                  <button type="button" class="btn btn-default">LaTeX</button>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <textarea class="form-control" style="max-width:100%" rows="5" placeholder="Deine Frage..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden</button>
-                        </form>
-                    </p>
-                </div>                
+                    <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Verständnisstatistik anzeigen
+                    </button>
+                    <button type="button" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Raum sperren
+                    </button>     
+                </div>                      
             </div> 
             <h2>Frage</h2>
             <div class="row question">

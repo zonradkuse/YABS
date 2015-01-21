@@ -80,7 +80,14 @@ module.exports.routes = function(){
             res.sendFile(path.resolve(__dirname, '../', 'public/index.html'));
     });
   });
-
+  // Courseadmin is for demo only, will be integrated into course
+  app.get('/courseadmin/*', function(req, res, next){
+    var path = require('path');
+    path.exists(path.resolve(__dirname, '../', req.originalUrl), function(exists) {
+        if (!exists)
+            res.sendFile(path.resolve(__dirname, '../', 'public/index.html'));
+    });
+  });
 
 }
 
