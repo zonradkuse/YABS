@@ -1,42 +1,36 @@
 {
-    "data": [
-        {
-            "uri" : "getQuestions",
-            "parameters" : {
-                "threadId" : ""
-            },
-            "func": ""
+    "data": [{
+        "uri": "getQuestions",
+        "parameters": {
+            "threadId": ""
         },
-        {
-          "uri" : "getAnswers",
-          "parameters": {
+        "func": ""
+    }, {
+        "uri": "getAnswers",
+        "parameters": {
             "questionId": ""
-          },
-          "func" : ""
         },
-        {
-            "uri" : "getLogs",
-            "parameters" : {
-                "category" : ""
-            },
-            "func" : ""
+        "func": ""
+    }, {
+        "uri": "getLogs",
+        "parameters": {
+            "category": ""
         },
-        {
-            "uri" : "vote",
-            "parameters" : {
-                "question" : "true",
-                "Id" : ""
-            },
-            "func" : "",
-            "broadcast" : true
+        "func": ""
+    }, {
+        "uri": "vote",
+        "parameters": {
+            "question": "true",
+            "Id": ""
         },
-        {
-            "uri" : "getRooms",
-            "parameters" : {
-                "userId" : "",
-                "sessionCookie" : ""
-            },
-            "func" : ""
-        }
-    ]
+        "func": "",
+        "broadcast": true
+    }, {
+        "uri": "getRooms",
+        "parameters": {
+            "userId": "",
+            "sessionCookie": ""
+        },
+        "func": ""
+    }]
 }

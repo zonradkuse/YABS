@@ -1,32 +1,32 @@
 {
-	"database" : {
-		"host" : "",
-		"user" : "",
-		"password" : "",
-		"db" : ""
-	},
-   "login" : {
-      "local" : true,
-      "l2p" : {
-         "clientID" : "",
-         "scopes" : "l2p.rwth userinfo.rwth"
+   "database": {
+      "host": "",
+      "user": "",
+      "password": "",
+      "db": ""
+   },
+   "login": {
+      "local": true,
+      "l2p": {
+         "clientID": "",
+         "scopes": "l2p.rwth userinfo.rwth"
       }
    },
-   "general" : {
-      "https" : {
-         "state" : true,
-         "key" : "ssl/server.key",
-         "crt" : "ssl/server.crt",
-         "port" : 9000
+   "general": {
+      "https": {
+         "state": true,
+         "key": "ssl/server.key",
+         "crt": "ssl/server.crt",
+         "port": 9000
       },
-      "http" : {
-         "port" : 8080 
+      "http": {
+         "port": 8080
       },
-      "cookie" : {
-         "secret" : "s3cr37"
-      }, 
-      "env" : {
-         "dev" : true
+      "cookie": {
+         "secret": "s3cr37"
+      },
+      "env": {
+         "dev": true
       }
    }
 }

@@ -13,7 +13,7 @@ module.exports = function(connection){
 
 //--------QUESTIONS
 module.exports.addQuestion = function(roomID, question, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	question.save(function(eQuestion){
 		if(eQuestion) 
@@ -25,7 +25,7 @@ module.exports.addQuestion = function(roomID, question, callback){
 }
 
 module.exports.setQuestionContent = function(questionID, content, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	Question.findByIdAndUpdate(questionID,{ 'content': content, 'updateTime': Date.now() },function(eQuestion){
 		return callback(eQuestion);
@@ -33,7 +33,7 @@ module.exports.setQuestionContent = function(questionID, content, callback){
 }
 
 module.exports.setQuestionVisibility = function(questionID, visible, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	Question.findByIdAndUpdate(questionID,{ 'visible': visible, 'updateTime': Date.now() },function(eQuestion){
 		return callback(eQuestion);
@@ -41,7 +41,7 @@ module.exports.setQuestionVisibility = function(questionID, visible, callback){
 }
 
 module.exports.removeQuestion = function(questionID, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	Room.update({'questions': questionID},{$pull:{'questions': questionID}},function(eRoom){
 		if(eRoom) 
@@ -53,7 +53,7 @@ module.exports.removeQuestion = function(questionID, callback){
 }
 
 module.exports.getQuestion = function(questionID, options, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	Question.findById(questionID).deepPopulate(options.population).exec(function(eQuestion,question){
 		return callback(eQuestion,question);
@@ -63,7 +63,7 @@ module.exports.getQuestion = function(questionID, options, callback){
 
 //------ANSWERS
 module.exports.addAnswer = function(questionID, answer, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	answer.save(function(eAnswer){
 		if(eAnswer) 
@@ -75,7 +75,7 @@ module.exports.addAnswer = function(questionID, answer, callback){
 }
 
 module.exports.setAnswerContent = function(answerID, content, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	Answer.findByIdAndUpdate(answerID,{ 'content': content, 'updateTime': Date.now() },function(eAnswer){
 		return callback(eAnswer);
@@ -83,7 +83,7 @@ module.exports.setAnswerContent = function(answerID, content, callback){
 }
 
 module.exports.setAnswerVisibility = function(answerID, visible, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	Answer.findByIdAndUpdate(answerID,{ 'visible': visible, 'updateTime': Date.now() },function(eAnswer){
 		return callback(eAnswer);
@@ -91,7 +91,7 @@ module.exports.setAnswerVisibility = function(answerID, visible, callback){
 }
 
 module.exports.removeAnswer = function(answerID, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	Question.update({'answers': answerID},{$pull:{'answers': answerID}},function(eQuestion){
 		if(eQuestion) 
@@ -103,7 +103,7 @@ module.exports.removeAnswer = function(answerID, callback){
 }
 
 module.exports.getAnswer = function(answerID, options, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	Answer.findById(answerID).deepPopulate(options.population).exec(function(eAnswer,answer){
 		return callback(eAnswer,answer);
@@ -114,7 +114,7 @@ module.exports.getAnswer = function(answerID, options, callback){
 
 //-------ROOMS
 module.exports.getRoom = function(roomID, options, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	Room.findById(roomID).deepPopulate(options.population).exec(function(eRoom,room){
 		return callback(eRoom,room);
@@ -122,7 +122,7 @@ module.exports.getRoom = function(roomID, options, callback){
 }
 
 module.exports.getRooms = function(options, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	Room.find({}).deepPopulate(options.population).exec(function(eRooms,rooms){
 		return callback(eRooms,rooms);
@@ -130,7 +130,7 @@ module.exports.getRooms = function(options, callback){
 }
 
 module.exports.getRoomsFromUser = function(userID, options, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	User.findById(userID).deepPopulate('access access.'+options.population).exec(function(eUser, user){
 		return callback(eRooms,user.access);
@@ -138,7 +138,7 @@ module.exports.getRoomsFromUser = function(userID, options, callback){
 }
 
 module.exports.addRoomsToUser = function(userID, roomIDs, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	User.findByIdAndUpdate(userID,{$pushAll:{'access': roomIDs}},function(eUser){
 		return callback(eRooms);
@@ -146,7 +146,7 @@ module.exports.addRoomsToUser = function(userID, roomIDs, callback){
 }
 
 module.exports.createRoom = function(room, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	room.save(function(eRoom, room){
 		return callback(eRoom, room);
@@ -157,15 +157,15 @@ module.exports.createRoom = function(room, callback){
 
 //-------USER
 module.exports.createUser = function(user, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	user.save(function(eUser, user){
-		return callback(eUser, user);
+		callback(eUser, user);
 	});
 }
 
 module.exports.getUser = function(userID, callback){
-	if(callback == undefined)
+	if(callback === undefined)
 		throw new Error("callback not defined");
 	User.findById(userID,function(eUser, user){
 		return callback(eUser, user);
