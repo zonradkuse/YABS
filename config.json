@@ -1,6 +1,6 @@
 {
    "database": {
-      "host": "",
+      "host": "mongodb://localhost/yabs",
       "user": "",
       "password": "",
       "db": ""

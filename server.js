@@ -1,4 +1,3 @@
-
 var express = require('express');
 var app = express();
 var config = require('./config.json');
@@ -12,46 +11,49 @@ var fs = require('fs');
 var compression = require('compression');
 var logger = require('./app/Logger.js');
 var passport = require('passport');
-/*
- * Initiate Express.js Webserver with
- *  default sessioncookie
- *  /public static file provider
- */
+var mongoose = require('mongoose');
+
+mongoose.connect(config.database.host)
+    /*
+     * Initiate Express.js Webserver with
+     *  default sessioncookie
+     *  /public static file provider
+     */
 app.use(morgan('default', {
-  stream: logger.stream
+    stream: logger.stream
 }));
 app.use(compression({
-  threshold: 1024
+    threshold: 1024
 }));
 app.use(cookieParser());
 //app.set('trust proxy', 1); // will be needed for production use with nginx
 app.use(session({
-  store: new sessionStore(),
-  sessionId: "",
-  secret: config.general.cookie.secret,
-  cookie: {
-    expires: 1000 * 60 * 60 * 3,
-    httpOnly: false
-  },
-  resave: true,
-  saveUninitialized: false
+    store: new sessionStore(),
+    sessionId: "",
+    secret: config.general.cookie.secret,
+    cookie: {
+        expires: 1000 * 60 * 60 * 3,
+        httpOnly: false
+    },
+    resave: true,
+    saveUninitialized: false
 }));
 
 app.use(express.static(__dirname + '/public', {
-  maxAge: 86400000
+    maxAge: 86400000
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-  extended: true
+    extended: true
 }));
-
+app.use(passport.initialize());
+app.use(passport.session());
 /* TODO var db = require('./app/DatabaseConnection.js').pool; */
 var routes = require('./app/Routes.js');
 routes(app);
 routes.routes();
 logger.info('initialized routes!');
-app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
+
 var auth = require('./app/Authentication.js')(passport);
 
 /*
@@ -59,12 +61,12 @@ var auth = require('./app/Authentication.js')(passport);
  */
 var server = require('http').createServer(app);
 if (config.general.https) {
-  var https = require('https');
-  https.createServer({
-    "key": fs.readFileSync(config.general.https.key),
-    "cert": fs.readFileSync(config.general.https.crt)
-  }, app).listen(config.general.https.port);
-  logger.info('Server now running on ssl ' + config.general.https.port + '!');
+    var https = require('https');
+    https.createServer({
+        "key": fs.readFileSync(config.general.https.key),
+        "cert": fs.readFileSync(config.general.https.crt)
+    }, app).listen(config.general.https.port);
+    logger.info('Server now running on ssl ' + config.general.https.port + '!');
 }
 
 server.listen(config.general.http.port || 8080);
