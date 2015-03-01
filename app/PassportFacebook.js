@@ -15,10 +15,11 @@ module.exports = function(passport){
     }, function (req, token, refreshToken, profile, done){
     process.nextTick(function(){
         if(!req.user){
+            logger.info("Facebook login attempt")
             User.findOne({'facebook.id' : profile.id},
             function(err, user){
                 if(err) return done(err);
-            
+                logger.info("write user to database")
                 if(user) {
                     if (!user.facebook.token) {
                     // there is an existing user but the token is not set
@@ -28,11 +29,14 @@ module.exports = function(passport){
               
                         user.save(function(err){
                             if(err) return done(err);
+                            logger.info("user successfully altered")
                             return done(null, user); //success
                         });
                     }
+                    logger.info("user successfully authenticated")
                     return done(null, user); // success
                 } else { // we could not find a user
+                    logger.info("creating a new user")
                     var nUser = new User();
             
                     nUser.facebook.id = profile.id;
@@ -41,12 +45,12 @@ module.exports = function(passport){
                     nUser.facebook.email = (profile.emails[0].value || '').toLowerCase();
                     nUser.save(function(err){
                         if(err) return done(err);
+                        logger.info("successfully saved user")
                         done(null, nUser);
                     })
                     //created user - success
                     
                 }
-                return done(null); //can not be reached. just for reasons of completeness.
             })
       } else {
           // there is already an existing user. Link the data
