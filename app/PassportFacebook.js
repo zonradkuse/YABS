@@ -6,7 +6,6 @@ var logger = require('./Logger.js');
 
 //TODO: Logger work
 module.exports = function(passport){
-    logger.info(authConf.facebook.callback);
     passport.use(new FacebookStrategy({
         clientID :   authConf.facebook.clientID,
         clientSecret : authConf.facebook.clientSecret,
@@ -18,10 +17,13 @@ module.exports = function(passport){
             logger.info("Facebook login attempt")
             User.findOne({'facebook.id' : profile.id},
             function(err, user){
+                logger.info("break 1");
                 if(err) return done(err);
                 logger.info("write user to database")
                 if(user) {
+                    logger.info("break 2");
                     if (!user.facebook.token) {
+                        logger.info("break 3");
                     // there is an existing user but the token is not set
                         user.facebook.token = token;
                         user.facebook.name = profile.name.givenName;
@@ -49,10 +51,11 @@ module.exports = function(passport){
                         done(null, nUser);
                     })
                     //created user - success
-                    
+                    logger.info("break 4");
                 }
             })
       } else {
+          logger.info("break 5");
           // there is already an existing user. Link the data
         var user = req.user; // pull the user out of the session
         user.facebook.id    = profile.id;
@@ -63,11 +66,21 @@ module.exports = function(passport){
         user.save(function(err) {
             if (err)
                 return done(err);
-                        
+                logger.info("break 6");
                 return done(null, user);
             });
         }
     });
-  }));
+    }));
+  
+    passport.serializeUser(function(user, done) {
+      done(null, user.id);
+    });
+    
+    passport.deserializeUser(function(id, done) {
+      User.findById(id, function(err, user){
+          done(err, user);
+      });
+    });
 }
 
