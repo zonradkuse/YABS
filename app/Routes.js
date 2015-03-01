@@ -1,16 +1,16 @@
   /*! Module to handle all incoming requests.
 
-          Note: the static folder is already set. Here are all needed routes like
-          the login post request.
-        */
+                  Note: the static folder is already set. Here are all needed routes like
+                  the login post request.
+                */
   var passport = require('passport')
-  var FacebookStrategy = require('passport-facebook').Strategy;
   var https = require('https');
   var querystring = require('querystring');
   var config = require('../config.json');
   var logger = require('./Logger.js');
   var mainController = require('./MainController.js');
   var app;
+
 
   module.exports = function(pExpressApp) {
       app = pExpressApp;
@@ -24,19 +24,23 @@
        *
        */
 
-      app.post('/login', function(req, res) {
+      app.post('/login/local', function(req, res) {
           var auth = require('./Authentication.js');
-          auth.loginLocal(req, function(res) {
+          auth.loginLocal(req, function(err, user) {
+              req.flash('message', 'Welcome' + res.name);
+              req.user = user;
               res.redirect("/sessiontest")
-          }, function() {
+          }, function(err) {
+              req.flash('message', 'Error:' + err);
               res.redirect("/")
           });
       });
 
-      app.post('/register', function(req, res) {
+      app.post('/register/local', function(req, res) {
           var auth = require('./Authentication.js');
-          auth.registerLocal(req, function(err, res) {
-              if (err) res.redirect("/?err=" + err.message);
+          auth.registerLocal(req, function(err, user) {
+              req.flash('message', err);
+              req.user = user;
               res.redirect('/');
           });
       });
@@ -71,16 +75,17 @@
           var sess = req.session
           res.setHeader('Content-Type', 'text/html');
           res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's (' + (sess.cookie.maxAge / 60 / 1000) + ' min)</p>')
-          res.write('<p>logged in with Session ID ' + sess.sessionId + '<p>')
-          if (sess.sessionId === undefined) {
+          res.write('<p>logged in with Session: ' + JSON.stringify(sess) + '<p>');
+          res.write('<p>Your User Information: ' + JSON.stringify(req.user) + '</p>');
+          if (sess.user === undefined) {
               res.write('login? \
-                  <form action="/login" method="post"> \
+                  <form action="/login/local" method="post"> \
                   First name:<br> \
                   <input type="text" name="username" value="Username"> \
                   <br><br> \
                   <input type="submit" value="Submit"> \
                   </form>register? \
-                  <form action="/register" method="post"> \
+                  <form action="/register/local" method="post"> \
                   First name:<br> \
                   <input type="text" name="username" value="Username"> \
                   <br> \
@@ -121,19 +126,23 @@
       }));
       // Twitter OAuth
       app.get('/login/twitter', passport.authenticate('twitter'));
-      app.get('/auth/twitter/callback', passport.authenticate('facebook', {
+      app.get('/auth/twitter/callback', passport.authenticate('twitter', {
           successRedirect: '/',
           failureRedirect: '/login'
       }));
       // GitHub OAuth
-      app.get('/login/github', passport.authenticate('github'));
-      app.get('/auth/github/callback', passport.authenticate('facebook', {
+      app.get('/login/github', passport.authenticate('github', {
+          scope: 'user'
+      }));
+      app.get('/auth/github/callback', passport.authenticate('github', {
           successRedirect: '/',
           failureRedirect: '/login'
       }));
       // Google OAuth
-      app.get('/login/google', passport.authenticate('github'));
-      app.get('/auth/google/callback', passport.authenticate('facebook', {
+      app.get('/login/google', passport.authenticate('google', {
+          scope: 'email'
+      }));
+      app.get('/auth/google/callback', passport.authenticate('google', {
           successRedirect: '/',
           failureRedirect: '/login'
       }));

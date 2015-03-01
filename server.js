@@ -12,6 +12,7 @@ var compression = require('compression');
 var logger = require('./app/Logger.js');
 var passport = require('passport');
 var mongoose = require('mongoose');
+var flash = require('connect-flash');
 
 mongoose.connect(config.database.host)
     /*
@@ -32,7 +33,7 @@ app.use(session({
     sessionId: "",
     secret: config.general.cookie.secret,
     cookie: {
-        expires: 1000 * 60 * 60 * 3,
+        expires: 1000 * 60 * 60 * 24 * 28,
         httpOnly: false
     },
     resave: true,
@@ -46,6 +47,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 /* TODO var db = require('./app/DatabaseConnection.js').pool; */

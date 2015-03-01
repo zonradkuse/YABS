@@ -6,15 +6,16 @@ var LocalStrategy = require('passport-local').Strategy;
 var Twitter = require('./PassportTwitter.js');
 var Facebook = require('./PassportFacebook.js');
 var Google = require('./PassportGoogle.js');
+var Github = require('./PassportGithub.js');
 
 // Passport Functionality
-module.exports = function(passport){
+module.exports = function(passport) {
     passport.serializeUser(function(user, done) {
-      done(null, user);
+        done(null, user);
     });
-    
+
     passport.deserializeUser(function(obj, done) {
-      done(null, obj);
+        done(null, obj);
     });
     logger.info("Initialize Google OAuth.")
     Google(passport);
@@ -22,20 +23,37 @@ module.exports = function(passport){
     Facebook(passport);
     logger.info("Initialize Twitter OAuth.")
     Twitter(passport);
-    
+    logger.info("Initialize Github OAuth.")
+    Github(passport);
+
 }
 
 module.exports.loginLocal = function(req, success, fail) {
-    //genereate a token
-    require('crypto').randomBytes(32, function(ex, buf) {
-        var token = buf.toString('hex');
-        logger.info('LOGIN: ' + req.body.username + ' ' + token);
-        req.session.sessionId = token;
-        success();
+    User.User.findOne({
+        mail: req.body.email
+    }, function(err, user) {
+        if (err) fail(err);
+        //genereate a token
+        if (!user) {
+            fail(new Error("User not found or wrong password"));
+        } else {
+            require('crypto').randomBytes(32, function(ex, buf) {
+                var token = buf.toString('hex');
+                logger.info('LOGIN: ' + req.body.username + ' ' + token);
+                if (user.password === require('crypto').createHash('sha1').update(req.body.password).digest('hex')) {
+                    req.session.sessionId = token;
+                    success(null, user);
+                } else {
+                    fail(new Error("User not found or wrong password"));
+                }
+            });
+        }
     });
+
+
 }
 
-exports.registerLocal = function(req, res, next) {
+module.exports.registerLocal = function(req, next) {
     //perform checks
     if (req.body === undefined) {
         next(new Error('request object undefined'));
@@ -46,15 +64,40 @@ exports.registerLocal = function(req, res, next) {
     } else if (req.body.password === undefined) {
         next(new Error('password is undefined'));
     }
-    var _user = new User.User({
-        name: req.body.username,
-        mail: req.body.email,
-        password: require('crypto').createHash('sha1').update(req.body.password).digest('hex')
-    });
-    _user.save(function(err) {
+    User.User.findOne({
+        mail: req.body.email
+    }, function(err, user) {
         if (err) next(err);
-        logger.info('successfully created user ' + _user.name);
-        next(null, res);
+        if (!req.user) { //not logged in
+            if (!user) {
+                //the user with this mail address is not existing
+                var _user = new User.User({
+                    name: req.body.username,
+                    mail: req.body.email,
+                    password: require('crypto').createHash('sha1').update(req.body.password).digest('hex')
+                });
+                _user.save(function(err) {
+                    if (err) next(err);
+                    logger.info('successfully created user ' + _user.name);
+                    next(null, user);
+                });
+            } else {
+                next(new Error("E-Mail already taken."))
+            }
+        } else {
+            //logged in
+                var _user = new User.User({
+                    name: req.body.username,
+                    mail: req.body.email,
+                    password: require('crypto').createHash('sha1').update(req.body.password).digest('hex')
+                });
+                _user.save(function(err) {
+                    if (err) next(err);
+                    logger.info('successfully created user ' + _user.name);
+                    next(null, user);
+                });
+        }
+
     })
 }
 

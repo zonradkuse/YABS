@@ -19,11 +19,8 @@ module.exports = function(passport) {
                         'facebook.id': profile.id
                     },
                     function(err, user) {
-                        logger.info("break 1");
-                        if (err) return done(err);
-                        logger.info("write user to database")
+                        if (err) return done(err); //error getting facebook id
                         if (user) {
-                            logger.info("break 2");
                             if (!user.facebook.token) {
                                 // there is an existing user but the token is not set
                                 user.facebook.token = token;
@@ -41,14 +38,14 @@ module.exports = function(passport) {
                         } else { // we could not find a user
                             logger.info("creating a new user")
                             var nUser = new User();
-                            logger.info("new user created: " + nUser);
+                            
                             nUser.facebook.id = profile.id;
                             nUser.facebook.token = token;
                             nUser.facebook.name = profile.name.givenName;
                             nUser.facebook.email = (profile.emails[0].value || '').toLowerCase();
                             nUser.save(function(err) {
                                     if (err) return done(err);
-                                    logger.info("successfully saved user")
+                                    logger.info("new user created: " + nUser._id);
                                     done(null, nUser);
                                 })
                                 //created user - success
@@ -57,7 +54,7 @@ module.exports = function(passport) {
             } else {
                 // there is already an existing user. Link the data
                 var _user = req.user; // pull the user out of the session
-                logger.info(_user._id);
+
                 User.findOne({
                     _id: _user._id
                 }, function(err, user) {
@@ -69,6 +66,7 @@ module.exports = function(passport) {
 
                     user.save(function(err) {
                         if (err) return done(err);
+                        logger.info("added credentials to user: " + user._id);
                         return done(null, user);
                     });
                 });

@@ -8,12 +8,15 @@ var deepPopulate = require('mongoose-deep-populate');
 var ObjectId = mongoose.Schema.ObjectId;
 
 var UserSchema = mongoose.Schema({
-    name: {
-        type: String,
-        unique: true
+    active: {
+      type: Boolean,
+      default: false
     },
     password: String, // this and the next line are only needed for local register/login
-    mail: String,
+    mail: {
+      type: String,
+      unique: true
+    },
     creationTime: {
         type: Date,
         default: Date.now

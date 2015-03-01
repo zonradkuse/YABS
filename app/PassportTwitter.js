@@ -14,6 +14,7 @@ module.exports = function(passport){
     }, function (req, token, refreshToken, profile, done){
     process.nextTick(function(){
         if(!req.user){
+            logger.info("Twitter login attempt")
             User.findOne({'twitter.id' : profile.id},
             function(err, user){
                 if(err) return done(err);
@@ -27,11 +28,13 @@ module.exports = function(passport){
               
                         user.save(function(err){
                             if(err) return done(err);
+                            logger.info("user successfully altered")
                             return done(null, user); //success
                         });
                     }
                     return done(null, user); // success
                 } else { // we could not find a user
+                    logger.info("creating a new user")
                     var nUser = new User();
             
                     nUser.twitter.id = profile.id;
@@ -40,6 +43,7 @@ module.exports = function(passport){
                     nUser.twitter.displayName = profile.displayName
                     nUser.save(function(err){
                         if(err) return done(err);
+                        logger.info("new user created: " + nUser._id);
                         done(null, nUser);
                     })
                     //created user - success
@@ -49,16 +53,18 @@ module.exports = function(passport){
             })
       } else {
           // there is already an existing user. Link the data
-        var user = req.user; // pull the user out of the session
-        user.twitter.id    = profile.id;
-        user.twitter.token = token;
-        user.twitter.username  = profile.username;
-        user.twitter.displayName = profile.displayName;
+        var _user = req.user; // pull the user out of the session
+        User.findOne({_id : _user._id}, function(err, user){
+            user.twitter.id    = profile.id;
+            user.twitter.token = token;
+            user.twitter.username  = profile.username;
+            user.twitter.displayName = profile.displayName;
 
-        user.save(function(err) {
-            if (err) return done(err);
-                        
-            return done(null, user);
+            user.save(function(err) {
+                if (err) return done(err);
+                logger.info("added credentials to user: " + user._id);            
+                return done(null, user);
+            });
         });
       }
     });
