@@ -1,10 +1,8 @@
   /*! Module to handle all incoming requests.
 
         Note: the static folder is already set. Here are all needed routes like
-        the login post request. 
+        the login post request.
       */
-  var FB_APP_ID = "client id";
-  var FB_APP_SECRET = "client secret";
   var passport = require('passport')
   var FacebookStrategy = require('passport-facebook').Strategy;
   var https = require('https');
@@ -45,13 +43,13 @@
 
 
       app.get('/l2plogin', function(req, res) {
-          //1. get a client id by post req to l2p server 
-          //2. redirect user to l2p auth 
-          //3. poll for user auth 
+          //1. get a client id by post req to l2p server
+          //2. redirect user to l2p auth
+          //3. poll for user auth
           postreqToL2P(function(response) {
               //check the answer from the oauth server
-              if (response != null) {
-                  if (response.user_code == null) {
+              if (response !== null) {
+                  if (response.user_code === null) {
                       //huston, we have a problem
                       res.write("error on authentication: " + response);
                   } else {
@@ -74,7 +72,7 @@
           res.setHeader('Content-Type', 'text/html');
           res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's (' + (sess.cookie.maxAge / 60 / 1000) + ' min)</p>')
           res.write('<p>logged in with Session ID ' + sess.sessionId + '<p>')
-          if (sess.sessionId == undefined) {
+          if (sess.sessionId === undefined) {
               res.write('login? \
                   <form action="/login" method="post"> \
                   First name:<br> \
@@ -112,7 +110,28 @@
                   res.sendFile(path.resolve(__dirname, '../', 'public/index.html'));
           });
       });
-
+      
+      // Facebook OAuth
+      app.get('/login/facebook', passport.authenticate('facebook', { scope: 'email'}));
+      app.get('/auth/facebook/callback', passport.authenticate('facebook', {successRedirect: '/course/'}));
+      // Twitter OAuth
+      app.get('/login/twitter', passport.authenticate('twitter'));
+      app.get('/auth/twitter/callback', passport.authenticate('facebook', {successRedirect: '/course/'}));
+      // GitHub OAuth
+      app.get('/login/github', passport.authenticate('github'));
+      app.get('/auth/github/callback', passport.authenticate('facebook', {successRedirect: '/course/'}));
+      // Google OAuth
+      app.get('/login/google', passport.authenticate('github'));
+      app.get('/auth/google/callback', passport.authenticate('facebook', {
+          successRedirect: '/course/',
+          failureRedirect: '/login'
+      }));
+      
+      // Logout route
+      app.get('/logout', function(req, res){
+        req.logout();
+        res.redirect('/');
+      })
   }
 
 
@@ -148,29 +167,8 @@
       postRequest.write(data);
       postRequest.end();
   }
-
-
-  passport.use(new FacebookStrategy({
-          clientID: FB_APP_ID,
-          clientSecret: FB_APP_SECRET,
-          callbackURL: "http://j0h.de:81/auth/facebook/callback"
-      },
-      function(accessToken, refreshToken, profile, done) {
-          User.findOrCreate({}, function(err, user) {
-              if (err) {
-                  return done(err);
-              }
-              done(null, user);
-          });
-      }
-  ));
-
-  exports.facebookLogin = function() {
-      app.get('/auth/facebook', passport.authenticate('facebook'));
-
-      app.get('/auth/facebook/callback',
-          passport.authenticate('facebook', {
-              successRedirect: '/',
-              failureRedirect: '/login'
-          }));
-  }
+  
+  function ensureAuthenticated(req, res, next) {
+      if (req.isAuthenticated()) { return next(); }
+      res.redirect('/login')
+    }

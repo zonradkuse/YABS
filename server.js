@@ -1,3 +1,4 @@
+
 var express = require('express');
 var app = express();
 var config = require('./config.json');
@@ -10,7 +11,7 @@ var config = require('./config.json');
 var fs = require('fs');
 var compression = require('compression');
 var logger = require('./app/Logger.js');
-
+var passport = require('passport');
 /*
  * Initiate Express.js Webserver with
  *  default sessioncookie
@@ -49,8 +50,9 @@ var routes = require('./app/Routes.js');
 routes(app);
 routes.routes();
 logger.info('initialized routes!');
-
-//var auth = require('./app/Authentication.js')(passport, LocalStrategy, db);  // TODO: Replace this?
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+var auth = require('./app/Authentication.js')(passport);
 
 /*
  *   Start the real server. If ssl is enabled start it too! http should not be used!

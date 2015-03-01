@@ -22,9 +22,32 @@ var UserSchema = mongoose.Schema({
         type: ObjectId,
         ref: 'Room'
     }],
-    l2pAPIKey: String
+    l2pAPIKey: String,
+    facebook: {
+      id : String,
+      token: String,
+      name: String,
+      username: String
+    },
+    google: {
+      id: String,
+      token: String,
+      email: String,
+      name: String
+    },
+    github: {
+      id: String,
+      token: String,
+      email: String,
+      name: String
+    },
+    twitter: {
+      id: String,
+      token: String,
+      displayName: String,
+      username: String
+    }
 });
-
 UserSchema.plugin(deepPopulate);
 module.exports.User = mongoose.model('User', UserSchema);
 module.exports.UserSchema = UserSchema;
