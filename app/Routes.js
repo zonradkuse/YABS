@@ -1,8 +1,8 @@
   /*! Module to handle all incoming requests.
 
-        Note: the static folder is already set. Here are all needed routes like
-        the login post request.
-      */
+          Note: the static folder is already set. Here are all needed routes like
+          the login post request.
+        */
   var passport = require('passport')
   var FacebookStrategy = require('passport-facebook').Strategy;
   var https = require('https');
@@ -110,27 +110,38 @@
                   res.sendFile(path.resolve(__dirname, '../', 'public/index.html'));
           });
       });
-      
+
       // Facebook OAuth
-      app.get('/login/facebook', passport.authenticate('facebook', { scope: 'email'}));
-      app.get('/auth/facebook/callback', passport.authenticate('facebook', {successRedirect: '/course/'}));
+      app.get('/login/facebook', passport.authenticate('facebook', {
+          scope: 'email',
+      }));
+      app.get('/auth/facebook/callback', passport.authenticate('facebook', {
+          successRedirect: '/',
+          failureRedirect: '/login'
+      }));
       // Twitter OAuth
       app.get('/login/twitter', passport.authenticate('twitter'));
-      app.get('/auth/twitter/callback', passport.authenticate('facebook', {successRedirect: '/course/'}));
+      app.get('/auth/twitter/callback', passport.authenticate('facebook', {
+          successRedirect: '/',
+          failureRedirect: '/login'
+      }));
       // GitHub OAuth
       app.get('/login/github', passport.authenticate('github'));
-      app.get('/auth/github/callback', passport.authenticate('facebook', {successRedirect: '/course/'}));
+      app.get('/auth/github/callback', passport.authenticate('facebook', {
+          successRedirect: '/',
+          failureRedirect: '/login'
+      }));
       // Google OAuth
       app.get('/login/google', passport.authenticate('github'));
       app.get('/auth/google/callback', passport.authenticate('facebook', {
-          successRedirect: '/course/',
+          successRedirect: '/',
           failureRedirect: '/login'
       }));
-      
+
       // Logout route
-      app.get('/logout', function(req, res){
-        req.logout();
-        res.redirect('/');
+      app.get('/logout', function(req, res) {
+          req.logout();
+          res.redirect('/');
       })
   }
 
@@ -167,8 +178,10 @@
       postRequest.write(data);
       postRequest.end();
   }
-  
+
   function isAuthenticated(req, res, next) {
-      if (req.isAuthenticated()) { return next(); }
+      if (req.isAuthenticated()) {
+          return next();
+      }
       res.redirect('/login')
-    }
+  }
