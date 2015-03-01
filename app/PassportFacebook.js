@@ -1,7 +1,7 @@
 var FacebookStrategy = require('passport-facebook').Strategy;
 var authConf = require('../config/auth.json');
 
-var User = require('../models/User.js');
+var User = require('../models/User.js').User;
 var logger = require('./Logger.js');
 
 //TODO: Logger work
