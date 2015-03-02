@@ -37,7 +37,7 @@ app.use(session({
         httpOnly: false
     },
     resave: true,
-    saveUninitialized: false
+    //saveUninitialized: false
 }));
 
 app.use(express.static(__dirname + '/public', {

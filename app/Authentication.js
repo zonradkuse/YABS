@@ -79,7 +79,7 @@ module.exports.registerLocal = function(req, next) {
                 _user.save(function(err) {
                     if (err) next(err);
                     logger.info('successfully created user ' + _user.name);
-                    next(null, user);
+                    next(null, _user);
                 });
             } else {
                 next(new Error("E-Mail already taken."))
@@ -94,7 +94,7 @@ module.exports.registerLocal = function(req, next) {
                 _user.save(function(err) {
                     if (err) next(err);
                     logger.info('successfully created user ' + _user.name);
-                    next(null, user);
+                    next(null, _user);
                 });
         }
 

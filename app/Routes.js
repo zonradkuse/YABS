@@ -28,20 +28,26 @@
           var auth = require('./Authentication.js');
           auth.loginLocal(req, function(err, user) {
               req.flash('message', 'Welcome' + res.name);
-              req.user = user;
+              req.session.user = user;
               res.redirect("/sessiontest")
           }, function(err) {
-              req.flash('message', 'Error:' + err);
+              req.flash('message', err);
               res.redirect("/")
           });
       });
 
       app.post('/register/local', function(req, res) {
-          var auth = require('./Authentication.js');
-          auth.registerLocal(req, function(err, user) {
-              req.flash('message', err);
-              req.user = user;
-              res.redirect('/');
+            var auth = require('./Authentication.js');
+            auth.registerLocal(req, function(err, user) {
+                if(err){
+                    req.flash('message', '' + err);
+                    res.redirect('/sessiontest');
+                }else{
+                    req.flash('message', '' + err);
+                    req.session.user = user;
+                    res.redirect('/');    
+                }
+                
           });
       });
 
@@ -76,7 +82,7 @@
           res.setHeader('Content-Type', 'text/html');
           res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's (' + (sess.cookie.maxAge / 60 / 1000) + ' min)</p>')
           res.write('<p>logged in with Session: ' + JSON.stringify(sess) + '<p>');
-          res.write('<p>Your User Information: ' + JSON.stringify(req.user) + '</p>');
+          res.write('<p>Your User Information: ' + JSON.stringify(sess.passport.user) + '</p>');
           if (sess.user === undefined) {
               res.write('login? \
                   <form action="/login/local" method="post"> \
@@ -150,6 +156,7 @@
       // Logout route
       app.get('/logout', function(req, res) {
           req.logout();
+          req.session.user = undefined; // delete local part of session cookie 
           res.redirect('/');
       })
   }
