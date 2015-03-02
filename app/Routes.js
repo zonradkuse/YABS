@@ -18,11 +18,6 @@
 
 
   module.exports.routes = function() {
-      /**
-       *
-       * UNDER CONSTRUCTION UNTIL WE GET THE API KEY - USE LOCAL INSTEAD
-       *
-       */
 
       app.post('/login/local', function(req, res) {
           var auth = require('./Authentication.js');

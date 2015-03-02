@@ -85,7 +85,8 @@ module.exports.registerLocal = function(req, next) {
                 next(new Error("E-Mail already taken."))
             }
         } else {
-            //logged in
+            //logged in - get user and edit it (do not! create an new one)
+            // TODO
                 var _user = new User.User({
                     name: req.body.username,
                     mail: req.body.email,
