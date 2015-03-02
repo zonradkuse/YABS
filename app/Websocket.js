@@ -1,5 +1,5 @@
 /**
-   Websocket.js manages 
+   Websocket.js manages
 */
 var logger = require('./Logger.js');
 var app = require('../server.js').app;
@@ -27,7 +27,7 @@ module.exports = function(app) {
     logger.log("Initializing Local Interface and function attaching");
     local();
     wss.on('connection', function(ws) {
-
+        // Upgrade ws to request in order to get the user out of session
         cookieParser(config.general.cookie.secret)(ws.upgradeReq, null, function(err) {
             var session;
             sessionID = ws.upgradeReq.signedCookies["connect.sid"];
@@ -40,7 +40,8 @@ module.exports = function(app) {
             //check for binary data
             //parse message string and call the attached functions in the interface
             ws.on('message', function(message) {
-                logger.info('received : ' + message + ' from ' + ws.upgradeReq.connection.remoteAddress);
+                logger.info('received new message from ' + ws.upgradeReq.connection.remoteAddress);
+                // lets process the message.
                 local.checkAndCall(session, ws, wss, message);
             });
 
