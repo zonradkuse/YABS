@@ -14,10 +14,7 @@ var UserSchema = mongoose.Schema({
     },
     name: String,
     password: String, // this and the next line are only needed for local register/login
-    mail: {
-      type: String,
-      unique: true
-    },
+    mail: type: String,
     creationTime: {
         type: Date,
         default: Date.now
