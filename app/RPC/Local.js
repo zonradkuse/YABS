@@ -37,7 +37,7 @@ function checkAndCall(session, ws, wss, message) {
          *   sanity check
          *       let's look for parameters object and uri
          */
-        if (cmd.parameters != undefined && cmd.uri != undefined) {
+        if (cmd.parameters !== undefined && cmd.uri !== undefined) {
             //local calls by URI with Parameters
             //standard request interface call.
             interface.call(cmd.uri, cmd.parameters, function(error, data) {
