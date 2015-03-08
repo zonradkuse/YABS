@@ -9,6 +9,7 @@
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
 var ObjectId = mongoose.Schema.ObjectId;
+var Room = require('../models/Room.js').Room;
 
 var QuestionSchema = mongoose.Schema({
     author: { type : ObjectId, ref: 'User' },
@@ -20,7 +21,7 @@ var QuestionSchema = mongoose.Schema({
     visible: { type: Boolean, default: true }
 });
 
-QuestionSchema.methods.addAnswer = function(answer){
+/*QuestionSchema.methods.addAnswer = function(answer){
 	this.answers.push(answer._id);
 	this.updateTime = Date.now();
 }
@@ -54,9 +55,57 @@ QuestionSchema.methods.vote = function(uid){
 		return true;
 	}
 	return false;
-}
+}*/
 
 QuestionSchema.plugin(deepPopulate);
-module.exports.Question = mongoose.model('Question',QuestionSchema);
+var Question = mongoose.model('Question',QuestionSchema);
+module.exports.Question = Question;
 module.exports.QuestionSchema = QuestionSchema;
 
+module.exports.addQuestion = function(roomID, question, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	question.save(function(eQuestion){
+		if(eQuestion) 
+			return callback(eQuestion);
+		Room.findByIdAndUpdate(roomID,{$push:{'questions': question._id}},function(eRoom){
+			return callback(eRoom, question);
+		});
+	});
+}
+
+module.exports.setQuestionContent = function(questionID, content, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	Question.findByIdAndUpdate(questionID,{ 'content': content, 'updateTime': Date.now() },function(eQuestion){
+		return callback(eQuestion);
+	});
+}
+
+module.exports.setQuestionVisibility = function(questionID, visible, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	Question.findByIdAndUpdate(questionID,{ 'visible': visible, 'updateTime': Date.now() },function(eQuestion){
+		return callback(eQuestion);
+	});
+}
+
+module.exports.removeQuestion = function(questionID, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	Room.update({'questions': questionID},{$pull:{'questions': questionID}},function(eRoom){
+		if(eRoom) 
+			return callback(eRoom);
+		Question.findByIdAndRemove(questionID,function(eQuestion){
+			return callback(eQuestion);
+		});
+	});
+}
+
+module.exports.getQuestion = function(questionID, options, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	Question.findById(questionID).deepPopulate(options.population).exec(function(eQuestion,question){
+		return callback(eQuestion,question);
+	});
+}

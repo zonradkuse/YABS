@@ -49,6 +49,25 @@ var UserSchema = mongoose.Schema({
       username: String
     }
 });
+
 UserSchema.plugin(deepPopulate);
-module.exports.User = mongoose.model('User', UserSchema);
+var User = mongoose.model('User', UserSchema);
+module.exports.User = User;
 module.exports.UserSchema = UserSchema;
+
+
+module.exports.createUser = function(user, callback){
+  if(callback === undefined)
+    throw new Error("callback not defined");
+  user.save(function(eUser, user){
+    callback(eUser, user);
+  });
+}
+
+module.exports.getUser = function(userID, callback){
+  if(callback === undefined)
+    throw new Error("callback not defined");
+  User.findById(userID,function(eUser, user){
+    return callback(eUser, user);
+  });
+}
