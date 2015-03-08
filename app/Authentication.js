@@ -27,78 +27,64 @@ module.exports = function(passport) {
     Github(passport);
 
 }
-
-module.exports.loginLocal = function(req, success, fail) {
+/*
+ * Log In. Looks user up or sets error on next callback (first parameter).
+ */
+module.exports.loginLocal = function(email, password, success, fail) {
     User.User.findOne({
-        mail: req.body.email
+        'local.mail': email
     }, function(err, user) {
         if (err) fail(err);
         //genereate a token
         if (!user) {
             fail(new Error("User not found or wrong password"));
         } else {
-            require('crypto').randomBytes(32, function(ex, buf) {
-                var token = buf.toString('hex');
-                logger.info('LOGIN: ' + req.body.username + ' ' + token);
+                logger.info('local login of: ' + username);
                 if (user.password === require('crypto').createHash('sha1').update(req.body.password).digest('hex')) {
                     req.session.sessionId = token;
                     success(null, user);
                 } else {
                     fail(new Error("User not found or wrong password"));
                 }
-            });
         }
     });
-
-
 }
 
-module.exports.registerLocal = function(req, next) {
+/**
+ * Register user locally. The request will not! be checked. A logged in user should set information on its own.
+ */
+
+module.exports.registerLocal = function(name, password, email, next) {
     //perform checks
-    if (req.body === undefined) {
-        next(new Error('request object undefined'));
-    } else if (req.body.username === undefined) {
+    if (arguments.length < 4) {
+        next(new Error('Not enough arguments'));
+    } else if (name === undefined) {
         next(new Error('username undefined'));
-    } else if (req.body.email === undefined) {
+    } else if (email === undefined) {
         next(new Error('email undefined'));
-    } else if (req.body.password === undefined) {
+    } else if (password === undefined) {
         next(new Error('password is undefined'));
     }
     User.User.findOne({
-        mail: req.body.email
+        'local.mail' : email
     }, function(err, user) {
         if (err) next(err);
-        if (!req.user) { //not logged in
-            if (!user) {
-                //the user with this mail address is not existing
-                var _user = new User.User({
-                    name: req.body.username,
-                    mail: req.body.email,
-                    password: require('crypto').createHash('sha1').update(req.body.password).digest('hex')
-                });
-                _user.save(function(err) {
-                    if (err) next(err);
-                    logger.info('successfully created user ' + _user.name);
-                    next(null, _user);
-                });
-            } else {
-                next(new Error("E-Mail already taken."))
-            }
+        if (!user) {
+            //the user with this mail address is not existing
+            var _user = new User.User({
+                'local.name': username,
+                'local.email': email,
+                // hash the password.
+                'local.password': require('crypto').createHash('sha1').update(password).digest('hex')
+            });
+            _user.save(function(err) {
+                if (err) next(err);
+                logger.info('successfully created user ' + _user.local.name);
+                next(null, _user);
+            });
         } else {
-            //logged in - get user and edit it (do not! create an new one)
-            // TODO
-                var _user = new User.User({
-                    name: req.body.username,
-                    mail: req.body.email,
-                    password: require('crypto').createHash('sha1').update(req.body.password).digest('hex')
-                });
-                _user.save(function(err) {
-                    if (err) next(err);
-                    logger.info('successfully created user ' + _user.name);
-                    next(null, _user);
-                });
+            next(new Error("E-Mail already taken."));
         }
-
-    })
+    });
 }
 
