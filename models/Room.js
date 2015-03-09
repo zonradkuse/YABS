@@ -98,7 +98,6 @@ var Room = mongoose.model('Room',RoomSchema);
 module.exports.Room = Room;
 module.exports.RoomSchema = RoomSchema;
 
-
 module.exports.getRoom = function(roomID, options, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");

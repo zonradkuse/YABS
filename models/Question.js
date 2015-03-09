@@ -109,3 +109,27 @@ module.exports.getQuestion = function(questionID, options, callback){
 		return callback(eQuestion,question);
 	});
 }
+
+module.exports.vote = function(questionID, userID, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	Question.findByIdAndUpdate(questionID,{$push:{'votes': userID}},function(eQuestion){
+		return callback(eQuestion);
+	});
+}
+
+module.exports.getVotes = function(questionID, options, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	Question.findById(questionID,'votes').deepPopulate(options.population).exec(function(eQuestion,question){
+		return callback(eQuestion,question.votes);
+	});
+}
+
+module.exports.getVotesCount = function(questionID, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	Question.aggregate([{$match:{'_id':questionID}},{$project:{count:{$size:'$votes'}}}],function(eQuestion,questions){
+		return callback(eQuestion,questions[0].count);
+	});
+}

@@ -55,7 +55,6 @@ var User = mongoose.model('User', UserSchema);
 module.exports.User = User;
 module.exports.UserSchema = UserSchema;
 
-
 module.exports.createUser = function(user, callback){
   if(callback === undefined)
     throw new Error("callback not defined");
