@@ -23,11 +23,11 @@ function attachFunction(uri, funct, callback) {
 }
 
 function getInterface(callback) {
-    (Interface != undefined) ? callback(null, Interface): callback(new Error('Interface is undefined'))
+    (Interface !== undefined) ? callback(null, Interface): callback(new Error('Interface is undefined'))
 }
 
 function setInterface(json, callback) {
-    if (json != null && json != undefined) {
+    if (json !== null && json !== undefined) {
         Interface = json;
         if (typeof callback === 'function') {
             callback(null);
@@ -40,7 +40,7 @@ function setInterface(json, callback) {
 }
 
 function call(invoke, params, callback, userid) {
-    if (typeof callback != 'function') {
+    if (typeof callback !== 'function') {
         throw new Error('callback is not a function');
         return;
     }
@@ -51,7 +51,7 @@ function call(invoke, params, callback, userid) {
         for (var i = data.length - 1; i >= 0; i--) {
             if (data[i].uri === invoke) {
                 //run the assoc function with params and provided callback
-                if (params != undefined && params != null)
+                if (params !== undefined && params !== null)
                     data[i].func(params, callback, userid);
                 return;
             }
@@ -62,7 +62,7 @@ function call(invoke, params, callback, userid) {
 
 function ParamsOfURI(uri, callback) {
     //get params for uri
-    if (Interface.data == undefined || Interface.data == null) {
+    if (Interface.data === undefined || Interface.data === null) {
         callback(new Error('Interface data not set or undefined.'));
     } else if (typeof callback != 'function') {
         throw new Error('callback is not a function');

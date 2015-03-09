@@ -8,13 +8,21 @@ var deepPopulate = require('mongoose-deep-populate');
 var ObjectId = mongoose.Schema.ObjectId;
 
 var UserSchema = mongoose.Schema({
-    active: {
+    active: { // needed for local registration in future to check if email has been verified.
       type: Boolean,
       default: false
     },
-    name: String,
-    password: String, // this and the next line are only needed for local register/login
-    mail: String,
+    local: {
+        name: String,
+        password: String, // this and the next line are only needed for local register/login
+        mail: String,
+    },
+    rwth:{
+        id: String,
+        token: String,
+        refreshToken: String,
+        displayName: String
+    },
     creationTime: {
         type: Date,
         default: Date.now
@@ -23,7 +31,6 @@ var UserSchema = mongoose.Schema({
         type: ObjectId,
         ref: 'Room'
     }],
-    l2pAPIKey: String,
     facebook: {
       id : String,
       token: String,
