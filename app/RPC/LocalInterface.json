@@ -4,7 +4,8 @@
         "parameters": {
             "threadId": ""
         },
-        "func": ""
+        "func": "",
+        "auth": true
     }, {
         "uri": "getAnswers",
         "parameters": {

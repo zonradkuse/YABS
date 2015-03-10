@@ -20,7 +20,7 @@ mongoose.connect(config.database.host)
      *  default sessioncookie
      *  /public static file provider
      */
-app.use(morgan('default', {
+app.use(morgan('dev', {
     stream: logger.stream
 }));
 app.use(compression({
@@ -37,7 +37,7 @@ app.use(session({
         httpOnly: false
     },
     resave: true,
-    //saveUninitialized: false
+    saveUninitialized: false
 }));
 
 app.use(express.static(__dirname + '/public', {
@@ -74,4 +74,4 @@ if (config.general.https) {
 server.listen(config.general.http.port || 8080);
 logger.info('Server now running on ' + config.general.http.port + '!');
 module.exports.app = app;
-var Websocket = require('./app/Websocket.js')(server);
+var ws = require('./app/WebsocketEventHandler.js'); //initialise websocket event handlers
