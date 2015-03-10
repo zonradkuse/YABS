@@ -1,12 +1,50 @@
-var Interface = require('./LocalInterface.json');
+var Interface = {
+    "data": [{
+        "uri": "getQuestions",
+        "parameters": {
+            "threadId": ""
+        },
+        "func": ""
+    }, {
+        "uri": "getAnswers",
+        "parameters": {
+            "questionId": ""
+        },
+        "func": ""
+    }, {
+        "uri": "getLogs",
+        "parameters": {
+            "category": ""
+        },
+        "func": ""
+    }, {
+        "uri": "vote",
+        "parameters": {
+            "question": "true",
+            "Id": ""
+        },
+        "func": "",
+        "broadcast": true
+    }, {
+        "uri": "getRooms",
+        "parameters": {
+            "userId": "",
+            "sessionCookie": ""
+        },
+        "func": ""
+    }]
+} //will be extended.
+
+/*!
+ * attaches funct to uri function and calls callback with error if needed.
+ */
 
 function attachFunction(uri, funct, callback) {
     if (typeof funct != 'function') {
         throw new Error('function is not a function');
-        return;
     }
     if (typeof callback != 'function') {
-        throw new Error('callback is not a function.')
+        throw new Error('callback is not a function.');
     } else if (Interface.data === undefined || Interface.data === null) {
         callback(new Error('Interface Data unset or undefined.'));
     } else {
@@ -14,16 +52,16 @@ function attachFunction(uri, funct, callback) {
         for (var i = data.length - 1; i >= 0; i--) {
             if (data[i].uri === uri) {
                 //run the assoc function with params and provided callback
-                data[i].func = funct
+                data[i].func = funct;
                 return;
             }
         }
-        callback(new Error('URI not found'), null);
+        callback(new Error('URI not found'));
     }
 }
 
 function getInterface(callback) {
-    (Interface !== undefined) ? callback(null, Interface): callback(new Error('Interface is undefined'))
+    (Interface !== undefined) ? callback(null, Interface): callback(new Error('Interface is undefined'));
 }
 
 function setInterface(json, callback) {
@@ -38,6 +76,11 @@ function setInterface(json, callback) {
         }
     }
 }
+
+/*!
+ * Calls the functions attached to the invoke uri with the params object. params is json formatted!
+ * callback is also passed to this function for your own handling. if an error occurs, the first parameter will be set.
+ */
 
 function call(invoke, params, callback, userid) {
     if (typeof callback !== 'function') {
@@ -54,7 +97,7 @@ function call(invoke, params, callback, userid) {
                 return;
             }
         }
-        callback(new Error('URI not found'), null);
+        callback(new Error('URI not found'));
     }
 }
 
@@ -68,7 +111,7 @@ function ParamsOfURI(uri, callback) {
         var data = Interface.data;
         for (var i = data.length - 1; i >= 0; i--) {
             if (data[i].uri === uri) {
-                callback(null, data[i].parameters)
+                callback(null, data[i].parameters);
                 return;
             }
         }
@@ -76,9 +119,3 @@ function ParamsOfURI(uri, callback) {
     }
 
 }
-
-module.exports.call = call;
-module.exports.setInterface = setInterface;
-module.exports.getInterface = getInterface
-module.exports.params = ParamsOfURI;
-module.exports.attachFunction = attachFunction;

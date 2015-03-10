@@ -93,12 +93,12 @@ function init() {
     interface.attachFunction('vote', function(params, callback, sessionid) {
         vote(params, callback, sessionid);
     }, function(err) {
-        throw err
+        throw err;
     });
     interface.attachFunction('getLogs', function(params, callback) {
-        getLogs(params, callback)
+        getLogs(params, callback);
     }, function(err, callback) {
-        throw err
+        throw err;
     });
 }
 
