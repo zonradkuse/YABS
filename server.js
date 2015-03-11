@@ -73,5 +73,5 @@ if (config.general.https) {
 
 server.listen(config.general.http.port || 8080);
 logger.info('Server now running on ' + config.general.http.port + '!');
-module.exports.app = app;
+module.exports.app = server;
 var ws = require('./app/WebsocketEventHandler.js'); //initialise websocket event handlers

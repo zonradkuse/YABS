@@ -33,5 +33,11 @@
             "sessionCookie": ""
         },
         "func": ""
+    }, {
+        "uri": "ping",
+        "parameters": {
+            "message": ""
+        },
+        "func": ""
     }]
 }
