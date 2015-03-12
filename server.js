@@ -33,11 +33,11 @@ app.use(session({
     sessionId: "",
     secret: config.general.cookie.secret,
     cookie: {
-        expires: 1000 * 60 * 60 * 24 * 28,
+        expires: 1000 * 3600,
         httpOnly: false
     },
-    resave: true,
-    saveUninitialized: false
+    resave: false,
+    saveUninitialized: true
 }));
 
 app.use(express.static(__dirname + '/public', {
@@ -75,7 +75,3 @@ server.listen(config.general.http.port || 8080);
 logger.info('Server now running on ' + config.general.http.port + '!');
 module.exports.app = server;
 var ws = require('./app/WebsocketEventHandler.js'); //initialise websocket event handlers
-logger.warn('lol');
-logger.debug('huehue');
-logger.info('sisi');
-logger.err('whoop');

@@ -48,9 +48,10 @@
       /** A short sessiontest
        */
       app.get('/sessiontest', function(req, res, next) {
-          var sess = req.session
+          var sess = req.session;
+          console.log(req.session);
           res.setHeader('Content-Type', 'text/html');
-          res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's (' + (sess.cookie.maxAge / 60 / 1000) + ' min)</p>')
+          res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's (' + (sess.cookie.maxAge / 60 / 1000) + ' min)</p>');
           res.write('<p>logged in with Session: ' + JSON.stringify(sess) + '<p>');
           res.write('<p>Your User Information: ' + JSON.stringify(sess.passport.user) + '</p>');
           if (sess.user === undefined) {
