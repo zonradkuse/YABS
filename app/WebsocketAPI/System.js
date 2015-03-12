@@ -67,7 +67,7 @@ module.exports = function(wsControl){
                                                 return;
                                             }
                                             session.user = _user;
-                                            sessionStore.set(_user, sId, function(err){
+                                            sessionStore.set(sId, session, function(err){
                                                 logger.debug(sId);
                                                 logger.debug(_user);
                                                 if(err) ws.send(wsControl.build(err));
