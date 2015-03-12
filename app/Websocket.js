@@ -49,11 +49,10 @@ var WebsocketHandler = function() {
                     try{
                         message = JSON.parse(message);
                     } catch(e){
-                        ws.send(e);
+                        ws.send(self.build(new Error("no valid json or not a string"), null, message.refId));
                         return;
                     }
                     if(message.uri){
-                        logger.info('calling ' + message.uri)
                         for(var i = 0; i<interf.data.length; i++){
                             if(interf.data[i].uri === message.uri){ //uri exists
                                 if(message.parameters){ //parameters set
@@ -62,29 +61,40 @@ var WebsocketHandler = function() {
                                     for(var key in obj){ // check structure
                                         //check if interface is made like specified in the interface file.
                                         if(key !== Object.getOwnPropertyNames(message.parameters)[c]) {
-                                            ws.send(JSON.stringify({error:"missing or bad parameter."}));
+                                            ws.send(self.build(new Error("missing or bad parameter."), null, message.refId));
                                             return;
                                         }
                                         c += 1;
                                     }
-                                    /** whoa. that has been a lot of checks. now emit the event. Optionals need
+                                    /**
+                                     * whoa. that have been a lot of checks. now emit the event. Optionals need
                                      *  to be checked by the event handler. They will maybe build into the interface
                                     **/
-                                    self.emit(message.uri, wss, ws, session, message.parameters, interf.data[i]);
+                                    self.emit(message.uri, wss, ws, session, message.parameters, interf.data[i], message.refId);
+                                    logger.log('emitted ' + message.uri + ' WSAPI event.');
                                     return;
                                 }
                             }
                         }
-                        ws.send(JSON.stringify({error:"uri not existing."}));
+                        ws.send(self.build(new Error("uri not existing."), null, message.refId));
                     } else {
-                        ws.send(JSON.stringify({error:"missing parameter."}));
+                        ws.send(self.build(new Error("missing parameter."), null, message.refId));
                     }
                     //check if message.parameters structure is same or if optional
-                    //local.checkAndCall(session, ws, wss, message);
+                    //local.checkAndCall(session, ws, wss, message); //deprecated
                 });
     
             });
         });
+    };
+    // build the response object as string
+    this.build = function(err, data, refId){
+        var json = {
+            "error": (err ? err.message : null),
+            "data": data,
+            "refId": refId
+        };
+        return JSON.stringify(json);
     };
 };
 

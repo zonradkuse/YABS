@@ -8,8 +8,8 @@
    "login": {
       "local": true,
       "l2p": {
-         "clientID": "",
-         "scopes": "l2p.rwth userinfo.rwth"
+         "clientID": "rwth client oauth",
+         "scope": "l2p2013.rwth userinfo.rwth"
       }
    },
    "general": {

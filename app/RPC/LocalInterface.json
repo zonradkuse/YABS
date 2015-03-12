@@ -34,10 +34,12 @@
         },
         "func": ""
     }, {
-        "uri": "ping",
-        "parameters": {
-            "message": ""
-        },
+        "uri": "system:ping",
+        "parameters": {},
+        "func": ""
+    },{
+        "uri": "system:login",
+        "parameters": {},
         "func": ""
     }]
 }

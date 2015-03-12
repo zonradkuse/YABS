@@ -1,9 +1,10 @@
 var ws = require('./Websocket.js');
 var wsFrame = new ws();
-    
-wsFrame.on('ping', function(wss, ws, session, params, interfaceEntry){
-    console.log('whoop, whoop. a ping.');
-    ws.send('pong');
-});
+
+// set all event handlers
+require('./WebsocketAPI/System.js')(wsFrame);
+require('./WebsocketAPI/Room.js')(wsFrame);
+require('./WebsocketAPI/User.js')(wsFrame);
+
 
 wsFrame.start();
