@@ -50,7 +50,7 @@ app.use(bodyParser.urlencoded({
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-/* TODO var db = require('./app/DatabaseConnection.js').pool; */
+
 var routes = require('./app/Routes.js');
 routes(app);
 routes.routes();

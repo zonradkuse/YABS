@@ -63,7 +63,8 @@ module.exports = function(wsControl){
                                             ws.send(null, { "status": "succes" }, refId);
                                             logger.info("created new user.");
                                         });
-                                        ws.upgradeReq
+                                        session.user = _user;
+                                        session.save();
                                     } else if(response.status === "error: authorization pending."){
                                         ws.send(wsControl.build(new Error("still waiting"), null, refId));
                                     }

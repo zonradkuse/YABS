@@ -18,10 +18,8 @@ var UserSchema = mongoose.Schema({
         mail: String,
     },
     rwth:{
-        id: String,
         token: String,
-        refreshToken: String,
-        displayName: String
+        refreshToken: String
     },
     creationTime: {
         type: Date,
