@@ -5,7 +5,7 @@ var https = require('https');
 var User = require('../../models/User.js').User;
 var session = require('express-session');
 var sessionStore = require('connect-redis')(session);
-
+sessionStore = new sessionStore();
 module.exports = function(wsControl){
     wsControl.on('system:ping', function(wss, ws, session, params, interfaceEntry, refId){
         ws.send(wsControl.build(null, "pong", refId));
@@ -67,7 +67,7 @@ module.exports = function(wsControl){
                                                 return;
                                             }
                                             session.user = _user;
-                                            sessionStore.set(_user, sId);
+                                            sessionStore.set(_user, sId, function(err){});
                                             ws.send(null, { "status": "succes" }, refId);
                                             logger.info("created new user.");
                                         });

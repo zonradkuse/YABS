@@ -28,8 +28,8 @@ var WebsocketHandler = function() {
     var self = this;
     this.start = function(){
         logger.info('Initializing Websockets');
-        logger.info("Initializing Local Interface and function attaching");
-        local();
+        //logger.info("Initializing Local Interface and function attaching");
+        //local();
         wss.on('connection', function(ws) {
             // Upgrade ws to request in order to get the user out of session
             cookieParser(config.general.cookie.secret)(ws.upgradeReq, null, function(err) {
@@ -43,7 +43,7 @@ var WebsocketHandler = function() {
                 //check for binary data
                 //parse message string and call the attached functions in the interface
                 ws.on('message', function(message) {
-                    logger.info('received new message from ' + ws.upgradeReq.connection.remoteAddress + ' : ' + message);
+                    logger.debug('received new message from ' + ws.upgradeReq.connection.remoteAddress + ' : ' + message);
                     // lets process the message.
                     // check if uri is existing
                     try{
