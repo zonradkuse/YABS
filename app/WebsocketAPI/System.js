@@ -61,12 +61,17 @@ module.exports = function(wsControl){
                                         _user.refresh_token = response.refresh_token;
                                         _user.expires_in = response.expires_in;
                                         _user.save(function(err){
-                                            if(err) ws.send(err, null, refId);
+                                            if(err) {
+                                                ws.send(err, null, refId);
+                                                logger.warn(err);
+                                                return;
+                                            }
+                                            session.user = _user;
+                                            sessionStore.set(_user, sId);
                                             ws.send(null, { "status": "succes" }, refId);
                                             logger.info("created new user.");
                                         });
-                                        session.user = _user;
-                                        sessionStore.set(_user, sId);
+                                        
                                     } else if(response.status === "error: authorization pending."){
                                         ws.send(wsControl.build(new Error("still waiting"), null, refId));
                                     }

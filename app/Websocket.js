@@ -71,7 +71,7 @@ var WebsocketHandler = function() {
                                      *  to be checked by the event handler. They will maybe build into the interface
                                     **/
                                     self.emit(message.uri, wss, ws, session, message.parameters, interf.data[i], message.refId, ws.upgradeReq.signedCookies["connect.sid"]);
-                                    logger.log('emitted ' + message.uri + ' WSAPI event.');
+                                    logger.info('emitted ' + message.uri + ' WSAPI event.');
                                     return;
                                 }
                             }
