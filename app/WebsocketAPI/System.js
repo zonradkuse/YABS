@@ -67,8 +67,12 @@ module.exports = function(wsControl){
                                                 return;
                                             }
                                             session.user = _user;
-                                            sessionStore.set(_user, sId, function(err){});
-                                            ws.send(null, { "status": "succes" }, refId);
+                                            sessionStore.set(_user, sId, function(err){
+                                                logger.debug(sId);
+                                                logger.debug(_user);
+                                                if(err) ws.send(wsControl.build(err));
+                                            });
+                                            ws.send(wsControl.build(null, { "status": "succes" }, refId));
                                             logger.info("created new user.");
                                         });
                                         
