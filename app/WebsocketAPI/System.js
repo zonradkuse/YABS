@@ -57,9 +57,9 @@ module.exports = function(wsControl){
                                         auth = true;
                                         clearInterval(timer);
                                         var _user = new User();
-                                        _user.token = response.access_token;
-                                        _user.refresh_token = response.refresh_token;
-                                        _user.expires_in = response.expires_in;
+                                        _user.rwth.token = response.access_token;
+                                        _user.rwth.refresh_token = response.refresh_token;
+                                        _user.rwth.expires_in = response.expires_in;
                                         _user.save(function(err){
                                             if(err) {
                                                 ws.send(err, null, refId);
