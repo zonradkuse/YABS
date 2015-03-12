@@ -3,13 +3,15 @@ var config = require('../../config.json');
 var querystring = require('querystring');
 var https = require('https');
 var User = require('../../models/User.js').User;
+var session = require('express-session');
+var sessionStore = require('connect-redis')(session);
 
 module.exports = function(wsControl){
     wsControl.on('system:ping', function(wss, ws, session, params, interfaceEntry, refId){
         ws.send(wsControl.build(null, "pong", refId));
     });
     
-    wsControl.on('system:login', function(wss, ws, session, params, interfaceEntry, refId){
+    wsControl.on('system:login', function(wss, ws, session, params, interfaceEntry, refId, sId){
         postReqCampus('code' ,querystring.stringify({
             "client_id": config.login.l2p.clientID,
             "scope": config.login.l2p.scope
@@ -64,7 +66,7 @@ module.exports = function(wsControl){
                                             logger.info("created new user.");
                                         });
                                         session.user = _user;
-                                        session.save();
+                                        sessionStore.set(_user, sId);
                                     } else if(response.status === "error: authorization pending."){
                                         ws.send(wsControl.build(new Error("still waiting"), null, refId));
                                     }
