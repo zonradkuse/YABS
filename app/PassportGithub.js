@@ -14,7 +14,7 @@ module.exports = function(passport) {
 
         process.nextTick(function() {
             if (!req.user) {
-                logger.info("Github login attempt")
+                logger.info("Github login attempt");
                 User.findOne({
                         'github.id': profile.id
                     },
@@ -29,14 +29,14 @@ module.exports = function(passport) {
 
                                 user.save(function(err) {
                                     if (err) return done(err);
-                                    logger.info("user successfully altered")
+                                    logger.info("user successfully altered");
                                     return done(null, user); //success
                                 });
                             }
-                            logger.info("user successfully authenticated")
+                            logger.info("user successfully authenticated");
                             return done(null, user); // success
                         } else { // we could not find a user
-                            logger.info("creating a new user")
+                            logger.info("creating a new user");
                             var nUser = new User();
                             
                             nUser.github.id = profile.id;
@@ -47,10 +47,10 @@ module.exports = function(passport) {
                                     if (err) return done(err);
                                     logger.info("new user created: " + nUser._id);
                                     done(null, nUser);
-                                })
+                                });
                                 //created user - success
                         }
-                    })
+                    });
             } else {
                 // there is already an existing user. Link the data
                 var _user = req.user; // pull the user out of the session
@@ -84,4 +84,4 @@ module.exports = function(passport) {
             done(err, user);
         });
     });
-}
+};

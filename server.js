@@ -30,7 +30,7 @@ app.use(cookieParser());
 //app.set('trust proxy', 1); // will be needed for production use with nginx
 app.use(session({
     store: new sessionStore(),
-    sessionId: "",
+    roomId: "",
     secret: config.general.cookie.secret,
     cookie: {
         expires: 1000 * 3600,

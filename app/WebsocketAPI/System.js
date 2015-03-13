@@ -6,9 +6,16 @@ var User = require('../../models/User.js').User;
 var session = require('express-session');
 var sessionStore = require('connect-redis')(session);
 sessionStore = new sessionStore();
+var userWorker = require('../UserWorker.js');
 module.exports = function(wsControl){
+    wsControl.on('system:close', function(ws, sId){
+        //stop the worker
+    });
+    wsControl.on('system:open', function(ws, session){
+        wsControl.build(ws, null, {message: 'welcome'}, null);
+    });
     wsControl.on('system:ping', function(wss, ws, session, params, interfaceEntry, refId){
-        ws.send(wsControl.build(null, "pong", refId));
+        wsControl.build(ws, null, "pong", refId);
     });
     
     wsControl.on('system:login', function(wss, ws, session, params, interfaceEntry, refId, sId){
@@ -21,16 +28,16 @@ module.exports = function(wsControl){
                 try{
                     answer = JSON.parse(answer);
                 } catch(e) {
-                    ws.send(wsControl.build(new Error("An error occured when communicating with Campus. lol."), null, refId));
+                    wsControl.build(ws, new Error("An error occured when communicating with Campus. lol."), null, refId);
                     logger.warn('An error occured whon communicating with Campus OAuth. Response was: ' + answer);
                     return;
                 }
                 var _url = answer.verification_url + '?q=verify&d=' + answer.user_code;
                 logger.debug(_url);
-                ws.send(wsControl.build(null, {
+                wsControl.build(ws, null, {
                     message: "Please visit the provided url.",
                     url: _url
-                }, refId));
+                }, refId);
                 var auth = false;
                 var reqTime = 0;
                 var timer = setInterval(function(){
@@ -47,7 +54,7 @@ module.exports = function(wsControl){
                                     response = JSON.parse(response);
                                 } catch(e) {
                                     logger.error();
-                                    ws.send(wsControl.build(new Error("An error occured when communicating with Campus. lol."), null, refId));
+                                    wsControl.build(ws, new Error("An error occured when communicating with Campus. lol."), null, refId);
                                     logger.warn('An error occured when communicating with Campus OAuth. Response was: ' + response);
                                 }
                                 if(response.status){
@@ -62,62 +69,70 @@ module.exports = function(wsControl){
                                         _user.rwth.expires_in = response.expires_in;
                                         _user.save(function(err){
                                             if(err) {
-                                                ws.send(err, null, refId);
+                                                wsControl.build(ws, err, null, refId);
                                                 logger.warn(err);
                                                 return;
                                             }
                                             session.user = _user;
                                             sessionStore.set(sId, session, function(err){
-                                                logger.debug(sId);
-                                                logger.debug(_user);
-                                                if(err) ws.send(wsControl.build(err));
+                                                if(err) {
+                                                    wsControl.build(ws, err);
+                                                    return;
+                                                }
                                             });
-                                            ws.send(wsControl.build(null, { "status": "succes" }, refId));
+                                            wsControl.build(ws, null, { "status": "succes" }, refId);
+                                            // start a worker that fetches rooms.
                                             logger.info("created new user.");
                                         });
                                         
                                     } else if(response.status === "error: authorization pending."){
-                                        ws.send(wsControl.build(new Error("still waiting"), null, refId));
+                                        wsControl.build(ws, new Error("still waiting"), null, refId);
                                     }
 
+                                } else {
+                                    wsControl.build(ws, new Error("There was no status in Campus answer."), null, refId);
                                 }
                             }
                         });
                     }else if(reqTime >= answer.expires_in){
-                        ws.send(wsControl.build(new Error("Your authentication request failed. Please try again."), null, refId));
+                        wsControl.build(ws, new Error("Your authentication request failed. Please try again."), null, refId);
                     }else{ // authenticated
                         clearInterval(timer);
                     }
                     reqTime += answer.interval;
                 }, answer.interval * 1000);
             } else {
-                ws.send(wsControl.build(new Error("Campus Response not set.")));
-                logger.debug("Campus Response not set. Answer was " + answer);
+                wsControl.build(ws, new Error("Campus Response not set."));
+                logger.debug("Campus Response not set. Answer was " + answer); //yes, it must have been empty
             }
         });
     });
 };
 
 function postReqCampus(query, data, next) {
-    logger.debug(query + "  " + data);
-    var post = {
-        host: 'oauth.campus.rwth-aachen.de',
-        port: '443',
-        path: '/oauth2waitress/oauth2.svc/' + query,
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': data.length
+    //logger.debug(query + "  " + data);
+    try{
+        var post = {
+            host: 'oauth.campus.rwth-aachen.de',
+            port: '443',
+            path: '/oauth2waitress/oauth2.svc/' + query,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': data.length
+            }
+    
         }
-
-    }
-    var postRequest = https.request(post, function(res) {
-        res.setEncoding('utf8');
-        res.on('data', function(chunk) {
-            next(chunk);
+        var postRequest = https.request(post, function(res) {
+            res.setEncoding('utf8');
+            res.on('data', function(chunk) {
+                next(chunk);
+            });
         });
-    });
-
-    postRequest.write(data);
-    postRequest.end();
+    
+        postRequest.write(data);
+        postRequest.end();
+    } catch(err){
+        logger.warn("could not post to Campus");
+    }
   }

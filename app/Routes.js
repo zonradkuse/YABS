@@ -1,9 +1,7 @@
-  /*! Module to handle all incoming requests.
+  /*! Module to handle all incoming htpp requests. WebSocketRequests are handled in app/WebsocketAPI
 
-                  Note: the static folder is already set. Here are all needed routes like
-                  the login post request.
-                */
-  var passport = require('passport')
+    */
+  var passport = require('passport');
   var querystring = require('querystring');
   var config = require('../config.json');
   var logger = require('./Logger.js');
@@ -13,7 +11,7 @@
 
   module.exports = function(pExpressApp) {
       app = pExpressApp;
-  }
+  };
 
 
   module.exports.routes = function() {
@@ -23,10 +21,10 @@
           auth.loginLocal(req, function(err, user) {
               req.flash('message', 'Welcome' + res.name);
               req.session.user = user;
-              res.redirect("/sessiontest")
+              res.redirect("/sessiontest");
           }, function(err) {
               req.flash('message', err);
-              res.redirect("/")
+              res.redirect("/");
           });
       });
 
@@ -49,30 +47,34 @@
        */
       app.get('/sessiontest', function(req, res, next) {
           var sess = req.session;
-          res.setHeader('Content-Type', 'text/html');
-          res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's (' + (sess.cookie.maxAge / 60 / 1000) + ' min)</p>');
-          res.write('<p>logged in with Session: ' + JSON.stringify(sess) + '<p>');
-          res.write('<p>Your User Information: ' + JSON.stringify(sess.passport.user) + '</p>');
-          if (sess.user === undefined) {
-              res.write('login? \
-                  <form action="/login/local" method="post"> \
-                  First name:<br> \
-                  <input type="text" name="username" value="Username"> \
-                  <br><br> \
-                  <input type="submit" value="Submit"> \
-                  </form>register? \
-                  <form action="/register/local" method="post"> \
-                  First name:<br> \
-                  <input type="text" name="username" value="Username"> \
-                  <br> \
-                  <input type="text" name="email" value="Email"> \
-                  <br> \
-                  <input type="password" name="password" value="Password"> \
-                  <br><br> \
-                  <input type="submit" value="Submit"> \
-                  </form>');
-          };
-          res.end()
+          if(!sess) {
+            res.redirect('/');
+          } else {
+              res.setHeader('Content-Type', 'text/html');
+              res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's (' + (sess.cookie.maxAge / 60 / 1000) + ' min)</p>');
+              res.write('<p>logged in with Session: ' + JSON.stringify(sess) + '<p>');
+              res.write('<p>Your User Information: ' + JSON.stringify(sess.user) + '</p>');
+              if (sess.user === undefined) {
+                  res.write('login? \
+                      <form action="/login/local" method="post"> \
+                      First name:<br> \
+                      <input type="text" name="username" value="Username"> \
+                      <br><br> \
+                      <input type="submit" value="Submit"> \
+                      </form>register? \
+                      <form action="/register/local" method="post"> \
+                      First name:<br> \
+                      <input type="text" name="username" value="Username"> \
+                      <br> \
+                      <input type="text" name="email" value="Email"> \
+                      <br> \
+                      <input type="password" name="password" value="Password"> \
+                      <br><br> \
+                      <input type="submit" value="Submit"> \
+                      </form>');
+              }
+              res.end();
+          }
       });
 
 
@@ -126,7 +128,7 @@
       // Logout route
       app.get('/logout', function(req, res) {
           req.logout();
-          req.session.user = undefined; // delete local part of session cookie
+          req.session.user = {}; // delete local part of session cookie
           res.redirect('/');
       })
   }

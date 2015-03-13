@@ -1,6 +1,7 @@
 /**
-   Websocket.js manages
-*/
+ *  Websocket.js manages the websocket events emittet by einaros/ws. It also checks
+ *   if the called uri is okay and emits those events for easy handling.
+ */
 var logger = require('./Logger.js');
 var local = require('./RPC/Local.js');
 var config = require('../config.json');
@@ -14,15 +15,37 @@ sessionStore = new sessionStore();
 var util = require('util');
 var events = require('events');
 
+
+// ------------- begin Websocket Server init with helper functions
+
 var wss = new WebSocketServer({
     server: app
 });
+
 wss.broadcast = function broadcast(data) {
     wss.clients.forEach(function each(client) {
         client.send(data);
     });
 };
+wss.roomBroadcast = function (data, roomId, refId){
+    wss.clients.forEach(function each(client){
+        //check if user is currently active room member.
+        var sId = client.upgradeReq.signedCookies["connect.sid"];
+        sessionStore.get(sId, function(err, sess){
+            if(err) logger.warn("An error occured on getting the user session: " + err);
+            if(sess.room){
+                if(session.room === roomId){
+                    WebsocketHandler.build(client, data, refId);
+                }
+            } else {
+                logger.warn("A room was unset in session: " + session);
+                WebsocketHandler.build(client, new Error("Your current room is not set."));
+            }
+        });
+    });
+};
 
+// ------------ begin WebsocketHandler Object extending EventEmitter.
 var WebsocketHandler = function() {
     events.EventEmitter.call(this);
     var self = this;
@@ -70,7 +93,8 @@ var WebsocketHandler = function() {
                                      * whoa. that have been a lot of checks. now emit the event. Optionals need
                                      *  to be checked by the event handler. They will maybe build into the interface
                                     **/
-                                    self.emit(message.uri, wss, ws, session, message.parameters, interf.data[i], message.refId, ws.upgradeReq.signedCookies["connect.sid"]);
+                                    self.emit(message.uri, wss, ws, session, message.parameters,
+                                        interf.data[i], message.refId, ws.upgradeReq.signedCookies["connect.sid"]);
                                     logger.info('emitted ' + message.uri + ' WSAPI event.');
                                     return;
                                 }
@@ -83,21 +107,31 @@ var WebsocketHandler = function() {
                     //check if message.parameters structure is same or if optional
                     //local.checkAndCall(session, ws, wss, message); //deprecated
                 });
-    
+                ws.on('close', function(code, message){
+                    // emit the close event and give some more information.
+                    self.emit('system:close', ws, ws.upgradeReq.signedCookies["connect.sid"]);
+                });
+                ws.on('error', function(err){
+                    logger.warn("An error occured on socket connection. " + err); // TODO What to handle here?
+                });
+                ws.on('open', function(){
+                    logger.info("New socket connection.");
+                    self.emit('system:open', ws, session);
+                });
             });
         });
     };
     // build the response object as string
-    this.build = function(err, data, refId){
+    this.build = function(ws, err, data, refId){
+        if(!ws || !ws.send) throw new Error("Websocket not set.");
         var json = {
             "error": (err ? err.message : null),
             "data": data,
             "refId": refId
         };
-        return JSON.stringify(json);
+        ws.send(JSON.stringify(json));
     };
 };
 
 util.inherits(WebsocketHandler, events.EventEmitter);
-//WebsocketHandler.prototype.__proto__ = events.EventEmitter.prototype; //__proto__ maybe deprecated. use if problem with inherits
 module.exports = WebsocketHandler;
