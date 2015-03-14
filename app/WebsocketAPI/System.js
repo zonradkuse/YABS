@@ -11,12 +11,14 @@ workerMap = {};
 
 module.exports = function(wsControl){
     wsControl.on('system:close', function(ws, sId){
-        workerMap[sId].stop();
+        //workerMap[sId].stop();
+        logger.info("a client disconnected.");
         process.nextTick(function(){
             delete workerMap[sId];
         });
     });
     wsControl.on('system:open', function(ws, session){
+        logger.info("new client arrived.");
         wsControl.build(ws, null, {message: 'welcome'}, null);
     });
     wsControl.on('system:ping', function(wss, ws, session, params, interfaceEntry, refId){

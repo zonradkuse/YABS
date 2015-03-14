@@ -107,21 +107,21 @@ UserWorker.prototype.fetchRooms = function(refId){
  **/
 UserWorker.prototype.checkSession = function(next){
     var self = this;
-        if(ws.readyState === websocket.OPEN){
-            sessionStore.get(sId, function(err, user){
-                if(err) {
-                    self.wsControl.build(self.ws, err);
-                    logger.warn("error on session retrieving: " + err);
-                    next(err);
-                } else if(!user) {
-                    next(null, false);
-                } else {
-                    next(null, true);
-                }
-            });
-        } else {
-            next(new Error("connection lost"), false);
-        }
+    if(self.ws.readyState === websocket.OPEN){
+        sessionStore.get(sId, function(err, user){
+            if(err) {
+                self.wsControl.build(self.ws, err);
+                logger.warn("error on session retrieving: " + err);
+                next(err);
+            } else if(!user) {
+                next(null, false);
+            } else {
+                next(null, true);
+            }
+        });
+    } else {
+        next(new Error("connection lost"), false);
+    }
 };
 
 /**
