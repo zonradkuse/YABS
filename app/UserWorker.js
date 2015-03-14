@@ -107,7 +107,7 @@ UserWorker.prototype.fetchRooms = function(refId){
  **/
 UserWorker.prototype.checkSession = function(next){
     var self = this;
-    sessionStore.get(sId, function(err, user){
+    sessionStore.get(self.sId, function(err, user){
         if(err) {
         self.wsControl.build(self.ws, err);
             logger.warn("error on session retrieving: " + err);
