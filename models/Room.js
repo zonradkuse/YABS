@@ -11,7 +11,11 @@ var RoomSchema = mongoose.Schema({
     creationTime: { type: Date, default: Date.now },
     updateTime: { type: Date, default: Date.now },
     questions: [{ type : ObjectId, ref: 'Question' }],
-    visible: { type: Boolean, default: true }
+    visible: { type: Boolean, default: true },
+    description: String,
+    url: String,
+    status: String,
+    semester: String
 });
 
 /*RoomSchema.methods.addQuestion = function(question){
@@ -83,7 +87,7 @@ RoomSchema.methods.sort = function(sorter, limit){
 		listSorted.sort(sorter[s]);
 	if(limit == undefined || limit < 0 || limit >= listSorted.length)
 		return listSorted;
-	else 
+	else
 		return listSorted.splice(0,limit);
 }
 
@@ -125,8 +129,8 @@ module.exports.getRoomsFromUser = function(userID, options, callback){
 module.exports.addRoomsToUser = function(userID, roomIDs, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");
-	User.findByIdAndUpdate(userID,{$pushAll:{'access': roomIDs}},function(eUser){
-		return callback(eRooms);
+	User.findByIdAndUpdate(userID,{$pushAll:{'access': roomIDs}},function(eUser, user){
+		return callback(eUser, user);
 	});
 }
 

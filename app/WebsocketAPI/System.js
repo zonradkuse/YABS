@@ -6,7 +6,7 @@ var session = require('express-session');
 var sessionStore = require('connect-redis')(session);
 sessionStore = new sessionStore();
 var userWorker = require('../UserWorker.js');
-var campus = require('../RWTH/CampusRequest.js');
+var campus = require('../RWTH/CampusRequests.js');
 workerMap = {};
 
 module.exports = function(wsControl){
@@ -23,6 +23,7 @@ module.exports = function(wsControl){
         wsControl.build(ws, null, "pong", refId);
     });
     
+    //Campus Device OAuth. Webapplication OAuth is not accessible. //TODO: Therefor a solution for multi-sessions is needed!
     wsControl.on('system:login', function(wss, ws, session, params, interfaceEntry, refId, sId){
         postReqCampus('code' ,querystring.stringify({
             "client_id": config.login.l2p.clientID,
@@ -136,3 +137,7 @@ module.exports = function(wsControl){
 
 // @function
 var postReqCampus = campus.postReqCampus;
+
+module.exports.getWorkerMap = function(){
+    return workerMap;
+};

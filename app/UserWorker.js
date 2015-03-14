@@ -4,6 +4,7 @@ var sessionStore = require('connect-redis')(session);
 var logger = require('./Logger.js');
 sessionStore = new sessionStore();
 var l2p = require('./RWTH/L2PRequests.js');
+var Room = require('../models/Room.js');
 /**
  * sets needed object attributes.
  *
@@ -23,34 +24,80 @@ var UserWorker = function(sId, ws, user, wsFrame){
  * checks if there are new rooms that need to be added to the database and adds them.
  **/
 UserWorker.prototype.fetchRooms = function(refId){
+    var self = this;
     this.checkSession(function(err, value){
         if(err) {
-            if (err.message !== "connection lost") this.wsControl.build(this.ws, err);
+            if (err.message !== "connection lost") self.wsControl.build(self.ws, err);
             logger.warn("could not fetch rooms: " + err);
         } else if(value) {
             // valid session existing
-            l2p.getAllCourses(this.user.rwth.token, function(err, courses){
+            l2p.getAllCourses(self.user.rwth.token, function(err, courses){
                 if (err) {
-                    this.wsControl.build(this.ws, new Error("could not get l2p courses."), null, refId);
+                    self.wsControl.build(self.ws, new Error("could not get l2p courses."), null, refId);
                     logger.warn("could not get l2p courses: " + err);
                 } else {
                     try{
                         courses = JSON.stringify(courses);
                     } catch (e) {
-                        wsControl.build(this.ws, new Error("L2P answer was malformed."), null, refId);
+                        self.wsControl.build(self.ws, new Error("L2P answer was malformed."), null, refId);
                         logger.warn("L2P courselist was not valid json: " + courses);
                         return;
                     }
                     if(courses.Status) {
                         for(var el in courses.dataSet) {
                             // TODO create the room
-                            //if(this.user.access)
+                            var arr = [el.uniqueid];
+                            var _room = new Room.Room();
+                            _room.l2pID = el.uniqueid;
+                            _room.name = el.courseTitle;
+                            _room.description = el.description;
+                            _room.url = el.url;
+                            _room.status = el.status;
+                            _room.semester = el.semester;
+                            Room.getRoom(_room, null, function(err, room){
+                                if (err) {
+                                    logger.warn("db error when trying to update users access: " + err);
+                                    return;
+                                }
+                                if (!room){
+                                    // create the room
+                                    Room.createRoom(_room, function(e, room){
+                                        if (e) {
+                                            logger.warn("Error on room creation: " + e);
+                                            return;
+                                        }
+                                        if (!room) {
+                                            logger.warn("Emtpy room object on creation.");
+                                            self.wsControl.build(self.ws, new Error("Emtpy room object on creation.", null, refId));
+                                        } else {
+                                            logger.info("created a new room.");
+                                            _room = room;
+                                        }
+                                    });
+                                }
+                                //attach room to User.
+                                Room.addRoomsToUser(self.user._id, arr, function(err, user){
+                                    if(err) {
+                                        logger.warn("error when trying to update users access: " + err);
+                                        return;
+                                    }
+                                    if(user) {
+                                        self.user = user;
+                                        self.wsControl.build(self.ws, null, {
+                                            message: "You got access to a new room.",
+                                            room: _room
+                                        }, refId);
+                                    } else {
+                                        logger.warn("user not set when trying to update users access.");
+                                    }
+                                });
+                            });
                         }
                     }
                 }
             });
         } else if(!value) {
-            this.wsControl.build(this.ws, new Error("Your session is invalid."));
+            self.wsControl.build(self.ws, new Error("Your session is invalid."));
         }
     });
 };
@@ -59,10 +106,11 @@ UserWorker.prototype.fetchRooms = function(refId){
  * sets next true if the user session is still valid.
  **/
 UserWorker.prototype.checkSession = function(next){
+    var self = this;
         if(ws.readyState === websocket.OPEN){
             sessionStore.get(sId, function(err, user){
                 if(err) {
-                    this.wsControl.build(this.ws, err);
+                    self.wsControl.build(self.ws, err);
                     logger.warn("error on session retrieving: " + err);
                     next(err);
                 } else if(!user) {
