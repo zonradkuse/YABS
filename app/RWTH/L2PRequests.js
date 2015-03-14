@@ -13,13 +13,13 @@ function getAllCourses(token, next) {
     var req = https.request(options, function(res) {
         res.setEncoding('utf8');
         res.on('data', function(chunk) {
-            next(null, chunk);
+            next(chunk);
         });
     });
     req.end();
     
     req.on('error', function(err){
-       next(err);
+       logger.warn(err);
     });
 }
 

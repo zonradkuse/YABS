@@ -96,7 +96,7 @@ module.exports = function(wsControl){
                                                 }
                                                 wsControl.build(ws, null, { "status": "succes" }, refId);
                                                 // start a worker that fetches rooms.
-                                                var worker = new userWorker(sId, ws, _user);
+                                                var worker = new userWorker(sId, ws, _user, wsControl);
                                                 if(!workerMap[sId]){
                                                     workerMap[sId] = worker;
                                                 } else {
