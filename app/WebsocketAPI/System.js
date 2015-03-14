@@ -125,7 +125,7 @@ module.exports = function(wsControl){
                         clearInterval(timer);
                     }
                     reqTime += answer.interval;
-                }, answer.interval);
+                }, answer.interval * 1000);
                 // Campus currently responds with 30 minutes polltime. srsly?
             } else {
                 wsControl.build(ws, new Error("Campus Response not set."));
