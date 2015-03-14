@@ -1,15 +1,20 @@
 var logger = require('../Logger.js');
 var config = require('../../config.json');
 var querystring = require('querystring');
-var https = require('https');
 var User = require('../../models/User.js').User;
 var session = require('express-session');
 var sessionStore = require('connect-redis')(session);
 sessionStore = new sessionStore();
 var userWorker = require('../UserWorker.js');
+var campus = require('../RWTH/CampusRequest.js');
+workerMap = {};
+
 module.exports = function(wsControl){
     wsControl.on('system:close', function(ws, sId){
-        //stop the worker
+        workerMap[sId].stop();
+        process.nextTick(function(){
+            delete workerMap[sId];
+        });
     });
     wsControl.on('system:open', function(ws, session){
         wsControl.build(ws, null, {message: 'welcome'}, null);
@@ -22,9 +27,12 @@ module.exports = function(wsControl){
         postReqCampus('code' ,querystring.stringify({
             "client_id": config.login.l2p.clientID,
             "scope": config.login.l2p.scope
-        }), function(answer){
-            logger.debug(answer);
-            if(answer){
+        }), function(err, answer){
+            if (err){
+                wsControl.build(ws, err, null, refId);
+                logger.warn(err);
+                return;
+            } else if(answer){
                 try{
                     answer = JSON.parse(answer);
                 } catch(e) {
@@ -47,8 +55,12 @@ module.exports = function(wsControl){
                             "client_id": config.login.l2p.clientID,
                             "code": answer.device_code,
                             "grant_type": "device"
-                        }), function(response){
-                            if(response){
+                        }), function(err, response){
+                            if (err){
+                                wsControl.build(ws, err, null, refId);
+                                logger.warn(err);
+                                return;
+                            } else if (response){
                                 logger.debug(response);
                                 try{
                                     response = JSON.parse(response);
@@ -79,10 +91,22 @@ module.exports = function(wsControl){
                                                     wsControl.build(ws, err);
                                                     return;
                                                 }
+                                                wsControl.build(ws, null, { "status": "succes" }, refId);
+                                                // start a worker that fetches rooms.
+                                                var worker = new userWorker(sId, ws, _user);
+                                                if(!workerMap[sId]){
+                                                    workerMap[sId] = worker;
+                                                } else {
+                                                    worker = workerMap[sId];
+                                                    worker.ws = ws; // this is necessary!
+                                                    worker.user = _user; // this not.
+                                                }
+                                                process.nextTick(function(){
+                                                    logger.info("starting new user worker.");
+                                                    worker.fetchRooms(); //start worker after this request.
+                                                });
+                                                logger.info("created new user.");
                                             });
-                                            wsControl.build(ws, null, { "status": "succes" }, refId);
-                                            // start a worker that fetches rooms.
-                                            logger.info("created new user.");
                                         });
                                         
                                     } else if(response.status === "error: authorization pending."){
@@ -100,7 +124,8 @@ module.exports = function(wsControl){
                         clearInterval(timer);
                     }
                     reqTime += answer.interval;
-                }, answer.interval * 1000);
+                }, (answer.interval > 1200 ? answer.interval * 200 : answer.interval));
+                // Campus currently responds with 30 minutes polltime. srsly?
             } else {
                 wsControl.build(ws, new Error("Campus Response not set."));
                 logger.debug("Campus Response not set. Answer was " + answer); //yes, it must have been empty
@@ -109,30 +134,5 @@ module.exports = function(wsControl){
     });
 };
 
-function postReqCampus(query, data, next) {
-    //logger.debug(query + "  " + data);
-    try{
-        var post = {
-            host: 'oauth.campus.rwth-aachen.de',
-            port: '443',
-            path: '/oauth2waitress/oauth2.svc/' + query,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Content-Length': data.length
-            }
-    
-        }
-        var postRequest = https.request(post, function(res) {
-            res.setEncoding('utf8');
-            res.on('data', function(chunk) {
-                next(chunk);
-            });
-        });
-    
-        postRequest.write(data);
-        postRequest.end();
-    } catch(err){
-        logger.warn("could not post to Campus");
-    }
-  }
+// @function
+var postReqCampus = campus.postReqCampus;

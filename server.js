@@ -14,7 +14,7 @@ var passport = require('passport');
 var mongoose = require('mongoose');
 var flash = require('connect-flash');
 
-mongoose.connect(config.database.host)
+mongoose.connect(config.database.host);
     /*
      * Initiate Express.js Webserver with
      *  default sessioncookie
@@ -33,7 +33,7 @@ app.use(session({
     roomId: "",
     secret: config.general.cookie.secret,
     cookie: {
-        expires: 1000 * 3600,
+        expires: 15778463, // 6 month
         httpOnly: false
     },
     resave: false,
