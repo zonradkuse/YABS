@@ -45,14 +45,15 @@ UserWorker.prototype.fetchRooms = function(refId){
                 if(courses.Status) {
                     for(var el in courses.dataSet) {
                         // TODO create the room
-                        var arr = [el.uniqueid];
+			console.log(courses.dataSet[el]);
+                        //var arr = [el.uniqueid];
                         var _room = new Room.Room();
-                        _room.l2pID = el.uniqueid;
-                        _room.name = el.courseTitle;
-                        _room.description = el.description;
-                        _room.url = el.url;
-                        _room.status = el.status;
-                        _room.semester = el.semester;
+                        _room.l2pID = courses.dataSet[el].uniqueid;
+                        _room.name = courses.dataSet[el].courseTitle;
+                        _room.description = courses.dataSet[el].description;
+                        _room.url = courses.dataSet[el].url;
+                        _room.status = courses.dataSet[el].status;
+                        _room.semester = courses.dataSet[el].semester;
 
                         Room.addRoomToUser(self.user._id, _room, function(err, user){
                             if(err){
