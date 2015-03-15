@@ -32,7 +32,9 @@ UserWorker.prototype.fetchRooms = function(refId){
         } else if(value) {
             // valid session existing
             l2p.getAllCourses(self.user.rwth.token, function(courses){
-                try{
+                //console.log(courses);
+		//logger.debug(courses);
+		try{
                     courses = JSON.parse(courses);
                     logger.debug(courses);
                 } catch (e) {
@@ -51,7 +53,7 @@ UserWorker.prototype.fetchRooms = function(refId){
                         _room.url = el.url;
                         _room.status = el.status;
                         _room.semester = el.semester;
-                        Room.getRoom(_room, null, function(err, room){
+                        Room.getRoom(_room, {}, function(err, room){
                             if (err) {
                                 logger.warn("db error when trying to update users access: " + err);
                                 return;
@@ -63,7 +65,7 @@ UserWorker.prototype.fetchRooms = function(refId){
                                         logger.warn("Error on room creation: " + e);
                                         return;
                                     }
-                                        if (!room) {
+                                    if (!room) {
                                         logger.warn("Emtpy room object on creation.");
                                         self.wsControl.build(self.ws, new Error("Emtpy room object on creation.", null, refId));
                                     } else {
@@ -73,7 +75,8 @@ UserWorker.prototype.fetchRooms = function(refId){
                                 });
                             }
                                 //attach room to User.
-                                Room.addRoomsToUser(self.user._id, arr, function(err, user){
+				//console.log(self.user);
+                                Room.addRoomsToUser(self.user._id, [_room], function(err, user){
                                 if(err) {
                                     logger.warn("error when trying to update users access: " + err);
                                     return;
