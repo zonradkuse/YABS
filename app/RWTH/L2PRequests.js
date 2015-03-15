@@ -11,9 +11,13 @@ function getAllCourses(token, next) {
         }
     };
     var req = https.request(options, function(res) {
+        var response = '';
         res.setEncoding('utf8');
         res.on('data', function(chunk) {
-            next(chunk);
+            response += chunk;
+        });
+        res.on('end',function(){
+            next(response);
         });
     });
     req.end();
