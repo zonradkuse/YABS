@@ -2,8 +2,9 @@
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
+var findOrCreate = require('mongoose-findorcreate');
 var ObjectId = mongoose.Schema.ObjectId;
-var User = require('../models/User.js').User;
+var User = require('../models/User.js');
 
 var RoomSchema = mongoose.Schema({
 	l2pID: { type: String, unique: true },
@@ -98,46 +99,53 @@ RoomSchema.methods.indexOfQuestion = function(qid){
 }*/
 
 RoomSchema.plugin(deepPopulate);
+RoomSchema.plugin(findOrCreate);
 var Room = mongoose.model('Room',RoomSchema);
 module.exports.Room = Room;
 module.exports.RoomSchema = RoomSchema;
 
-module.exports.getRoom = function(roomID, options, callback){
+module.exports.getRoomByID = function(roomID, options, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");
-	Room.findById(roomID).deepPopulate(options.population).exec(function(eRoom,room){
-		return callback(eRoom,room);
+	Room.findById(roomID).deepPopulate(options.population).exec(function(err,room){
+		return callback(err,room);
+	});
+}
+
+module.exports.getRoomByL2PID = function(l2pID, options, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	Room.findOne({'l2pID':l2pID}).deepPopulate(options.population).exec(function(err,room){
+		return callback(err,room);
 	});
 }
 
 module.exports.getRooms = function(options, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");
-	Room.find({}).deepPopulate(options.population).exec(function(eRooms,rooms){
-		return callback(eRooms,rooms);
-	});
-}
-
-module.exports.getRoomsFromUser = function(userID, options, callback){
-	if(callback === undefined)
-		throw new Error("callback not defined");
-	User.findById(userID).deepPopulate('access access.'+options.population).exec(function(eUser, user){
-		return callback(eRooms,user.access);
-	});
-}
-
-module.exports.addRoomsToUser = function(userID, roomIDs, callback){
-	if(callback === undefined)
-		throw new Error("callback not defined");
-	User.findByIdAndUpdate(userID,{$pushAll:{'access': roomIDs}},function(eUser, user){
-		return callback(eUser, user);
+	Room.find({}).deepPopulate(options.population).exec(function(err,rooms){
+		return callback(err,rooms);
 	});
 }
 
 module.exports.createRoom = function(room, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");
-	room.save(function(eRoom, room){
-		return callback(eRoom, room);
+	room.save(function(err, room){
+		return callback(err, room);
+	});
+}
+
+module.exports.addRoomToUser = function(userID, room, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	Room.findOrCreate({'l2pID':room.l2pID}, room.toObject(), function(err, room, created){
+		if(err)
+			throw new Error("room not found or cannot created");
+		User.addRoomAccess(userID, [room._id], function(err, user){
+			if(err)
+				throw new Error("cannot update users room access");
+			return callback(err, user);
+		});
 	});
 }

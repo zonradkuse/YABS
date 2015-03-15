@@ -76,3 +76,19 @@ module.exports.getUser = function(userID, callback){
     return callback(eUser, user);
   });
 }
+
+module.exports.addRoomAccess = function(userID, roomIDs, callback){
+  if(callback === undefined)
+    throw new Error("callback not defined");
+  User.findByIdAndUpdate(userID,{$pushAll:{'access': roomIDs}},function(eUser, user){
+    return callback(eUser, user);
+  });
+}
+
+module.exports.getRoomAccess = function(userID, options, callback){
+  if(callback === undefined)
+    throw new Error("callback not defined");
+  User.findById(userID).deepPopulate('access access.'+options.population).exec(function(eUser, user){
+    return callback(eUser, user.access);
+  });
+}

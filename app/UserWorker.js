@@ -53,7 +53,24 @@ UserWorker.prototype.fetchRooms = function(refId){
                         _room.url = el.url;
                         _room.status = el.status;
                         _room.semester = el.semester;
-                        Room.getRoom(_room, {}, function(err, room){
+
+                        Room.addRoomToUser(self.user._id, _room, function(err, user){
+                            if(err){
+                                logger.warn("error: "+err)
+                                return;
+                            }
+                            if(user) {
+                                self.user = user;
+                                self.wsControl.build(self.ws, null, {
+                                    message: "You got access to a new room.",
+                                    room: _room
+                                }, refId);
+                            } else {
+                                logger.warn("user not set when trying to update users access.");
+                            }
+                        });
+
+                        /*Room.getRoom(_room, {}, function(err, room){
                             if (err) {
                                 logger.warn("db error when trying to update users access: " + err);
                                 return;
@@ -91,7 +108,7 @@ UserWorker.prototype.fetchRooms = function(refId){
                                     logger.warn("user not set when trying to update users access.");
                                 }
                             });
-                        });
+                        });*/
                     }
                 }
             });
