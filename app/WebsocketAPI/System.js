@@ -135,6 +135,13 @@ module.exports = function(wsControl){
             }
         });
     });
+    wsControl.on("system:whoami", function(wss, ws, session, params, interfaceEntry, refId, sId){
+        if(!session || !session.user || !session.user._id){
+            wsControl.build(ws, null, "You are not logged in." , refId);
+        } else {
+            wsControl.build(ws, null, session.user._id, refId);
+        }
+    });
 };
 
 // @function

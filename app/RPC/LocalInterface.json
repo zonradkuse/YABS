@@ -7,5 +7,9 @@
         "uri": "system:login",
         "parameters": {},
         "func": ""
+    },{
+        "uri": "system:whoami",
+        "parameters": {},
+        "func": ""
     }]
 }
