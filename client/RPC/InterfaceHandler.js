@@ -58,11 +58,11 @@ var fromRemoteRPC = {};
     };
     
     /**
-     * Calls the functions attached to the invoke uri with the params object. params is json formatted!
+     * Calls the functions attached to the invoke uri with the params object.
      * callback is also passed to this function for your own handling. if an error occurs, the first parameter will be set.
      **/
     
-    fromRemoteRPC.call = function(invoke, params, refId) {
+    fromRemoteRPC.call = function(invoke, params) {
         if (Interface.data === undefined || Interface.data === null) {
             callback(new Error('Interface Data unset or undefined.'));
         } else {
@@ -73,7 +73,7 @@ var fromRemoteRPC = {};
                         if (data[i].uri === invoke) {
                             //run the assoc function with params and provided callback
                             if (params !== undefined && params !== null)
-                                data[i].func(params, refId);
+                                data[i].func(params);
                             return;
                         }
                     }

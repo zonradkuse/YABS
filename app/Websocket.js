@@ -121,14 +121,21 @@ var WebsocketHandler = function() {
         });
     };
     // build the response object as string
-    this.build = function(ws, err, data, refId, wasRequest){
+    this.build = function(ws, err, data, refId){
         if(!ws || !ws.send) throw new Error("Websocket not set.");
-        var json = {
-            "error": (err ? err.message : null),
-            "data": data,
-            "refId": refId,
-            "wasReq": wasRequest
-        };
+        var json = {};
+        if (refId) { // response
+            json = {
+                "error": (err ? err.message : null),
+                "data": data,
+                "refId": refId
+            };
+        } else { // broadcast
+            json = {
+                "uri": "",
+                "parameters": "",
+            };
+        }
         ws.send(JSON.stringify(json));
     };
 };
