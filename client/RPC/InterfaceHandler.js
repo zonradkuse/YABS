@@ -21,13 +21,11 @@ var fromRemoteRPC = {};
      *                  refId: reference that comes from the server.
      **/
     
-    fromRemoteRPC.attachFunction = function(uri, funct, callback) {
+    fromRemoteRPC.attachFunction = function(uri, funct) {
         if (typeof funct != 'function') {
             throw new Error('function is not a function');
         }
-        if (typeof callback != 'function') {
-            throw new Error('callback is not a function.');
-        } else if (Interface.data === undefined || Interface.data === null) {
+        if (Interface.data === undefined || Interface.data === null) {
             callback(new Error('Interface Data unset or undefined.'));
         } else {
             var data = Interface.data;
@@ -64,22 +62,27 @@ var fromRemoteRPC = {};
      * callback is also passed to this function for your own handling. if an error occurs, the first parameter will be set.
      **/
     
-    fromRemoteRPC.call = function(invoke, params, callback, refId) {
-        if (typeof callback !== 'function') {
-            throw new Error('callback is not a function');
-        }else if (Interface.data === undefined || Interface.data === null) {
+    fromRemoteRPC.call = function(invoke, params, refId) {
+        if (Interface.data === undefined || Interface.data === null) {
             callback(new Error('Interface Data unset or undefined.'));
         } else {
             var data = Interface.data;
-            for (var i = data.length - 1; i >= 0; i--) {
-                if (data[i].uri === invoke) {
-                    //run the assoc function with params and provided callback
-                    if (params !== undefined && params !== null)
-                        data[i].func(params, callback, refId);
-                    return;
+            fromRemoteRPC.checkParameters(invoke, params, function(err, res){
+                if (res) {
+                    for (var i = data.length - 1; i >= 0; i--) {
+                        if (data[i].uri === invoke) {
+                            //run the assoc function with params and provided callback
+                            if (params !== undefined && params !== null)
+                                data[i].func(params, refId);
+                            return;
+                        }
+                    }
+                    callback(new Error('URI not found'));
+                } else {
+                    throw err;
                 }
-            }
-            callback(new Error('URI not found'));
+            });
+            
         }
     };
     
@@ -99,20 +102,28 @@ var fromRemoteRPC = {};
             }
             callback(new Error('URI not found'));
         }
-    fromRemoteRPC.checkParameters = function(uri, params){
+        
+    /**
+     * checks parameter keys.
+     * next gets (err, boolean)
+     **/
+    fromRemoteRPC.checkParameters = function(uri, params, next){
         fromRemoteRPC.ParamsOfURI(uri, function(err, _params){
             if(err) {
-                throw err;
+                next(err, false);
+                return;
             }
             if(_params){
                 var c = 0;
                 for (var key in _params) {
                     if(key !== Object.getOwnPropertyNames(params)[c]) {
-                        throw new Error("parameter objects not matching (tested");
+                        next(new Error("parameter objects not matching (tested key names)"), false);
+                        return;
                     }
                     c += 1;
                 }
             }
+            next(null, true);
         });
     };
 };

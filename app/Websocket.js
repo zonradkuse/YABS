@@ -121,12 +121,13 @@ var WebsocketHandler = function() {
         });
     };
     // build the response object as string
-    this.build = function(ws, err, data, refId){
+    this.build = function(ws, err, data, refId, wasRequest){
         if(!ws || !ws.send) throw new Error("Websocket not set.");
         var json = {
             "error": (err ? err.message : null),
             "data": data,
-            "refId": refId
+            "refId": refId,
+            "wasReq": wasRequest
         };
         ws.send(JSON.stringify(json));
     };
