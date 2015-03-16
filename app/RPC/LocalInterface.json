@@ -11,5 +11,9 @@
         "uri": "system:whoami",
         "parameters": {},
         "func": ""
+    },{
+        "uri": "user:fetchRooms",
+        "parameters": {},
+        "func": ""
     }]
 }

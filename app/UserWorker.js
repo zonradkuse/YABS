@@ -57,11 +57,14 @@ UserWorker.prototype.fetchRooms = function(refId){
                             }
                             if(user) {
                                 self.user = user;
-                                self.wsControl.build(self.ws, null, {
-                                    uri: "room:new",
-                                    message: "You got access to a new room.",
-                                    room: _room
-                                }, refId);
+                                if (refId) {
+                                    self.wsControl.build(self.ws, null, {
+                                        message: "You got a new room.",
+                                        room: _room
+                                    }, refId);
+                                } else {
+                                    self.wsControl.build(self.ws, null, null, null, "room:add", { room: _room });
+                                }
                             } else {
                                 logger.warn("user not set when trying to update users access.");
                             }
