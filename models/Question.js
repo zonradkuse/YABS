@@ -21,115 +21,117 @@ var QuestionSchema = mongoose.Schema({
     visible: { type: Boolean, default: true }
 });
 
-/*QuestionSchema.methods.addAnswer = function(answer){
-	this.answers.push(answer._id);
-	this.updateTime = Date.now();
-}
-
-QuestionSchema.methods.getAnswer = function(aid){
-	for(var i = 0; i < this.answers.length; i++)
-		if(this.answers[i]._id == aid)
-			return this.answers[i];
-	return null;
-}
-
-QuestionSchema.methods.deleteAnswer = function(aid){
-	var index = this.indexOfAnswer(aid);
-	if(index != -1){
-		delete this.answers.splice(index,1);
-		updateTime = Date.now();
-	}
-	return index != -1;
-}
-
-QuestionSchema.methods.indexOfAnswer = function(aid){
-	for(var i = 0; i < this.answers.length; i++)
-		if(this.answers[i]._id == aid) return i;
-	return -1;
-}
-
-QuestionSchema.methods.vote = function(uid){
-	if(this.votes.indexOf(uid) != -1){
-		this.votes.push(uid);
-		updateTime = Date.now();
-		return true;
-	}
-	return false;
-}*/
-
 QuestionSchema.plugin(deepPopulate);
 var Question = mongoose.model('Question',QuestionSchema);
 module.exports.Question = Question;
 module.exports.QuestionSchema = QuestionSchema;
 
-module.exports.addQuestion = function(roomID, question, callback){
+/*
+* @param question the target question object
+* @param content the new content of the question
+* @param callback params: error, question object
+*/
+module.exports.setContent = function(question, content, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");
-	question.save(function(eQuestion){
-		if(eQuestion) 
-			return callback(eQuestion);
-		Room.findByIdAndUpdate(roomID,{$push:{'questions': question._id}},function(eRoom){
-			return callback(eRoom, question);
+	Question.findByIdAndUpdate(question._id,{ 'content': content, 'updateTime': Date.now() },function(err, question){
+		return callback(err,question);
+	});
+}
+
+/*
+* @param question the target question object
+* @param visible set true for visible, false otherwise
+* @param callback params: error, question object
+*/
+module.exports.setVisibility = function(question, visible, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	Question.findByIdAndUpdate(question._id,{ 'visible': visible, 'updateTime': Date.now() },function(err, question){
+		return callback(err,question);
+	});
+}
+
+/*
+* @param question the question object which should be removed
+* @param callback params: error
+*/
+module.exports.remove = function(question, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	Room.update({'questions': question._id},{$pull:{'questions': question._id}},function(err){
+		if(err) 
+			return callback(err);
+		Question.findByIdAndRemove(question._id,function(err){
+			return callback(err);
 		});
 	});
 }
 
-module.exports.setQuestionContent = function(questionID, content, callback){
+/*
+* @param questionID the ID of the target question object
+* @param options used for deepPopulation
+* @param callback params: error, question object 
+*/
+module.exports.get = function(questionID, options, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");
-	Question.findByIdAndUpdate(questionID,{ 'content': content, 'updateTime': Date.now() },function(eQuestion){
-		return callback(eQuestion);
+	Question.findById(questionID).deepPopulate(options.population).exec(function(err,question){
+		return callback(err,question);
 	});
 }
 
-module.exports.setQuestionVisibility = function(questionID, visible, callback){
+/*
+* @param question the target question object
+* @param user the user object, which voted
+* @param callback params: error, question object
+*/
+module.exports.vote = function(question, user, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");
-	Question.findByIdAndUpdate(questionID,{ 'visible': visible, 'updateTime': Date.now() },function(eQuestion){
-		return callback(eQuestion);
+	Question.findByIdAndUpdate(question._id,{$push:{'votes': user._id}},function(err,question){
+		return callback(err,question);
 	});
 }
 
-module.exports.removeQuestion = function(questionID, callback){
+/*
+* @param question the target question object
+* @param options used for deepPopulation
+* @param callback params: error, array of user objects which voted
+*/
+module.exports.getVotes = function(question, options, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");
-	Room.update({'questions': questionID},{$pull:{'questions': questionID}},function(eRoom){
-		if(eRoom) 
-			return callback(eRoom);
-		Question.findByIdAndRemove(questionID,function(eQuestion){
-			return callback(eQuestion);
-		});
+	Question.findById(question._id,'votes').deepPopulate(options.population).exec(function(err,question){
+		return callback(err,question.votes);
 	});
 }
 
-module.exports.getQuestion = function(questionID, options, callback){
+/*
+* @param question the target question object
+* @param callback params: error, number of votes
+*/
+module.exports.getVotesCount = function(question, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");
-	Question.findById(questionID).deepPopulate(options.population).exec(function(eQuestion,question){
-		return callback(eQuestion,question);
+	Question.aggregate([{$match:{'_id':question._id}},{$project:{count:{$size:'$votes'}}}],function(err,questions){
+		return callback(err,questions[0].count);
 	});
 }
 
-module.exports.vote = function(questionID, userID, callback){
-	if(callback === undefined)
-		throw new Error("callback not defined");
-	Question.findByIdAndUpdate(questionID,{$push:{'votes': userID}},function(eQuestion){
-		return callback(eQuestion);
-	});
-}
-
-module.exports.getVotes = function(questionID, options, callback){
-	if(callback === undefined)
-		throw new Error("callback not defined");
-	Question.findById(questionID,'votes').deepPopulate(options.population).exec(function(eQuestion,question){
-		return callback(eQuestion,question.votes);
-	});
-}
-
-module.exports.getVotesCount = function(questionID, callback){
-	if(callback === undefined)
-		throw new Error("callback not defined");
-	Question.aggregate([{$match:{'_id':questionID}},{$project:{count:{$size:'$votes'}}}],function(eQuestion,questions){
-		return callback(eQuestion,questions[0].count);
-	});
+/*
+* @param question the target question object
+* @param answer the answer object which should be added
+* @param callback params: error, question object, answer object
+*/
+module.exports.addAnswer = function(question, answer, callback){
+    if(callback === undefined)
+        throw new Error("callback not defined");
+    answer.save(function(err){
+        if(eAnswer) 
+            return callback(err);
+        Question.findByIdAndUpdate(question._id,{$push:{'answers': answer._id}},function(err, question){
+            return callback(err, question, answer);
+        });
+    });
 }

@@ -35,50 +35,57 @@ var Answer = mongoose.model('Answer', AnswerSchema);
 module.exports.Answer = Answer
 module.exports.AnswerSchema = AnswerSchema;
 
-module.exports.addAnswer = function(questionID, answer, callback){
+/*
+* @param answer the target answer object
+* @param content the new content of the answer
+* @param callback params: error, answer object
+*/
+module.exports.setContent = function(answer, content, callback){
     if(callback === undefined)
         throw new Error("callback not defined");
-    answer.save(function(eAnswer){
-        if(eAnswer) 
-            return callback(eAnswer);
-        Question.findByIdAndUpdate(questionID,{$push:{'answers': answer._id}},function(eQuestion){
-            return callback(eQuestion, answer);
+    Answer.findByIdAndUpdate(answer._id,{ 'content': content, 'updateTime': Date.now() },function(err, answer){
+        return callback(err, answer);
+    });
+}
+
+/*
+* @param answer the target answer object
+* @param visible set true for visible, false otherwise
+* @param callback params: error, answer object
+*/
+module.exports.setVisibility = function(answer, visible, callback){
+    if(callback === undefined)
+        throw new Error("callback not defined");
+    Answer.findByIdAndUpdate(answer._id,{ 'visible': visible, 'updateTime': Date.now() },function(err, answer){
+        return callback(err, answer);
+    });
+}
+
+/*
+* @param answer the target answer object which should be removed
+* @param callback params: error
+*/
+module.exports.remove = function(answer, callback){
+    if(callback === undefined)
+        throw new Error("callback not defined");
+    Question.update({'answers': answer._id},{$pull:{'answers': answer._id}},function(err){
+        if(err) 
+            return callback(err);
+        Answer.findByIdAndRemove(answer._id,function(err){
+            return callback(err);
         });
     });
 }
 
-module.exports.setAnswerContent = function(answerID, content, callback){
+/*
+* @param answerID the ID of the target answer object
+* @param options used for deepPopulation
+* @param callback params: error, answer object
+*/
+module.exports.get = function(answerID, options, callback){
     if(callback === undefined)
         throw new Error("callback not defined");
-    Answer.findByIdAndUpdate(answerID,{ 'content': content, 'updateTime': Date.now() },function(eAnswer){
-        return callback(eAnswer);
-    });
-}
-
-module.exports.setAnswerVisibility = function(answerID, visible, callback){
-    if(callback === undefined)
-        throw new Error("callback not defined");
-    Answer.findByIdAndUpdate(answerID,{ 'visible': visible, 'updateTime': Date.now() },function(eAnswer){
-        return callback(eAnswer);
-    });
-}
-
-module.exports.removeAnswer = function(answerID, callback){
-    if(callback === undefined)
-        throw new Error("callback not defined");
-    Question.update({'answers': answerID},{$pull:{'answers': answerID}},function(eQuestion){
-        if(eQuestion) 
-            return callback(eQuestion);
-        Answer.findByIdAndRemove(answerID,function(eAnswer){
-            return callback(eAnswer);
-        });
-    });
-}
-
-module.exports.getAnswer = function(answerID, options, callback){
-    if(callback === undefined)
-        throw new Error("callback not defined");
-    Answer.findById(answerID).deepPopulate(options.population).exec(function(eAnswer,answer){
-        return callback(eAnswer,answer);
+    Answer.findById(answerID).deepPopulate(options.population).exec(function(err,answer){
+        return callback(err,answer);
     });
 }

@@ -5,6 +5,7 @@ var logger = require('./Logger.js');
 sessionStore = new sessionStore();
 var l2p = require('./RWTH/L2PRequests.js');
 var Room = require('../models/Room.js');
+var User = require('../models/User.js');
 /**
  * sets needed object attributes.
  *
@@ -50,7 +51,7 @@ UserWorker.prototype.fetchRooms = function(refId){
                         _room.status = courses.dataSet[el].status;
                         _room.semester = courses.dataSet[el].semester;
 
-                        Room.addRoomToUser(self.user._id, _room, function(err, user){
+                        User.addRoomToUser(self.user, _room, function(err, user){
                             if(err){
                                 logger.warn("error on adding room to user: " + err);
                                 return;
