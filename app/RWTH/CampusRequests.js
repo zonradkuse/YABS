@@ -19,7 +19,7 @@ function postReqCampus(query, data, next) {
             response += chunk;
         });
         res.on('end',function(){
-            next(response);
+            next(null, response);
         });
     });
     
