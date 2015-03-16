@@ -19,10 +19,10 @@ module.exports = function(wsControl){
     });
     wsControl.on('system:open', function(ws, session){
         logger.info("new client arrived.");
-        wsControl.build(ws, null, {message: 'welcome'}, null);
+        wsControl.build(ws, null, { message: 'welcome' }, null);
     });
     wsControl.on('system:ping', function(wss, ws, session, params, interfaceEntry, refId){
-        wsControl.build(ws, null, "pong", refId);
+        wsControl.build(ws, null, { message: "pong" }, refId);
     });
     
     //Campus Device OAuth. Webapplication OAuth is not accessible. //TODO: Therefor a solution for multi-sessions is needed!
@@ -94,7 +94,7 @@ module.exports = function(wsControl){
                                                     wsControl.build(ws, err);
                                                     return;
                                                 }
-                                                wsControl.build(ws, null, { "status": "succes" }, refId);
+                                                wsControl.build(ws, null, { status: "succes" }, refId);
                                                 // start a worker that fetches rooms.
                                                 var worker = new userWorker(sId, ws, _user, wsControl);
                                                 if(!workerMap[sId]){
@@ -113,7 +113,7 @@ module.exports = function(wsControl){
                                         });
                                         
                                     } else if(response.status === "error: authorization pending."){
-                                        wsControl.build(ws, new Error("still waiting"), null, refId);
+                                        wsControl.build(ws, null, { status : "waiting" }, refId);
                                     }
 
                                 } else {
@@ -137,12 +137,18 @@ module.exports = function(wsControl){
     });
     wsControl.on("system:whoami", function(wss, ws, session, params, interfaceEntry, refId, sId){
         if(!session || !session.user || !session.user._id){
-            wsControl.build(ws, null, "You are not logged in." , refId);
+            wsControl.build(ws, null, {
+                status: false,
+                message: "You are currently not logged in."
+            } , refId);
         } else {
-            wsControl.build(ws, null, session.user._id, refId);
+            wsControl.build(ws, null, {
+                status: true,
+                message: session.user._id
+            }, refId);
         }
     });
-};
+}
 
 // @function
 var postReqCampus = campus.postReqCampus;
