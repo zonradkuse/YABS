@@ -7,7 +7,7 @@ var sessionStore = require('connect-redis')(session);
 sessionStore = new sessionStore();
 var userWorker = require('../UserWorker.js');
 var campus = require('../RWTH/CampusRequests.js');
-workerMap = {};
+var workerMap = {};
 
 module.exports = function(wsControl){
     wsControl.on('system:close', function(ws, sId){
@@ -136,19 +136,21 @@ module.exports = function(wsControl){
         });
     });
     wsControl.on("system:whoami", function(wss, ws, session, params, interfaceEntry, refId, sId){
-        if(!session || !session.user || !session.user._id){
-            wsControl.build(ws, null, {
-                status: false,
-                message: "You are currently not logged in."
-            } , refId);
-        } else {
-            wsControl.build(ws, null, {
-                status: true,
-                message: session.user._id
-            }, refId);
+        if(refId){
+            if(!session || !session.user || !session.user._id){
+                wsControl.build(ws, null, {
+                    status: false,
+                    message: "You are currently not logged in."
+                } , refId);
+            } else {
+                wsControl.build(ws, null, {
+                    status: true,
+                    message: session.user._id
+                }, refId);
+            }
         }
     });
-}
+};
 
 // @function
 var postReqCampus = campus.postReqCampus;

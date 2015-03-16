@@ -2,12 +2,10 @@ var fromRemoteRPC = {};
 
     fromRemoteRPC.Interface = {
         "data": [{
-            "uri": "system:ping",
-            "parameters": {},
-            "func": ""
-        },{
-            "uri": "system:login",
-            "parameters": {},
+            "uri": "room:add",
+            "parameters": {
+                room: ""
+            },
             "func": ""
         }]
     }; //will be extended.

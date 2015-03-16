@@ -15,5 +15,9 @@
         "uri": "user:fetchRooms",
         "parameters": {},
         "func": ""
+    },{
+        "uri": "user:getRooms",
+        "parameters": {},
+        "func": ""
     }]
 }

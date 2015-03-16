@@ -132,6 +132,7 @@ var WebsocketHandler = function() {
             };
         } else { // broadcast TODO
             json = {
+                "error": "",
                 "uri": uri,
                 "parameters": data.data,
             };
