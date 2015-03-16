@@ -40,10 +40,10 @@ db.once('open',function(callback){
 				User.createUser(u, function(err){callback(err, u._id);});
 			},
 			function(userID, callback){
-				User.getUser(userID, function(err, u){callback(err, u._id);});
+				User.getUser(userID, function(err, u){callback(err, u);});
 			},
-			function(userID, callback){
-				Room.addRoomToUser(userID, r, function(err, user){callback(err,user)});
+			function(user, callback){
+				User.addRoomToUser(user, r, function(err, user){callback(err,user)});
 			}
 		], function(err, res){
 			if(err)
