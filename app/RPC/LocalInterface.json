@@ -1,39 +1,5 @@
 {
     "data": [{
-        "uri": "getQuestions",
-        "parameters": {
-            "threadId": ""
-        },
-        "func": "",
-        "auth": true
-    }, {
-        "uri": "getAnswers",
-        "parameters": {
-            "questionId": ""
-        },
-        "func": ""
-    }, {
-        "uri": "getLogs",
-        "parameters": {
-            "category": ""
-        },
-        "func": ""
-    }, {
-        "uri": "vote",
-        "parameters": {
-            "question": "true",
-            "Id": ""
-        },
-        "func": "",
-        "broadcast": true
-    }, {
-        "uri": "getRooms",
-        "parameters": {
-            "userId": "",
-            "sessionCookie": ""
-        },
-        "func": ""
-    }, {
         "uri": "system:ping",
         "parameters": {},
         "func": ""

@@ -1,4 +1,5 @@
 var https = require('https');
+var logger = require('../Logger.js');
 
 function getAllCourses(token, next) {
     var options = {

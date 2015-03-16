@@ -14,8 +14,12 @@ function postReqCampus(query, data, next) {
     };
     var postRequest = https.request(post, function(res) {
         res.setEncoding('utf8');
+        var response = '';
         res.on('data', function(chunk) {
-            next(null, chunk);
+            response += chunk;
+        });
+        res.on('end',function(){
+            next(response);
         });
     });
     

@@ -32,9 +32,7 @@ UserWorker.prototype.fetchRooms = function(refId){
         } else if(value) {
             // valid session existing
             l2p.getAllCourses(self.user.rwth.token, function(courses){
-                //console.log(courses);
-		//logger.debug(courses);
-		try{
+		        try{
                     courses = JSON.parse(courses);
                     logger.debug(courses);
                 } catch (e) {
@@ -44,9 +42,6 @@ UserWorker.prototype.fetchRooms = function(refId){
                 }
                 if(courses.Status) {
                     for(var el in courses.dataSet) {
-                        // TODO create the room
-			console.log(courses.dataSet[el]);
-                        //var arr = [el.uniqueid];
                         var _room = new Room.Room();
                         _room.l2pID = courses.dataSet[el].uniqueid;
                         _room.name = courses.dataSet[el].courseTitle;
@@ -57,12 +52,13 @@ UserWorker.prototype.fetchRooms = function(refId){
 
                         Room.addRoomToUser(self.user._id, _room, function(err, user){
                             if(err){
-                                logger.warn("error: "+err)
+                                logger.warn("error on adding room to user: " + err);
                                 return;
                             }
                             if(user) {
                                 self.user = user;
                                 self.wsControl.build(self.ws, null, {
+                                    uri: "room:new",
                                     message: "You got access to a new room.",
                                     room: _room
                                 }, refId);
@@ -70,46 +66,6 @@ UserWorker.prototype.fetchRooms = function(refId){
                                 logger.warn("user not set when trying to update users access.");
                             }
                         });
-
-                        /*Room.getRoom(_room, {}, function(err, room){
-                            if (err) {
-                                logger.warn("db error when trying to update users access: " + err);
-                                return;
-                            }
-                            if (!room){
-                                // create the room
-                                Room.createRoom(_room, function(e, room){
-                                    if (e) {
-                                        logger.warn("Error on room creation: " + e);
-                                        return;
-                                    }
-                                    if (!room) {
-                                        logger.warn("Emtpy room object on creation.");
-                                        self.wsControl.build(self.ws, new Error("Emtpy room object on creation.", null, refId));
-                                    } else {
-                                        logger.info("created a new room.");
-                                        _room = room;
-                                    }
-                                });
-                            }
-                                //attach room to User.
-				//console.log(self.user);
-                                Room.addRoomsToUser(self.user._id, [_room], function(err, user){
-                                if(err) {
-                                    logger.warn("error when trying to update users access: " + err);
-                                    return;
-                                }
-                                if(user) {
-                                    self.user = user;
-                                    self.wsControl.build(self.ws, null, {
-                                        message: "You got access to a new room.",
-                                        room: _room
-                                    }, refId);
-                                } else {
-                                    logger.warn("user not set when trying to update users access.");
-                                }
-                            });
-                        });*/
                     }
                 }
             });
@@ -141,6 +97,13 @@ UserWorker.prototype.checkSession = function(next){
  * renews the Campus access_token if called and the user is still logged in/has a valid session.
  **/
 UserWorker.prototype.renewAccessToken = function(){
+    
+};
+
+/**
+ * merges this.user with the given userId and sets (err, mergedUser) as parameters in next.
+ **/
+UserWorker.prototype.mergeWithUser = function(userId, next){
     
 };
 

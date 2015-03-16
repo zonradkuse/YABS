@@ -115,7 +115,6 @@ var WebsocketHandler = function() {
                     logger.warn("An error occured on socket connection. " + err); // TODO What to handle here?
                 });
                 ws.on('open', function(){
-                    logger.info("New socket connection.");
                     self.emit('system:open', ws, session);
                 });
             });
