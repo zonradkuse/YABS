@@ -4,14 +4,11 @@
             'clientControllers'
         ]);
     window.client = client;
+    window.appUrl = window.location.host;
 
     client.config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
         $locationProvider.html5Mode(true);
         $routeProvider.
-            when('/courseadmin/:courseid', { // Only for demo, will be integrated into course later
-                templateUrl: 'courseadmin.html',
-                controller: 'courseController'
-            }).
             when('/course/:courseid', {
                 templateUrl: 'course.html',
                 controller: 'courseController'
