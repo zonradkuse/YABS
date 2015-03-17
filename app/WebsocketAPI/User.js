@@ -5,6 +5,7 @@ module.exports = function(wsControl){
     wsControl.on('user:fetchRooms', function(wss, ws, session, params, interfaceEntry, refId, sId){
             if(session.user && session.user._id){
                 var worker = system.getWorkerMap()[sId];
+                console.log(system.getWorkerMap()[sId]);
                 if(worker){
                     worker.fetchRooms(refId);
                 } else {
