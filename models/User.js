@@ -67,7 +67,7 @@ module.exports.UserSchema = UserSchema;
 * @param user the user object which should be created
 * @param callback params: error, user object
 */
-module.exports.createUser = function(user, callback){
+module.exports.create = function(user, callback){
   if(callback === undefined)
     throw new Error("callback not defined");
   user.save(function(err, user){
@@ -79,11 +79,22 @@ module.exports.createUser = function(user, callback){
 * @param userID ID of the target user object
 * @param callback params: error, user object
 */
-module.exports.getUser = function(userID, callback){
+module.exports.get = function(userID, callback){
   if(callback === undefined)
     throw new Error("callback not defined");
   User.findById(userID,function(err, user){
     return callback(err, user);
+  });
+}
+
+/*
+* @param callback params: error, user object
+*/
+module.exports.getAll = function(callback){
+  if(callback === undefined)
+    throw new Error("callback not defined");
+  User.find({},function(err, users){
+    return callback(err, users);
   });
 }
 
@@ -95,9 +106,8 @@ module.exports.getUser = function(userID, callback){
 module.exports.addRoomAccess = function(user, roomID, callback){
   if(callback === undefined)
     throw new Error("callback not defined");
-  console.log(JSON.stringify(roomID,null,2));
   User.findOneAndUpdate({'_id':user._id,'access':{$nin:[roomID]}},{$pushAll:{'access':[roomID]}},function(err, user){
-      return callback(err, user, !user);
+      return callback(err, user);
   });
 }
 

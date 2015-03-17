@@ -37,7 +37,7 @@ db.once('open',function(callback){
 
 		async.waterfall([
 			function(callback){
-				User.createUser(u, function(err, user){callback(err, user);});
+				User.create(u, function(err, user){callback(err, user);});
 			},
 			function(user, callback){
 				User.addRoomToUser(user, r, function(err, user){callback(err,user)});
@@ -54,7 +54,7 @@ db.once('open',function(callback){
 			    });
 			},
 			function(callback){
-				User.getUser(u._id, function(err, user){callback(err, user);});
+				User.get(u._id, function(err, user){callback(err, user);});
 			}/*,
 			function(user, callback){
 			    Room.getAll({population: ''}, function(err, rooms){
