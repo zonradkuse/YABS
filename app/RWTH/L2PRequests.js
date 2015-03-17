@@ -24,7 +24,8 @@ function getAllCourses(token, next) {
     req.end();
     
     req.on('error', function(err){
-       logger.warn(err);
+        logger.warn(err);
+        next(err);
     });
 }
 
