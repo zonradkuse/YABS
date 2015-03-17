@@ -37,27 +37,30 @@ db.once('open',function(callback){
 
 		async.waterfall([
 			function(callback){
-				User.createUser(u, function(err){callback(err, u._id);});
-			},
-			function(userID, callback){
-				User.getUser(userID, function(err, u){callback(err, u);});
+				User.createUser(u, function(err, user){callback(err, user);});
 			},
 			function(user, callback){
 				User.addRoomToUser(user, r, function(err, user){callback(err,user)});
 			},
 			function(user, callback){
-			    Room.addQuestion(r, q, function(err, room, question){ callback(err, question)});
+				User.addRoomToUser(user, r, function(err, user){callback(err,user)});
+			},
+			function(user, callback){
+			    Room.addQuestion(r, q, function(err, room, question){callback(err, question)});
 			},
 			function(question, callback){
 			    Question.addAnswer(question, a, function(err, que, answer){
-			        callback(err, que, answer);
+			        callback(err);
 			    });
 			},
-			function(question, answer, callback){
-			    Room.getAll({population: 'questions.answers.author questions.author'}, function(err, rooms){
+			function(callback){
+				User.getUser(u._id, function(err, user){callback(err, user);});
+			}/*,
+			function(user, callback){
+			    Room.getAll({population: ''}, function(err, rooms){
 			        callback(err, rooms);
 			    });
-			}
+			}*/
 		], function(err, res){
 			if(err)
 				throw err;

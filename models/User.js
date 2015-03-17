@@ -89,14 +89,15 @@ module.exports.getUser = function(userID, callback){
 
 /*
 * @param user the target user object
-* @param roomIDs array of roomIDs which should add to the user
+* @param roomID the ID of room which should add to the user
 * @param callback params: error, user object
 */
-module.exports.addRoomAccess = function(user, roomIDs, callback){
+module.exports.addRoomAccess = function(user, roomID, callback){
   if(callback === undefined)
     throw new Error("callback not defined");
-  User.findByIdAndUpdate(user._id,{$pushAll:{'access': roomIDs}},function(err, user){
-    return callback(err, user);
+  console.log(JSON.stringify(roomID,null,2));
+  User.findOneAndUpdate({'_id':user._id,'access':{$nin:[roomID]}},{$pushAll:{'access':[roomID]}},function(err, user){
+      return callback(err, user, !user);
   });
 }
 
@@ -124,7 +125,7 @@ module.exports.addRoomToUser = function(user, room, callback){
   Room.findOrCreate({'l2pID':room.l2pID}, room.toObject(), function(err, room, created){
     if(err)
       throw new Error("room not found or cannot created");
-    module.exports.addRoomAccess(user, [room._id], function(err, user){
+    module.exports.addRoomAccess(user, room._id, function(err, user){
       if(err)
         throw new Error("cannot update users room access");
       return callback(err, user, room);
