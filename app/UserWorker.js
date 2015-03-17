@@ -51,23 +51,25 @@ UserWorker.prototype.fetchRooms = function(refId){
                         _room.status = courses.dataSet[el].status;
                         _room.semester = courses.dataSet[el].semester;
 
-                        User.addRoomToUser(self.user, _room, function(err, user){
+                        User.addRoomToUser(self.user, _room, function(err, user, added){
                             if(err){
                                 logger.warn("error on adding room to user: " + err);
                                 return;
                             }
-                            if(user) {
-                                self.user = user;
-                                if (refId) {
-                                    self.wsControl.build(self.ws, null, {
-                                        message: "You got a new room.",
-                                        room: _room
-                                    }, refId);
+                            if(added){
+                                if(user) {
+                                    self.user = user;
+                                    if (refId) {
+                                        self.wsControl.build(self.ws, null, {
+                                            message: "You got a new room.",
+                                            room: _room
+                                        }, refId);
+                                    } else {
+                                        self.wsControl.build(self.ws, null, null, null, "room:add", { room: _room });
+                                    }
                                 } else {
-                                    self.wsControl.build(self.ws, null, null, null, "room:add", { room: _room });
+                                    logger.warn("user not set when trying to update users access.");
                                 }
-                            } else {
-                                logger.warn("user not set when trying to update users access.");
                             }
                         });
                     }
