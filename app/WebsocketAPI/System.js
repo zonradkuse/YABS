@@ -22,11 +22,12 @@ module.exports = function(wsControl){
         logger.info("new client arrived.");
         wsControl.build(ws, null, { message: 'welcome' }, null);
         if(!workerMap[sId] && session && session.user && session.user._id){
-            UserModel.getUser(session.user._id, function(err, _user){
+            UserModel.get(session.user._id, function(err, _user){
                 var worker = new userWorker(sId, ws, _user, wsControl);
                 workerMap[sId] = worker;
                 worker.fetchRooms();
                 process.nextTick(function(){
+                    console.log("hi");
                     worker.getRooms();
                 });
             });
