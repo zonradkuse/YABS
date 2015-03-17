@@ -30,4 +30,17 @@ client.service('authentication', ['$window', '$q', 'rpc', function($window, $q, 
 			return deferred.promise;
 		});
 	};
+
+	this.getLoginUrl = function(onSuccess) {
+		var deferred = $q.defer();
+		rpc.call("system:login", {}, function(data) {
+			if ("url" in data) {
+				deferred.resolve(data.url);
+			}
+			else if ("status" in data && data.status) {
+				onSuccess();
+			}
+		});
+		return deferred.promise;
+	};
 }]);

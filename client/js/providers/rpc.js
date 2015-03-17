@@ -23,7 +23,7 @@ client.service('rpc', [function(){
 
     var send = function(data) {
         if (ws.readyState === 1) {
-            sendQueue();
+            sendOutQueue();
             ws.send(data);
         }
         else {
@@ -39,7 +39,7 @@ client.service('rpc', [function(){
 		var id = Math.floor(Math.random() * 10000000);
 		send(JSON.stringify({
 			uri : method,
-			params: params,
+			parameters: params,
 			refId: id
 		}));
 		callbackTable[id] = callback;
@@ -49,8 +49,7 @@ client.service('rpc', [function(){
 	ws.onmessage = function(event) {
 		var data = JSON.parse(event.data);
 		if ('error' in data && data.error !== null)
-			log("WS Error received: " + data.error);
-
+			console.log("WS Error received: " + data.error);
 		if ('data' in data) {
 			// Response
 			if (callbackTable[data.refId] !== undefined) {
