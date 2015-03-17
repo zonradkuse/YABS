@@ -20,8 +20,10 @@ module.exports = function(wsControl){
     });
     wsControl.on('system:open', function(wss, ws, session, sId){
         logger.info("new client arrived.");
+        console.log(session);
+        console.log(sId);
         wsControl.build(ws, null, { message: 'welcome' }, null);
-        if(!workerMap[sId] && session && session.user && sess.user._id){
+        if(!workerMap[sId] && session && session.user && session.user._id){
             UserModel.getUser(session.user._id, function(err, _user){
                 var worker = new userWorker(sId, ws, _user, wsControl);
                 workerMap[sId] = worker;
@@ -60,7 +62,7 @@ module.exports = function(wsControl){
                 var auth = false;
                 var reqTime = 0;
                 var timer = setInterval(function(){
-                    if(!auth && reqTime < answer.expires_in){
+                    if(!auth && reqTime < answer.expires_in && ws.readyState === 1){
                         // poll
                         postReqCampus('token', querystring.stringify({
                             "client_id": config.login.l2p.clientID,
@@ -132,7 +134,7 @@ module.exports = function(wsControl){
                     }else if(reqTime >= answer.expires_in){
                         wsControl.build(ws, new Error("Your authentication request failed. Please try again."), null, refId);
                         clearInterval(timer);
-                    }else{ // authenticated
+                    }else{ // authenticated or connection was dumped
                         clearInterval(timer);
                     }
                     reqTime += answer.interval;

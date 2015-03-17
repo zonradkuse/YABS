@@ -61,9 +61,8 @@ var WebsocketHandler = function() {
                 sessionStore.get(sessionID, function(err, sess) {
                     if (err) ws.send(err); // TODO HANDLE ERROR CORRECTLY
                     session = sess;
+                    self.emit('system:open', wss, ws, session, ws.upgradeReq.signedCookies["connect.sid"]);
                 });
-                
-                self.emit('system:open', wss, ws, session, ws.upgradeReq.signedCookies["connect.sid"]);
                 //check for binary data
                 //parse message string and call the attached functions in the interface
                 ws.on('message', function(message) {
