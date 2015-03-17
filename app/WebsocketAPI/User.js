@@ -27,4 +27,8 @@ module.exports = function(wsControl){
                 wsControl.build(ws, new Error("Your session is invalid."), null, refId);
             }
     });
+
+    wsControl.on('user:ask', function(wss, ws, session, params, interfaceEntry, refId, sId){
+        
+    });
 };

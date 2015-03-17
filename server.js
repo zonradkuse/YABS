@@ -55,7 +55,10 @@ var routes = require('./app/Routes.js');
 routes(app);
 routes.routes();
 logger.info('initialized routes!');
-
+app.use(function(req, res) {
+  // Use res.sendfile, as it streams instead of reading the file into memory.
+  res.sendFile(__dirname + '/public/index.html');
+});
 var auth = require('./app/Authentication.js')(passport);
 
 /*

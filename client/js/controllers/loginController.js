@@ -1,12 +1,13 @@
 (function() {
-    clientControllers.controller('loginController', ['$scope', '$routeParams', 'authentication', '$window', '$q',
-        function($scope, $routeParams, authentication, $window, $q) {
+    clientControllers.controller('loginController', ['$scope', '$routeParams', 'authentication', '$window', '$q', '$location',
+        function($scope, $routeParams, authentication, $window, $q, $location) {
         	authentication.isUserLoggedIn()
 				.then(function(result) {
 					var deferred = $q.defer();
 					if (!result) {
 						return authentication.getLoginUrl(function() {
-							$window.location = "/";
+							$location.path("/");
+							$scope.$apply();
 						});
 					}
 					else {
