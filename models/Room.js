@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
 var findOrCreate = require('mongoose-findorcreate');
 var ObjectId = mongoose.Schema.ObjectId;
-var Question = require('../models/Question.js').Question;
+//var Question = require('../models/Question.js');
 
 var RoomSchema = mongoose.Schema({
 	l2pID: { type: String, unique: true },
@@ -83,8 +83,8 @@ module.exports.create = function(room, callback){
 module.exports.addQuestion = function(room, question, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");
-	Question.save(function(err){
-		if(err) 
+	question.save(function(err){
+		if(err)
 			return callback(err);
 		Room.findByIdAndUpdate(room._id,{$push:{'questions': question._id}},function(err){
 			return callback(err, room, question);

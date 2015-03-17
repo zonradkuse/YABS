@@ -37,7 +37,7 @@ UserWorker.prototype.fetchRooms = function(refId){
                     courses = JSON.parse(courses);
                     logger.debug(courses);
                 } catch (e) {
-                    self.wsControl.build(self.ws, new Error("L2P answer was malformed."), null, refId);
+                    self.wsControl.build(self.ws, new Error("L2P answer was invalid."), null, refId);
                     logger.warn("L2P courselist was not valid json: " + courses);
                     return;
                 }

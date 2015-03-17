@@ -16,8 +16,12 @@ module.exports = function(wsControl){
     });
     
     wsControl.on('user:getRooms', function(wss, ws, session, params, interfaceEntry, refId, sId){
-            if(session.user && session.user._id){
-                //query for user rooms
+            if(session && session.user && session.user._id){
+                userDAO.getRoomAccess(session.user, {population: ''}, function(err, rooms){
+                    wsControl.build(ws, null, {
+                        'rooms': rooms,
+                    }, refId);
+                });
             } else {
                 wsControl.build(ws, new Error("Your session is invalid."), null, refId);
             }

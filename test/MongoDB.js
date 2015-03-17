@@ -44,6 +44,19 @@ db.once('open',function(callback){
 			},
 			function(user, callback){
 				User.addRoomToUser(user, r, function(err, user){callback(err,user)});
+			},
+			function(user, callback){
+			    Room.addQuestion(r, q, function(err, room, question){ callback(err, question)});
+			},
+			function(question, callback){
+			    Question.addAnswer(question, a, function(err, que, answer){
+			        callback(err, que, answer);
+			    });
+			},
+			function(question, answer, callback){
+			    Room.getAll({population: 'questions.answers.author questions.author'}, function(err, rooms){
+			        callback(err, rooms);
+			    });
 			}
 		], function(err, res){
 			if(err)

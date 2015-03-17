@@ -60,7 +60,7 @@ module.exports.remove = function(question, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");
 	Room.update({'questions': question._id},{$pull:{'questions': question._id}},function(err){
-		if(err) 
+		if(err)
 			return callback(err);
 		Question.findByIdAndRemove(question._id,function(err){
 			return callback(err);
@@ -71,7 +71,7 @@ module.exports.remove = function(question, callback){
 /*
 * @param questionID the ID of the target question object
 * @param options used for deepPopulation
-* @param callback params: error, question object 
+* @param callback params: error, question object
 */
 module.exports.get = function(questionID, options, callback){
 	if(callback === undefined)
@@ -128,7 +128,7 @@ module.exports.addAnswer = function(question, answer, callback){
     if(callback === undefined)
         throw new Error("callback not defined");
     answer.save(function(err){
-        if(eAnswer) 
+        if(err)
             return callback(err);
         Question.findByIdAndUpdate(question._id,{$push:{'answers': answer._id}},function(err, question){
             return callback(err, question, answer);
