@@ -1,6 +1,73 @@
-var fromRemoteRPC = {};
+client.service('rpc', [function(){
+    /*
+     * Code related to sending requests
+     */
 
-    fromRemoteRPC.Interface = {
+    var callbackTable = {};
+	var wsUrl = (window.location.protocol == 'http:' ? 'ws' : 'wss') + "://" + appUrl;
+	var ws = new WebSocket(wsUrl);
+    var sendQueue = [];
+    var queueTimer = false;
+
+    var sendOutQueue = function() {
+        queueTimer = false;
+        if (ws.readyState === 1) {
+            for (var i = 0; i < sendQueue.length; i++) {
+                ws.send(sendQueue[i]);
+            }
+        } else {
+            queueTimer = true;
+            setTimeout(sendOutQueue, 100);            
+        }
+    };
+
+    var send = function(data) {
+        if (ws.readyState === 1) {
+            sendQueue();
+            ws.send(data);
+        }
+        else {
+            sendQueue.push(data);
+            if (!queueTimer) {
+                queueTimer = true;
+                setTimeout(sendOutQueue, 100);
+            }    
+        }
+    };
+
+	this.call = function(method, params, callback) {
+		var id = Math.floor(Math.random() * 10000000);
+		send({
+			uri : method,
+			params: params,
+			refId: id
+		});
+		callbackTable[id] = callback;
+	};
+
+
+	ws.onmessage = function(event) {
+		var data = JSON.parse(event.data);
+		if ('error' in data && data.error !== null)
+			log("WS Error received: " + data.error);
+
+		if ('data' in data) {
+			// Response
+			if (callbackTable[data.refId] !== undefined) {
+				callbackTable[data.refId](data.data);
+			}
+		}
+		else {
+			// Broadcast
+			this.handleBroadcast(data.uri, data.parameters);
+		}
+	};
+
+	/*
+	 * Code related to handling incoming broadcasts
+	 */
+
+    this.Interface = {
         "data": [{
             "uri": "room:add",
             "parameters": {
@@ -8,8 +75,9 @@ var fromRemoteRPC = {};
             },
             "func": ""
         }]
-    }; //will be extended.
-    
+    };
+
+
     /**
      * attaches funct to uri function and calls callback with error if needed.
      *
@@ -18,8 +86,7 @@ var fromRemoteRPC = {};
      *                  callback: a callback you can handle - should be used for err.
      *                  refId: reference that comes from the server.
      **/
-    
-    fromRemoteRPC.attachFunction = function(uri, funct) {
+    this.attachFunction = function(uri, funct) {
         if (typeof funct != 'function') {
             throw new Error('function is not a function');
         }
@@ -37,35 +104,17 @@ var fromRemoteRPC = {};
             callback(new Error('URI not found'));
         }
     };
-    
-    fromRemoteRPC.getInterface = function(callback) {
-        (Interface !== undefined) ? callback(null, Interface): callback(new Error('Interface is undefined'));
-    };
-    
-    fromRemoteRPC.setInterface = function(json, callback) {
-        if (json !== null && json !== undefined) {
-            Interface = json;
-            if (typeof callback === 'function') {
-                callback(null);
-            }
-        } else {
-            if (typeof callback === 'function') {
-                callback(new Error('Passed Interface is null or undefined'));
-            }
-        }
-    };
-    
+
     /**
      * Calls the functions attached to the invoke uri with the params object.
      * callback is also passed to this function for your own handling. if an error occurs, the first parameter will be set.
      **/
-    
-    fromRemoteRPC.call = function(invoke, params) {
+    this.handleBroadcast = function(invoke, params) {
         if (Interface.data === undefined || Interface.data === null) {
             callback(new Error('Interface Data unset or undefined.'));
         } else {
             var data = Interface.data;
-            fromRemoteRPC.checkParameters(invoke, params, function(err, res){
+            this.checkParameters(invoke, params, function(err, res){
                 if (res) {
                     for (var i = data.length - 1; i >= 0; i--) {
                         if (data[i].uri === invoke) {
@@ -83,8 +132,8 @@ var fromRemoteRPC = {};
             
         }
     };
-    
-    fromRemoteRPC.ParamsOfURI = function(uri, callback) {
+
+    this.ParamsOfURI = function(uri, callback) {
         //get params for uri
         if (Interface.data === undefined || Interface.data === null) {
             callback(new Error('Interface data not set or undefined.'));
@@ -99,14 +148,15 @@ var fromRemoteRPC = {};
                 }
             }
             callback(new Error('URI not found'));
-        }
-        
+        }    
+    };
+
     /**
      * checks parameter keys.
      * next gets (err, boolean)
      **/
-    fromRemoteRPC.checkParameters = function(uri, params, next){
-        fromRemoteRPC.ParamsOfURI(uri, function(err, _params){
+    this.checkParameters = function(uri, params, next){
+        this.ParamsOfURI(uri, function(err, _params){
             if(err) {
                 next(err, false);
                 return;
@@ -124,4 +174,5 @@ var fromRemoteRPC = {};
             next(null, true);
         });
     };
-};
+
+}]);

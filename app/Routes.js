@@ -96,6 +96,16 @@
           });
       });
 
+      app.get('/login', function(req, res, next) {
+          var fs = require('fs');
+          var path = require('path');
+          fs.exists(path.resolve(__dirname, '../', req.originalUrl), function(exists) {
+              if (!exists)
+                  res.sendFile(path.resolve(__dirname, '../', 'public/index.html'));
+          });
+      });
+
+
       // Facebook OAuth
       app.get('/login/facebook', passport.authenticate('facebook', {
           scope: 'email',
