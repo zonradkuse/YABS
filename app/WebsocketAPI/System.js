@@ -21,7 +21,7 @@ module.exports = function(wsControl){
     wsControl.on('system:open', function(wss, ws, session, sId){
         logger.info("new client arrived.");
         wsControl.build(ws, null, { message: 'welcome' }, null);
-        if(!workerMap[sId] && session.user && sess.user._id){
+        if(!workerMap[sId] && session && session.user && sess.user._id){
             UserModel.getUser(session.user._id, function(err, _user){
                 var worker = new userWorker(sId, ws, _user, wsControl);
                 workerMap[sId] = worker;
