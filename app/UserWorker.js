@@ -71,6 +71,9 @@ UserWorker.prototype.fetchRooms = function(refId){
                             }
                         });
                     }
+                } else {
+                    self.wsControl.build(self.ws, new Error("L2P returned false status"), null, refId);
+                    logger.warn("Bad L2P answer: " + courses);
                 }
             });
         } else if(!value) {
