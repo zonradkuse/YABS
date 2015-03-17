@@ -1,6 +1,7 @@
 var logger = require('../Logger.js');
 var config = require('../../config.json');
 var querystring = require('querystring');
+var UserModel = require('../../models/User.js');
 var User = require('../../models/User.js').User;
 var session = require('express-session');
 var sessionStore = require('connect-redis')(session);
@@ -17,9 +18,16 @@ module.exports = function(wsControl){
             delete workerMap[sId];
         });
     });
-    wsControl.on('system:open', function(ws, session){
+    wsControl.on('system:open', function(wss, ws, session, sId){
         logger.info("new client arrived.");
         wsControl.build(ws, null, { message: 'welcome' }, null);
+        if(!workerMap[sId] && session.user && sess.user._id){
+            UserModel.getUser(session.user._id, function(err, _user){
+                var worker = new userWorker(sId, ws, _user, wsControl);
+                workerMap[sId] = worker;
+                worker.fetchRooms();
+            });
+        }
     });
     wsControl.on('system:ping', function(wss, ws, session, params, interfaceEntry, refId){
         wsControl.build(ws, null, { message: "pong" }, refId);

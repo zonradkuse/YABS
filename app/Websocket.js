@@ -63,7 +63,7 @@ var WebsocketHandler = function() {
                     session = sess;
                 });
                 
-                self.emit('system:open', ws, session);
+                self.emit('system:open', wss, ws, session, ws.upgradeReq.signedCookies["connect.sid"]);
                 //check for binary data
                 //parse message string and call the attached functions in the interface
                 ws.on('message', function(message) {
