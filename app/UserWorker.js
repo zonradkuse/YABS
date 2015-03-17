@@ -56,21 +56,17 @@ UserWorker.prototype.fetchRooms = function(refId){
                                 logger.warn("error on adding room to user: " + err);
                                 return;
                             }
-                            if(added){
-                                if(user) {
-                                    self.user = user;
-                                    if (refId) {
-                                        self.wsControl.build(self.ws, null, {
-                                            message: "You got a new room.",
-                                            room: _room
-                                        }, refId);
-                                    } else {
-                                        self.wsControl.build(self.ws, null, null, null, "room:add", { room: _room });
-                                    }
+                            if(user) {
+                                self.user = user;
+                                if (refId) {
+                                self.wsControl.build(self.ws, null, {
+                                        message: "You got a new room.",
+                                        room: _room
+                                    }, refId);
                                 } else {
-                                    logger.warn("user not set when trying to update users access.");
+                                    self.wsControl.build(self.ws, null, null, null, "room:add", { room: _room });
                                 }
-                            }
+                            } 
                         });
                     }
                 } else {
