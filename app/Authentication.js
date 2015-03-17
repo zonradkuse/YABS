@@ -17,14 +17,14 @@ module.exports = function(passport) {
     passport.deserializeUser(function(obj, done) {
         done(null, obj);
     });
-    logger.info("Initialize Google OAuth.")
+    /* logger.info("Initialize Google OAuth.")
     Google(passport);
     logger.info("Initialize Facebook OAuth.")
     Facebook(passport);
     logger.info("Initialize Twitter OAuth.")
     Twitter(passport);
     logger.info("Initialize Github OAuth.")
-    Github(passport);
+    Github(passport); */
 
 }
 /*

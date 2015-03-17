@@ -100,28 +100,32 @@ module.exports = function(wsControl){
                                                 logger.warn(err);
                                                 return;
                                             }
-                                            session.user = _user;
-                                            sessionStore.set(sId, session, function(err){
-                                                if(err) {
-                                                    wsControl.build(ws, err);
-                                                    return;
-                                                }
-                                                wsControl.build(ws, null, { status: true }, refId);
-                                                // start a worker that fetches rooms.
-                                                var worker = new userWorker(sId, ws, _user, wsControl);
-                                                if(!workerMap[sId]){
-                                                    workerMap[sId] = worker;
-                                                } else {
-                                                    worker = workerMap[sId];
-                                                    worker.ws = ws; // this is necessary!
-                                                    worker.user = _user; // this not.
-                                                }
-                                                process.nextTick(function(){
-                                                    logger.info("starting new user worker.");
-                                                    worker.fetchRooms(); //start worker after this request.
+                                            if (session) {
+                                                session.user = _user;
+                                                sessionStore.set(sId, session, function(err){
+                                                    if(err) {
+                                                        wsControl.build(ws, err);
+                                                        return;
+                                                    }
+                                                    wsControl.build(ws, null, { status: true }, refId);
+                                                    // start a worker that fetches rooms.
+                                                    var worker = new userWorker(sId, ws, _user, wsControl);
+                                                    if(!workerMap[sId]){
+                                                        workerMap[sId] = worker;
+                                                    } else {
+                                                        worker = workerMap[sId];
+                                                        worker.ws = ws; // this is necessary!
+                                                        worker.user = _user; // this not.
+                                                    }
+                                                    process.nextTick(function(){
+                                                        logger.info("starting new user worker.");
+                                                        worker.fetchRooms(); //start worker after this request.
+                                                    });
+                                                    logger.info("created new user.");
                                                 });
-                                                logger.info("created new user.");
-                                            });
+                                            } else {
+                                                wsControl.build(ws, new Error("Your session is invalid"), null, refId);
+                                            }
                                         });
                                         
                                     } else if(response.status === "error: authorization pending."){

@@ -75,34 +75,38 @@ var WebsocketHandler = function() {
                         ws.send(self.build(ws, new Error("no valid json or not a string"), null, message.refId));
                         return;
                     }
-                    if(message && message.uri){
-                        for(var i = 0; i<interf.data.length; i++){
-                            if(interf.data[i].uri === message.uri){ //uri exists
-                                if(message.parameters){ //parameters set
-                                    var obj = interf.data[i].parameters;
-                                    var c = 0;
-                                    for(var key in obj){ // check structure
-                                        //check if interface is made like specified in the interface file.
-                                        if(key !== Object.getOwnPropertyNames(message.parameters)[c]) {
-                                            ws.send(self.build(new Error("missing or bad parameter."), null, message.refId));
-                                            return;
+                    if(session){
+                        if(message && message.uri){
+                            for(var i = 0; i<interf.data.length; i++){
+                                if(interf.data[i].uri === message.uri){ //uri exists
+                                    if(message.parameters){ //parameters set
+                                        var obj = interf.data[i].parameters;
+                                        var c = 0;
+                                        for(var key in obj){ // check structure
+                                            //check if interface is made like specified in the interface file.
+                                            if(key !== Object.getOwnPropertyNames(message.parameters)[c]) {
+                                                ws.send(self.build(new Error("missing or bad parameter."), null, message.refId));
+                                                return;
+                                            }
+                                            c += 1;
                                         }
-                                        c += 1;
+                                        /**
+                                         * whoa. that have been a lot of checks. now emit the event. Optionals need
+                                         *  to be checked by the event handler. They will maybe build into the interface
+                                        **/
+                                        self.emit(message.uri, wss, ws, session, message.parameters,
+                                            interf.data[i], message.refId, ws.upgradeReq.signedCookies["connect.sid"]);
+                                        logger.info('emitted ' + message.uri + ' WSAPI event.');
+                                        return;
                                     }
-                                    /**
-                                     * whoa. that have been a lot of checks. now emit the event. Optionals need
-                                     *  to be checked by the event handler. They will maybe build into the interface
-                                    **/
-                                    self.emit(message.uri, wss, ws, session, message.parameters,
-                                        interf.data[i], message.refId, ws.upgradeReq.signedCookies["connect.sid"]);
-                                    logger.info('emitted ' + message.uri + ' WSAPI event.');
-                                    return;
                                 }
                             }
+                            ws.send(self.build(ws, new Error("uri not existing."), null, message.refId));
+                        } else {
+                            ws.send(self.build(ws, new Error("missing parameter."), null, message.refId));
                         }
-                        ws.send(self.build(ws, new Error("uri not existing."), null, message.refId));
                     } else {
-                        ws.send(self.build(ws, new Error("missing parameter."), null, message.refId));
+                        ws.send(self.build(ws, new Error("Your session is invalid."), null, message.refId));
                     }
                     //check if message.parameters structure is same or if optional
                     //local.checkAndCall(session, ws, wss, message); //deprecated
@@ -134,7 +138,7 @@ var WebsocketHandler = function() {
                 "parameters": param,
             };
         }
-        
+
         if(ws.readyState === 1) ws.send(JSON.stringify(json));
     };
 };
