@@ -134,7 +134,7 @@ var WebsocketHandler = function() {
                 "parameters": param,
             };
         }
-        ws.send(JSON.stringify(json));
+        if(ws.readyState === 1) ws.send(JSON.stringify(json));
     };
 };
 
