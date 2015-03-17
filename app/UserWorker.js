@@ -65,6 +65,8 @@ UserWorker.prototype.fetchRooms = function(refId){
                                         'message': "You got a new room.",
                                         'room': room
                                     }, refId);
+                                } else {
+                                    self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': room });
                                 }
                                 logger.info("added new room: " + room.l2pID);
                             }
