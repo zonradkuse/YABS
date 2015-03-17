@@ -1,5 +1,5 @@
 var system = require('./System.js');
-
+var userDAO = require('../../models/User.js');
 
 module.exports = function(wsControl){
     wsControl.on('user:fetchRooms', function(wss, ws, session, params, interfaceEntry, refId, sId){

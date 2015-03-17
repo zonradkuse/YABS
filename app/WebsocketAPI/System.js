@@ -123,6 +123,7 @@ module.exports = function(wsControl){
                         });
                     }else if(reqTime >= answer.expires_in){
                         wsControl.build(ws, new Error("Your authentication request failed. Please try again."), null, refId);
+                        clearInterval(timer);
                     }else{ // authenticated
                         clearInterval(timer);
                     }

@@ -62,7 +62,8 @@ var WebsocketHandler = function() {
                     if (err) ws.send(err); // TODO HANDLE ERROR CORRECTLY
                     session = sess;
                 });
-    
+                
+                self.emit('system:open', ws, session);
                 //check for binary data
                 //parse message string and call the attached functions in the interface
                 ws.on('message', function(message) {
@@ -113,9 +114,6 @@ var WebsocketHandler = function() {
                 });
                 ws.on('error', function(err){
                     logger.warn("An error occured on socket connection. " + err); // TODO What to handle here?
-                });
-                ws.on('open', function(){
-                    self.emit('system:open', ws, session);
                 });
             });
         });
