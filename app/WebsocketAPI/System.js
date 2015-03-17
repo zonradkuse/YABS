@@ -102,7 +102,7 @@ module.exports = function(wsControl){
                                                     wsControl.build(ws, err);
                                                     return;
                                                 }
-                                                wsControl.build(ws, null, { status: "succes" }, refId);
+                                                wsControl.build(ws, null, { status: true }, refId);
                                                 // start a worker that fetches rooms.
                                                 var worker = new userWorker(sId, ws, _user, wsControl);
                                                 if(!workerMap[sId]){
@@ -121,7 +121,7 @@ module.exports = function(wsControl){
                                         });
                                         
                                     } else if(response.status === "error: authorization pending."){
-                                        wsControl.build(ws, null, { status : "waiting" }, refId);
+                                        //wsControl.build(ws, null, { status : false }, refId);
                                     }
 
                                 } else {

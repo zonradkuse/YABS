@@ -19,5 +19,11 @@
         "uri": "user:getRooms",
         "parameters": {},
         "func": ""
+    },{
+        "uri": "user:ask",
+        "parameters": {
+            "question": {}
+            },
+        "func": ""
     }]
 }
