@@ -17,7 +17,7 @@ client.service('rpc', [function(){
             }
         } else {
             queueTimer = true;
-            setTimeout(sendOutQueue, 100);            
+            setTimeout(sendOutQueue, 100);
         }
     };
 
@@ -31,17 +31,17 @@ client.service('rpc', [function(){
             if (!queueTimer) {
                 queueTimer = true;
                 setTimeout(sendOutQueue, 100);
-            }    
+            }
         }
     };
 
 	this.call = function(method, params, callback) {
 		var id = Math.floor(Math.random() * 10000000);
-		send({
+		send(JSON.stringify({
 			uri : method,
 			params: params,
 			refId: id
-		});
+		}));
 		callbackTable[id] = callback;
 	};
 
@@ -148,7 +148,7 @@ client.service('rpc', [function(){
                 }
             }
             callback(new Error('URI not found'));
-        }    
+        }
     };
 
     /**

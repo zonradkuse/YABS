@@ -71,12 +71,12 @@ var WebsocketHandler = function() {
                     // lets process the message.
                     // check if uri is existing
                     try{
-                        message = JSON.parse(message);
+                        message = (typeof message === 'object' ? message : JSON.parse(message));
                     } catch(e){
-                        ws.send(self.build(new Error("no valid json or not a string"), null, message.refId));
+                        ws.send(self.build(ws, new Error("no valid json or not a string"), null, message.refId));
                         return;
                     }
-                    if(message.uri){
+                    if(message && message.uri){
                         for(var i = 0; i<interf.data.length; i++){
                             if(interf.data[i].uri === message.uri){ //uri exists
                                 if(message.parameters){ //parameters set
@@ -101,9 +101,9 @@ var WebsocketHandler = function() {
                                 }
                             }
                         }
-                        ws.send(self.build(new Error("uri not existing."), null, message.refId));
+                        ws.send(self.build(ws, new Error("uri not existing."), null, message.refId));
                     } else {
-                        ws.send(self.build(new Error("missing parameter."), null, message.refId));
+                        ws.send(self.build(ws, new Error("missing parameter."), null, message.refId));
                     }
                     //check if message.parameters structure is same or if optional
                     //local.checkAndCall(session, ws, wss, message); //deprecated
@@ -122,7 +122,7 @@ var WebsocketHandler = function() {
     this.build = function(ws, err, data, refId, uri){
         if(!ws || !ws.send) throw new Error("Websocket not set.");
         var json = {};
-        if (refId) { // response
+        if (refId || !uri) { // response
             json = {
                 "error": (err ? err.message : null),
                 "data": data,
@@ -130,7 +130,7 @@ var WebsocketHandler = function() {
             };
         } else { // broadcast TODO
             json = {
-                "error": "",
+                "error": (err ? err.message : null),
                 "uri": uri,
                 "parameters": data.data,
             };
