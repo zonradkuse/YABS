@@ -16,7 +16,11 @@
             when('/login', {
                 templateUrl: 'login.html',
                 controller: 'loginController'
-            }).            
+            }).
+            when('/rooms', {
+                templateUrl: 'rooms.html',
+                controller: 'roomsController'
+            }).                    
             when('/', {
                 templateUrl: 'frontpage.html',
                 controller: 'frontpageController'
@@ -26,6 +30,11 @@
         });
     }]);
 
+    client.run(["rpc", "rooms", function(rpc, rooms) {
+        rpc.attachFunction("room:add", function(data) {
+            rooms.upsertRoom(data.room);
+        });
+    }]);
     var controllers = angular.module('clientControllers', []);
     //var authenticationProvider = angular.module('authenticationProvider', []);
     window.clientControllers = controllers;

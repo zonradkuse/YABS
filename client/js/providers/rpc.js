@@ -8,6 +8,7 @@ client.service('rpc', [function(){
 	var ws = new WebSocket(wsUrl);
     var sendQueue = [];
     var queueTimer = false;
+    var self = this;
 
     var sendOutQueue = function() {
         queueTimer = false;
@@ -58,7 +59,7 @@ client.service('rpc', [function(){
 		}
 		else {
 			// Broadcast
-			this.handleBroadcast(data.uri, data.parameters);
+			self.handleBroadcast(data.uri, data.parameters);
 		}
 	};
 
@@ -66,7 +67,7 @@ client.service('rpc', [function(){
 	 * Code related to handling incoming broadcasts
 	 */
 
-    this.Interface = {
+    var Interface = {
         "data": [{
             "uri": "room:add",
             "parameters": {

@@ -1,6 +1,7 @@
 body {
     background-color: #ddd;
     line-height: 1.6;
+    margin-top: 50px;
 }
 
 .navbar-inverse {
