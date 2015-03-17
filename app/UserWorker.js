@@ -6,6 +6,8 @@ sessionStore = new sessionStore();
 var l2p = require('./RWTH/L2PRequests.js');
 var Room = require('../models/Room.js');
 var User = require('../models/User.js');
+var userDAO = require('../models/User.js');
+
 /**
  * sets needed object attributes.
  *
@@ -51,7 +53,7 @@ UserWorker.prototype.fetchRooms = function(refId){
                         _room.status = courses.dataSet[el].status;
                         _room.semester = courses.dataSet[el].semester;
 
-                        User.addRoomToUser(self.user, _room, function(err, user, added){
+                        User.addRoomToUser(self.user, _room, function(err, user, room){
                             if(err){
                                 logger.warn("error on adding room to user: " + err);
                                 return;
@@ -60,18 +62,19 @@ UserWorker.prototype.fetchRooms = function(refId){
                                 self.user = user;
                                 if (refId) {
                                 self.wsControl.build(self.ws, null, {
-                                        message: "You got a new room.",
-                                        room: _room
+                                        'message': "You got a new room.",
+                                        'room': room
                                     }, refId);
                                 } else {
-                                    self.wsControl.build(self.ws, null, null, null, "room:add", { room: _room });
+                                    self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': room });
                                 }
-                            } 
+                                logger.info("added new room: " + room.l2pID);
+                            }
                         });
                     }
                 } else {
                     self.wsControl.build(self.ws, new Error("L2P returned bad things (probably html code)"), null, refId);
-                    logger.warn("Bad L2P answer: " + courses);
+                    logger.warn("Bad L2P answer: " + courses); 
                 }
             });
         } else if(!value) {
@@ -111,6 +114,22 @@ UserWorker.prototype.renewAccessToken = function(){
 UserWorker.prototype.mergeWithUser = function(userId, next){
     
 };
+
+UserWorker.prototype.getRooms = function(){
+    var self = this;
+    if(self.user && self.user._id){
+        userDAO.getRoomAccess(self.user, {population: ''}, function(err, rooms){
+            for (var room in rooms){
+                if(rooms[room].l2pID !== undefined){
+                    self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': rooms[room] });
+                    logger.debug("send: " + rooms[room].l2pID);
+                }
+            }
+        });
+    } else {
+        wsControl.build(ws, new Error("Your session is invalid."), null, refId);
+    }
+}
 
 //------ Helper section.
 

@@ -29,6 +29,10 @@ module.exports = function(wsControl){
     });
 
     wsControl.on('user:ask', function(wss, ws, session, params, interfaceEntry, refId, sId){
-        
+        if(params && params.question && params.roomId){
+
+        } else {
+            
+        }
     });
 };

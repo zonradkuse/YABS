@@ -26,6 +26,9 @@ module.exports = function(wsControl){
                 var worker = new userWorker(sId, ws, _user, wsControl);
                 workerMap[sId] = worker;
                 worker.fetchRooms();
+                process.nextTick(function(){
+                    worker.getRooms();
+                });
             });
         }
     });
