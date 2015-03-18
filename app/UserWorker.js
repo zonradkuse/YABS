@@ -90,7 +90,7 @@ UserWorker.prototype.checkSession = function(next){
     var self = this;
     sessionStore.get(self.sId, function(err, user){
         if(err) {
-        self.wsControl.build(self.ws, err);
+            self.wsControl.build(self.ws, err);
             logger.warn("error on session retrieving: " + err);
             next(err);
         } else if(!user) {

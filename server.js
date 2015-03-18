@@ -48,8 +48,8 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 //app.use(flash());
-//app.use(passport.initialize());
-//app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
 var routes = require('./app/Routes.js');
 routes(app);
