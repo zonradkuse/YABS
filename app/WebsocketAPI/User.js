@@ -2,6 +2,7 @@ var system = require('./System.js');
 var questionDAO = require('../../models/Question.js');
 var userDAO = require('../../models/User.js');
 var roomDAO = require('../../models/Room.js');
+var answerDAO = require('../../models/Answer.js');
 
 module.exports = function(wsControl){
     wsControl.on('user:fetchRooms', function(wss, ws, session, params, interfaceEntry, refId, sId){
@@ -56,10 +57,10 @@ module.exports = function(wsControl){
                                     logger.info("added new question to room " + room.l2pID);
                                 }
                             });
-                        } else {
-                            wsControl.build(ws, new Error("Access denied."), null, refId);
+                            return;
                         }
                     };
+                    wsControl.build(ws, new Error("Access Denied."), null, refId);
                 }
             })
         } else {
@@ -69,12 +70,22 @@ module.exports = function(wsControl){
 
     wsControl.on("user:answer", function(wss, ws, session, params, interfaceEntry, refId, sId){
         if(params && params.roomId && params.questionId && params.answer) {
-            userDAO.getRoomAccess(session.user, {population: 'Question'}, function(err, access){
+            userDAO.getRoomAccess(session.user, {population: 'questions'}, function(err, access){
                 for (var i = access.length - 1; i >= 0; i--) {
                     if (access[i]._id === params.roomId) {
-                        
+                        for (var j = access[i].questions.length - 1; j >= 0; j--) {
+                            if (access[i].questions[j] === params.questionId) {
+                                var a = new answerDAO.Answer();
+                                a.author = session.user._id;
+                                a.content = params.answer;
+                                questionDAO.addAnswer({_id : questionId}, a, function(err, question, answer){
+                                    
+                                });
+                            }
+                        };
                     } 
                 };
+
             });
         }
     })
