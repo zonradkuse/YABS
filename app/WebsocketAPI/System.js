@@ -174,7 +174,7 @@ module.exports = function(wsControl){
     });
 
     wsControl.on("system:enterRoom", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
-        if(authed && params.roomId){
+        if(authed && params.roomId !== undefined){
             session.room = params.roomId;
             sessionStore.set(sId, session, function(err){
                 if(err) {
@@ -196,7 +196,7 @@ module.exports = function(wsControl){
         if(authed){
             sessionStore.destroy(sId, function(err){
                 if(err) {
-                    wsControl.build(ws, null, {status: false, message: "An error occured."}, refId);
+                    wsControl.build(ws, new Error("Could not delete your session."), {status: false, message: "An error occured."}, refId);
                     return logger.warn("could not delete session.");    
                 } 
                 wsControl.build(ws, null, {status: true, message: "Goodbye."}, refId);
