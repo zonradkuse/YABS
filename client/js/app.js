@@ -17,6 +17,10 @@
                 templateUrl: 'login.html',
                 controller: 'loginController'
             }).
+            when('/logout', {
+                controller: "logoutController",
+                templateUrl: 'frontpage.html',
+            }).        
             when('/rooms', {
                 templateUrl: 'rooms.html',
                 controller: 'roomsController'
@@ -35,6 +39,7 @@
             rooms.upsertRoom(data.room);
         });
     }]);
+
     var controllers = angular.module('clientControllers', []);
     //var authenticationProvider = angular.module('authenticationProvider', []);
     window.clientControllers = controllers;

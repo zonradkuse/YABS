@@ -11,9 +11,11 @@
         <script src="ui-bootstrap-tpls-0.11.2.js"></script>
         <script src="app.js"></script>
         <script src="rpc.js"></script>
-         <script src="rooms.js"></script>
+        <script src="rooms.js"></script>
         <script src="authentication.js"></script>
+        <script src="navbarController.js"></script>
         <script src="loginController.js"></script>
+        <script src="logoutController.js"></script>
         <script src="frontpageController.js"></script>
         <script src="roomsController.js"></script>
         <script src="courseController.js"></script>
@@ -23,7 +25,8 @@
     </head>
     
     <body>
-        <div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+        <div ng-controller="navbarController" >
+        <div ng-if="username" class="navbar navbar-fixed-top navbar-inverse" role="navigation">
             <div class="container">
                 <div class="navbar-header">
                     <a class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -40,16 +43,17 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Angemeldet als Max Mustermann<b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Angemeldet als {{username}}<b class="caret"></b></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="#">Avatar ändern</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">Abmelden</a></li>
+                                <li><a href="/logout">Abmelden</a></li>
                             </ul>
                         </li>
                     </ul>
                 </div>    
             </div>
+        </div>
         </div>
         <div ng-view></div>
     </body>

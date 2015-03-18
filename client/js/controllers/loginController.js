@@ -6,8 +6,7 @@
 					var deferred = $q.defer();
 					if (!result) {
 						return authentication.getLoginUrl(function() {
-							$location.path("/");
-							$scope.$apply();
+							$window.location = "/";
 						});
 					}
 					else {

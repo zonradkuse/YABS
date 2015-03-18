@@ -1,5 +1,6 @@
 client.service('authentication', ['$window', '$q', 'rpc', function($window, $q, rpc){
-	
+	var username = false;
+
 	this.enforceLoggedIn = function(basedata) {
 		this.isUserLoggedIn().then(function(status) {
 			if (!status) {
@@ -16,9 +17,19 @@ client.service('authentication', ['$window', '$q', 'rpc', function($window, $q, 
 		return deferred.promise;
 	};
 
-	this.getUserId = function() {
+	this.logout = function() {
 		var deferred = $q.defer();
-		this.isUserLoggedIn().then(function(loggedin) {
+		rpc.call("system:logout", {}, function(data) {
+			deferred.resolve();
+		});
+		return deferred.promise;
+	};
+
+	this.getUserName = function() {
+		var deferred = $q.defer();
+		if (username)
+			return deferred.resolve(username);
+		return this.isUserLoggedIn().then(function(loggedin) {
 			if (loggedin) {
 				rpc.call("system:whoami", {}, function(data) {
 					deferred.resolve(data.message);
