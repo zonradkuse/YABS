@@ -19,9 +19,10 @@ module.exports = function(wsControl){
             				if(err){
             					logger.warn("Cannot access room. "+err);
             					wsControl.build(ws, new Error("Cannot access room."), null, refId);
-            				}
-            				else
+            				} else {
+                                room.questions = removeAuthorTokens(room.questions);
             					wsControl.build(ws, null, {'questions': room.questions}, refId);
+                            }
             			});
             			return;
             		}
@@ -58,8 +59,10 @@ module.exports = function(wsControl){
             									logger.warn("Cannot get question. "+err);
             									wsControl.build(ws, new Error("Cannot get question."), null, refId);
             								}
-            								else
+            								else {
+                                                question.answers = removeAuthorTokens(question.answers);
             									wsControl.build(ws, null, {'answers': question.answers}, refId);
+                                            }
             							});
             							return;
             						}
@@ -77,3 +80,14 @@ module.exports = function(wsControl){
         }
     });
 };
+
+function removeAuthorTokens(input) {
+    for (var i = input.length - 1; i >= 0; i--) {
+        if(input[i].author) {
+            if(input[i].author.rwth){
+                delete input[i].author.rwth;
+            }
+        }
+    };
+    return input;
+}
