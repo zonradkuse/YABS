@@ -24,6 +24,7 @@ var AnswerSchema = mongoose.Schema({
         default: Date.now
     },
     content: String,
+    images: [{ type: ObjectId, ref:'Image' }],
     visible: {
         type: Boolean,
         default: true
@@ -32,7 +33,7 @@ var AnswerSchema = mongoose.Schema({
 
 AnswerSchema.plugin(deepPopulate);
 var Answer = mongoose.model('Answer', AnswerSchema);
-module.exports.Answer = Answer
+module.exports.Answer = Answer;
 module.exports.AnswerSchema = AnswerSchema;
 
 /*

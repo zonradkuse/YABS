@@ -17,6 +17,7 @@ var QuestionSchema = mongoose.Schema({
     updateTime: { type: Date, default: Date.now },
     content: String,
     votes: [{ type : ObjectId, ref: 'User', unique: true }],
+    images: [{ type: ObjectId, ref:'Image' }],
     answers: [{ type : ObjectId, ref: 'Answer' }],
     visible: { type: Boolean, default: true }
 });
