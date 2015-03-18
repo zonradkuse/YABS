@@ -26,5 +26,26 @@
             "question": {}
             },
         "func": ""
+    },{
+        "uri": "user:answer",
+        "parameters": {
+            "roomId": "",
+            "questionId": "",
+            "answer": ""
+            },
+        "func": ""
+    },{
+        "uri": "room:getQuestions",
+        "parameters": {
+            "roomId": ""
+            },
+        "func": ""
+    },{
+        "uri": "room:getAnswers",
+        "parameters": {
+            "roomId": "",
+            "questionId": ""
+            },
+        "func": ""
     }]
 }

@@ -165,7 +165,7 @@ module.exports = function(wsControl){
             } else {
                 wsControl.build(ws, null, {
                     status: true,
-                    message: session.user._id
+                    message: (session.user.local ? session.user.local.name : session.user._id)
                 }, refId);
             }
         }

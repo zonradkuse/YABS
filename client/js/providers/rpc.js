@@ -74,6 +74,21 @@ client.service('rpc', [function(){
                 room: ""
             },
             "func": ""
+        },{
+            "uri": "question:add",
+            "parameters": {
+                roomId: '',
+                question: {}               
+            },
+            "func": ""
+        }{
+            "uri": "answer:add",
+            "parameters": {
+                roomId: "",
+                questionId: '',
+                answer {}
+            },
+            "func": ""
         }]
     };
 

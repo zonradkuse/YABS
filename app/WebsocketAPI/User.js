@@ -1,5 +1,7 @@
 var system = require('./System.js');
+var questionDAO = require('../../models/Question.js');
 var userDAO = require('../../models/User.js');
+var roomDAO = require('../../models/Room.js');
 
 module.exports = function(wsControl){
     wsControl.on('user:fetchRooms', function(wss, ws, session, params, interfaceEntry, refId, sId){
@@ -30,9 +32,50 @@ module.exports = function(wsControl){
 
     wsControl.on('user:ask', function(wss, ws, session, params, interfaceEntry, refId, sId){
         if(params && params.question && params.roomId){
-
+            //check if user is in room
+            userDAO.getRoomAccess(session.user, {population: ''}, function(err, access){
+                if(err) {
+                    logger.warn("error on getting room access array " + err);
+                } else {
+                    for (var i = access.length - 1; i >= 0; i--) {
+                        if(access[i]._id === roomId){
+                            var q = new questionDAO.Question();
+                            q.author = session.user._id;
+                            q.content = params.question;
+                            q.votes = session.user._id;
+                            q.answers = [];
+                            roomDAO.addQuestion({ _id : params.roomId}, q, function(err, room, question){
+                                if(err) {
+                                    logger.warn("could not add or create question: " + err);
+                                    wsControl.build(ws, new Error("could not add or create question"), null, refId);
+                                } else {
+                                    wsControl.roomBroadcast(ws, 'question:add', {
+                                        'roomId': room._id,
+                                        'question': question
+                                    }, room._id);
+                                    logger.info("added new question to room " + room.l2pID);
+                                }
+                            });
+                        } else {
+                            wsControl.build(ws, new Error("Access denied."), null, refId);
+                        }
+                    };
+                }
+            })
         } else {
-            
+            wsControl.build(ws, new Error("malformed params"), null, refId);
         }
     });
+
+    wsControl.on("user:answer", function(wss, ws, session, params, interfaceEntry, refId, sId){
+        if(params && params.roomId && params.questionId && params.answer) {
+            userDAO.getRoomAccess(session.user, {population: 'Question'}, function(err, access){
+                for (var i = access.length - 1; i >= 0; i--) {
+                    if (access[i]._id === params.roomId) {
+                        
+                    } 
+                };
+            });
+        }
+    })
 };

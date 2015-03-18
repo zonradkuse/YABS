@@ -27,7 +27,7 @@ wss.broadcast = function broadcast(data) {
         client.send(data);
     });
 };
-wss.roomBroadcast = function (data, roomId, refId){
+wss.roomBroadcast = function (ws, uri, data, roomId){
     wss.clients.forEach(function each(client){
         //check if user is currently active room member.
         var sId = client.upgradeReq.signedCookies["connect.sid"];
@@ -35,11 +35,11 @@ wss.roomBroadcast = function (data, roomId, refId){
             if(err) logger.warn("An error occured on getting the user session: " + err);
             if(sess.room){
                 if(session.room === roomId){
-                    WebsocketHandler.build(client, data, refId);
+                    WebsocketHandler.build(client, null, null, null, uri, data);
                 }
             } else {
                 logger.warn("A room was unset in session: " + session);
-                WebsocketHandler.build(client, new Error("Your current room is not set."));
+                WebsocketHandler.build(ws, new Error("Your current room is not set."));
             }
         });
     });
