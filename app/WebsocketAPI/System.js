@@ -8,6 +8,8 @@ var sessionStore = require('connect-redis')(session);
 sessionStore = new sessionStore();
 var userWorker = require('../UserWorker.js');
 var campus = require('../RWTH/CampusRequests.js');
+var moniker = require('moniker');
+var fancyNames = moniker.generator([moniker.adjective, moniker.noun],{glue:' '});
 var workerMap = {};
 
 module.exports = function(wsControl){
@@ -91,6 +93,7 @@ module.exports = function(wsControl){
                                         auth = true;
                                         clearInterval(timer);
                                         var _user = new User();
+                                        _user.local.name = fancyNames.choose().replace(/\b(\w)/g, function(m){ return m.toUpperCase()});
                                         _user.rwth.token = response.access_token;
                                         _user.rwth.refresh_token = response.refresh_token;
                                         _user.rwth.expires_in = response.expires_in;

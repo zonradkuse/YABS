@@ -16,6 +16,27 @@
 
   module.exports.routes = function() {
 
+      app.get('/upload', function(req, res) {
+          res.setHeader('Content-Type', 'text/html');
+          res.write('image upload \
+                      <form action="/upload" method="post" enctype="multipart/form-data"> \
+                      File:<br> \
+                      <input type="file" name="image" value="Your File..."> \
+                      <br><br> \
+                      <input type="submit" value="Submit"> \
+                      </form>');
+          res.end();
+      });
+
+      app.post('/upload', function(req, res) {
+          console.log(JSON.stringify(req.files,null,2));
+          if(req.files.image === undefined)
+            res.write('<p>No file selected</p>');
+          else
+            res.write('<p>File <b>'+req.files.image.originalname+'</b> uploaded!</p>');
+          res.end();
+      });
+
       app.post('/login/local', function(req, res) {
           var auth = require('./Authentication.js');
           auth.loginLocal(req, function(err, user) {
