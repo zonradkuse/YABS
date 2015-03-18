@@ -73,7 +73,7 @@ module.exports.remove = function(question, callback){
 * @param options used for deepPopulation
 * @param callback params: error, question object
 */
-module.exports.get = function(questionID, options, callback){
+module.exports.getByID = function(questionID, options, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");
 	Question.findById(questionID).deepPopulate(options.population).exec(function(err,question){
