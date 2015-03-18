@@ -34,12 +34,11 @@ wss.roomBroadcast = function (ws, uri, data, roomId){
         sessionStore.get(sId, function(err, sess){
             if(err) logger.warn("An error occured on getting the user session: " + err);
             if(sess.room){
-                if(session.room === roomId){
+                if(sess.room === roomId){
                     WebsocketHandler.build(client, null, null, null, uri, data);
                 }
             } else {
-                logger.warn("A room was unset in session: " + session);
-                WebsocketHandler.build(ws, new Error("Your current room is not set."));
+                build(ws, new Error("Your current room is not set."));
             }
         });
     });
@@ -123,25 +122,30 @@ var WebsocketHandler = function() {
     };
     // build the response object as string
     this.build = function(ws, err, data, refId, uri, param){
-        if(!ws || !ws.send) throw new Error("Websocket not set.");
-        var json = {};
-        if (refId || !uri) { // response
-            json = {
-                "error": (err ? err.message : null),
-                "data": data,
-                "refId": refId
-            };
-        } else { // broadcast TODO
-            json = {
-                "error": (err ? err.message : null),
-                "uri": uri,
-                "parameters": param,
-            };
-        }
-
-        if(ws.readyState === 1) ws.send(JSON.stringify(json));
+        build(ws, err, data, refId, uri, param);
     };
 };
+
+function build(ws, err, data, refId, uri, param){
+    if(!ws || !ws.send) throw new Error("Websocket not set.");
+    var json = {};
+    if (refId || !uri) { // response
+        json = {
+            "error": (err ? err.message : null),
+            "data": data,
+            "refId": refId
+        };
+    } else { // broadcast TODO
+        json = {
+            "error": (err ? err.message : null),
+            "uri": uri,
+            "parameters": param,
+        };
+    }
+
+    if(ws.readyState === 1) ws.send(JSON.stringify(json));
+};
+
 
 util.inherits(WebsocketHandler, events.EventEmitter);
 module.exports = WebsocketHandler;

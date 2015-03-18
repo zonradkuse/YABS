@@ -3,6 +3,7 @@ var questionDAO = require('../../models/Question.js');
 var userDAO = require('../../models/User.js');
 var roomDAO = require('../../models/Room.js');
 var answerDAO = require('../../models/Answer.js');
+var logger = require('../Logger.js');
 
 module.exports = function(wsControl){
     wsControl.on('user:fetchRooms', function(wss, ws, session, params, interfaceEntry, refId, sId){
@@ -50,11 +51,11 @@ module.exports = function(wsControl){
                                     logger.warn("could not add or create question: " + err);
                                     wsControl.build(ws, new Error("could not add or create question"), null, refId);
                                 } else {
-                                    wsControl.roomBroadcast(ws, 'question:add', {
+                                    wss.roomBroadcast(ws, 'question:add', {
                                         'roomId': room._id,
                                         'question': question
                                     }, room._id);
-                                    logger.info("added new question to room " + room.l2pID);
+                                    logger.info("added new question to room " + room._id);
                                 }
                             });
                             return;
@@ -83,11 +84,12 @@ module.exports = function(wsControl){
                                         logger.warn("could not add or create question: " + err);
                                         wsControl.build(ws, new Error("could not add or create answer"), null, refId);
                                     } else {
-                                        wsControl.roomBroadcast(ws, 'answer:add', {
+                                        wss.roomBroadcast(ws, 'answer:add', {
                                             'roomId': room._id,
                                             'questionId': question._id,
                                             'answer': a
                                         }, room._id);
+                                        console.log(room);
                                         logger.info("added new answer to room " + room.l2pID);
                                     }
                                 });

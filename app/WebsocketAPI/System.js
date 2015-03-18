@@ -29,7 +29,6 @@ module.exports = function(wsControl){
                 workerMap[sId] = worker;
                 worker.fetchRooms();
                 process.nextTick(function(){
-                    console.log("hi");
                     worker.getRooms();
                 });
             });
@@ -107,7 +106,7 @@ module.exports = function(wsControl){
                                                 session.user = _user;
                                                 sessionStore.set(sId, session, function(err){
                                                     if(err) {
-                                                        wsControl.build(ws, err);
+                                                        wsControl.build(ws, err, null, refId);
                                                         return;
                                                     }
                                                     wsControl.build(ws, null, { status: true }, refId);
@@ -155,6 +154,7 @@ module.exports = function(wsControl){
             }
         });
     });
+
     wsControl.on("system:whoami", function(wss, ws, session, params, interfaceEntry, refId, sId){
         if(refId){
             if(!session || !session.user || !session.user._id){
@@ -170,6 +170,33 @@ module.exports = function(wsControl){
                     userName: (session.user && session.user.local ? session.user.local.name : null)
                 }, refId);
             }
+        }
+    });
+
+    wsControl.on("system:enterRoom", function(wss, ws, session, params, interfaceEntry, refId, sId){
+        if(session && session.user && session.user._id && params.roomId){
+            session.room = params.roomId;
+            sessionStore.set(sId, session, function(err){
+                if(err) {
+                    wsControl.build(ws, err, null, refId);
+                } else {
+                    wsControl.build(ws, null, {
+                        status: true,
+                    }, refId);    
+                }
+            });
+        } else {
+            wsControl.build(ws, null, {
+                status: false,
+            } , refId);
+        }
+    });
+
+    wsControl.on("system:logout", function(wss, ws, session, params, interfaceEntry, refId, sId){
+        if(session.user && session.user._id){
+            sessionStore.destroy(sId, function(err){
+                if(err) return logger.warn("could not delete session.");    
+            });
         }
     });
 };

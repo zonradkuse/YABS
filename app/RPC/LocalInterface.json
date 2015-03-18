@@ -8,6 +8,16 @@
         "parameters": {},
         "func": ""
     },{
+        "uri": "system:logout",
+        "parameters": {},
+        "func": ""
+    },{
+        "uri": "system:enterRoom",
+        "parameters": {
+            "roomId" : ""
+        },
+        "func": ""
+    },{
         "uri": "system:whoami",
         "parameters": {},
         "func": ""
