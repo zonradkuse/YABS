@@ -15,4 +15,12 @@ client.service('rooms', ['rpc', function(rpc){
 		rooms.push(room);
 	};
 
+	this.getById = function(id) {
+		for(var i = 0; i < rooms.length; i++) {
+			if (rooms[i]._id === id) {
+				return rooms[i];
+			}
+		}
+	};
+
 }]);
