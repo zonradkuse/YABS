@@ -86,7 +86,7 @@ client.service('rpc', [function(){
             "parameters": {
                 roomId: "",
                 questionId: '',
-                answer {}
+                answer: {}
             },
             "func": ""
         }]
