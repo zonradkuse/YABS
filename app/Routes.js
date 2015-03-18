@@ -157,13 +157,6 @@
           successRedirect: '/',
           failureRedirect: '/login'
       }));
-
-      // Logout route
-      app.get('/logout', function(req, res) {
-          req.logout();
-          req.session.user = {}; // delete local part of session cookie
-          res.redirect('/');
-      })
   }
 
   function isAuthenticated(req, res, next) {
