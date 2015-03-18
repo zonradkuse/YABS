@@ -16,6 +16,7 @@ var flash = require('connect-flash');
 var multer = require('multer');
 
 mongoose.connect(config.database.host);
+
     /*
      * Initiate Express.js Webserver with
      *  default sessioncookie
