@@ -81,7 +81,7 @@ module.exports = function(wsControl){
                                 questionDAO.addAnswer({_id : params.questionId}, a, function(err, question, answer){
                                     if(err) {
                                         logger.warn("could not add or create question: " + err);
-                                        wsControl.build(ws, new Error("could not add or create question"), null, refId);
+                                        wsControl.build(ws, new Error("could not add or create answer"), null, refId);
                                     } else {
                                         wsControl.roomBroadcast(ws, 'answer:add', {
                                             'roomId': room._id,
