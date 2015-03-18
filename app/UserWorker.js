@@ -7,6 +7,9 @@ var l2p = require('./RWTH/L2PRequests.js');
 var Room = require('../models/Room.js');
 var User = require('../models/User.js');
 var userDAO = require('../models/User.js');
+var campusReq = require('./RWTH/CampusRequests.js');
+var config = require('../config.json');
+var querystring = require('querystring');
 
 /**
  * sets needed object attributes.
@@ -104,16 +107,72 @@ UserWorker.prototype.checkSession = function(next){
 /**
  * renews the Campus access_token if called and the user is still logged in/has a valid session.
  **/
-UserWorker.prototype.renewAccessToken = function(){
+UserWorker.prototype.refreshAccessToken = function(){
     var self = this;
-    this.checkToken(function(){
-        //renew the session or delete regular token. 
+    this.checkToken(function(err, expires){
+        if(!expires || expires < 300){
+            campusReq.postReqCampus('token', querystring.stringify({
+                "client_id": config.login.l2p.clientID,
+                "refresh_token": self.user.rwth.refresh_token,
+                "grant_type": "refresh_token"
+            }), function(err, res){
+                if (err) {
+
+                } else {
+                    var answer;
+                    try{
+                        answer = JSON.parse(res);
+                    } catch (e) {
+                        return next(e);
+                    }
+                    if(answer.status === "ok"){
+                        userDAO.get(self.user._id, function(err, _user){
+                            if (err) return logger.warn("could not get user: " + err);
+                            if(_user) {
+                                user.rwth.access_token = answer.access_token;
+                                self.user.save(function(e){
+                                    if (e) return logger.warn("could not save a user: " + e);
+                                    self.user = user;
+                                });
+                            } else {
+                                logger.warn("user should have existed: " + self.user);
+                            }
+
+                        });
+
+                    } else if (answer.error === "authorization invalid."){
+                        //TODO invalidate user
+                    }
+                }
+            });
+        }
+        //else do nothing. no need to refresh
     });
 
 };
 
 UserWorker.prototype.checkToken = function(next){
     var self = this;
+    campusReq.postReqCampus('tokeninfo', querystring.stringify({
+            "client_id": config.login.l2p.clientID,
+            "access_token": self.user.rwth.token
+        }), function(err, res){
+            if (err) {
+                return next(err)
+            } else {
+                var answer;
+                try{
+                    answer = JSON.parse(res);
+                } catch (e) {
+                    return next(e);
+                }
+                if(answer.status === "ok"){
+                    next(null, expires);
+                } else {
+                    next(null, null);
+                }
+            }    
+    });
 
 }
 /**
