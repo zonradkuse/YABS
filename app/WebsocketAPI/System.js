@@ -173,8 +173,8 @@ module.exports = function(wsControl){
         }
     });
 
-    wsControl.on("system:enterRoom", function(wss, ws, session, params, interfaceEntry, refId, sId){
-        if(session && session.user && session.user._id && params.roomId){
+    wsControl.on("system:enterRoom", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
+        if(authed && params.roomId){
             session.room = params.roomId;
             sessionStore.set(sId, session, function(err){
                 if(err) {
@@ -192,11 +192,17 @@ module.exports = function(wsControl){
         }
     });
 
-    wsControl.on("system:logout", function(wss, ws, session, params, interfaceEntry, refId, sId){
-        if(session.user && session.user._id){
+    wsControl.on("system:logout", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
+        if(authed){
             sessionStore.destroy(sId, function(err){
-                if(err) return logger.warn("could not delete session.");    
+                if(err) {
+                    wsControl.build(ws, null, {status: false, message: "An error occured."}, refId);
+                    return logger.warn("could not delete session.");    
+                } 
+                wsControl.build(ws, null, {status: true, message: "Goodbye."}, refId);
             });
+        } else {
+            wsControl.build(ws, null, {status: false, message: "You are not logged in."}, refId);
         }
     });
 };

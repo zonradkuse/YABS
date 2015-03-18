@@ -93,8 +93,9 @@ var WebsocketHandler = function() {
                                          * whoa. that have been a lot of checks. now emit the event. Optionals need
                                          *  to be checked by the event handler. They will maybe build into the interface
                                         **/
+                                        var authed = session && session.user && session.user._id;
                                         self.emit(message.uri, wss, ws, session, message.parameters,
-                                            interf.data[i], message.refId, ws.upgradeReq.signedCookies["connect.sid"]);
+                                            interf.data[i], message.refId, ws.upgradeReq.signedCookies["connect.sid"], authed);
                                         logger.info('emitted ' + message.uri + ' WSAPI event.');
                                         return;
                                     }
