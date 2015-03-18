@@ -39,7 +39,7 @@ module.exports = function(wsControl){
                     logger.warn("error on getting room access array " + err);
                 } else {
                     for (var i = access.length - 1; i >= 0; i--) {
-                        if(access[i]._id === roomId){
+                        if(access[i]._id == params.roomId){
                             var q = new questionDAO.Question();
                             q.author = session.user._id;
                             q.content = params.question;
@@ -72,31 +72,34 @@ module.exports = function(wsControl){
         if(params && params.roomId && params.questionId && params.answer) {
             userDAO.getRoomAccess(session.user, {population: 'questions'}, function(err, access){
                 for (var i = access.length - 1; i >= 0; i--) {
-                    if (access[i]._id === params.roomId) {
-                        for (var j = access[i].questions.length - 1; j >= 0; j--) {
-                            if (access[i].questions[j]._id === params.questionId) {
+                    if (access[i]._id == params.roomId) {
+                        questionDAO.get(params.questionId, {population : ''}, function(err, q){
+                            if (q){
                                 var a = new answerDAO.Answer();
                                 a.author = session.user._id;
                                 a.content = params.answer;
                                 questionDAO.addAnswer({_id : params.questionId}, a, function(err, question, answer){
                                     if(err) {
                                         logger.warn("could not add or create question: " + err);
-                                        wsControl.build(ws, new Error("could not add or create question"), null, refId);
+                                        wsControl.build(ws, new Error("could not add or create answer"), null, refId);
                                     } else {
                                         wsControl.roomBroadcast(ws, 'answer:add', {
                                             'roomId': room._id,
                                             'questionId': question._id,
-                                            'answer': answer
+                                            'answer': a
                                         }, room._id);
-                                        logger.info("added new question to room " + room.l2pID);
+                                        logger.info("added new answer to room " + room.l2pID);
                                     }
                                 });
+                                return;
                             }
-                        };
+                        });
                     } 
                 };
-
+                wsControl.build(ws, new Error("Access Denied."), null, refId);
             });
+        } else {
+            wsControl.build(ws, new Error("malformed params"), null, refId);
         }
-    })
+    });
 };

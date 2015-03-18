@@ -85,7 +85,7 @@ var WebsocketHandler = function() {
                                         for(var key in obj){ // check structure
                                             //check if interface is made like specified in the interface file.
                                             if(key !== Object.getOwnPropertyNames(message.parameters)[c]) {
-                                                ws.send(self.build(new Error("missing or bad parameter."), null, message.refId));
+                                                self.build(ws, new Error("missing or bad parameter."), null, message.refId);
                                                 return;
                                             }
                                             c += 1;
