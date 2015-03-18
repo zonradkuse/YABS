@@ -26,12 +26,17 @@ client.service('authentication', ['$window', '$q', 'rpc', function($window, $q, 
 	};
 
 	this.getUserName = function() {
+		return username;
+	};
+
+	this.fetchUserName = function() {
 		var deferred = $q.defer();
 		if (username)
 			return deferred.resolve(username);
 		return this.isUserLoggedIn().then(function(loggedin) {
 			if (loggedin) {
 				rpc.call("system:whoami", {}, function(data) {
+					username = data.message;
 					deferred.resolve(data.message);
 				});
 			}

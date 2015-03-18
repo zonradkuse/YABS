@@ -3,10 +3,11 @@
         function($scope, $routeParams, authentication, $window, $q, $location) {
         	authentication.isUserLoggedIn()
 				.then(function(result) {
-					var deferred = $q.defer();
 					if (!result) {
 						return authentication.getLoginUrl(function() {
-							$window.location = "/";
+							authentication.fetchUserName().then(function() {
+									$location.path("/");
+							});
 						});
 					}
 					else {

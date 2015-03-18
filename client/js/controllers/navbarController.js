@@ -1,7 +1,8 @@
 clientControllers.controller('navbarController', ['$scope', 'authentication',
     function($scope, authentication) {
-        authentication.getUserName().then(function(name) {
-            $scope.username = name;
+		authentication.fetchUserName();
+        $scope.$watch(authentication.getUserName, function(name) {
+        	$scope.username = name;
         });
     }
 ]);
