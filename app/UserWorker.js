@@ -105,9 +105,17 @@ UserWorker.prototype.checkSession = function(next){
  * renews the Campus access_token if called and the user is still logged in/has a valid session.
  **/
 UserWorker.prototype.renewAccessToken = function(){
-    
+    var self = this;
+    this.checkToken(function(){
+        //renew the session or delete regular token. 
+    });
+
 };
 
+UserWorker.prototype.checkToken = function(next){
+    var self = this;
+
+}
 /**
  * merges this.user with the given userId and sets (err, mergedUser) as parameters in next.
  **/
