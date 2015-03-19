@@ -27,8 +27,7 @@ module.exports = function(wsControl){
             UserModel.get(session.user._id, function(err, _user){
                 var worker = new userWorker(sId, ws, _user, wsControl, true);
                 workerMap[sId] = worker;
-                worker.fetchRooms();
-                process.nextTick(function(){
+                worker.fetchRooms(null, function(){
                     worker.getRooms();
                 });
             });
