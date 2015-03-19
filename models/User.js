@@ -155,8 +155,8 @@ module.exports.hasAccessToRoom = function(user, roomID, options, callback){
         return callback(new Error("Cannot check user's room access."), null, null);
       for(var i=0; i<rooms.length; i++){
         if(rooms[i]._id == roomID){
-          Room.getByID(roomID,{population:options.population},function(err, room){
-            if(err){
+          Room.getByID(roomID,{population: options.population},function(err, room){
+            if(err)
               return callback(new Error("Cannot access room."), null, null);
             return callback(null, user, room);
           });
