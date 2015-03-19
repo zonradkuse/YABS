@@ -6,33 +6,16 @@ var logger = require('../Logger.js');
 module.exports = function(wsControl){
     wsControl.on("room:getQuestions", function(wss, ws, session, params, interfaceEntry, refId, sId){
         //params.roomId
+        console.log(JSON.stringify(session.user,null,2));
         if(session.user && params.roomId){
-			userDAO.getRoomAccess(session.user, {population:''}, function(err, rooms){
-				if(err){
-					logger.warn("Cannot check user's room access. "+err);
-					wsControl.build(ws, new Error("Cannot check user's room access."), null, refId);
-					return;
-				}
-            	for(var i=0; i<rooms.length; i++){
-            		if(rooms[i]._id == params.roomId){
-            			roomDAO.getByID(params.roomId,{population:'questions.author'},function(err, room){
-            				if(err){
-            					logger.warn("Cannot access room. "+err);
-            					wsControl.build(ws, new Error("Cannot access room."), null, refId);
-            				} else {
-                                room.questions = removeAuthorTokens(room.questions);
-            					wsControl.build(ws, null, {'questions': room.questions}, refId);
-                            }
-            			});
-            			return;
-            		}
-            	}
-            	wsControl.build(ws, new Error("Access denied."), null, refId);
-            });
-        } else {
+			userDAO.hasAccessToRoom(session.user, params.roomId, {population:'questions.author'},function(err, user, room){
+				if(err)
+					return wsControl.build(ws, err, null, refId);
+				room.questions = removeAuthorTokens(room.questions);
+            	wsControl.build(ws, null, {'questions': room.questions}, refId);
+			});			
+        } else
         	wsControl.build(ws, new Error("Your session is invalid."), null, refId);
-        }
-
     });
 
     wsControl.on("room:getAnswers", function(wss, ws, session, params, interfaceEntry, refId, sId){

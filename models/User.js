@@ -6,7 +6,7 @@
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
 var ObjectId = mongoose.Schema.ObjectId;
-var Room = require('../models/Room.js').Room;
+var Room = require('../models/Room.js');
 
 var UserSchema = mongoose.Schema({
     active: { // needed for local registration in future to check if email has been verified.
@@ -27,10 +27,8 @@ var UserSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    access: [{
-        type: ObjectId,
-        ref: 'Room'
-    }],
+    access: [{ roomID: { type: ObjectId, ref: 'Room' }, 
+              rights: Number }],
     facebook: {
       id : String,
       token: String,
@@ -132,7 +130,7 @@ module.exports.getRoomAccess = function(user, options, callback){
 module.exports.addRoomToUser = function(user, room, callback){
   if(callback === undefined)
     throw new Error("callback not defined");
-  Room.findOrCreate({'l2pID':room.l2pID}, room.toObject(), function(err, room, created){
+  Room.Room.findOrCreate({'l2pID':room.l2pID}, room.toObject(), function(err, room, created){
     if(err)
       throw new Error("room not found or cannot created");
     module.exports.addRoomAccess(user, room._id, function(err, user){
@@ -141,4 +139,30 @@ module.exports.addRoomToUser = function(user, room, callback){
       return callback(err, user, room);
     });
   });
+}
+
+/*
+* @param user the target user object
+* @param roomID ID of the room object to check
+* @oaram options used for deepPopulation of the room object
+* @param callback params: error, user object, room object
+*/
+module.exports.hasAccessToRoom = function(user, roomID, options, callback){
+  if(callback === undefined)
+    throw new Error("callback not defined");
+    module.exports.getRoomAccess(user, {population:''}, function(err, rooms){
+      if(err)
+        return callback(new Error("Cannot check user's room access."), null, null);
+      for(var i=0; i<rooms.length; i++){
+        if(rooms[i]._id == roomID){
+          Room.getByID(roomID,{population:options.population},function(err, room){
+            if(err){
+              return callback(new Error("Cannot access room."), null, null);
+            return callback(null, user, room);
+          });
+          return;
+        }
+      }
+      return callback(new Error("Access denied."), null, null);
+    });
 }
