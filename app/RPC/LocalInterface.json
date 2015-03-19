@@ -45,6 +45,12 @@
             },
         "func": ""
     },{
+        "uri": "user:vote",
+        "parameters": {
+            "questionId": ""
+            },
+        "func": ""        
+    },{
         "uri": "room:getQuestions",
         "parameters": {
             "roomId": ""
