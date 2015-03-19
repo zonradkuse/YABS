@@ -25,7 +25,7 @@ module.exports = function(wsControl){
         wsControl.build(ws, null, { message: 'welcome' }, null);
         if(!workerMap[sId] && session && session.user && session.user._id){
             UserModel.get(session.user._id, function(err, _user){
-                var worker = new userWorker(sId, ws, _user, wsControl);
+                var worker = new userWorker(sId, ws, _user, wsControl, true);
                 workerMap[sId] = worker;
                 worker.fetchRooms();
                 process.nextTick(function(){
@@ -111,13 +111,13 @@ module.exports = function(wsControl){
                                                     }
                                                     wsControl.build(ws, null, { status: true }, refId);
                                                     // start a worker that fetches rooms.
-                                                    var worker = new userWorker(sId, ws, _user, wsControl);
+                                                    var worker = new userWorker(sId, ws, _user, wsControl, false);
                                                     if(!workerMap[sId]){
                                                         workerMap[sId] = worker;
                                                     } else {
                                                         worker = workerMap[sId];
                                                         worker.ws = ws; // this is necessary!
-                                                        worker.user = _user; // this not.
+                                                        worker.user = _user;
                                                     }
                                                     process.nextTick(function(){
                                                         logger.info("starting new user worker.");
