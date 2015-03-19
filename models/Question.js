@@ -115,7 +115,11 @@ module.exports.getVotes = function(question, options, callback){
 module.exports.getVotesCount = function(question, callback){
 	if(callback === undefined)
 		throw new Error("callback not defined");
-	Question.aggregate([{$match:{'_id':question._id}},{$project:{count:{$size:'$votes'}}}],function(err,questions){
+	Question.aggregate([{$match:{'_id':new mongoose.Types.ObjectId(question._id)}},{$project:{count:{$size:'$votes'}}}],function(err,questions){
+		if(err)
+			throw err;
+		if(questions.length == 0)
+			return callback(new Error("Question not found."),null);
 		return callback(err,questions[0].count);
 	});
 }

@@ -46,11 +46,4 @@ db.once('open',function(callback){
 		});
 		
 	});*/
-	
-	User.getAll(function(err, users){
-		if(err)
-			throw err;
-		console.log(JSON.stringify(users,null,2));
-	});
-
 });
