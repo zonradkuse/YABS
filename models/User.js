@@ -68,7 +68,7 @@ module.exports.create = function(user, callback){
   if(callback === undefined)
     throw new Error("callback not defined");
   user.save(function(err, user){
-    callback(err, user);
+    return callback(err, user);
   });
 }
 

@@ -33,7 +33,7 @@
         "uri": "user:ask",
         "parameters": {
             "roomId": "",
-            "question": {}
+            "question": ""
             },
         "func": ""
     },{
@@ -54,6 +54,12 @@
         "uri": "room:getAnswers",
         "parameters": {
             "roomId": "",
+            "questionId": ""
+            },
+        "func": ""
+    },{
+        "uri": "question:getVotes",
+        "parameters": {
             "questionId": ""
             },
         "func": ""
