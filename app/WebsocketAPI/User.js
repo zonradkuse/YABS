@@ -76,11 +76,15 @@ module.exports = function(wsControl){
                                         logger.warn("could not add or create question: " + err);
                                         wsControl.build(ws, new Error("could not add or create question"), null, refId);
                                     } else {
-                                        wss.roomBroadcast(ws, 'question:add', {
-                                            'roomId': room._id,
-                                            'question': question
-                                        }, room._id);
-                                        logger.info("added new question to room " + room._id);
+                                        questionDAO.getByID(question._id, {population : 'author answers answers.author'}, function(err, quest) {
+                                            quest.votes = undefined;
+                                            quest.author = quest.author.local;
+                                            wss.roomBroadcast(ws, 'question:add', {
+                                                'roomId': room._id,
+                                                'question': quest
+                                            }, room._id);
+                                            logger.info("added new question to room " + room._id);
+                                        });
                                     }
                                 });
                                 return;
