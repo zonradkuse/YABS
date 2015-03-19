@@ -35,7 +35,7 @@ wss.roomBroadcast = function (ws, uri, data, roomId){
             if(err) logger.warn("An error occured on getting the user session: " + err);
             if(sess.room){
                 if(sess.room === roomId){
-                    WebsocketHandler.build(client, null, null, null, uri, data);
+                    build(client, null, null, null, uri, data);
                 }
             } else {
                 build(ws, new Error("Your current room is not set."));
