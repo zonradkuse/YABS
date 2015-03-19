@@ -37,7 +37,7 @@ module.exports = function(wsControl){
             }
     });
 
-    wsControl.on('user:ask', function(wss, ws, session, params, interfaceEntry, refId, sId){
+    wsControl.on('user:ask', function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
         if (authed) {
             if(params && params.question && params.roomId){
                 //check if user is in room
