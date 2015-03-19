@@ -27,8 +27,7 @@ var UserSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    access: [{ roomID: { type: ObjectId, ref: 'Room' }, 
-              rights: Number }],
+    access: [{ type: ObjectId, ref: 'Room' }],
     facebook: {
       id : String,
       token: String,
