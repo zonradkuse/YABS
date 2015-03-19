@@ -9,7 +9,7 @@ module.exports = function(wsControl){
     wsControl.on("user:vote", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
         if (authed) {
             if (params.questionId) {
-                userDAO.hasAccessToRoom(session.user, { _id : params:roomId }, { population: '' }, function (err, user, room){
+                userDAO.hasAccessToRoom(session.user, { _id : params.roomId }, { population: '' }, function (err, user, room){
                     if (err) {
                         return logger.warn("could not check user access: " + err)
                     }
