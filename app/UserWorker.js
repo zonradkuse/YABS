@@ -68,18 +68,8 @@ UserWorker.prototype.fetchRooms = function(refId, next){
                                     return;
                                 }
                                 if(user) {
-                                    self.user = user;
-                                    room.questions = [];
-                                    if (refId) {
-                                        self.wsControl.build(self.ws, null, {
-                                            'message': "You got a new room.",
-                                            'room': room
-                                        }, refId);
-                                    } else {
-                                        self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': room });
-                                    }
+                                    self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': room });
                                     logger.info("added new room: " + room.l2pID);
-
                                 }
                             });
                         }
