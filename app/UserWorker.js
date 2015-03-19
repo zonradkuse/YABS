@@ -33,52 +33,58 @@ UserWorker.prototype.fetchRooms = function(refId){
     var self = this;
     this.checkSession(function(err, value){
         if(err) {
-            if (err.message !== "connection lost") self.wsControl.build(self.ws, err);
+            self.wsControl.build(self.ws, err);
             logger.warn("could not fetch rooms: " + err);
         } else if(value) {
-            // valid session existing
-            l2p.getAllCourses(self.user.rwth.token, function(courses){
-		        try{
-                    courses = JSON.parse(courses);
-                    logger.debug(courses);
-                } catch (e) {
-                    self.wsControl.build(self.ws, new Error("L2P answer was invalid."), null, refId);
-                    logger.warn("L2P courselist was not valid json: " + courses);
-                    return;
+            // valid session existing - check access token
+            self.refreshAccessToken(function(err){
+                if(err){
+                    logger.warn("could not refresh access token: " + err);
+                    return self.wsControl.build(self.ws, new Error("Could not refresh your token."), null, refId);
                 }
-                if(courses.Status) {
-                    for(var el in courses.dataSet) {
-                        var _room = new Room.Room();
-                        _room.l2pID = courses.dataSet[el].uniqueid;
-                        _room.name = courses.dataSet[el].courseTitle;
-                        _room.description = courses.dataSet[el].description;
-                        _room.url = courses.dataSet[el].url;
-                        _room.status = courses.dataSet[el].status;
-                        _room.semester = courses.dataSet[el].semester;
-
-                        User.addRoomToUser(self.user, _room, function(err, user, room){
-                            if(err){
-                                logger.warn("error on adding room to user: " + err);
-                                return;
-                            }
-                            if(user) {
-                                self.user = user;
-                                if (refId) {
-                                    self.wsControl.build(self.ws, null, {
-                                        'message': "You got a new room.",
-                                        'room': room
-                                    }, refId);
-                                } else {
-                                    self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': room });
-                                }
-                                logger.info("added new room: " + room.l2pID);
-                            }
-                        });
+                l2p.getAllCourses(self.user.rwth.token, function(courses){
+    		        try{
+                        courses = JSON.parse(courses);
+                        logger.debug(courses);
+                    } catch (e) {
+                        self.wsControl.build(self.ws, new Error("L2P answer was invalid."), null, refId);
+                        logger.warn("L2P courselist was not valid json: " + courses);
+                        return;
                     }
-                } else {
-                    self.wsControl.build(self.ws, new Error("L2P returned bad things (probably html code)"), null, refId);
-                    logger.warn("Bad L2P answer: " + courses); 
-                }
+                    if(courses.Status) {
+                        for(var el in courses.dataSet) {
+                            var _room = new Room.Room();
+                            _room.l2pID = courses.dataSet[el].uniqueid;
+                            _room.name = courses.dataSet[el].courseTitle;
+                            _room.description = courses.dataSet[el].description;
+                            _room.url = courses.dataSet[el].url;
+                            _room.status = courses.dataSet[el].status;
+                            _room.semester = courses.dataSet[el].semester;
+
+                            User.addRoomToUser(self.user, _room, function(err, user, room){
+                                if(err){
+                                    logger.warn("error on adding room to user: " + err);
+                                    return;
+                                }
+                                if(user) {
+                                    self.user = user;
+                                    if (refId) {
+                                        self.wsControl.build(self.ws, null, {
+                                            'message': "You got a new room.",
+                                            'room': room
+                                        }, refId);
+                                    } else {
+                                        self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': room });
+                                    }
+                                    logger.info("added new room: " + room.l2pID);
+                                }
+                            });
+                        }
+                    } else {
+                        self.wsControl.build(self.ws, new Error("L2P returned bad things (probably html code)"), null, refId);
+                        logger.warn("Bad L2P answer: " + courses); 
+                    }
+                });
             });
         } else if(!value) {
             self.wsControl.build(self.ws, new Error("Your session is invalid."));
@@ -107,9 +113,11 @@ UserWorker.prototype.checkSession = function(next){
 /**
  * renews the Campus access_token if called and the user is still logged in/has a valid session.
  **/
-UserWorker.prototype.refreshAccessToken = function(){
+UserWorker.prototype.refreshAccessToken = function(next){
     var self = this;
     this.checkToken(function(err, expires){
+        if(err) return next(err);
+
         if(!expires || expires < 300){
             campusReq.postReqCampus('token', querystring.stringify({
                 "client_id": config.login.l2p.clientID,
@@ -117,7 +125,7 @@ UserWorker.prototype.refreshAccessToken = function(){
                 "grant_type": "refresh_token"
             }), function(err, res){
                 if (err) {
-
+                    next(err)
                 } else {
                     var answer;
                     try{
@@ -127,21 +135,25 @@ UserWorker.prototype.refreshAccessToken = function(){
                     }
                     if(answer.status === "ok"){
                         userDAO.get(self.user._id, function(err, _user){
-                            if (err) return logger.warn("could not get user: " + err);
+                            if (err) return next(err);
                             if(_user) {
-                                user.rwth.access_token = answer.access_token;
+                                _user.rwth.token = answer.access_token;
+                                self.user = _user;
                                 self.user.save(function(e){
                                     if (e) return logger.warn("could not save a user: " + e);
-                                    self.user = user;
+                                    
+                                    console.log(self.user);
+                                    logger.debug("refreshed a access_token");
                                 });
                             } else {
                                 logger.warn("user should have existed: " + self.user);
+                                next(new Error("You do not exist."))
                             }
 
                         });
 
                     } else if (answer.error === "authorization invalid."){
-                        //TODO invalidate user
+                        next(new Error("Your refresh_token is invalid."));
                     }
                 }
             });
@@ -153,6 +165,7 @@ UserWorker.prototype.refreshAccessToken = function(){
 
 UserWorker.prototype.checkToken = function(next){
     var self = this;
+    console.log(self.user.rwth.token)
     campusReq.postReqCampus('tokeninfo', querystring.stringify({
             "client_id": config.login.l2p.clientID,
             "access_token": self.user.rwth.token
@@ -166,8 +179,9 @@ UserWorker.prototype.checkToken = function(next){
                 } catch (e) {
                     return next(e);
                 }
+                
                 if(answer.status === "ok"){
-                    next(null, expires);
+                    next(null, answer.expires_in);
                 } else {
                     next(null, null);
                 }
