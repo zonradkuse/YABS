@@ -19,11 +19,12 @@ var querystring = require('querystring');
  * @param ws The to the user specific websocket.
  * @param user User Data Access Object
  **/
-var UserWorker = function(sId, ws, user, wsFrame){
+var UserWorker = function(sId, ws, user, wsFrame, initialBool){
     this.sId = sId;
     this.ws = ws;
     this.user = user;
     this.wsControl = wsFrame;
+    this.initialized = initialBool;
 };
 
 /**
@@ -158,14 +159,14 @@ UserWorker.prototype.refreshAccessToken = function(next){
                 }
             });
         }
-        //else do nothing. no need to refresh
+        next(null);
     });
 
 };
 
 UserWorker.prototype.checkToken = function(next){
     var self = this;
-    console.log(self.user.rwth.token)
+
     campusReq.postReqCampus('tokeninfo', querystring.stringify({
             "client_id": config.login.l2p.clientID,
             "access_token": self.user.rwth.token
