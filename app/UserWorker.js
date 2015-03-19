@@ -69,6 +69,7 @@ UserWorker.prototype.fetchRooms = function(refId, next){
                                 }
                                 if(user) {
                                     self.user = user;
+                                    room.questions = [];
                                     if (refId) {
                                         self.wsControl.build(self.ws, null, {
                                             'message': "You got a new room.",
@@ -205,6 +206,7 @@ UserWorker.prototype.getRooms = function(){
         userDAO.getRoomAccess(self.user, {population: ''}, function(err, rooms){
             for (var room in rooms){
                 if(rooms[room].l2pID !== undefined){
+                    rooms[room].questions = [];
                     self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': rooms[room] });
                     logger.debug("send: " + rooms[room].l2pID);
                 }
