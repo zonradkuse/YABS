@@ -30,7 +30,7 @@ var UserWorker = function(sId, ws, user, wsFrame, initialBool){
 /**
  * checks if there are new rooms that need to be added to the database and adds them.
  **/
-UserWorker.prototype.fetchRooms = function(refId){
+UserWorker.prototype.fetchRooms = function(refId, next){
     var self = this;
     this.checkSession(function(err, value){
         if(err) {
@@ -78,6 +78,7 @@ UserWorker.prototype.fetchRooms = function(refId){
                                         self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': room });
                                     }
                                     logger.info("added new room: " + room.l2pID);
+
                                 }
                             });
                         }
@@ -85,6 +86,7 @@ UserWorker.prototype.fetchRooms = function(refId){
                         self.wsControl.build(self.ws, new Error("L2P returned bad things (probably html code)"), null, refId);
                         logger.warn("Bad L2P answer: " + courses); 
                     }
+                    if (next) next();
                 });
             });
         } else if(!value) {

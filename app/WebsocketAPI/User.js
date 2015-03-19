@@ -21,8 +21,13 @@ module.exports = function(wsControl){
     });
     
     wsControl.on('user:getRooms', function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
+            console.log(session.user);
             if(authed){
                 userDAO.getRoomAccess(session.user, {population: ''}, function(err, rooms){
+                    if (err) {
+                        return logger.warn("could not get rooms: " + err);
+                    }
+                    console.log(rooms);
                     wsControl.build(ws, null, {
                         'rooms': rooms,
                     }, refId);
