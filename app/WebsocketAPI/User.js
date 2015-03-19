@@ -40,16 +40,18 @@ module.exports = function(wsControl){
     });
     
     wsControl.on('user:getRooms', function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
-            console.log(session.user);
             if(authed){
                 userDAO.getRoomAccess(session.user, {population: ''}, function(err, rooms){
                     if (err) {
                         return logger.warn("could not get rooms: " + err);
                     }
-                    console.log(rooms);
-                    wsControl.build(ws, null, {
-                        'rooms': rooms,
-                    }, refId);
+                    rooms = rooms.toObject();
+                    for (var i = rooms.length - 1; i >= 0; i--) {
+                        wsControl.build(ws, null, null, null, "room:add", {
+                            'room': rooms[i],
+                        });
+                    };
+                    
                 });
             } else {
                 wsControl.build(ws, new Error("Your session is invalid."), null, refId);
@@ -79,6 +81,9 @@ module.exports = function(wsControl){
                                         questionDAO.getByID(question._id, {population : 'author answers answers.author'}, function(err, quest) {
                                             quest.votes = undefined;
                                             quest.author = quest.author.local;
+                                            for (var i = quest.answers.length - 1; i >= 0; i--) {
+                                                quest.answers[i].author = quest.answers[i].author.local;
+                                            };
                                             wss.roomBroadcast(ws, 'question:add', {
                                                 'roomId': room._id,
                                                 'question': quest
