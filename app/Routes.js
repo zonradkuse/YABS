@@ -72,7 +72,8 @@
             res.redirect('/');
           } else {
               res.setHeader('Content-Type', 'text/html');
-              res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's (' + (sess.cookie.maxAge / 60 / 1000) + ' min)</p>');
+              res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's (' + (sess.cookie.maxAge / 60 / 1000) + ' min or ' +
+               (sess.cookie.maxAge / (60 * 60 * 1000)) + 'h or ' + (sess.cookie.maxAge / ( 60 * 60 * 24 * 1000)) + 'd)</p>');
               res.write('<p>logged in with Session: ' + JSON.stringify(sess) + '<p>');
               res.write('<p>Your User Information: ' + JSON.stringify(sess.user) + '</p>');
               if (sess.user === undefined) {
