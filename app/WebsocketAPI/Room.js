@@ -7,11 +7,18 @@ module.exports = function(wsControl){
     wsControl.on("room:getQuestions", function(wss, ws, session, params, interfaceEntry, refId, sId){
         //params.roomId
         if(session.user && params.roomId){
-			userDAO.hasAccessToRoom(session.user, params.roomId, {population:'questions.author'},function(err, user, room){
+			userDAO.hasAccessToRoom(session.user, params.roomId, {population:'questions.author questions.answers questions.answers.author'},function(err, user, room){
 				if(err)
 					return wsControl.build(ws, err, null, refId);
-				room.questions = removeAuthorTokens(room.questions);
-            	wsControl.build(ws, null, {'questions': room.questions}, refId);
+                room = room.toObject();
+                room.questions = removeAuthorTokens(room.questions);
+                for (var j = room.questions.length - 1; j >= 0; j--) {
+                    room.questions[j].answers = removeAuthorTokens(room.questions[j].answers);
+                    wsControl.build(ws, null, null, null, "question:add", {
+                        roomId : params.roomId,
+                        question : room.questions[j]
+                    });
+                };
 			});			
         } else
         	wsControl.build(ws, new Error("Your session is invalid."), null, refId);
@@ -51,8 +58,7 @@ function removeAuthorTokens(input) {
         console.log(i);
         if(input[i].author) {
             if(input[i].author.rwth){
-                input[i].author = {local: {name: input[i].author.local.name}};
-                console.log(input[i]);
+                input[i].author = input[i].author.local;
             }
         }
     };

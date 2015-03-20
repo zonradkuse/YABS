@@ -34,8 +34,9 @@ wss.roomBroadcast = function (ws, uri, data, roomId){
         sessionStore.get(sId, function(err, sess){
             if(err) logger.warn("An error occured on getting the user session: " + err);
             if(sess.room){
-                if(sess.room === roomId){
-                    WebsocketHandler.build(client, null, null, null, uri, data);
+
+                if(sess.room == roomId){
+                    build(client, null, null, null, uri, data);
                 }
             } else {
                 build(ws, new Error("Your current room is not set."));
@@ -74,7 +75,7 @@ var WebsocketHandler = function() {
                         ws.send(self.build(ws, new Error("no valid json or not a string"), null, message.refId));
                         return;
                     }
-                    if(session){
+                    if(session || (message.uri === "system:benchmark")){
                         if(message && message.uri){
                             for(var i = 0; i<interf.data.length; i++){
                                 if(interf.data[i].uri === message.uri){ //uri exists

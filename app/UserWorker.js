@@ -68,17 +68,8 @@ UserWorker.prototype.fetchRooms = function(refId, next){
                                     return;
                                 }
                                 if(user) {
-                                    self.user = user;
-                                    if (refId) {
-                                        self.wsControl.build(self.ws, null, {
-                                            'message': "You got a new room.",
-                                            'room': room
-                                        }, refId);
-                                    } else {
-                                        self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': room });
-                                    }
+                                    self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': room });
                                     logger.info("added new room: " + room.l2pID);
-
                                 }
                             });
                         }
@@ -205,6 +196,7 @@ UserWorker.prototype.getRooms = function(){
         userDAO.getRoomAccess(self.user, {population: ''}, function(err, rooms){
             for (var room in rooms){
                 if(rooms[room].l2pID !== undefined){
+                    rooms[room].questions = [];
                     self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': rooms[room] });
                     logger.debug("send: " + rooms[room].l2pID);
                 }

@@ -35,7 +35,7 @@ app.use(session({
     roomId: "",
     secret: config.general.cookie.secret,
     cookie: {
-        expires: new Date(Date.now() + 15778463), // 6 month
+        expires: new Date(Date.now() + 15778463000), // 6 month
         httpOnly: false
     },
     resave: false,
