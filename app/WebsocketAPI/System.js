@@ -2,6 +2,7 @@ var logger = require('../Logger.js');
 var config = require('../../config.json');
 var querystring = require('querystring');
 var UserModel = require('../../models/User.js');
+var roomDAO = require('../../models/Room.js');
 var User = require('../../models/User.js').User;
 var session = require('express-session');
 var sessionStore = require('connect-redis')(session);
@@ -13,6 +14,17 @@ var fancyNames = moniker.generator([moniker.adjective, moniker.noun],{glue:' '})
 var workerMap = {};
 
 module.exports = function(wsControl){
+    /*
+     * This method performs a big database query and sends it back to the client.
+     */
+    wsControl.on("system:benchmark", function(wss, ws, session, params, interfaceEntry, refId, sId){
+        if (config.general.env.dev) {
+            roomDAO.getAll({population: 'questions questions.author questions.votes questions.votes.access questions.answers questions.answers.author questions.author.access questions.answers.author.access'}, function(err, rooms){
+                wsControl.build(ws, err, rooms, refId);
+            });
+        }
+    });
+
     wsControl.on('system:close', function(ws, sId){
         //workerMap[sId].stop();
         logger.info("a client disconnected.");

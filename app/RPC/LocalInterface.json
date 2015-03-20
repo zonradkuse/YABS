@@ -4,6 +4,10 @@
         "parameters": {},
         "func": ""
     },{
+        "uri": "system:benchmark",
+        "parameters": {},
+        "func": ""
+    },{
         "uri": "system:login",
         "parameters": {},
         "func": ""

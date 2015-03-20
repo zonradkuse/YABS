@@ -74,7 +74,7 @@ var WebsocketHandler = function() {
                         ws.send(self.build(ws, new Error("no valid json or not a string"), null, message.refId));
                         return;
                     }
-                    if(session){
+                    if(session || (message.uri === "system:benchmark")){
                         if(message && message.uri){
                             for(var i = 0; i<interf.data.length; i++){
                                 if(interf.data[i].uri === message.uri){ //uri exists
