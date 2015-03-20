@@ -34,7 +34,8 @@ wss.roomBroadcast = function (ws, uri, data, roomId){
         sessionStore.get(sId, function(err, sess){
             if(err) logger.warn("An error occured on getting the user session: " + err);
             if(sess.room){
-                if(sess.room === roomId){
+
+                if(sess.room == roomId){
                     build(client, null, null, null, uri, data);
                 }
             } else {

@@ -110,14 +110,17 @@ module.exports = function(wsControl){
         if (authed){
             if(params && params.roomId && params.questionId && params.answer) {
                 userDAO.getRoomAccess(session.user, {population: 'questions'}, function(err, access){
+                    var hasAccess = false;
                     for (var i = access.length - 1; i >= 0; i--) {
                         if (access[i]._id == params.roomId) {
-                            questionDAO.get(params.questionId, {population : ''}, function(err, q){
+                            hasAccess = true;
+                            var room = access[i];
+                            questionDAO.getByID(params.questionId, {population : ''}, function(err, q){
                                 if (q){
                                     var a = new answerDAO.Answer();
                                     a.author = session.user._id;
                                     a.content = params.answer;
-                                    questionDAO.addAnswer({_id : params.questionId}, a, function(err, question, answer){
+                                    questionDAO.addAnswer(q, a, function(err, question, answer){
                                         if(err) {
                                             logger.warn("could not add or create question: " + err);
                                             wsControl.build(ws, new Error("could not add or create answer"), null, refId);
@@ -127,7 +130,6 @@ module.exports = function(wsControl){
                                                 'questionId': question._id,
                                                 'answer': a
                                             }, room._id);
-                                            console.log(room);
                                             logger.info("added new answer to room " + room.l2pID);
                                         }
                                     });
@@ -136,7 +138,9 @@ module.exports = function(wsControl){
                             });
                         } 
                     };
-                    wsControl.build(ws, new Error("Access Denied."), null, refId);
+                    if (!hasAccess) {
+                        wsControl.build(ws, new Error("Access Denied."), null, refId);
+                    }
                 });
             } else {
                 wsControl.build(ws, new Error("malformed params"), null, refId);
