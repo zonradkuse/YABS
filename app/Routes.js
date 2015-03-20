@@ -99,35 +99,6 @@
           }
       });
 
-
-      app.get('/course/*', function(req, res, next) {
-          var fs = require('fs');
-          var path = require('path');
-          fs.exists(path.resolve(__dirname, '../', req.originalUrl), function(exists) {
-              if (!exists)
-                  res.sendFile(path.resolve(__dirname, '../', 'public/index.html'));
-          });
-      });
-      // Courseadmin is for demo only, will be integrated into course
-      app.get('/courseadmin/*', function(req, res, next) {
-          var fs = require('fs');
-          var path = require('path');
-          fs.exists(path.resolve(__dirname, '../', req.originalUrl), function(exists) {
-              if (!exists)
-                  res.sendFile(path.resolve(__dirname, '../', 'public/index.html'));
-          });
-      });
-
-      app.get('/login', function(req, res, next) {
-          var fs = require('fs');
-          var path = require('path');
-          fs.exists(path.resolve(__dirname, '../', req.originalUrl), function(exists) {
-              if (!exists)
-                  res.sendFile(path.resolve(__dirname, '../', 'public/index.html'));
-          });
-      });
-
-
       // Facebook OAuth
       app.get('/login/facebook', passport.authenticate('facebook', {
           scope: 'email',
