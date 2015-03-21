@@ -123,7 +123,7 @@ module.exports = function(wsControl){
                                             logger.warn("could not add or create question: " + err);
                                             wsControl.build(ws, new Error("could not add or create answer"), null, refId);
                                         } else {
-                                            answerDAO.getByID(answer._id, {population: author}, function(err, ans){
+                                            answerDAO.getByID(answer._id, {population: 'author'}, function(err, ans){
                                                 ans.toObject();
                                                 ans.author = ans.author.local;
                                                 wss.roomBroadcast(ws, 'answer:add', {
