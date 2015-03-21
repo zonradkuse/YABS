@@ -7,6 +7,8 @@ var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
 var ObjectId = mongoose.Schema.ObjectId;
 var Room = require('../models/Room.js');
+var Question = require('../models/Question.js');
+var Answer = require('../models/Answer.js');
 
 var UserSchema = mongoose.Schema({
     active: { // needed for local registration in future to check if email has been verified.
@@ -147,21 +149,21 @@ module.exports.addRoomToUser = function(user, room, callback){
 
 /*
 * @param user the target user object
-* @param roomID ID of the room object to check
+* @param room room object to check
 * @oaram options used for deepPopulation of the room object
 * @param callback params: error, user object, room object
 */
-module.exports.hasAccessToRoom = function(user, roomID, options, callback){
+module.exports.hasAccessToRoom = function(user, room, options, callback){
   if(callback === undefined)
     throw new Error("callback not defined");
     module.exports.getRoomAccess(user, {population:''}, function(err, rooms){
       if(err)
         return callback(new Error("Cannot check user's room access."), null, null);
       for(var i=0; i<rooms.length; i++){
-        if(rooms[i]._id == roomID){
-          Room.getByID(roomID,{population: options.population},function(err, room){
+        if(rooms[i]._id == room._id){
+          Room.getByID(room._id, {population: options.population}, function(err, room){
             if(err)
-              return callback(new Error("Cannot access room."), null, null);
+              return callback(new Error("Room not found."), null, null);
             return callback(null, user, room);
           });
           return;
@@ -169,4 +171,59 @@ module.exports.hasAccessToRoom = function(user, roomID, options, callback){
       }
       return callback(new Error("Access denied."), null, null);
     });
+}
+
+/*
+* @param user the target user object
+* @param room room object 
+* @param question question object to check
+* @oaram options used for deepPopulation of the question object
+* @param callback params: error, user object, question object
+*/
+module.exports.hasAccessToQuestion = function(user, room, question, options, callback){
+  if(callback === undefined)
+    throw new Error("callback not defined");
+  module.exports.hasAccessToRoom(user, room._id, {population:''}, function(err, user, room){
+    if(err)
+      return callback(err, null, null);
+    for(var i=0; i<room.questions.length; i++){
+      if(room.questions[i] == question._id){
+        Question.getByID(question._id, {population: options.population}, function(err, question){
+          if(err)
+            return callback(new Error("Question not found."), null, null);
+          return callback(null, user, question);
+        });
+        return;
+      }
+    }
+    return callback(new Error("Access denied."), null, null);
+  });
+}
+
+/*
+* @param user the target user object
+* @param room room object
+* @param question question object
+* @param answer answer object to check
+* @oaram options used for deepPopulation of the answer object
+* @param callback params: error, user object, answer object
+*/
+module.exports.hasAccessToAnswer = function(user, room, question, answer, options, callback){
+  if(callback === undefined)
+    throw new Error("callback not defined");
+  module.exports.hasAccessToQuestion(user, room._id, question._id, {population:''}, function(err, user, question){
+    if(err)
+      return callback(err, null, null);
+    for(var i=0; i<question.answers.length; i++){
+      if(question.answers[i] == answer._id){
+        Answer.getByID(answer._id, {population: options.population}, function(err, answer){
+          if(err)
+            return callback(new Error("Answer not found."), null, null);
+          return callback(null, user, answer);
+        });
+        return;
+      }
+    }
+    return callback(new Error("Access denied."), null, null);
+  });
 }
