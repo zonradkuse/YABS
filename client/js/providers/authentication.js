@@ -1,4 +1,4 @@
-client.service('authentication', ['$window', '$q', 'rpc', function($window, $q, rpc){
+client.service("authentication", ["$window", "$q", "rpc", function($window, $q, rpc){
 	var username = false;
 
 	this.enforceLoggedIn = function() {

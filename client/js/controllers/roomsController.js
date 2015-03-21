@@ -1,8 +1,6 @@
-(function() {
-    clientControllers.controller('roomsController', ['$scope', '$routeParams', "rooms",
-        function($scope, $routeParams, rooms) {
-        	$scope.rooms = rooms.toArray();
-        }
-    ]);
-
-})();
+clientControllers.controller("roomsController", ["$scope", "$routeParams", "rooms", "authentication",
+    function($scope, $routeParams, rooms, authentication) {
+    	authentication.enforceLoggedIn();
+    	$scope.rooms = rooms.toArray();
+    }
+]);

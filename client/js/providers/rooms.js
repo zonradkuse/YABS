@@ -1,4 +1,4 @@
-client.service('rooms', ['rpc', '$rootScope', function(rpc, $rootScope){
+client.service("rooms", ["rpc", "$rootScope", function(rpc, $rootScope){
 	var rooms = [];
 	var self = this;
 

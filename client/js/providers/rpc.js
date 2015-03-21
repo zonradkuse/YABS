@@ -1,10 +1,10 @@
-client.service('rpc', [function(){
+client.service("rpc", [function(){
     /*
      * Code related to sending requests
      */
 
     var callbackTable = {};
-	var wsUrl = (window.location.protocol == 'http:' ? 'ws' : 'wss') + "://" + appUrl;
+	var wsUrl = (window.location.protocol == "http:" ? "ws" : "wss") + "://" + appUrl;
 	var ws = new WebSocket(wsUrl);
     var sendQueue = [];
     var queueTimer = false;
@@ -49,9 +49,9 @@ client.service('rpc', [function(){
 
 	ws.onmessage = function(event) {
 		var data = JSON.parse(event.data);
-		if ('error' in data && data.error !== null)
+		if ("error" in data && data.error !== null)
 			console.log("WS Error received: " + data.error);
-		if ('data' in data) {
+		if ("data" in data) {
 			// Response
 			if (callbackTable[data.refId] !== undefined) {
 				callbackTable[data.refId](data.data);
@@ -77,7 +77,7 @@ client.service('rpc', [function(){
         },{
             "uri": "question:add",
             "parameters": {
-                roomId: '',
+                roomId: "",
                 question: {}               
             },
             "func": ""
@@ -85,7 +85,7 @@ client.service('rpc', [function(){
             "uri": "answer:add",
             "parameters": {
                 roomId: "",
-                questionId: '',
+                questionId: "",
                 answer: {}
             },
             "func": ""
@@ -102,11 +102,11 @@ client.service('rpc', [function(){
      *                  refId: reference that comes from the server.
      **/
     this.attachFunction = function(uri, funct) {
-        if (typeof funct != 'function') {
-            throw new Error('function is not a function');
+        if (typeof funct != "function") {
+            throw new Error("function is not a function");
         }
         if (Interface.data === undefined || Interface.data === null) {
-            callback(new Error('Interface Data unset or undefined.'));
+            callback(new Error("Interface Data unset or undefined."));
         } else {
             var data = Interface.data;
             for (var i = data.length - 1; i >= 0; i--) {
@@ -116,7 +116,7 @@ client.service('rpc', [function(){
                     return;
                 }
             }
-            callback(new Error('URI not found'));
+            callback(new Error("URI not found"));
         }
     };
 
@@ -126,7 +126,7 @@ client.service('rpc', [function(){
      **/
     this.handleBroadcast = function(invoke, params) {
         if (Interface.data === undefined || Interface.data === null) {
-            callback(new Error('Interface Data unset or undefined.'));
+            callback(new Error("Interface Data unset or undefined."));
         } else {
             var data = Interface.data;
             this.checkParameters(invoke, params, function(err, res){
@@ -139,7 +139,7 @@ client.service('rpc', [function(){
                             return;
                         }
                     }
-                    callback(new Error('URI not found'));
+                    callback(new Error("URI not found"));
                 } else {
                     throw err;
                 }
@@ -151,9 +151,9 @@ client.service('rpc', [function(){
     this.ParamsOfURI = function(uri, callback) {
         //get params for uri
         if (Interface.data === undefined || Interface.data === null) {
-            callback(new Error('Interface data not set or undefined.'));
-        } else if (typeof callback != 'function') {
-            throw new Error('callback is not a function');
+            callback(new Error("Interface data not set or undefined."));
+        } else if (typeof callback != "function") {
+            throw new Error("callback is not a function");
         } else {
             var data = Interface.data;
             for (var i = data.length - 1; i >= 0; i--) {
@@ -162,7 +162,7 @@ client.service('rpc', [function(){
                     return;
                 }
             }
-            callback(new Error('URI not found'));
+            callback(new Error("URI not found"));
         }
     };
 
