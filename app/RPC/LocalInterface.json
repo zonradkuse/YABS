@@ -79,5 +79,21 @@
             "questionId": ""
             },
         "func": ""
+    },{
+        "uri": "question:setContent",
+        "parameters": {
+            "roomId": "",
+            "questionId": "",
+            "content": ""
+            },
+        "func": ""
+    },{
+        "uri": "question:setVisibility",
+        "parameters": {
+            "roomId": "",
+            "questionId": "",
+            "isVisible": ""
+            },
+        "func": ""
     }]
 }

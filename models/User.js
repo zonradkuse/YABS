@@ -183,7 +183,7 @@ module.exports.hasAccessToRoom = function(user, room, options, callback){
 module.exports.hasAccessToQuestion = function(user, room, question, options, callback){
   if(callback === undefined)
     throw new Error("callback not defined");
-  module.exports.hasAccessToRoom(user, room._id, {population:''}, function(err, user, room){
+  module.exports.hasAccessToRoom(user, room, {population:''}, function(err, user, room){
     if(err)
       return callback(err, null, null);
     for(var i=0; i<room.questions.length; i++){
@@ -211,7 +211,7 @@ module.exports.hasAccessToQuestion = function(user, room, question, options, cal
 module.exports.hasAccessToAnswer = function(user, room, question, answer, options, callback){
   if(callback === undefined)
     throw new Error("callback not defined");
-  module.exports.hasAccessToQuestion(user, room._id, question._id, {population:''}, function(err, user, question){
+  module.exports.hasAccessToQuestion(user, room, question, {population:''}, function(err, user, question){
     if(err)
       return callback(err, null, null);
     for(var i=0; i<question.answers.length; i++){
