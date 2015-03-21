@@ -8,12 +8,17 @@ client.service('rooms', ['rpc', '$rootScope', function(rpc, $rootScope){
 
 	this.upsertRoom = function(room) {
 		for(var i = 0; i < rooms.length; i++) {
+			/*jshint loopfunc: true */
 			if (rooms[i]._id === room._id) {
-				rooms[i] = room;
+				$rootScope.$apply(function (){
+					rooms[i] = room;
+				});
 				return;
 			}
-		}	
-		rooms.push(room);
+		}
+		$rootScope.$apply(function (){
+			rooms.push(room);
+		});
 	};
 
 	this.getById = function(id) {

@@ -1,7 +1,7 @@
 client.service('authentication', ['$window', '$q', 'rpc', function($window, $q, rpc){
 	var username = false;
 
-	this.enforceLoggedIn = function(basedata) {
+	this.enforceLoggedIn = function() {
 		this.isUserLoggedIn().then(function(status) {
 			if (!status) {
 				$window.location = "/login";
