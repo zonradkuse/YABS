@@ -32,6 +32,12 @@
             otherwise({
                 redirectTo: '/404'
         });
+        
+        $(document).on('click','.navbar-collapse.in',function(e) { // Stolen from http://stackoverflow.com/a/22917099
+            if( $(e.target).is('a') && $(e.target).attr('class') != 'dropdown-toggle' ) {
+                $(this).collapse('hide');
+            }
+        });
     }]);
 
     client.run(["rooms", function(rooms) {
