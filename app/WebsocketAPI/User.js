@@ -9,11 +9,11 @@ module.exports = function(wsControl){
     wsControl.on("user:vote", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
         if (authed) {
             if (params.questionId) {
-                userDAO.hasAccessToRoom(session.user, { _id : params.roomId }, { population: '' }, function (err, user, room){
+                userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, { population: '' }, function (err, user, question){
                     if (err) {
-                        return logger.warn("could not check user access: " + err)
+                        return logger.warn("could not check user access: " + err);
                     }
-                    questionDAO.vote({ _id : params.questionId }, session.user, function(e, q){
+                    questionDAO.vote(question, session.user, function(err, question){
                         
                     });
                 });

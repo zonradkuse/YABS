@@ -34,13 +34,10 @@
         });
     }]);
 
-    client.run(["rpc", "rooms", function(rpc, rooms) {
-        rpc.attachFunction("room:add", function(data) {
-            rooms.upsertRoom(data.room);
-        });
+    client.run(["rooms", function(rooms) {
+        rooms.enableListeners();
     }]);
 
     var controllers = angular.module('clientControllers', []);
-    //var authenticationProvider = angular.module('authenticationProvider', []);
     window.clientControllers = controllers;
 })();
