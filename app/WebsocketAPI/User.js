@@ -4,6 +4,7 @@ var userDAO = require('../../models/User.js');
 var roomDAO = require('../../models/Room.js');
 var answerDAO = require('../../models/Answer.js');
 var logger = require('../Logger.js');
+var roomWSControl = require('./Room.js');
 
 module.exports = function(wsControl){
     wsControl.on("user:vote", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
@@ -79,14 +80,11 @@ module.exports = function(wsControl){
                                         wsControl.build(ws, new Error("could not add or create question"), null, refId);
                                     } else {
                                         questionDAO.getByID(question._id, {population : 'author answers answers.author'}, function(err, quest) {
-                                            quest.votes = undefined;
                                             quest.author = quest.author.local;
-                                            for (var i = quest.answers.length - 1; i >= 0; i--) {
-                                                quest.answers[i].author = quest.answers[i].author.local;
-                                            };
+                                            quest.answers = roomWSControl.removeAuthorTokens(quest.answers);
                                             wss.roomBroadcast(ws, 'question:add', {
                                                 'roomId': room._id,
-                                                'question': quest
+                                                'question': roomWSControl.createVotesFields(session.user, quest)
                                             }, room._id);
                                             logger.info("added new question to room " + room._id);
                                         });
@@ -125,18 +123,22 @@ module.exports = function(wsControl){
                                             logger.warn("could not add or create question: " + err);
                                             wsControl.build(ws, new Error("could not add or create answer"), null, refId);
                                         } else {
-                                            wss.roomBroadcast(ws, 'answer:add', {
-                                                'roomId': room._id,
-                                                'questionId': question._id,
-                                                'answer': a
-                                            }, room._id);
-                                            logger.info("added new answer to room " + room.l2pID);
+                                            answerDAO.getByID(answer._id, {population: author}, function(err, ans){
+                                                ans.toObject();
+                                                ans.author = ans.author.local;
+                                                wss.roomBroadcast(ws, 'answer:add', {
+                                                    'roomId': room._id,
+                                                    'questionId': question._id,
+                                                    'answer': ans
+                                                }, room._id);
+                                                logger.info("added new answer to room " + room.l2pID);
+                                            });
                                         }
                                     });
                                     return;
                                 }
                             });
-                        } 
+                        }
                     };
                     if (!hasAccess) {
                         wsControl.build(ws, new Error("Access Denied."), null, refId);

@@ -19,7 +19,7 @@ module.exports = function(wsControl){
                         question : createVotesFields(session.user, room.questions[j])
                     });
                 };
-			});			
+			});
         } else
         	wsControl.build(ws, new Error("Your session is invalid."), null, refId);
     });
@@ -51,7 +51,7 @@ function removeAuthorTokens(input) {
                 input[i].author = input[i].author.local;
             }
         }
-    };
+    }
     return input;
 }
 
@@ -68,3 +68,6 @@ function createVotesFields(user, question){
 	question.hasVote = hasVote;
 	return question;
 }
+
+module.exports.createVotesFields = createVotesFields;
+module.exports.removeAuthorTokens = removeAuthorTokens;
