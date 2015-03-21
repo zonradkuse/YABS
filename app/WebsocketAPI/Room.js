@@ -41,6 +41,19 @@ module.exports = function(wsControl){
         	wsControl.build(ws, new Error("Your session is invalid."), null, refId);
         }
     });
+
+    wsControl.on("room:exists", function(wss, ws, session, params, interfaceEntry, refId, sId){
+        //params.roomId
+        if(session.user && params.roomId){
+        	userDAO.hasAccessToRoom(session.user, {_id: params.roomId}, {population:''}, function(err, room){
+        		if(err)
+        			return wsControl.build(ws, new Error("Access denied."), null, refId);
+        		wsControl.build(ws, null, {'exists': (room ? true : false)}, refId);
+        	});
+        } else {
+        	wsControl.build(ws, new Error("Your session is invalid."), null, refId);
+        }
+    });
 };
 
 function removeAuthorTokens(input) {

@@ -68,6 +68,12 @@
             },
         "func": ""
     },{
+        "uri": "room:exists",
+        "parameters": {
+            "roomId": ""
+            },
+        "func": ""
+    },{
         "uri": "question:getVotes",
         "parameters": {
             "questionId": ""
