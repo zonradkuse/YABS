@@ -40,7 +40,7 @@ gulp.task('build', function() {
         .pipe(flatten())
         .pipe(gulp.dest('public/'));
     
-    gulp.src(['client/img/**/*.jpg'])
+    gulp.src(['client/img/**/*.{jpg,gif}'])
         .pipe(flatten())
         .pipe(gulp.dest('public/'));           
 });

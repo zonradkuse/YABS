@@ -1,1 +1,20 @@
-Login läuft...
+<div class="container-frontpage container-fluid">
+	<div class="header-frontpage text-center">
+		<span class="glyphicon glyphicon-education" aria-hidden="true"></span>
+	</div>
+    <div class="background-frontpage">
+        <div class="container text-center">
+            <h1>YABS<small> &ndash; Yet Another Backchannel System</small></h1>
+            <div class="row">
+            	<h2>Login</h2>
+            	<p style="{{loginurl == '' ? 'visibility: hidden;' : ''}}">
+            	Bitte logge dich mit deiner TIM Kennung im Popup-Fenster ein. Sollte kein Popup geöffnet worden sein, so klicke bitte <a href="{{loginurl}}" target="_blank">hier</a>.</p>
+            </div>
+            <div class="row">
+           		<img class="loading" src="loading.gif" />
+           		<strong ng-if="loginurl == ''">Warte auf RWTH OAuth Service</strong>
+           		<strong ng-if="loginurl != ''">Warte auf Autorisierung durch den Benutzer</strong>
+            </div>
+        </div>
+    </div>
+</div>

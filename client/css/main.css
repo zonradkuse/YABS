@@ -29,6 +29,12 @@ h1 {
     font-size: 36px;
 }
 
+img.loading {
+    margin: 0 auto;
+    padding-bottom: 15px;
+    display: block;
+}
+
 .container-course {
     padding-right: 0;
     padding-left: 0;
@@ -148,4 +154,11 @@ h1 {
     display: inline-block;
     vertical-align: middle;
     float: none;
+}
+
+/* Rooms controller */
+
+.container.rooms {
+    border-top: 5px solid #337AB7;
+    margin-top: 70px;
 }
