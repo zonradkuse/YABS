@@ -59,7 +59,7 @@ var WebsocketHandler = function() {
                 var session;
                 sessionID = ws.upgradeReq.signedCookies["connect.sid"];
                 sessionStore.get(sessionID, function(err, sess) {
-                    if (err) ws.send(err); // TODO HANDLE ERROR CORRECTLY
+                    if (err) return self.build(ws, new Error("Error on session init.")); // TODO HANDLE ERROR CORRECTLY
                     session = sess;
                     self.emit('system:open', wss, ws, session, ws.upgradeReq.signedCookies["connect.sid"]);
                 });

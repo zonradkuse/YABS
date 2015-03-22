@@ -49,7 +49,7 @@ UserWorker.prototype.fetchRooms = function(refId, next){
                         logger.debug(courses);
                     } catch (e) {
                         self.wsControl.build(self.ws, new Error("L2P answer was invalid."), null, refId);
-                        logger.warn("L2P courselist was not valid json: " + courses);
+                        logger.warn("L2P courselist was not valid json: " + courses.toString());
                         return;
                     }
                     if(courses.Status) {
@@ -75,7 +75,7 @@ UserWorker.prototype.fetchRooms = function(refId, next){
                         }
                     } else {
                         self.wsControl.build(self.ws, new Error("L2P returned bad things (probably html code)"), null, refId);
-                        logger.warn("Bad L2P answer: " + courses); 
+                        logger.warn("Bad L2P answer: " + courses.toString());
                     }
                     if (next) next();
                 });
@@ -179,7 +179,7 @@ UserWorker.prototype.checkToken = function(next){
                 } else {
                     next(null, null);
                 }
-            }    
+            }
     });
 
 }
@@ -198,7 +198,6 @@ UserWorker.prototype.getRooms = function(){
                 if(rooms[room].l2pID !== undefined){
                     rooms[room].questions = [];
                     self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': rooms[room] });
-                    logger.debug("send: " + rooms[room].l2pID);
                 }
             }
         });

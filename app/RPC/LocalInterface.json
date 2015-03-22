@@ -53,7 +53,7 @@
         "parameters": {
             "questionId": ""
             },
-        "func": ""        
+        "func": ""
     },{
         "uri": "room:getQuestions",
         "parameters": {
@@ -94,6 +94,22 @@
             "questionId": "",
             "isVisible": ""
             },
+        "func": ""
+    },{
+        "uri": "question:markAsAnswer",
+        "parameters": {
+            "roomId": "",
+            "questionId": "",
+            "answerId": ""
+            },
+        "func": ""
+    },{
+        "uri": "user:panic",
+        "parameters": {},
+        "func": ""
+    },{
+        "uri": "user:unpanic",
+        "parameters": {},
         "func": ""
     }]
 }

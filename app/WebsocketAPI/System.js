@@ -39,9 +39,10 @@ module.exports = function(wsControl){
             UserModel.get(session.user._id, function(err, _user){
                 var worker = new userWorker(sId, ws, _user, wsControl, true);
                 workerMap[sId] = worker;
-                worker.fetchRooms(null, function(){
-                    worker.getRooms();
+                worker.fetchRooms(null, function(){ //get new rooms
+                    worker.getRooms(); //send all rooms
                 });
+                worker.getRooms(); //send at least old rooms
             });
         }
     });
@@ -193,7 +194,7 @@ module.exports = function(wsControl){
                 } else {
                     wsControl.build(ws, null, {
                         status: true,
-                    }, refId);    
+                    }, refId);
                 }
             });
         } else {
@@ -208,8 +209,8 @@ module.exports = function(wsControl){
             sessionStore.destroy(sId, function(err){
                 if(err) {
                     wsControl.build(ws, new Error("Could not delete your session."), {status: false, message: "An error occured."}, refId);
-                    return logger.warn("could not delete session.");    
-                } 
+                    return logger.warn("could not delete session.");
+                }
                 wsControl.build(ws, null, {status: true, message: "Goodbye."}, refId);
             });
         } else {
