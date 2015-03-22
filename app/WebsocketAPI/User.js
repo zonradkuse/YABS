@@ -14,8 +14,21 @@ module.exports = function(wsControl){
                     if (err) {
                         return logger.warn("could not check user access: " + err);
                     }
-                    questionDAO.vote(question, session.user, function(err, question){
-                        
+                    questionDAO.vote(question, session.user, function(err, q){
+                        if (err) {
+                            logger.warn('Could not vote: ' + err);
+                            return wsControl.build(ws, new Error('Could not vote.'), null, refId);
+                        } else if (q) {
+                            quest = quest.toObject();
+                            quest.author = quest.author.local;
+                            quest.answers = roomWSControl.removeAuthorTokens(quest.answers);
+                            wss.roomBroadcast(ws, 'question:add', {
+                                'roomId': room._id,
+                                'question': roomWSControl.createVotesFields(session.user, quest)
+                            }, params.roomId);
+                        } else {
+                            wsControl.build(ws, new Error('Could not vote.'), null, refId);
+                        }
                     });
                 });
             } else {
@@ -62,7 +75,9 @@ module.exports = function(wsControl){
     wsControl.on('user:ask', function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
         if (authed) {
             if(params && params.question && params.roomId){
-                //check if user is in room
+
+                if(params.question == "" || typeof params.question !== 'string')
+                    return wsControl.build(ws, new Error("invalid question format"), null, refId);
                 userDAO.getRoomAccess(session.user, {population: ''}, function(err, access){
                     if(err) {
                         logger.warn("error on getting room access array " + err);
@@ -98,7 +113,7 @@ module.exports = function(wsControl){
                     }
                 })
             } else {
-                wsControl.build(ws, new Error("malformed params"), null, refId);
+                wsControl.build(ws, new Error("Malformed Parameters."), null, refId);
             }
         } else {
             wsControl.build(ws, new Error("Permission denied."), null, refId);
@@ -108,6 +123,8 @@ module.exports = function(wsControl){
     wsControl.on("user:answer", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
         if (authed){
             if(params && params.roomId && params.questionId && params.answer) {
+                if(params.answer == "" || typeof params.answer !== 'string')
+                    return wsControl.build(ws, new Error("invalid question format"), null, refId);
                 userDAO.getRoomAccess(session.user, {population: 'questions'}, function(err, access){
                     var hasAccess = false;
                     for (var i = access.length - 1; i >= 0; i--) {

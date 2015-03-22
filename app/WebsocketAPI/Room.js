@@ -58,7 +58,6 @@ module.exports = function(wsControl){
 
 function removeAuthorTokens(input) {
     for (var i = input.length - 1; i >= 0; i--) {
-        console.log(i);
         if(input[i].author) {
             if(input[i].author.rwth){
                 input[i].author = input[i].author.local;
