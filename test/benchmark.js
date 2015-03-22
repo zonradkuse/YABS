@@ -30,11 +30,11 @@
     var j = 1;
     while(j > 0){
         setTimeout(function(){
-            for (var i = 1000; i >= 0; i--) {
+            for (var i = 100; i >= 0; i--) {
                 new Benchmark(count);
 		        count++;
             };
-        }, j+30000);
+        }, j);
         j--;
     }
     

@@ -80,6 +80,7 @@ module.exports = function(wsControl){
                                         wsControl.build(ws, new Error("could not add or create question"), null, refId);
                                     } else {
                                         questionDAO.getByID(question._id, {population : 'author answers answers.author'}, function(err, quest) {
+                                            quest = quest.toObject();
                                             quest.author = quest.author.local;
                                             quest.answers = roomWSControl.removeAuthorTokens(quest.answers);
                                             wss.roomBroadcast(ws, 'question:add', {
