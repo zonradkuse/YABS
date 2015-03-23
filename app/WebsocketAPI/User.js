@@ -14,16 +14,16 @@ module.exports = function(wsControl){
                     if (err) {
                         return logger.warn("could not check user access: " + err);
                     }
-                    questionDAO.vote(question, session.user, function(err, q){
+                    questionDAO.vote(question, session.user, function(err, quest){
                         if (err) {
                             logger.warn('Could not vote: ' + err);
                             return wsControl.build(ws, new Error('Could not vote.'), null, refId);
-                        } else if (q) {
+                        } else if (quest) {
                             quest = quest.toObject();
                             quest.author = quest.author.local;
                             quest.answers = roomWSControl.removeAuthorTokens(quest.answers);
                             wss.roomBroadcast(ws, 'question:add', {
-                                'roomId': room._id,
+                                'roomId': params.roomId,
                                 'question': roomWSControl.createVotesFields(session.user, quest)
                             }, params.roomId);
                         } else {
