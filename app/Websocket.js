@@ -14,7 +14,7 @@ var interf = require('./RPC/LocalInterface.json');
 sessionStore = new sessionStore();
 var util = require('util');
 var events = require('events');
-
+var roomWSControl = require('./WebsocketAPI/Room.js');
 
 // ------------- begin Websocket Server init with helper functions
 
@@ -28,15 +28,22 @@ wss.broadcast = function broadcast(data) {
     });
 };
 wss.roomBroadcast = function (ws, uri, data, roomId){
+    var oldQ;
+    if (data.question) oldQ = data.question;
     wss.clients.forEach(function each(client){
         //check if user is currently active room member.
         var sId = client.upgradeReq.signedCookies["connect.sid"];
         sessionStore.get(sId, function(err, sess){
             if(err) logger.warn("An error occured on getting the user session: " + err);
             if(sess.room){
-
                 if(sess.room == roomId){
+                    if(data.question) {
+                        data.question = roomWSControl.createVotesFields(sess.user, data.question);
+                        data.question.hasVote = true;
+                        data.question.votes++;
+                    }
                     build(client, null, null, null, uri, data);
+                    if(data.question) data.question = oldQ;
                 }
             } else {
                 build(ws, new Error("Your current room is not set."));
