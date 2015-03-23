@@ -29,7 +29,9 @@ wss.broadcast = function broadcast(data) {
 };
 wss.roomBroadcast = function (ws, uri, data, roomId){
     var oldQ;
-    if (data.question) oldQ = data.question;
+    if (data.question) {
+        oldQ = JSON.parse(JSON.stringify(data.question));
+    }
     wss.clients.forEach(function each(client){
         //check if user is currently active room member.
         var sId = client.upgradeReq.signedCookies["connect.sid"];
@@ -38,12 +40,11 @@ wss.roomBroadcast = function (ws, uri, data, roomId){
             if(sess.room){
                 if(sess.room == roomId){
                     if(data.question) {
-                        data.question = roomWSControl.createVotesFields(sess.user, data.question);
-                        data.question.hasVote = true;
-                        data.question.votes++;
+                        data.question = JSON.parse(JSON.stringify(oldQ));
+                        data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
+                        console.log(data.question);
                     }
                     build(client, null, null, null, uri, data);
-                    if(data.question) data.question = oldQ;
                 }
             } else {
                 build(ws, new Error("Your current room is not set."));

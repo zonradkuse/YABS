@@ -25,7 +25,9 @@ module.exports = function(wsControl){
                         } else if (quest) {
                             question = question.toObject();
                             question.author = question.author.local;
+                            question.votes = quest.votes;
                             question.answers = roomWSControl.removeAuthorTokens(question.answers);
+
                             wss.roomBroadcast(ws, 'question:add', {
                                 'roomId': params.roomId,
                                 'question': question
@@ -103,7 +105,7 @@ module.exports = function(wsControl){
                                             quest.answers = roomWSControl.removeAuthorTokens(quest.answers);
                                             wss.roomBroadcast(ws, 'question:add', {
                                                 'roomId': room._id,
-                                                'question': roomWSControl.createVotesFields(session.user, quest)
+                                                'question': quest
                                             }, room._id);
                                             logger.info("added new question to room " + room._id);
                                         });
