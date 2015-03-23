@@ -10,11 +10,13 @@ module.exports = function(wsControl){
     wsControl.on("user:vote", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
         if (authed) {
             if (params.questionId) {
-                userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, { population: 'author votes' }, function (err, user, question){
+                userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, { population: 'author answers answers.author' }, function (err, user, question){
                     if (err) {
                         return logger.warn("could not check user access: " + err);
                     }
-
+                    if(roomWSControl.createVotesFields(session.user, question).hasVote) {
+                        return wsControl.build(ws, new Error("You already voted for this Question!"), null, refId);
+                    }
                     questionDAO.vote(question, session.user, function(err, quest){
                         if (err) {
                             logger.warn('Could not vote: ' + err);
@@ -23,10 +25,10 @@ module.exports = function(wsControl){
                             question = question.toObject();
                             question.author = question.author.local;
                             question.answers = roomWSControl.removeAuthorTokens(question.answers);
-
+                            question = roomWSControl.createVotesFields(session.user, question);
                             wss.roomBroadcast(ws, 'question:add', {
                                 'roomId': params.roomId,
-                                'question': roomWSControl.createVotesFields(session.user, question)
+                                'question': question
                             }, params.roomId);
                         } else {
                             wsControl.build(ws, new Error('Could not vote.'), null, refId);
