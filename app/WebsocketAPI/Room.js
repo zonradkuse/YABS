@@ -70,7 +70,7 @@ function removeAuthorTokens(input) {
 function createVotesFields(user, question){
 	var hasVote = false;
 	for(var i=0; i<question.votes.length; i++){
-		if(question.votes[i] == user._id){
+		if(question.votes[i]._id == user._id){
 			hasVote = true;
 			break;
 		}
@@ -78,6 +78,7 @@ function createVotesFields(user, question){
 	var votesCount = question.votes.length;
 	question.votes = votesCount;
 	question.hasVote = hasVote;
+    console.log(question);
 	return question;
 }
 
