@@ -18,6 +18,7 @@ module.exports = function(wsControl){
                         return wsControl.build(ws, new Error("You already voted for this Question!"), null, refId);
                     }
                     questionDAO.vote(question, session.user, function(err, quest){
+                        
                         if (err) {
                             logger.warn('Could not vote: ' + err);
                             return wsControl.build(ws, new Error('Could not vote.'), null, refId);
@@ -26,6 +27,7 @@ module.exports = function(wsControl){
                             question.author = question.author.local;
                             question.answers = roomWSControl.removeAuthorTokens(question.answers);
                             question = roomWSControl.createVotesFields(session.user, question);
+                            question.votes++;
                             wss.roomBroadcast(ws, 'question:add', {
                                 'roomId': params.roomId,
                                 'question': question
