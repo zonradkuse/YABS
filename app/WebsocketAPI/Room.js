@@ -14,11 +14,13 @@ module.exports = function(wsControl){
                 room.questions = removeAuthorTokens(room.questions);
                 for (var j = room.questions.length - 1; j >= 0; j--) {
                     room.questions[j].answers = removeAuthorTokens(room.questions[j].answers);
-                    wsControl.build(ws, null, null, null, "question:add", {
-                        roomId : params.roomId,
-                        question : createVotesFields(session.user, room.questions[j])
-                    });
-                };
+                    if (room.questions[j].content !== "") {
+                        wsControl.build(ws, null, null, null, "question:add", {
+                            roomId : params.roomId,
+                            question : createVotesFields(session.user, room.questions[j])
+                        });
+                    }
+                }
 			});
         } else
         	wsControl.build(ws, new Error("Your session is invalid."), null, refId);
