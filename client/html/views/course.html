@@ -12,7 +12,7 @@
                             <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" src="http://placehold.it/100x100" /></div><!--
                          --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{question.author.name}}</span><span class="time">vor {{question.elapsedSince}} Minuten</span></div><!--
                          --><div class="col-xs-7 col-sm-12 votebutton vcenter">
-                                <button type="button" class="btn btn-default" {{question.hasVote ? "disabled=disabled" : ""}}>
+                                <button type="button" ng-click="voteQuestion(question)" class="btn btn-default" {{question.hasVote ? "disabled=disabled" : ""}}>
                                     <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Frage unterstützen
                                 </button>
                                 <span>{{question.votes}} Studenten haben die selbe Frage</span>
