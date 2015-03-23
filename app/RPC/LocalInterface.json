@@ -114,7 +114,16 @@
         "func": "",
         "accessLevel": 2
     },{
-        "uri": "question:markAsAnswer",
+        "uri": "mod:markAsAnswer",
+        "parameters": {
+            "roomId": "",
+            "questionId": "",
+            "answerId": ""
+            },
+        "func": "",
+        "accessLevel": 2
+    },{
+        "uri": "mod:unmarkAsAnswer",
         "parameters": {
             "roomId": "",
             "questionId": "",

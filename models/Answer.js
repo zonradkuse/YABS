@@ -1,4 +1,4 @@
-/*! Model of Answer 
+/*! Model of Answer
  * @param {Number} author The user identifier.
  * @param {Number} qid The question identifier.
  * @param {Timestamp} time Timestamp of creation
@@ -22,6 +22,10 @@ var AnswerSchema = mongoose.Schema({
     updateTime: {
         type: Date,
         default: Date.now
+    },
+    isAnswer: {
+        type: Boolean,
+        default: false
     },
     content: String,
     images: [{ type: ObjectId, ref:'Image' }],
@@ -51,6 +55,19 @@ module.exports.setContent = function(answer, content, callback){
 
 /*
 * @param answer the target answer object
+* @param bool the new bool of the answer
+* @param callback params: error, answer object
+*/
+module.exports.setContent = function(answer, bool, callback){
+    if(callback === undefined)
+        throw new Error("callback not defined");
+    Answer.findByIdAndUpdate(answer._id,{ 'isAnswer': bool, 'updateTime': Date.now() },function(err, answer){
+        return callback(err, answer);
+    });
+}
+
+/*
+* @param answer the target answer object
 * @param visible set true for visible, false otherwise
 * @param callback params: error, answer object
 */
@@ -70,7 +87,7 @@ module.exports.remove = function(answer, callback){
     if(callback === undefined)
         throw new Error("callback not defined");
     Question.update({'answers': answer._id},{$pull:{'answers': answer._id}},function(err){
-        if(err) 
+        if(err)
             return callback(err);
         Answer.findByIdAndRemove(answer._id,function(err){
             return callback(err);

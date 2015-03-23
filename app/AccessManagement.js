@@ -33,12 +33,24 @@ function checkAccess(uri, myAccess) {
  * @param {sId} the sessionId to check
  * @param {next} callback with params (err, bool). bool is set true when access is granted.
  **/
-function checkAccessBySId(uri, sId, next){
+function checkAccessBySId(uri, sId, roomId, next){
     sessionStore.get(sId, function(err, session){
         if (err) return next(err, false);
         if (!session) return next(null, false);
+        // check if there is anything defined in rights array
+        if (session.user && session.user.rights) {
+            for (var key in session.user.rights) {
+                if(session.user.rights[key].roomId == roomId){
+                    return next(null, checkAcces(uri, session.user.rights[key].accessLevel));
+                }
+            }
+        }
+        if (session.user) {
+            return next(null, checkAccess(uri, roles.defaultLoggedIn));
+        } else {
+            next(null, checkAccess(uri, roles.default));
+        }
         
-        next(null, checkAcces(uri, session.user.rights));
     });
 }
 

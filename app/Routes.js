@@ -12,8 +12,7 @@
   var app;
   var nodemailer = require('nodemailer');
   var addresses = require('../config/mails.json').data
-   
-  // create reusable transporter object using SMTP transport 
+  
   var transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
@@ -21,12 +20,10 @@
           pass: 'a1b2c3d4$'
       }
   });
-   
-   
-  // setup e-mail data with unicode symbols 
+  
   var mailOptions = {
-      from: 'YABS <yabs@gmail.com>', 
-      to: '', 
+      from: 'YABS <noreply.yabs@gmail.com>',
+      to: '',
       subject: 'YABS admin access',
       text: '',
   };
@@ -190,7 +187,7 @@
                   }else{
                       res.write('Message sent: ' + info.response);
                   }
-                  res.end(); 
+                  res.end();
               });
             } else {
               res.send("Your address is not listed. Please contact johannes.neuhaus [at] rwth-aachen.de");
