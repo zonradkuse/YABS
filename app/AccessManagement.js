@@ -45,7 +45,7 @@ function checkAccessBySId(uri, sId, next){
 /**
  * Sets a new accessLevel to session.
  *
- * @param {level} uri to
+ * @param {level} accessLevel to set
  * @param {sId} the sessionId to check
  * @param {next} callback with params (err, bool). bool is set true on success.
  **/
@@ -64,7 +64,27 @@ function setAccessBySId(level, sId, next) {
     });
 }
 
-function
+/**
+ * Sets accessLevel by rwth role.
+ *
+ * @param {rwthRole} rwthRole string that is set in UserRoles.json
+ * @param {sId} the sessionId to check
+ * @param {next} callback with params (err, bool). bool is set true on success.
+ *
+ **/
+function setAccessByRWTH(rwthRole, sId, next) {
+    for (var key in roles.rwth) {
+        if (roles.rwth[key] === rwthRole) {
+            for (var r in roles) {
+                if (roles.rwth[key] === roles[r]) {
+                    return setAccessBySId(roles[r], sId, next);
+                }
+            }
+            logger.warn("Potential misconfiguration on UserRoles.json!! " + roles.rwth[key] + " seems not to be existing.");
+        }
+    }
+    return next(null, false);
+}
 
 module.exports.checkAccessBySId = checkAccessBySId;
 module.exports.setAccessBySId = setAccessBySId;
