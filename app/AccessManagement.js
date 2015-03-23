@@ -22,7 +22,7 @@ function checkAccess(uri, myAccess) {
     if (aL) {
         return aL <= myAccess;
     } else {
-        return roles.defaultGuest;
+        return roles.default;
     }
 }
 
@@ -38,7 +38,7 @@ function checkAccessBySId(uri, sId, next){
         if (err) return next(err, false);
         if (!session) return next(null, false);
         
-        next(null, checkAcces(uri, session.accessLevel));
+        next(null, checkAcces(uri, session.user.rights));
     });
 }
 
@@ -49,13 +49,13 @@ function checkAccessBySId(uri, sId, next){
  * @param {sId} the sessionId to check
  * @param {next} callback with params (err, bool). bool is set true on success.
  **/
-function setAccessBySId(level, sId, next) {
+function setAccessBySId(level, sId, roomId, next) {
     sessionStore.get(sId, function(err, session){
         if (err) next(err, false);
         if (!session) next(null, false);
         
-        session.accessLevel = level;
-        
+        session.user.rights.push({ "roomId" : roomId, "accessLevel" : level});
+
         sessionStore.set(sId, session, function(err){
             if (err) return next(err);
             
@@ -72,12 +72,12 @@ function setAccessBySId(level, sId, next) {
  * @param {next} callback with params (err, bool). bool is set true on success.
  *
  **/
-function setAccessByRWTH(rwthRole, sId, next) {
+function setAccessByRWTH(rwthRole, sId, roomId, next) {
     for (var key in roles.rwth) {
         if (roles.rwth[key] === rwthRole) {
             for (var r in roles) {
                 if (roles.rwth[key] === roles[r]) {
-                    return setAccessBySId(roles[r], sId, next);
+                    return setAccessBySId(roles[r], sId, roomId, next);
                 }
             }
             logger.warn("Potential misconfiguration on UserRoles.json!! " + roles.rwth[key] + " seems not to be existing.");

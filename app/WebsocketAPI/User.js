@@ -5,6 +5,10 @@ var roomDAO = require('../../models/Room.js');
 var answerDAO = require('../../models/Answer.js');
 var logger = require('../Logger.js');
 var roomWSControl = require('./Room.js');
+var roles = require('../../config/UserRoles.json');
+var session = require('express-session');
+var sessionStore = require('connect-redis')(session);
+var sessionStore = new sessionStore();
 
 module.exports = function(wsControl){
     wsControl.on("user:vote", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
@@ -172,6 +176,23 @@ module.exports = function(wsControl){
             }
         } else {
             wsControl.build(ws, new Error("Permission denied."), null, refId);
+        }
+    });
+
+    wsControl.on('user:getAccessLevel', function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
+        if (authed) {
+            sessionStore.get(sId, function(err, sess) {
+                if(sess.user && sess.user.rights) {
+                    for (var key in sess.user.rights) {
+                        if(sess.user.rights[key].roomId === params.roomId) {
+                            return wsControl.build(ws, null, { accessLevel: sess.user.rights[key].accessLevel}, refId);
+                        }
+                    }
+                }
+                wsControl.build(ws, null, { accessLevel: roles.defaultLoggedIn}, refId);
+            });
+        } else {
+            wsControl.build(ws, null, { accessLevel: roles.default}, refId);
         }
     });
 };

@@ -132,5 +132,12 @@
         "parameters": {},
         "func": "",
         "accessLevel": 1
+    },{
+        "uri": "user:getAccessLevel",
+        "parameters": {
+            "roomId" : ""
+        },
+        "func": "",
+        "accessLevel": 1
     }]
 }

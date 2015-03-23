@@ -33,10 +33,11 @@ app.use(cookieParser());
 app.use(session({
     store: new sessionStore(),
     roomId: "",
+    accessLevel: 0,
     secret: config.general.cookie.secret,
     cookie: {
         expires: new Date(Date.now() + 15778463000), // 6 month
-        httpOnly: false
+        httpOnly: false,
     },
     resave: false,
     saveUninitialized: true
