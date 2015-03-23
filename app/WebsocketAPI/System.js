@@ -209,7 +209,7 @@ module.exports = function(wsControl){
             sessionStore.destroy(sId, function(err){
                 if(err) {
                     wsControl.build(ws, new Error("Could not delete your session."), {status: false, message: "An error occured."}, refId);
-                    return logger.warn("could not delete session.");
+                    return logger.warn("could not delete session: " + err);
                 }
                 wsControl.build(ws, null, {status: true, message: "Goodbye."}, refId);
             });

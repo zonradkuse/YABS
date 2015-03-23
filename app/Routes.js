@@ -5,7 +5,10 @@
   var querystring = require('querystring');
   var config = require('../config.json');
   var logger = require('./Logger.js');
-  var mainController = require('./MainController.js');
+  var roomDAO = require('../models/Room.js');
+  var adminkey = "wurstbrot";
+  var modkey = "käsebrötchen";
+  var roles = require('../config/UserRoles.json');
   var app;
 
 
@@ -129,7 +132,62 @@
       successRedirect: '/',
       failureRedirect: '/login'
     }));
-  }
+    
+    /**
+     *
+     * ONLY UNTIL L2P ROLE MANAGEMENT IS FIXED
+     *
+     **/
+    app.get('/roles/keys', function (req, res){
+        
+    });
+     
+    app.post('/roles/admin/:roomId', function(req, res){
+        if(req.params.roomId && req.body.key) {
+            roomDAO.getByID(req.params.roomId, {population : ''}, function(err, room){
+                if (err) {
+                    res.write(err.message);
+                } else {
+                    if(req.body.key == require('crypto').createHash('sha1').update(req.params.roomId + adminkey).digest('hex')){
+                        //set access right
+                        req.session.rights.push({roomId : roles.defaultAdmin});
+                        res.write("success");
+                    } else {
+                        res.write("bad key");
+                    }
+                }
+                res.end();
+            });
+        } else {
+            res.write("Missing Field.");
+            res.end();
+        }
+        
+    });
+    
+    app.post('/roles/mod/:roomId', function(req, res){
+        if(req.params.roomId && req.body.key) {
+            roomDAO.getByID(req.params.roomId, {population : ''}, function(err, room){
+                if (err) {
+                    res.write(err.message);
+                } else {
+                    if(req.body.key == require('crypto').createHash('sha1').update(req.params.roomId + modkey).digest('hex')){
+                        //set access right
+                        req.session.rights.push({roomId : roles.defaultMod});
+                        res.write("success");
+                    } else {
+                        res.write("bad key");
+                    }
+                }
+                res.end();
+            });
+        } else {
+            res.write("Missing Field.");
+            res.end();
+        }
+        
+    });
+  };
 
   function isAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
