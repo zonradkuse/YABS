@@ -42,7 +42,6 @@ wss.roomBroadcast = function (ws, uri, data, roomId){
                     if(data.question) {
                         data.question = JSON.parse(JSON.stringify(oldQ));
                         data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
-                        console.log(data.question);
                     }
                     build(client, null, null, null, uri, data);
                 }
