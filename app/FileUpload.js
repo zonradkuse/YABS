@@ -4,9 +4,9 @@ var lwip = require('lwip');
 var imageDAO = require('../models/Image.js');
 if (config.clamav.enabled) {
     try {
-        var clamav = require('clamscan')(config.clamav);
+        var clamav = require('clamscan')(config.clamav.options);
     } catch (e) {
-        logger.warn("File Uploads are enabled without virus scan! This is not recommended. Install ClamAV.");
+        logger.warn("File Uploads are enabled without virus scan! This is not recommended. Install ClamAV." + e);
     }
 }
 var multer = require('multer');
