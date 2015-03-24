@@ -119,7 +119,7 @@ UserWorker.prototype.refreshAccessToken = function(next){
                 "grant_type": "refresh_token"
             }), function(err, res){
                 if (err) {
-                    next(err)
+                    next(err);
                 } else {
                     var answer;
                     try{
@@ -135,13 +135,11 @@ UserWorker.prototype.refreshAccessToken = function(next){
                                 self.user = _user;
                                 self.user.save(function(e){
                                     if (e) return logger.warn("could not save a user: " + e);
-                                    
-                                    console.log(self.user);
-                                    logger.debug("refreshed a access_token");
+                                    next(null);
                                 });
                             } else {
                                 logger.warn("user should have existed: " + self.user);
-                                next(new Error("You do not exist."))
+                                next(new Error("You do not exist."));
                             }
 
                         });
@@ -151,8 +149,10 @@ UserWorker.prototype.refreshAccessToken = function(next){
                     }
                 }
             });
+        } else {
+            next(null);
         }
-        next(null);
+        
     });
 
 };
