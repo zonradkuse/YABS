@@ -14,6 +14,7 @@ module.exports = function(wsControl) {
                                     wsControl.build("Could not save the new state.");
                                     return logger.err("Could not save the new state: " + err);
                                 }
+                                ans.author = ans.author.local;
                                 wss.roomBroadcast(ws, "answer:add", {
                                     'roomId': params.roomId,
                                     'questionId': params.questionId,
