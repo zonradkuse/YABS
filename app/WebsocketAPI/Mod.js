@@ -8,7 +8,6 @@ module.exports = function(wsControl) {
                 accessManager.checkAccessBySId("mod:markAsAnswer", sId, params.roomId, function(err, bool){
                     if (bool) {
                         answerDAO.getByID(params.answerId, {population: 'author'}, function(err, ans){
-                            ans = ans.toObject();
                             ans.isAnswer = true;
                             ans.save(function(err){
                                 if (err){
@@ -40,14 +39,14 @@ module.exports = function(wsControl) {
                 accessManager.checkAccessBySId("mod:markAsAnswer", sId, params.roomId, function(err, bool){
                     if (bool) {
                         answerDAO.getByID(params.answerId, {population: 'author'}, function(err, ans){
-                            ans = ans.toObject();
                             ans.isAnswer = false;
-                            ans.author = ans.author.local;
+                            
                             ans.save(function(err){
                                 if (err){
                                     wsControl.build("Could not save the new state.");
                                     return logger.err("Could not save the new state: " + err);
                                 }
+                                ans.author = ans.author.local;
                                 wss.roomBroadcast(ws, "answer:add", {
                                     'roomId': params.roomId,
                                     'questionId': params.questionId,
