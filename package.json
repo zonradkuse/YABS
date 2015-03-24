@@ -15,6 +15,7 @@
     "express": "^4.10.4",
     "express-session": "^1.9.1",
     "express-winston": "^0.2.11",
+    "lwip": "0.0.6",
     "moment": "^2.7.0",
     "mongoose": "^3.8.21",
     "mongoose-deep-populate": "0.0.7",
