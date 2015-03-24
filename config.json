@@ -38,17 +38,17 @@
             "scan_log": null,
             "debug_mode": false,
             "file_list": null,
-            "scan_recursively": true,
+            "scan_recursively": false,
             "clamscan": {
                 "path": "/usr/bin/clamscan",
                 "db": null,
-                "scan_archives": true,
+                "scan_archives": false,
                 "active": true
             },
             "clamdscan": {
                 "path": "/usr/bin/clamdscan",
                 "config_file": null,
-                "multiscan": true,
+                "multiscan": false,
                 "reload_db": false,
                 "active": true
             },
