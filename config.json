@@ -6,7 +6,7 @@
       "db": ""
    },
    "login": {
-      "local": true,
+      "local": false,
       "l2p": {
          "clientID": "rwth client oauth",
          "scope": "l2p2013.rwth userinfo.rwth"
@@ -29,5 +29,35 @@
       "env": {
          "dev": true
       }
-   }
+   },
+   "clamav" : {
+       "enabled" : true,
+       "options" : {
+            "remove_infected": false,
+            "quarantine_infected": false,
+            "scan_log": null,
+            "debug_mode": false,
+            "file_list": null,
+            "scan_recursively": true,
+            "clamscan": {
+                "path": "/usr/bin/clamscan",
+                "db": null,
+                "scan_archives": true,
+                "active": true
+            },
+            "clamdscan": {
+                "path": "/usr/bin/clamdscan",
+                "config_file": null,
+                "multiscan": true,
+                "reload_db": false,
+                "active": true
+            },
+            "preference": "clamdscan"
+        }
+    },
+    "whitelistMime": [
+        "image/gif",
+        "image/jpeg",
+        "image/png"
+    ]
 }

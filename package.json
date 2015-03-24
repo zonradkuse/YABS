@@ -7,6 +7,7 @@
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.9.2",
     "bootable": "^0.2.4",
+    "clamscan": "^0.6.4",
     "compression": "^1.2.2",
     "connect-flash": "^0.1.1",
     "connect-redis": "^2.2.0",
