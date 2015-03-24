@@ -2,6 +2,8 @@ var Room = require('../models/Room.js');
 var Question = require('../models/Question.js');
 var User = require('../models/User.js');
 var Answer = require('../models/Answer.js');
+var Panic = require('../models/Panic.js');
+
 var mongoose = require('mongoose');
 var async = require('async');
 
@@ -46,4 +48,42 @@ db.once('open',function(callback){
 		});
 		
 	});*/
+
+	//Panic.getEvents({_id: "12345"},{population:'', end: new Date()},function(err, graph){});
+	//Panic.panic({_id: mongoose.Types.ObjectId()},{_id: mongoose.Types.ObjectId()},function(err, panic){});
+	var roomID = mongoose.Types.ObjectId();
+	var userID1 = mongoose.Types.ObjectId();
+	var userID2 = mongoose.Types.ObjectId();
+	var userID3 = mongoose.Types.ObjectId();
+
+	Panic.register({_id: roomID}, null, {live: 1000, graph: 4500});
+
+	setTimeout(function(){
+		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
+		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
+	},1000);
+
+	setTimeout(function(){
+		Panic.panic({_id:userID1},{_id:roomID},function(err){});
+		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
+	},6500);
+
+	setTimeout(function(){
+		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
+		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
+	},7000);
+
+	setTimeout(function(){
+		Panic.unpanic({_id:userID1},{_id:roomID},function(err){});
+		//Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
+	},7800);
+
+	setTimeout(function(){
+		console.log("unregister");
+		Panic.unregister({_id: roomID});
+		Panic.getGraph({_id:roomID},{population:''},function(err, graph){
+			console.log(JSON.stringify(graph,null,2));
+		});
+	},10000);
+
 });
