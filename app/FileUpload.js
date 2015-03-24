@@ -20,27 +20,33 @@ module.exports = function(app) {
         limits: config.multer.options,
         onFileUploadStart : function(file, req, res) {
             // set header
+            console.log(file);
             res.setHeader('Content-Type', 'application/json');
             // do first checks on file
             if (file === undefined) {
                 res.write(JSON.stringify({error: "No image attached."}));
                 res.end();
                 return false; // don't call upload route
-            } else if (config.whitelistMime.indexOf(file.mimetype) < 0) {
-                res.write(JSON.stringify({error: "Mimetype " + file.mimetype + " is not supported"}));
-                res.end();
-                return false;
+            } else {
+                if (config.whitelistMime.indexOf(file.mimetype) < 0) {
+                    res.write(JSON.stringify({error: "Mimetype " + file.mimetype + " is not supported"}));
+                    res.end();
+                    return false;
+                }
                 
-            } else if (!req.session || !req.session.user || !req.session.user._id) {
-                res.write(JSON.stringify({error: "You are not logged in."}));
-                res.end();
-                return false;
+                if (!req.session || !req.session.user || !req.session.user._id) {
+                    res.write(JSON.stringify({error: "You are not logged in."}));
+                    res.end();
+                    return false;
+                }
             }
+            console.log("lol")
         },
         onFileSizeLimit: function (file) {
           fs.unlink('../public/' + file.path); // delete the partially written file
         },
         onFileUploadComplete: function(file, req, res) {
+            console.log(file);
             if (file.size >= config.multer.options.fileSize) {
                 res.write(JSON.stringify({error : "Filesize limit exceeded."}));
                 req.files = undefined; //indicator to upload route
@@ -64,11 +70,12 @@ module.exports = function(app) {
         });
     }
 
-    app.post('/upload/:roomId/:questionId/', function(req, res) {
+    app.post('/upload', function(req, res) {
         if (req.files) { // we still have files - so nice. perform virus check and create database entry
+            console.log(req.files);
             if (req.files.image) {
                 if (clamav) {
-                    clamav.is_infected(__dirname + "/../upload/" + req.files.image.path, function(err, file, isVirus) {
+                    clamav.is_infected(__dirname + "/../" + req.files.image.path, function(err, file, isVirus) {
                         if (err) {
                             logger.warn(err);
                             res.write(JSON.stringify({error: err}));
@@ -106,7 +113,7 @@ function processFile(file, req, res) {
                 // TODO check if only not something bad.
                 //create a compressed real file
                 var webpath = "/userimages/" + req.files.image.name.split('.')[0] + ".jpg"; //webpath
-                image.writeFile(__dirname + "/../public/" + filepath,
+                image.writeFile(__dirname + "/../public/" + webpath,
                     { quality : 50 }, function(err){
                         if (err) {
                             res.send(JSON.stringify({error: "An error occured on processing the image"}));
@@ -115,7 +122,7 @@ function processFile(file, req, res) {
                         }
                         var im = new imageDAO.Image();
                         im.author = req.session.user._id;
-                        im.path = filepath;
+                        im.path = webpath;
                         im.resolution.width = image.width();
                         im.resolution.height = image.height();
                         im.size = req.files.image.size;
