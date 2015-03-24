@@ -13,7 +13,7 @@ var logger = require('./app/Logger.js');
 var passport = require('passport');
 var mongoose = require('mongoose');
 var flash = require('connect-flash');
-var multer = require('multer');
+
 
 mongoose.connect(config.database.host);
 
@@ -51,7 +51,7 @@ app.use(bodyParser.urlencoded({
 //app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(multer({dest: './uploads/'}));
+
 
 var routes = require('./app/Routes.js');
 routes(app);
