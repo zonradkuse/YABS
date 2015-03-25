@@ -39,10 +39,11 @@ module.exports = function(wsControl){
             UserModel.get(session.user._id, function(err, _user){
                 var worker = new userWorker(sId, ws, _user, wsControl, true);
                 workerMap[sId] = worker;
+                console.log(worker);
+                worker.getRooms(); //send at least old rooms
                 worker.fetchRooms(null, function(){ //get new rooms
                     worker.getRooms(); //send all rooms
                 });
-                worker.getRooms(); //send at least old rooms
             });
         }
     });
