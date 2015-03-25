@@ -9,6 +9,7 @@ var roles = require('../../config/UserRoles.json');
 var session = require('express-session');
 var sessionStore = require('connect-redis')(session);
 var sessionStore = new sessionStore();
+var imageDAO = require('../../models/Image.js');
 
 module.exports = function(wsControl){
     wsControl.on("user:vote", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
@@ -93,28 +94,28 @@ module.exports = function(wsControl){
                     } else {
                         for (var i = access.length - 1; i >= 0; i--) {
                             if(access[i]._id == params.roomId){
-                                var q = new questionDAO.Question();
-                                q.author = session.user._id;
-                                q.content = params.question;
-                                q.votes = session.user._id;
-                                q.answers = [];
-                                roomDAO.addQuestion({ _id : params.roomId}, q, function(err, room, question){
-                                    if(err) {
-                                        logger.warn("could not add or create question: " + err);
-                                        wsControl.build(ws, new Error("could not add or create question"), null, refId);
-                                    } else {
-                                        questionDAO.getByID(question._id, {population : 'author answers answers.author'}, function(err, quest) {
-                                            quest = quest.toObject();
-                                            quest.author = quest.author.local;
-                                            quest.answers = roomWSControl.removeAuthorTokens(quest.answers);
-                                            wss.roomBroadcast(ws, 'question:add', {
-                                                'roomId': room._id,
-                                                'question': quest
-                                            }, room._id);
-                                            logger.info("added new question to room " + room._id);
+                                    var q = new questionDAO.Question();
+                                    q.author = session.user._id;
+                                    q.content = params.question;
+                                    q.votes = session.user._id;
+                                    q.answers = [];
+                                    
+                                    if(params.images && params.images !== [] && Object.prototype.toString.call(params.images) === '[object Array]') {
+                                        //check if valid image ids
+                                        imageDAO.Image.find({_id: { $in : params.images }}, function(err, images){
+                                            images = images.toObject();
+                                            aCopy = JSON.parse(JSON.stringify(q)); // to send
+                                            q.images = params.images;// to save
+                                            aCopy.images = images;
+                                            for(var key in aCopy.images) {
+                                                if(aCopy.images[key].owner !== session.user._id) // a user can only use his own images
+                                                    return wsControl.build(ws, new Error("Access denied. Bad images."), null, refId);
+                                                delete aCopy.images[key].owner; // delete own user id
+                                            }
+                                            sendAndSaveQuestion(wss, ws, params.roomId, q, aCopy);
                                         });
                                     }
-                                });
+                                    
                                 return;
                             }
                         };
@@ -145,23 +146,24 @@ module.exports = function(wsControl){
                                     var a = new answerDAO.Answer();
                                     a.author = session.user._id;
                                     a.content = params.answer;
-                                    questionDAO.addAnswer(q, a, function(err, question, answer){
-                                        if(err) {
-                                            logger.warn("could not add or create question: " + err);
-                                            wsControl.build(ws, new Error("could not add or create answer"), null, refId);
-                                        } else {
-                                            answerDAO.getByID(answer._id, {population: 'author'}, function(err, ans){
-                                                ans.toObject();
-                                                ans.author = ans.author.local;
-                                                wss.roomBroadcast(ws, 'answer:add', {
-                                                    'roomId': room._id,
-                                                    'questionId': question._id,
-                                                    'answer': ans
-                                                }, room._id);
-                                                logger.info("added new answer to room " + room.l2pID);
-                                            });
-                                        }
-                                    });
+                                    if(params.images && params.images !== [] && Object.prototype.toString.call(params.images) === '[object Array]') {
+                                        //check if valid image ids
+                                        imageDAO.Image.find({_id: { $in : params.images }}, function(err, images){
+                                            images = images.toObject();
+                                            aCopy = JSON.parse(JSON.stringify(a)); // to send
+                                            a.images = params.images;// to save
+                                            aCopy.images = images;
+                                            for(var key in aCopy.images) {
+                                                if(aCopy.images[key].owner !== session.user._id) // a user can only use his own images
+                                                    return wsControl.build(ws, new Error("Access denied. Bad images."), null, refId);
+                                                delete aCopy.images[key].owner; // delete own user id
+                                            }
+                                            sendAndSaveAnswer(wss, ws, q, a, aCopy);
+                                        });
+                                        
+                                    } else {
+                                        sendAndSaveAnswer(wss, ws, q, a, a);
+                                    }
                                     return;
                                 }
                             });
@@ -196,3 +198,45 @@ module.exports = function(wsControl){
         }
     });
 };
+
+
+function sendAndSaveQuestion(wss, ws, roomId, q, qToSend) {
+
+    roomDAO.addQuestion({ _id : roomId}, q, function(err, room, question){
+        if(err) {
+            logger.warn("could not add or create question: " + err);
+            wsControl.build(ws, new Error("could not add or create question"), null, refId);
+        } else {
+            questionDAO.getByID(question._id, {population : 'author answers answers.author images answers.images'}, function(err, quest) {
+                quest = quest.toObject();
+                qToSend.author = quest.author.local;
+                qToSave.answers = roomWSControl.removeAuthorTokens(quest.answers);
+                wss.roomBroadcast(ws, 'question:add', {
+                    'roomId': room._id,
+                    'question': qToSend
+                }, room._id);
+                logger.info("added new question to room " + room._id);
+            });
+        }
+    });
+}
+
+function sendAndSaveAnswer(wss, ws, question, answerToSave, answerToSend){
+    questionDAO.addAnswer(q, a, function(err, question, answer){
+        if(err) {
+            logger.warn("could not add or create question: " + err);
+            wsControl.build(ws, new Error("could not add or create answer"), null, refId);
+        } else {
+            answerDAO.getByID(answer._id, {population: 'author'}, function(err, ans){
+                ans.toObject();
+                answerToSend.author = ans.author.local;
+                wss.roomBroadcast(ws, 'answer:add', {
+                    'roomId': room._id,
+                    'questionId': question._id,
+                    'answer': ans
+                }, room._id);
+                logger.info("added new answer to room " + room.l2pID);
+            });
+        }
+    });
+}
