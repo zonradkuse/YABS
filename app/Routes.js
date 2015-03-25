@@ -5,9 +5,12 @@
   var querystring = require('querystring');
   var config = require('../config.json');
   var logger = require('./Logger.js');
-  var mainController = require('./MainController.js');
+  var roomDAO = require('../models/Room.js');
+  var adminkey = "wurstbrot";
+  var roles = require('../config/UserRoles.json');
+  var upgrade = require('./AccountUpgrade.js');
+  var fileup = require('./FileUpload.js');
   var app;
-
 
   module.exports = function(pExpressApp) {
     app = pExpressApp;
@@ -15,28 +18,11 @@
 
 
   module.exports.routes = function() {
-
-    app.get('/upload', function(req, res) {
-      res.setHeader('Content-Type', 'text/html');
-      res.write('image upload \
-                      <form action="/upload" method="post" enctype="multipart/form-data"> \
-                      File:<br> \
-                      <input type="file" name="image" value="Your File..."> \
-                      <br><br> \
-                      <input type="submit" value="Submit"> \
-                      </form>');
-      res.end();
-    });
-
-    app.post('/upload', function(req, res) {
-      console.log(JSON.stringify(req.files, null, 2));
-      if (req.files.image === undefined)
-        res.write('<p>No file selected</p>');
-      else
-        res.write('<p>File <b>' + req.files.image.originalname + '</b> uploaded!</p>');
-      res.end();
-    });
-
+    // route uploads
+    fileup(app);
+    // route account upgrades
+    upgrade(app);
+    
     app.post('/login/local', function(req, res) {
       var auth = require('./Authentication.js');
       auth.loginLocal(req, function(err, user) {
@@ -129,7 +115,8 @@
       successRedirect: '/',
       failureRedirect: '/login'
     }));
-  }
+    
+  };
 
   function isAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {

@@ -5,6 +5,11 @@ clientControllers.controller("courseController", ["$scope", "$routeParams",  "ro
         $scope.$watch(function() { return rooms.getById($routeParams.courseid); }, function(room) {
             $scope.room = room;
             if($scope.room !== undefined) { // Happens while loading
+                rooms.hasUserAccess($scope.room).then(function(allowed) {
+                    if(!allowed) {
+                        $window.location = "/";
+                    }
+                });
                 rooms.enter($scope.room);
                 rooms.getQuestions($scope.room);
             }
@@ -25,9 +30,14 @@ clientControllers.controller("courseController", ["$scope", "$routeParams",  "ro
             rooms.addQuestion($scope.room, this.questionText);
             this.questionText = "";
         };
+
         $scope.addAnswer = function(question) {
             rooms.addAnswer($scope.room, question, this.answerText[question._id]);
             this.answerText[question._id] = "";
-        };            
+        };
+
+        $scope.voteQuestion = function(question) {
+            rooms.voteQuestion($scope.room, question);
+        };        
     }
 ]);

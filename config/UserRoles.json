@@ -1,0 +1,13 @@
+{
+    "default" : 0,
+    "defaultLoggedIn" : 1,
+    "defaultMod" : 2,
+    "defaultAdmin" : 3,
+    "defaultRoot" : 42,
+    
+    "rwth" : {
+        "tutor" : "defaultMod",
+        "student" : "defaultLoggedIn",
+        "manager" : "defaultAdmin"
+    }
+}

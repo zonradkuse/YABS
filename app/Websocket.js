@@ -14,7 +14,7 @@ var interf = require('./RPC/LocalInterface.json');
 sessionStore = new sessionStore();
 var util = require('util');
 var events = require('events');
-
+var roomWSControl = require('./WebsocketAPI/Room.js');
 
 // ------------- begin Websocket Server init with helper functions
 
@@ -28,14 +28,21 @@ wss.broadcast = function broadcast(data) {
     });
 };
 wss.roomBroadcast = function (ws, uri, data, roomId){
+    var oldQ;
+    if (data.question) {
+        oldQ = JSON.parse(JSON.stringify(data.question));
+    }
     wss.clients.forEach(function each(client){
         //check if user is currently active room member.
         var sId = client.upgradeReq.signedCookies["connect.sid"];
         sessionStore.get(sId, function(err, sess){
             if(err) logger.warn("An error occured on getting the user session: " + err);
             if(sess.room){
-
                 if(sess.room == roomId){
+                    if(data.question) {
+                        data.question = JSON.parse(JSON.stringify(oldQ));
+                        data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
+                    }
                     build(client, null, null, null, uri, data);
                 }
             } else {
@@ -59,7 +66,7 @@ var WebsocketHandler = function() {
                 var session;
                 sessionID = ws.upgradeReq.signedCookies["connect.sid"];
                 sessionStore.get(sessionID, function(err, sess) {
-                    if (err) ws.send(err); // TODO HANDLE ERROR CORRECTLY
+                    if (err) return self.build(ws, new Error("Error on session init.")); // TODO HANDLE ERROR CORRECTLY
                     session = sess;
                     self.emit('system:open', wss, ws, session, ws.upgradeReq.signedCookies["connect.sid"]);
                 });

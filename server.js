@@ -13,7 +13,7 @@ var logger = require('./app/Logger.js');
 var passport = require('passport');
 var mongoose = require('mongoose');
 var flash = require('connect-flash');
-var multer = require('multer');
+
 
 mongoose.connect(config.database.host);
 
@@ -33,18 +33,17 @@ app.use(cookieParser());
 app.use(session({
     store: new sessionStore(),
     roomId: "",
+    accessLevel: 0,
     secret: config.general.cookie.secret,
     cookie: {
         expires: new Date(Date.now() + 15778463000), // 6 month
-        httpOnly: false
+        httpOnly: false,
     },
     resave: false,
     saveUninitialized: true
 }));
 
-app.use(express.static(__dirname + '/public', {
-    maxAge: 86400000
-}));
+app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
@@ -52,7 +51,7 @@ app.use(bodyParser.urlencoded({
 //app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(multer({dest: './uploads/'}));
+
 
 var routes = require('./app/Routes.js');
 routes(app);

@@ -27,10 +27,10 @@
     }
     
     var count = 0;
-    var j = 1;
+    var j = 1000;
     while(j > 0){
         setTimeout(function(){
-            for (var i = 100; i >= 0; i--) {
+            for (var i = 10; i >= 0; i--) {
                 new Benchmark(count);
 		        count++;
             };

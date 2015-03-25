@@ -5,26 +5,36 @@ var roomDAO = require('../../models/Room.js');
 var answerDAO = require('../../models/Answer.js');
 var logger = require('../Logger.js');
 var roomWSControl = require('./Room.js');
+var roles = require('../../config/UserRoles.json');
+var session = require('express-session');
+var sessionStore = require('connect-redis')(session);
+var sessionStore = new sessionStore();
 
 module.exports = function(wsControl){
     wsControl.on("user:vote", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
         if (authed) {
             if (params.questionId) {
-                userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, { population: '' }, function (err, user, question){
+                userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, { population: 'author answers answers.author' }, function (err, user, question){
                     if (err) {
                         return logger.warn("could not check user access: " + err);
                     }
-                    questionDAO.vote(question, session.user, function(err, q){
+                    if(roomWSControl.createVotesFields(session.user, question).hasVote) {
+                        return wsControl.build(ws, new Error("You already voted for this Question!"), null, refId);
+                    }
+                    questionDAO.vote(question, session.user, function(err, quest){
+
                         if (err) {
                             logger.warn('Could not vote: ' + err);
                             return wsControl.build(ws, new Error('Could not vote.'), null, refId);
-                        } else if (q) {
-                            quest = quest.toObject();
-                            quest.author = quest.author.local;
-                            quest.answers = roomWSControl.removeAuthorTokens(quest.answers);
+                        } else if (quest) {
+                            question = question.toObject();
+                            question.author = question.author.local;
+                            question.votes = quest.votes;
+                            question.answers = roomWSControl.removeAuthorTokens(question.answers);
+
                             wss.roomBroadcast(ws, 'question:add', {
-                                'roomId': room._id,
-                                'question': roomWSControl.createVotesFields(session.user, quest)
+                                'roomId': params.roomId,
+                                'question': question
                             }, params.roomId);
                         } else {
                             wsControl.build(ws, new Error('Could not vote.'), null, refId);
@@ -42,7 +52,6 @@ module.exports = function(wsControl){
     wsControl.on('user:fetchRooms', function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
             if(authed){
                 var worker = system.getWorkerMap()[sId];
-                console.log(system.getWorkerMap()[sId]);
                 if(worker){
                     worker.fetchRooms(refId);
                 } else {
@@ -100,7 +109,7 @@ module.exports = function(wsControl){
                                             quest.answers = roomWSControl.removeAuthorTokens(quest.answers);
                                             wss.roomBroadcast(ws, 'question:add', {
                                                 'roomId': room._id,
-                                                'question': roomWSControl.createVotesFields(session.user, quest)
+                                                'question': quest
                                             }, room._id);
                                             logger.info("added new question to room " + room._id);
                                         });
@@ -167,6 +176,23 @@ module.exports = function(wsControl){
             }
         } else {
             wsControl.build(ws, new Error("Permission denied."), null, refId);
+        }
+    });
+
+    wsControl.on('user:getAccessLevel', function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
+        if (authed) {
+            sessionStore.get(sId, function(err, sess) {
+                if(sess.user && sess.user.rights) {
+                    for (var key in sess.user.rights) {
+                        if(sess.user.rights[key].roomId === params.roomId) {
+                            return wsControl.build(ws, null, { accessLevel: sess.user.rights[key].accessLevel}, refId);
+                        }
+                    }
+                }
+                wsControl.build(ws, null, { accessLevel: roles.defaultLoggedIn}, refId);
+            });
+        } else {
+            wsControl.build(ws, null, { accessLevel: roles.default}, refId);
         }
     });
 };

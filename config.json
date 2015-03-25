@@ -6,13 +6,14 @@
       "db": ""
    },
    "login": {
-      "local": true,
+      "local": false,
       "l2p": {
          "clientID": "rwth client oauth",
          "scope": "l2p2013.rwth userinfo.rwth"
       }
    },
    "general": {
+      "domain": "",
       "https": {
          "state": true,
          "key": "ssl/server.key",
@@ -28,5 +29,42 @@
       "env": {
          "dev": true
       }
-   }
+   },
+   "clamav" : {
+       "enabled" : true,
+       "options" : {
+            "remove_infected": true,
+            "quarantine_infected": false,
+            "scan_log": null,
+            "debug_mode": false,
+            "file_list": null,
+            "scan_recursively": false,
+            "clamscan": {
+                "path": "/usr/bin/clamscan",
+                "db": null,
+                "scan_archives": false,
+                "active": true
+            },
+            "clamdscan": {
+                "path": "/usr/bin/clamdscan",
+                "config_file": null,
+                "multiscan": false,
+                "reload_db": false,
+                "active": true
+            },
+            "preference": "clamscan"
+        }
+    },
+    "whitelistMime": [
+        "image/gif",
+        "image/jpeg",
+        "image/png"
+    ],
+    "multer" : {
+        "options" : {
+            "fields" : 0,
+            "fileSize" : 4194304,
+            "files" : 1
+        }
+    }
 }

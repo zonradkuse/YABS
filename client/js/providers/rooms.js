@@ -1,9 +1,17 @@
-client.service("rooms", ["rpc", "$rootScope", function(rpc, $rootScope){
+client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q){
 	var rooms = [];
 	var self = this;
 
 	this.toArray = function() {
 		return rooms;
+	};
+
+	this.hasUserAccess = function(room) {
+		var deferred = $q.defer();
+		rpc.call("room:exists", {roomId: room._id}, function(result) {
+			deferred.resolve(result.exists === true);
+		});	
+		return deferred.promise;
 	};
 
 	this.upsertRoom = function(room) {
@@ -111,4 +119,7 @@ client.service("rooms", ["rpc", "$rootScope", function(rpc, $rootScope){
     	rpc.call("room:getQuestions", {roomId: room._id}, function(data) {});
     };
 
+    this.voteQuestion = function(room, question) {
+    	rpc.call("user:vote", {roomId: room._id, questionId: question._id}, function(data) {});
+    };
 }]);
