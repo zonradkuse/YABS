@@ -104,19 +104,19 @@ module.exports = function(wsControl){
                                     if(params.images && params.images !== [] && Object.prototype.toString.call(params.images) === '[object Array]') {
                                         //check if valid image ids
                                         imageDAO.Image.find({_id: { $in : params.images }}, function(err, images){
-                                            images = images.toObject();
+                                            //images = images.toObject();
                                             aCopy = JSON.parse(JSON.stringify(q)); // to send
                                             q.images = params.images;// to save
                                             aCopy.images = images;
                                             for(var key in aCopy.images) {
-                                                if(aCopy.images[key].owner !== session.user._id) // a user can only use his own images
+                                                if(images[key].owner != session.user._id) // a user can only use his own images
                                                     return wsControl.build(ws, new Error("Access denied. Bad images."), null, refId);
-                                                delete aCopy.images[key].owner; // delete own user id
+                                                aCopy.images[key].owner = undefined; // delete own user id
                                             }
-                                            sendAndSaveQuestion(wss, ws, params.roomId, q, aCopy);
+                                            sendAndSaveQuestion(wsControl, wss, ws, params.roomId, q, aCopy, refId);
                                         });
                                     } else {
-                                        sendAndSaveQuestion(wss, ws, params.roomId, q, q);
+                                        sendAndSaveQuestion(wsControl, wss, ws, params.roomId, q, q, refId);
                                     }
                                     
                                 return;
@@ -152,20 +152,20 @@ module.exports = function(wsControl){
                                     if(params.images && params.images !== [] && Object.prototype.toString.call(params.images) === '[object Array]') {
                                         //check if valid image ids
                                         imageDAO.Image.find({_id: { $in : params.images }}, function(err, images){
-                                            images = images.toObject();
+                                            //images = images.toObject();
                                             aCopy = JSON.parse(JSON.stringify(a)); // to send
                                             a.images = params.images;// to save
                                             aCopy.images = images;
                                             for(var key in aCopy.images) {
-                                                if(aCopy.images[key].owner !== session.user._id) // a user can only use his own images
+                                                if(images[key].owner != session.user._id) // a user can only use his own images
                                                     return wsControl.build(ws, new Error("Access denied. Bad images."), null, refId);
-                                                delete aCopy.images[key].owner; // delete own user id
+                                                aCopy.images[key].owner = undefined; // delete own user id
                                             }
-                                            sendAndSaveAnswer(wss, ws, q, a, room, aCopy);
+                                            sendAndSaveAnswer(wsControl, wss, ws, q, a, room, aCopy, refId);
                                         });
                                         
                                     } else {
-                                        sendAndSaveAnswer(wss, ws, q, a, room, a);
+                                        sendAndSaveAnswer(wsControl, wss, ws, q, a, room, a, refId);
                                     }
                                     return;
                                 }
@@ -255,7 +255,7 @@ module.exports = function(wsControl){
  * @param  {[type]} qToSend [description]
  * @return {[type]}         [description]
  */
-function sendAndSaveQuestion(wss, ws, roomId, q, qToSend) {
+function sendAndSaveQuestion(wsControl, wss, ws, roomId, q, qToSend, refId) {
 
     roomDAO.addQuestion({ _id : roomId}, q, function(err, room, question){
         if(err) {
@@ -286,7 +286,7 @@ function sendAndSaveQuestion(wss, ws, roomId, q, qToSend) {
  * @param  {[type]} answerToSend [description]
  * @return {[type]}              [description]
  */
-function sendAndSaveAnswer(wss, ws, q, a, room, answerToSend){
+function sendAndSaveAnswer(wsControl, wss, ws, q, a, room, answerToSend, refId){
     questionDAO.addAnswer(q, a, function(err, question, answer){
         if(err) {
             logger.warn("could not add or create question: " + err);
@@ -298,7 +298,7 @@ function sendAndSaveAnswer(wss, ws, q, a, room, answerToSend){
                 wss.roomBroadcast(ws, 'answer:add', {
                     'roomId': room._id,
                     'questionId': question._id,
-                    'answer': ans
+                    'answer': answerToSend
                 }, room._id);
                 logger.info("added new answer to room " + room.l2pID);
             });

@@ -121,7 +121,7 @@ function processFile(file, req, res) {
                             return res.end();
                         }
                         var im = new imageDAO.Image();
-                        im.author = req.session.user._id;
+                        im.owner = req.session.user._id;
                         im.path = webpath;
                         im.resolution.width = image.width();
                         im.resolution.height = image.height();
@@ -131,9 +131,9 @@ function processFile(file, req, res) {
                             if (err) {
                                 res.write(JSON.stringify({error: "Could not save new Image"}));
                             } else {
-                                im = im.toObject();
-                                delete im.author;
-                                res.write(JSON.stringify(im));
+                                var i = JSON.parse(JSON.stringify(im.toObject()));
+                                i.owner = undefined;
+                                res.write(JSON.stringify(i));
                             }
                             res.end();
                         });
