@@ -115,6 +115,8 @@ module.exports = function(wsControl){
                                             }
                                             sendAndSaveQuestion(wss, ws, params.roomId, q, aCopy);
                                         });
+                                    } else {
+                                        sendAndSaveQuestion(wss, ws, params.roomId, q, q);
                                     }
                                     
                                 return;
@@ -159,11 +161,11 @@ module.exports = function(wsControl){
                                                     return wsControl.build(ws, new Error("Access denied. Bad images."), null, refId);
                                                 delete aCopy.images[key].owner; // delete own user id
                                             }
-                                            sendAndSaveAnswer(wss, ws, q, a, aCopy);
+                                            sendAndSaveAnswer(wss, ws, q, a, room, aCopy);
                                         });
                                         
                                     } else {
-                                        sendAndSaveAnswer(wss, ws, q, a, a);
+                                        sendAndSaveAnswer(wss, ws, q, a, room, a);
                                     }
                                     return;
                                 }
@@ -244,7 +246,15 @@ module.exports = function(wsControl){
     });
 };
 
-
+/**
+ * Helper Function to broadcast questions.
+ * @param  {[type]} wss     [description]
+ * @param  {[type]} ws      [description]
+ * @param  {[type]} roomId  [description]
+ * @param  {[type]} q       [description]
+ * @param  {[type]} qToSend [description]
+ * @return {[type]}         [description]
+ */
 function sendAndSaveQuestion(wss, ws, roomId, q, qToSend) {
 
     roomDAO.addQuestion({ _id : roomId}, q, function(err, room, question){
@@ -255,7 +265,7 @@ function sendAndSaveQuestion(wss, ws, roomId, q, qToSend) {
             questionDAO.getByID(question._id, {population : 'author answers answers.author images answers.images'}, function(err, quest) {
                 quest = quest.toObject();
                 qToSend.author = quest.author.local;
-                qToSave.answers = roomWSControl.removeAuthorTokens(quest.answers);
+                qToSend.answers = roomWSControl.removeAuthorTokens(quest.answers);
                 wss.roomBroadcast(ws, 'question:add', {
                     'roomId': room._id,
                     'question': qToSend
@@ -266,7 +276,17 @@ function sendAndSaveQuestion(wss, ws, roomId, q, qToSend) {
     });
 }
 
-function sendAndSaveAnswer(wss, ws, question, answerToSave, answerToSend){
+
+/**
+ * Helper Function to broadcast answers.
+ * @param  {[type]} wss          [description]
+ * @param  {[type]} ws           [description]
+ * @param  {[type]} q            [description]
+ * @param  {[type]} a            [description]
+ * @param  {[type]} answerToSend [description]
+ * @return {[type]}              [description]
+ */
+function sendAndSaveAnswer(wss, ws, q, a, room, answerToSend){
     questionDAO.addAnswer(q, a, function(err, question, answer){
         if(err) {
             logger.warn("could not add or create question: " + err);
