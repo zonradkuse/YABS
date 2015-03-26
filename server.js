@@ -28,6 +28,7 @@ app.use(morgan('dev', {
 app.use(compression({
     threshold: 1024
 }));
+app.disable('etag');
 app.use(cookieParser());
 //app.set('trust proxy', 1); // will be needed for production use with nginx
 app.use(session({

@@ -41,17 +41,20 @@ module.exports = function(wsControl){
                     UserModel.get(session.user._id, function(err, _user){
                         var worker = new userWorker(sId, ws, _user, wsControl, true);
                         workerMap[sId] = worker;
-                        console.log(worker);
-                        worker.getRooms(); //send at least old rooms
                         worker.fetchRooms(null, function(){ //get new rooms
                             worker.getRooms(); //send all rooms
                         });
+                        process.nextTick(function(){
+                            worker.getRooms(); //send at least old rooms                            
+                        });
                     });
                 } else if(workerMap[sId]) {
+                    var worker = new userWorker(sId, ws, _user, wsControl, true);
+                    workerMap[sId] = worker;
                     workerMap[sId].getRooms(); //send at least old rooms
-                    /* workerMap[sId].fetchRooms(null, function(){ //get new rooms
+                    workerMap[sId].fetchRooms(null, function(){ //get new rooms
                         workerMap[sId].getRooms(); //send all rooms
-                    }); */
+                    });
                 }
             }, 1000);
         });    
