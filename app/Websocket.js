@@ -36,17 +36,22 @@ wss.roomBroadcast = function (ws, uri, data, roomId){
         //check if user is currently active room member.
         var sId = client.upgradeReq.signedCookies["connect.sid"];
         sessionStore.get(sId, function(err, sess){
-            if(err) logger.warn("An error occured on getting the user session: " + err);
-            if(sess.room){
-                if(sess.room == roomId){
-                    if(data.question) {
-                        data.question = JSON.parse(JSON.stringify(oldQ));
-                        data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
+            if(err) logger.err("An error occured on getting the user session: " + err);
+            if(sess) {
+                if(sess.room){
+                    if(sess.room == roomId){
+                        if(data.question) {
+                            data.question = JSON.parse(JSON.stringify(oldQ));
+                            data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
+                        }
+                        build(client, null, null, null, uri, data);
                     }
-                    build(client, null, null, null, uri, data);
+                } else {
+                    build(ws, new Error("Your current room is not set."));
                 }
             } else {
-                build(ws, new Error("Your current room is not set."));
+                logger.warn("There is a sessionId without a session. sId: " + sId + 
+                    " session: " + JSON.stringify(sess) + " data to be sent: " + JSON.stringify(data));
             }
         });
     });

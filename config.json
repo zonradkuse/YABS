@@ -52,7 +52,7 @@
                 "reload_db": false,
                 "active": true
             },
-            "preference": "clamscan"
+            "preference": "clamdscan"
         }
     },
     "whitelistMime": [
