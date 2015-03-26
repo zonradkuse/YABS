@@ -36,22 +36,24 @@ module.exports = function(wsControl){
         logger.info("new client arrived.");
         wsControl.build(ws, null, { message: 'welcome' }, null);
         process.nextTick(function(){
-            if(!workerMap[sId] && session && session.user && session.user._id){
-                UserModel.get(session.user._id, function(err, _user){
-                    var worker = new userWorker(sId, ws, _user, wsControl, true);
-                    workerMap[sId] = worker;
-                    console.log(worker);
-                    worker.getRooms(); //send at least old rooms
-                    worker.fetchRooms(null, function(){ //get new rooms
-                        worker.getRooms(); //send all rooms
+            setTimeout(function(){
+                if(!workerMap[sId] && session && session.user && session.user._id){
+                    UserModel.get(session.user._id, function(err, _user){
+                        var worker = new userWorker(sId, ws, _user, wsControl, true);
+                        workerMap[sId] = worker;
+                        console.log(worker);
+                        worker.getRooms(); //send at least old rooms
+                        worker.fetchRooms(null, function(){ //get new rooms
+                            worker.getRooms(); //send all rooms
+                        });
                     });
-                });
-            } else if(workerMap[sId]) {
-                worker.getRooms(); //send at least old rooms
-                worker.fetchRooms(null, function(){ //get new rooms
-                    worker.getRooms(); //send all rooms
-                });
-            }
+                } else if(workerMap[sId]) {
+                    workerMap[sId].getRooms(); //send at least old rooms
+                    /* workerMap[sId].fetchRooms(null, function(){ //get new rooms
+                        workerMap[sId].getRooms(); //send all rooms
+                    }); */
+                }
+            }, 1000);
         });    
     });
     wsControl.on('system:ping', function(wss, ws, session, params, interfaceEntry, refId){
