@@ -15,12 +15,13 @@ module.exports = function(wsControl){
                 for (var j = room.questions.length - 1; j >= 0; j--) {
                     room.questions[j].answers = removeAuthorTokens(room.questions[j].answers);
                     room.images = removeOwnerFields(room.images);
-                    if (room.answers) {
-                        for (var i = room.answers.length - 1; i >= 0; i--) {
-                            room.answers[i].images = removeOwnerFields(room.answers[i].images);
+                    if (room.questions[j].answers) {
+                        for (var i = room.questions[j].answers.length - 1; i >= 0; i--) {
+                            room.questions[j].answers[i].images = removeOwnerFields(room.questions[j].answers[i].images);
                         };
                     }
                     if (room.questions[j].content !== "") {
+                        
                         wsControl.build(ws, null, null, null, "question:add", {
                             roomId : params.roomId,
                             question : createVotesFields(session.user, room.questions[j])
