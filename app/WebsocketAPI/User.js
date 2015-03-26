@@ -2,6 +2,7 @@ var system = require('./System.js');
 var questionDAO = require('../../models/Question.js');
 var userDAO = require('../../models/User.js');
 var roomDAO = require('../../models/Room.js');
+var panicDAO = require('../../models/Panic.js');
 var answerDAO = require('../../models/Answer.js');
 var logger = require('../Logger.js');
 var roomWSControl = require('./Room.js');
@@ -71,7 +72,7 @@ module.exports = function(wsControl){
                     rooms = rooms.toObject();
                     for (var i = rooms.length - 1; i >= 0; i--) {
                         wsControl.build(ws, null, null, null, "room:add", {
-                            'room': rooms[i],
+                            'room': rooms[i]
                         });
                     };
                     
@@ -193,6 +194,50 @@ module.exports = function(wsControl){
             });
         } else {
             wsControl.build(ws, null, { accessLevel: roles.default}, refId);
+        }
+    });
+
+    wsControl.on('user:panic', function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
+        if(authed){
+            if(params && params.roomId){
+                userDAO.hasAccessToRoom(session.user, {_id:params.roomId}, {population: ''}, function(err, user, room){
+                    if (err) {
+                        wsControl.build(ws, new Error("Access denied."), null, refId);
+                        return logger.warn("could not check room access: " + err);
+                    }
+                    panicDAO.panic(session.user,{_id:params.roomId},function(err){
+                        if(err)
+                            return wsControl.build(ws, new Error("Cannot save user's panic."), null, refId);
+                        wsControl.build(ws, null, {'status': true}, refId);
+                    });                
+                });
+            } else {
+                wsControl.build(ws, new Error("Your session is invalid."), null, refId);
+            }
+        } else {
+            wsControl.build(ws, new Error("Your session is invalid."), null, refId);
+        }
+    });
+
+    wsControl.on('user:unpanic', function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
+        if(authed){
+            if(params && params.roomId){
+                userDAO.hasAccessToRoom(session.user, {_id:params.roomId}, {population: ''}, function(err, user, room){
+                    if (err) {
+                        wsControl.build(ws, new Error("Access denied."), null, refId);
+                        return logger.warn("could not check room access: " + err);
+                    }
+                    panicDAO.unpanic(session.user,{_id:params.roomId},function(err){
+                        if(err)
+                            return wsControl.build(ws, new Error("Cannot delete user's panic."), null, refId);
+                        wsControl.build(ws, null, {'status': true}, refId);
+                    });                
+                });
+            } else {
+                wsControl.build(ws, new Error("Your session is invalid."), null, refId);
+            }
+        } else {
+            wsControl.build(ws, new Error("Your session is invalid."), null, refId);
         }
     });
 };

@@ -56,15 +56,17 @@ db.once('open',function(callback){
 	var userID2 = mongoose.Types.ObjectId();
 	var userID3 = mongoose.Types.ObjectId();
 
-	Panic.register({_id: roomID}, null, {live: 1000, graph: 4500});
+	Panic.register({_id: roomID}, null, {live: 1000, graph: 6000},function(err){});
 
 	setTimeout(function(){
-		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
+		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){if(err) throw err});
 		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
 	},1000);
 
 	setTimeout(function(){
-		Panic.panic({_id:userID1},{_id:roomID},function(err){});
+		Panic.panic({_id:userID1},{_id:roomID},function(err){
+			//Panic.panic({_id:userID1},{_id:roomID},function(err){if(err) throw err});
+		});
 		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
 	},6500);
 
@@ -80,10 +82,10 @@ db.once('open',function(callback){
 
 	setTimeout(function(){
 		console.log("unregister");
-		Panic.unregister({_id: roomID});
+		Panic.unregister({_id: roomID},function(err){});
 		Panic.getGraph({_id:roomID},{population:''},function(err, graph){
 			console.log(JSON.stringify(graph,null,2));
 		});
-	},10000);
+	},13000);
 
 });
