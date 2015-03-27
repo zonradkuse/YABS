@@ -48,7 +48,7 @@ UserWorker.prototype.fetchRooms = function(refId, next){
                         courses = JSON.parse(courses);
                         logger.debug(courses);
                     } catch (e) {
-                        self.wsControl.build(self.ws, new Error("L2P answer was invalid."), null, refId);
+                        self.wsControl.build(self.ws, new Error("L2P answer was invalid. Probably HTML code."), null, refId);
                         logger.warn("L2P courselist was not valid json: " + courses.toString());
                         return;
                     }
@@ -74,7 +74,7 @@ UserWorker.prototype.fetchRooms = function(refId, next){
                             });
                         }
                     } else {
-                        self.wsControl.build(self.ws, new Error("L2P returned bad things (probably html code)"), null, refId);
+                        self.wsControl.build(self.ws, new Error("L2P returned bad things."), null, refId);
                         logger.warn("Bad L2P answer: " + courses.toString());
                     }
                     if (next) next();
@@ -145,6 +145,8 @@ UserWorker.prototype.refreshAccessToken = function(next){
                         });
 
                     } else if (answer.error === "authorization invalid."){
+                        next(new Error("Your refresh_token is invalid."));
+                    } else if (answer.status === "error: refresh token invalid.") {
                         next(new Error("Your refresh_token is invalid."));
                     }
                 }

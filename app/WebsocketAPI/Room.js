@@ -9,14 +9,21 @@ module.exports = function(wsControl){
     wsControl.on("room:getQuestions", function(wss, ws, session, params, interfaceEntry, refId, sId){
         //params.roomId
         if(session.user && params.roomId){
-			userDAO.hasAccessToRoom(session.user, { _id : params.roomId }, {population:'questions.author questions.answers questions.answers.author'}, function(err, user, room){
+			userDAO.hasAccessToRoom(session.user, { _id : params.roomId }, {population:'questions.author questions.answers.images questions.answers.images questions.answers questions.answers.author'}, function(err, user, room){
 				if(err)
 					return wsControl.build(ws, err, null, refId);
                 room = room.toObject();
                 room.questions = removeAuthorTokens(room.questions);
                 for (var j = room.questions.length - 1; j >= 0; j--) {
                     room.questions[j].answers = removeAuthorTokens(room.questions[j].answers);
+                    room.images = removeOwnerFields(room.images);
+                    if (room.questions[j].answers) {
+                        for (var i = room.questions[j].answers.length - 1; i >= 0; i--) {
+                            room.questions[j].answers[i].images = removeOwnerFields(room.questions[j].answers[i].images);
+                        };
+                    }
                     if (room.questions[j].content !== "") {
+                        
                         wsControl.build(ws, null, null, null, "question:add", {
                             roomId : params.roomId,
                             question : createVotesFields(session.user, room.questions[j])
@@ -163,6 +170,15 @@ function removeIdFields(input){
         delete input[i]._id;
     }
     return input;
+}
+
+function removeOwnerFields(images) {
+    if (images) { 
+        for (var i = images.length - 1; i >= 0; i--) {
+            delete images[i].owner; 
+        }
+    }
+    return images;
 }
 
 module.exports.createVotesFields = createVotesFields;
