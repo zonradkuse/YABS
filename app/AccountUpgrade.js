@@ -1,5 +1,10 @@
 var nodemailer = require('nodemailer');
 var addresses = require('../config/mails.json').data;
+var config = require('../config.json');
+var logger = require('./Logger.js');
+var roomDAO = require('../models/Room.js');
+var adminkey = "wurstbrot";
+var roles = require('../config/UserRoles.json');
 
 var transporter = nodemailer.createTransport({
     service: 'Gmail',
