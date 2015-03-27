@@ -1,6 +1,8 @@
 var roomDAO = require('../../models/Room.js');
 var userDAO = require('../../models/User.js');
 var questionDAO = require('../../models/Question.js');
+var panicDAO = require('../../models/Panic.js');
+var accessManager = require('../AccessManagement.js');
 var logger = require('../Logger.js');
 
 module.exports = function(wsControl){
@@ -56,6 +58,78 @@ module.exports = function(wsControl){
         	wsControl.build(ws, new Error("Your session is invalid."), null, refId);
         }
     });
+
+    wsControl.on("room:enablePanicEvents", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
+        if(authed){
+	        if(params.roomId && params.intervals){
+	        	accessManager.checkAccessBySId("room:enablePanicEvents", sId, params.roomId, function(err, hasAccess){
+	        		if(err || !hasAccess)
+	        			return wsControl.build(ws, new Error("Access denied."), null, refId);
+		        	userDAO.hasAccessToRoom(session.user, {_id: params.roomId}, {population:''}, function(err, room){
+		        		if(err)
+		        			return wsControl.build(ws, new Error("Access denied."), null, refId);
+		        		panicDAO.register({_id: params.roomId}, wsControl, wss, ws, params.intervals, function(err){
+		        			if(err)
+		        				return wsControl.build(ws, new Error("Cannot enable panic events."), null, refId);
+		        			wsControl.build(ws, null, {'status': true}, refId);
+		        		});
+		        	});
+	        	});
+	        }else{
+	        	wsControl.build(ws, new Error("Invalid params."), null, refId);
+	        }
+        } else {
+        	wsControl.build(ws, new Error("Your session is invalid."), null, refId);
+        }
+    });
+
+    wsControl.on("room:disablePanicEvents", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
+        if(authed){
+	        if(params.roomId){
+	        	accessManager.checkAccessBySId("room:disablePanicEvents", sId, params.roomId, function(err, hasAccess){
+	        		if(err || !hasAccess)
+	        			return wsControl.build(ws, new Error("Access denied."), null, refId);
+		        	userDAO.hasAccessToRoom(session.user, {_id: params.roomId}, {population:''}, function(err, room){
+		        		if(err)
+		        			return wsControl.build(ws, new Error("Access denied."), null, refId);
+		        		panicDAO.unregister({_id: params.roomId}, function(err){
+		        			if(err)
+		        				return wsControl.build(ws, new Error("Cannot disable panic events."), null, refId);
+		        			wsControl.build(ws, null, {'status': true}, refId);
+		        		});
+		        	});
+	        	});
+	        }else{
+	        	wsControl.build(ws, new Error("Invalid params."), null, refId);
+	        }
+        } else {
+        	wsControl.build(ws, new Error("Your session is invalid."), null, refId);
+        }
+    });
+	
+	wsControl.on("room:getPanicGraph", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
+        if(authed){
+	        if(params.roomId){
+	        	accessManager.checkAccessBySId("room:getPanicGraph", sId, params.roomId, function(err, hasAccess){
+	        		if(err || !hasAccess)
+	        			return wsControl.build(ws, new Error("Access denied."), null, refId);
+		        	userDAO.hasAccessToRoom(session.user, {_id: params.roomId}, {population:''}, function(err, room){
+		        		if(err)
+		        			return wsControl.build(ws, new Error("Access denied."), null, refId);
+		        		panicDAO.getGraph({_id: params.roomId}, {population:''}, function(err, graph){
+		        			if(err)
+		        				return wsControl.build(ws, new Error("Cannot get graph."), null, refId);
+		        			wsControl.build(ws, null, {'graph': removeIdFields(graph.data.toObject())}, refId);
+		        		});
+		        	});
+	        	});
+	        }else{
+	        	wsControl.build(ws, new Error("Invalid params."), null, refId);
+	        }
+        } else {
+        	wsControl.build(ws, new Error("Your session is invalid."), null, refId);
+        }
+    });
 };
 
 function removeAuthorTokens(input) {
@@ -81,6 +155,14 @@ function createVotesFields(user, question){
 	question.votes = votesCount;
 	question.hasVote = hasVote;
 	return question;
+}
+
+//for panic graph
+function removeIdFields(input){
+	for (var i = input.length - 1; i >= 0; i--) {
+        delete input[i]._id;
+    }
+    return input;
 }
 
 module.exports.createVotesFields = createVotesFields;

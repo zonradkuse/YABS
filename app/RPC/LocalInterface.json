@@ -89,6 +89,28 @@
         "func": "",
         "accessLevel": 1
     },{
+        "uri": "room:enablePanicEvents",
+        "parameters": {
+            "roomId": "",
+            "intervals": {}
+            },
+        "func": "",
+        "accessLevel": 2
+    },{
+        "uri": "room:disablePanicEvents",
+        "parameters": {
+            "roomId": ""
+            },
+        "func": "",
+        "accessLevel": 2
+    },{
+        "uri": "room:getPanicGraph",
+        "parameters": {
+            "roomId": ""
+            },
+        "func": "",
+        "accessLevel": 2
+    },{
         "uri": "question:getVotes",
         "parameters": {
             "questionId": ""

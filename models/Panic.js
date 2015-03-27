@@ -9,8 +9,6 @@ var PanicEventSchema = mongoose.Schema({
 });
 
 var PanicGraphSchema = mongoose.Schema({
-    startTime: { type: Date },
-    endTime: { type: Date },
     room: { type: ObjectId, ref: 'Room' },
     data: [{ time: { type: Date, default: Date.now }, 
             panics: { type: Number } }]
@@ -144,9 +142,11 @@ module.exports.unpanic = function(user, room, callback){
         throw new Error("callback not defined");
     if(workerMap[room._id] === undefined)
         return callback(new Error("Room not registered"));
-    PanicEvent.find({room:room._id, user:user._id}).remove(function(err){
+    PanicEvent.find({room:room._id, user:user._id}).remove(function(err, count){
         if(err)
             return callback(err);
+        if(count == 0)
+            return callback(new Error("User had already no panic"));
         return callback(null);
     });
 }
@@ -158,7 +158,7 @@ var workerMap = [];
 * @param wss the websocket object to communicate
 * @param intervals object within intervals for live update and graph clustering
 */
-var RoomWorker = function(roomID, ws, intervals) {
+var RoomWorker = function(roomID, wsControl, wss, ws, intervals) {
     if(intervals.live === undefined)
         intervals.live = 3*1000;
     if(intervals.graph === undefined)
@@ -173,8 +173,8 @@ var RoomWorker = function(roomID, ws, intervals) {
             if(err)
                 throw err;
             var data = { panics: events.length };
-            //TODO send data with ws
             console.log(JSON.stringify(data,null,0));
+            wsControl.build(ws, null, data, null);
         });
     }, intervals.live);
 
@@ -200,10 +200,12 @@ RoomWorker.prototype.stop = function(){
 * @param intervals object within intervals for live update and graph clustering
 * @param callback params: error
 */
-module.exports.register = function(room, ws, intervals, callback){
+module.exports.register = function(room, wsControl, wss, ws, intervals, callback){
     if(callback === undefined)
         throw new Error("callback not defined");
-    workerMap[room._id] = new RoomWorker(room._id, ws, intervals);
+    if(workerMap[room._id] !== undefined)
+        return callback(new Error("Room already registered")); 
+    workerMap[room._id] = new RoomWorker(room._id, wsControl, wss, ws, intervals);
     return callback(null);
 }
 
