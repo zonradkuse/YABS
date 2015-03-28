@@ -15,6 +15,7 @@ sessionStore = new sessionStore();
 var util = require('util');
 var events = require('events');
 var roomWSControl = require('./WebsocketAPI/Room.js');
+var accessManager = require('./AccessManagement.js');
 
 // ------------- begin Websocket Server init with helper functions
 
@@ -53,6 +54,29 @@ wss.roomBroadcast = function (ws, uri, data, roomId){
                 logger.warn("There is a sessionId without a session. sId: " + sId + 
                     " session: " + JSON.stringify(sess) + " data to be sent: " + JSON.stringify(data));
             }
+        });
+    });
+};
+
+wss.roomAccessLevelBroadcast = function (ws, uri, data, roomId, options){
+    var oldQ;
+    if (data.question) {
+        oldQ = JSON.parse(JSON.stringify(data.question));
+    }
+    wss.clients.forEach(function each(client){
+        var sId = client.upgradeReq.signedCookies["connect.sid"];
+        accessManager.checkAccessLevel(sId, options, roomId, function(err, access){
+            if(err) return;
+            if(access){
+                if(data.question) {
+                    data.question = JSON.parse(JSON.stringify(oldQ));
+                    data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
+                }
+                build(client, null, null, null, uri, data);
+            } else {
+                build(ws, new Error("Access denied."));
+            }
+
         });
     });
 };

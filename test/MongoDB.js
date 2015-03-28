@@ -87,5 +87,4 @@ db.once('open',function(callback){
 			console.log(JSON.stringify(graph,null,2));
 		});
 	},13000);
-
 });

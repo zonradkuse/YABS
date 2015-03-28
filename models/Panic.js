@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var roles = require('../config/UserRoles.json');
 var deepPopulate = require('mongoose-deep-populate');
 var ObjectId = mongoose.Schema.ObjectId;
 
@@ -160,9 +161,9 @@ var workerMap = [];
 */
 var RoomWorker = function(roomID, wsControl, wss, ws, intervals) {
     if(intervals.live === undefined)
-        intervals.live = 3*1000;
+        intervals.live = 30;
     if(intervals.graph === undefined)
-        intervals.graph = 60*1000;
+        intervals.graph = 60;
 
     var self = this;
 
@@ -173,20 +174,21 @@ var RoomWorker = function(roomID, wsControl, wss, ws, intervals) {
             if(err)
                 throw err;
             var data = { panics: events.length };
-            console.log(JSON.stringify(data,null,0));
-            wsControl.build(ws, null, data, null);
+            wss.roomAccessLevelBroadcast(ws, 'room:livePanic', data, roomID,{
+                requiredAccess: roles.defaultMod, roomMember: true
+            });
         });
-    }, intervals.live);
+    }, intervals.live*1000);
 
 
     this.graphDaemon = setInterval(function(){
-        var endTime = new Date(self.graphDaemonTime.getTime()+intervals.graph);
+        var endTime = new Date(self.graphDaemonTime.getTime()+intervals.graph*1000);
         clusterEvents({_id:roomID},{population:'', end:endTime},function(err){
             if(err)
                 throw err;
             self.graphDaemonTime = endTime;
         });
-    }, intervals.graph);
+    }, intervals.graph*1000);
 };
 
 RoomWorker.prototype.stop = function(){

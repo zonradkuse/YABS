@@ -55,6 +55,44 @@ function checkAccessBySId(uri, sId, roomId, next){
 }
 
 /**
+ * Gets session out of sessionStore and compare the accessLevel to the expected one.
+ *
+ * @param {sId} the sessionId to check
+ * @param {options} fields (requiredAccess, roomMember). roomMember equals true then user have to be active room member
+ * @param {roomId} id of room to check
+ * @param {next} callback with params (err, bool). bool is set true when access is granted.
+ **/
+function checkAccessLevel(sId, options, roomId, next){
+    if(options.requiredAccess === undefined)
+        throw new Error("options must have requiredAccess field.");
+    var roomMember = false;
+    if(options.roomMember !== undefined)
+        roomMember = options.roomMember;
+
+    sessionStore.get(sId, function(err, session){
+        if (err) return next(err, false);
+        if (!session) return next(null, false);
+        // check if there is anything defined in rights array
+        if (session.user && session.user.rights) {
+            if(!roomMember || session.room == roomId){
+                for (var key in session.user.rights) {
+                    if(session.user.rights[key].roomId == roomId){
+                        return next(null, options.requiredAccess <= session.user.rights[key].accessLevel);
+                    }
+                }
+            } else {
+                return next(null, false);
+            }
+        }
+        if (session.user) {
+            return next(null, options.requiredAccess <= roles.defaultLoggedIn);
+        } else {
+            next(null, options.requiredAccess <= roles.default);
+        }
+    });
+}
+
+/**
  * Sets a new accessLevel to session.
  *
  * @param {level} accessLevel to set
@@ -99,5 +137,6 @@ function setAccessByRWTH(rwthRole, sId, roomId, next) {
 }
 
 module.exports.checkAccessBySId = checkAccessBySId;
+module.exports.checkAccessLevel = checkAccessLevel;
 module.exports.setAccessBySId = setAccessBySId;
 
