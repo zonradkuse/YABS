@@ -10,6 +10,7 @@ sessionStore = new sessionStore();
 var userWorker = require('../UserWorker.js');
 var campus = require('../RWTH/CampusRequests.js');
 var moniker = require('moniker');
+var panicDAO = require('../../models/Panic.js');
 var fancyNames = moniker.generator([moniker.adjective, moniker.noun],{glue:' '});
 var workerMap = {};
 
@@ -205,9 +206,15 @@ module.exports = function(wsControl){
                 if(err) {
                     wsControl.build(ws, err, null, refId);
                 } else {
-                    wsControl.build(ws, null, {
-                        status: true,
-                    }, refId);
+                    panicDAO.isRoomRegistered({_id: params.roomId}, function(isRegistered){
+                        panicDAO.hasUserPanic(session.user, function(err, panicEvent){
+                            wsControl.build(ws, null, {
+                                status: true,
+                                hasRoomPanicRegistered: isRegistered,
+                                hasUserPanic: (panicEvent && !err) ? true : false
+                            }, refId);
+                        });
+                    });
                 }
             });
         } else {

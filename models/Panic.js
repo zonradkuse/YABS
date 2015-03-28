@@ -104,9 +104,22 @@ module.exports.hasUserPanic = function(user, callback){
         throw new Error("callback not defined");
     PanicEvent.findOne({user: user._id}).exec(function(err, panicEvent){
         if(err)
-            return callback(err, false);
+            return callback(err, null);
         return callback(null, panicEvent);
     });
+}
+
+/*
+* @param room the room object which should be registered
+* @param callback params: bool
+*/
+module.exports.isRoomRegistered = function(room, callback){
+    if(callback === undefined)
+        throw new Error("callback not defined");
+    if(workerMap[room._id] !== undefined)
+        return callback(true);
+    else
+        return callback(false);
 }
 
 /*

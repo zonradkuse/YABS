@@ -71,12 +71,18 @@ module.exports = function(wsControl){
                         return logger.warn("could not get rooms: " + err);
                     }
                     rooms = rooms.toObject();
-                    for (var i = rooms.length - 1; i >= 0; i--) {
-                        wsControl.build(ws, null, null, null, "room:add", {
-                            'room': rooms[i]
-                        });
-                    };
-                    
+                    panicDAO.hasUserPanic(session.user, function(err, panicEvent){
+                        for (var i = rooms.length - 1; i >= 0; i--) {
+                            panicDAO.isRoomRegistered(rooms[i],function(isRegistered){
+                                var r = rooms[i].toObject();
+                                r.hasUserPanic = (!err && panicEvent) ? true : false;
+                                r.isRoomRegistered = isRegistered;
+                                wsControl.build(ws, null, null, null, "room:add", {
+                                    'room': r
+                                });
+                            });
+                        };
+                    });                    
                 });
             } else {
                 wsControl.build(ws, new Error("Your session is invalid."), null, refId);
@@ -211,7 +217,7 @@ module.exports = function(wsControl){
                     }
                     panicDAO.panic(session.user,{_id:params.roomId},function(err){
                         if(err)
-                            return wsControl.build(ws, new Error("Cannot save user's panic."), null, refId);
+                            return wsControl.build(ws, new Error("Cannot save user's panic. "+err), null, refId);
                         wsControl.build(ws, null, {'status': true}, refId);
                     });                
                 });

@@ -10,6 +10,7 @@ var userDAO = require('../models/User.js');
 var campusReq = require('./RWTH/CampusRequests.js');
 var config = require('../config.json');
 var querystring = require('querystring');
+var panicDAO = require('../models/Panic.js');
 
 /**
  * sets needed object attributes.
@@ -68,8 +69,15 @@ UserWorker.prototype.fetchRooms = function(refId, next){
                                     return;
                                 }
                                 if(user) {
-                                    self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': room });
-                                    logger.info("added new room: " + room.l2pID);
+                                    panicDAO.hasUserPanic(self.user, function(err, panicEvent){
+                                        panicDAO.isRoomRegistered(room, function(isRegistered){
+                                            var r = room.toObject();
+                                            r.hasUserPanic = (!err && panicEvent) ? true : false;
+                                            r.isRoomRegistered = isRegistered;
+                                            self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': r });
+                                            logger.info("added new room: " + r.l2pID);
+                                        });
+                                    });
                                 }
                             });
                         }
@@ -196,12 +204,19 @@ UserWorker.prototype.getRooms = function(){
     var self = this;
     if(self.user && self.user._id){
         userDAO.getRoomAccess(self.user, {population: ''}, function(err, rooms){
-            for (var room in rooms){
-                if(rooms[room].l2pID !== undefined){
-                    rooms[room].questions = [];
-                    self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': rooms[room] });
+            panicDAO.hasUserPanic(self.user, function(err, panicEvent){
+                for (var room in rooms){
+                    if(rooms[room].l2pID !== undefined){
+                        panicDAO.isRoomRegistered(rooms[room], function(isRegistered){
+                            var r = rooms[room].toObject();
+                            r.hasUserPanic = (!err && panicEvent) ? true : false;
+                            r.isRoomRegistered = isRegistered;
+                            r.questions = [];
+                            self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': r });
+                        });
+                    }
                 }
-            }
+            });
         });
     } else {
         wsControl.build(ws, new Error("Your session is invalid."), null, refId);

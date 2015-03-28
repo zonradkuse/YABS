@@ -94,7 +94,7 @@ module.exports = function(wsControl){
 		        		panicDAO.register({_id: params.roomId}, wsControl, wss, ws, params.intervals, function(err){
 		        			if(err)
 		        				return wsControl.build(ws, new Error("Cannot enable panic events."), null, refId);
-		        			wsControl.build(ws, null, {'status': true}, refId);
+		        			wss.roomBroadcast(ws, "room:panicStatus", {isEnabled: true}, params.roomId);
 		        		});
 		        	});
 	        	});
@@ -118,7 +118,7 @@ module.exports = function(wsControl){
 		        		panicDAO.unregister({_id: params.roomId}, function(err){
 		        			if(err)
 		        				return wsControl.build(ws, new Error("Cannot disable panic events."), null, refId);
-		        			wsControl.build(ws, null, {'status': true}, refId);
+		        			wss.roomBroadcast(ws, "room:panicStatus", {isEnabled: false}, params.roomId);
 		        		});
 		        	});
 	        	});
