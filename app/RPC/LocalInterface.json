@@ -154,6 +154,13 @@
         "func": "",
         "accessLevel": 2
     },{
+        "uri": "room:userCount",
+        "parameters": {
+            "roomId": ""
+            },
+        "func": "",
+        "accessLevel": 2
+    },{
         "uri": "user:panic",
         "parameters": {
             "roomId": ""

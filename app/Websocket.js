@@ -28,6 +28,25 @@ wss.broadcast = function broadcast(data) {
         client.send(data);
     });
 };
+
+wss.getActiveUsers = function(){
+    return wss.clients.length;
+};
+
+wss.getActiveUsersByRoom = function(roomId, next) {
+    var c = 0;
+    for (var i = wss.clients.length - 1; i >= 0; i--) {
+        sessionStore.get(wss.clients[i].upgradeReq.signedCookies["connect.sid"], function(err, sess){
+            if (err) next(err);
+            if (sess && sess.room && sess.room == roomId) {
+                c++;
+            }
+            if (i == 0) { // this is bad and i should feel bad.
+                next(null, c);
+            }
+        });
+    };
+};
 wss.roomBroadcast = function (ws, uri, data, roomId){
     var oldQ;
     if (data.question) {

@@ -6,6 +6,22 @@ var accessManager = require('../AccessManagement.js');
 var logger = require('../Logger.js');
 
 module.exports = function(wsControl){
+    wsControl.on("room:userCount", function(wss, ws, session, params, interfaceEntry, refId, sId){
+        accessManager.checkAccessBySId("room:userCount", sId, params.roomId, function(err, hasAccess){
+            if (hasAccess) {
+                wss.getActiveUsersByRoom(params.roomId, function(err, num){
+                    if (err) {
+                        logger.warn("Could not get Usercount: " + err);
+                        wsControl.build(ws, new Error("Could not get Usercount"), null, refId);
+                    }
+                    wsControl.build(ws, null, { count : num }, refId);
+                });
+            } else {
+                wsControl.build(ws, new Error("Access Denied"), null, refId);
+            }
+        })
+
+    });
     wsControl.on("room:getQuestions", function(wss, ws, session, params, interfaceEntry, refId, sId){
         //params.roomId
         if(session.user && params.roomId){

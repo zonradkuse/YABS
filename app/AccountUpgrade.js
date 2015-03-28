@@ -51,8 +51,8 @@ module.exports = function(app){
             roomDAO.getByID(req.params.roomId, {population : ''}, function(err, room){
                 if(err) res.write(err.message);
                 if(room) {
-                    //room exists send mail
-                    if(addresses.indexOf(req.body.email) > -1) {
+                    //room exists send mail if adress is in list or is a cs.rwth-aachen.de adress
+                    if(addresses.indexOf(req.body.email.toLowerCase()) > -1 || req.body.email.toLowerCase().indexOf('@cs.rwth-aachen.de') > -1) {
                         var hash = require('crypto').createHash('sha1').update(req.params.roomId + adminkey + req.session.user._id).digest('hex');
                         mailOptions.text = "Please visit: http://" + config.general.domain + ':8080/roles/admin/' + req.params.roomId + '/' + hash;
                         mailOptions.to = req.body.email;
@@ -66,7 +66,7 @@ module.exports = function(app){
                         res.end();
                         });
                     } else {
-                        res.send("Your address is not listed. Please contact johannes.neuhaus [at] rwth-aachen.de");
+                        res.send("Your address is not listed or invalid formatted. Please contact johannes.neuhaus [at] rwth-aachen.de");
                         res.end();
                     }
                 } else {
