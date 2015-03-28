@@ -14,6 +14,7 @@ module.exports = function(wsControl){
                         logger.warn("Could not get Usercount: " + err);
                         wsControl.build(ws, new Error("Could not get Usercount"), null, refId);
                     }
+                    console.log(num);
                     wsControl.build(ws, null, { count : num }, refId);
                 });
             } else {
