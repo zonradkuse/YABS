@@ -54,7 +54,7 @@ module.exports = function(app){
                     //room exists send mail if adress is in list or is a cs.rwth-aachen.de adress
                     if(addresses.indexOf(req.body.email.toLowerCase()) > -1 || req.body.email.toLowerCase().indexOf('@cs.rwth-aachen.de') > -1) {
                         var hash = require('crypto').createHash('sha1').update(req.params.roomId + adminkey + req.session.user._id).digest('hex');
-                        mailOptions.text = "Please visit: http://" + config.general.domain + ':8080/roles/admin/' + req.params.roomId + '/' + hash;
+                        mailOptions.text = "Please visit: " + req.protocol + "://" + req.get('Host') + '/roles/admin/' + req.params.roomId + '/' + hash;
                         mailOptions.to = req.body.email;
                         transporter.sendMail(mailOptions, function(error, info){
                         if(error){

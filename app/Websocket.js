@@ -41,7 +41,7 @@ wss.getActiveUsersByRoom = function(roomId, next) {
             if (sess && sess.room && sess.room == roomId) {
                 c++;
             }
-            if (i == 0) { // this is bad and i should feel bad.
+            if (i == -1) { // this is bad and i should feel bad.
                 next(null, c);
             }
         });

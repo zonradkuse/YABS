@@ -38,8 +38,8 @@ module.exports = function(wsControl){
         wsControl.build(ws, null, { message: 'welcome' }, null);
         process.nextTick(function(){
             setTimeout(function(){
-                if(!workerMap[sId] && session && session.user && session.user._id){
-                    UserModel.get(session.user._id, function(err, _user){
+                UserModel.get(session.user._id, function(err, _user){
+                    if(!workerMap[sId] && session && session.user && session.user._id){
                         var worker = new userWorker(sId, ws, _user, wsControl, true);
                         workerMap[sId] = worker;
                         worker.fetchRooms(null, function(){ //get new rooms
@@ -48,16 +48,17 @@ module.exports = function(wsControl){
                         process.nextTick(function(){
                             worker.getRooms(); //send at least old rooms                            
                         });
-                    });
-                } else if(workerMap[sId]) {
-                    var worker = new userWorker(sId, ws, _user, wsControl, true);
-                    workerMap[sId] = worker;
-                    workerMap[sId].getRooms(); //send at least old rooms
-                    workerMap[sId].fetchRooms(null, function(){ //get new rooms
-                        workerMap[sId].getRooms(); //send all rooms
-                    });
-                }
-            }, 1000);
+                    
+                    } else if(workerMap[sId]) {
+                        var worker = new userWorker(sId, ws, _user, wsControl, true);
+                        workerMap[sId] = worker;
+                        workerMap[sId].getRooms(); //send at least old rooms
+                        workerMap[sId].fetchRooms(null, function(){ //get new rooms
+                            workerMap[sId].getRooms(); //send all rooms
+                        });
+                    }
+                });
+            }, 700);
         });    
     });
     wsControl.on('system:ping', function(wss, ws, session, params, interfaceEntry, refId){
