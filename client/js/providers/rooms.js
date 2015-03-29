@@ -55,8 +55,12 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		});
 	};
 
-	this.addAnswer = function(room, question, answer) {
-		rpc.call("user:answer", {roomId: room._id, questionId: question._id, answer: answer}, function(data) {
+	this.addAnswer = function(room, question, answer, images) {
+		var imageIds = [];
+		for (var i = 0; i < images.length; i++) {
+			imageIds.push(images[i]._id);
+		}
+		rpc.call("user:answer", {roomId: room._id, questionId: question._id, answer: answer, images: imageIds}, function(data) {
 			console.log(data);
 		});
 	};

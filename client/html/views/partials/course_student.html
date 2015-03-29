@@ -19,15 +19,16 @@
             <form role="form">
                 <div class="form-group">
                     <div class="btn-group" role="group" aria-label="...">
-                        <button ng-click="uploadImage($event)" type="button" class="btn btn-default"><input type="file" accept="image/*" style="display:none"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></button>
+                        <button ng-click="uploadImage($event, 'question')" type="button" class="btn btn-default"><input type="file" accept="image/*" style="display:none"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></button>
                         <button type="button" class="btn btn-default">LaTeX</button>
                     </div>
                 </div>
                 <div class="form-group">
                     <textarea class="form-control" style="max-width:100%" rows="5" ng-model="questionText" placeholder="Deine Frage..."></textarea>
                 </div>
-                <span>Angehängte Bilder: {{questionImageUploads.length}}</span>
-                <button ng-click="addQuestion()" type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden</button>
+                <span ng-if="imageUploads['question']">Angehängte Bilder: {{imageUploads['question'].length}}</span>
+                <span ng-if="uploading['question']">Bild wird hochgeladen <img src="loading.gif" style="height: 18px; width: 18px;" /></span>
+                <button ng-disabled="uploading['question']" ng-click="addQuestion()" type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden</button>
             </form>
         </p>
     </div>
