@@ -154,6 +154,23 @@
         "func": "",
         "accessLevel": 2
     },{
+        "uri": "mod:deleteQuestion",
+        "parameters": {
+            "roomId": "",
+            "questionId": ""
+            },
+        "func": "",
+        "accessLevel": 2
+    },{
+        "uri": "mod:deleteAnswer",
+        "parameters": {
+            "roomId": "",
+            "questionId": "",
+            "answerId": ""
+            },
+        "func": "",
+        "accessLevel": 2
+    },{
         "uri": "room:userCount",
         "parameters": {
             "roomId": ""
