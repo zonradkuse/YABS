@@ -32,3 +32,13 @@ ImageSchema.plugin(deepPopulate);
 var Image = mongoose.model('Image', ImageSchema);
 module.exports.Image = Image;
 module.exports.ImageSchema = ImageSchema;
+
+module.exports.get = function(imageID, callback){
+    if(callback === undefined)
+        throw new Error("callback not defined");
+    Image.findById(imageID,function(err, img){
+        if(err)
+            return callback(new Error("Image not found."), null);
+        callback(err, img);
+    });
+}

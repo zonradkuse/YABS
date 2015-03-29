@@ -11,6 +11,8 @@ var userWorker = require('../UserWorker.js');
 var campus = require('../RWTH/CampusRequests.js');
 var moniker = require('moniker');
 var panicDAO = require('../../models/Panic.js');
+var avatarGenerator = require('../ProfilePicture.js');
+var imageDAO = require('../../models/Image.js');
 var fancyNames = moniker.generator([moniker.adjective, moniker.noun],{glue:' '});
 var workerMap = {};
 
@@ -118,43 +120,49 @@ module.exports = function(wsControl){
                                         logger.debug(response);
                                         auth = true;
                                         clearInterval(timer);
+                                        var gender = (Math.random() <= 0.5) ? 'male' : 'female';
                                         var _user = new User();
-                                        _user.local.name = fancyNames.choose().replace(/\b(\w)/g, function(m){ return m.toUpperCase()});
-                                        _user.rwth.token = response.access_token;
-                                        _user.rwth.refresh_token = response.refresh_token;
-                                        _user.rwth.expires_in = response.expires_in;
-                                        _user.save(function(err){
-                                            if(err) {
-                                                wsControl.build(ws, err, null, refId);
-                                                logger.warn(err);
-                                                return;
-                                            }
-                                            if (session) {
-                                                session.user = _user;
-                                                sessionStore.set(sId, session, function(err){
-                                                    if(err) {
-                                                        wsControl.build(ws, err, null, refId);
-                                                        return;
-                                                    }
-                                                    wsControl.build(ws, null, { status: true }, refId);
-                                                    // start a worker that fetches rooms.
-                                                    var worker = new userWorker(sId, ws, _user, wsControl, false);
-                                                    if(!workerMap[sId]){
-                                                        workerMap[sId] = worker;
-                                                    } else {
-                                                        worker = workerMap[sId];
-                                                        worker.ws = ws; // this is necessary!
-                                                        worker.user = _user;
-                                                    }
-                                                    process.nextTick(function(){
-                                                        logger.info("starting new user worker.");
-                                                        worker.fetchRooms(); //start worker after this request.
+                                        avatarGenerator.generate(_user,gender,100, function(err, avatar){
+                                            if(err)
+                                                logger.warn("User avatar could not created");
+                                            _user.local.name = fancyNames.choose().replace(/\b(\w)/g, function(m){ return m.toUpperCase()});
+                                            _user.local.avatar = avatar;
+                                            _user.rwth.token = response.access_token;
+                                            _user.rwth.refresh_token = response.refresh_token;
+                                            _user.rwth.expires_in = response.expires_in;
+                                            _user.save(function(err){
+                                                if(err) {
+                                                    wsControl.build(ws, err, null, refId);
+                                                    logger.warn(err);
+                                                    return;
+                                                }
+                                                if (session) {
+                                                    session.user = _user;
+                                                    sessionStore.set(sId, session, function(err){
+                                                        if(err) {
+                                                            wsControl.build(ws, err, null, refId);
+                                                            return;
+                                                        }
+                                                        wsControl.build(ws, null, { status: true }, refId);
+                                                        // start a worker that fetches rooms.
+                                                        var worker = new userWorker(sId, ws, _user, wsControl, false);
+                                                        if(!workerMap[sId]){
+                                                            workerMap[sId] = worker;
+                                                        } else {
+                                                            worker = workerMap[sId];
+                                                            worker.ws = ws; // this is necessary!
+                                                            worker.user = _user;
+                                                        }
+                                                        process.nextTick(function(){
+                                                            logger.info("starting new user worker.");
+                                                            worker.fetchRooms(); //start worker after this request.
+                                                        });
+                                                        logger.info("created new user.");
                                                     });
-                                                    logger.info("created new user.");
-                                                });
-                                            } else {
-                                                wsControl.build(ws, new Error("Your session is invalid"), null, refId);
-                                            }
+                                                } else {
+                                                    wsControl.build(ws, new Error("Your session is invalid"), null, refId);
+                                                }
+                                            });
                                         });
                                         
                                     } else if(response.status === "error: authorization pending."){
@@ -190,12 +198,15 @@ module.exports = function(wsControl){
                     message: "You are currently not logged in."
                 } , refId);
             } else {
-                wsControl.build(ws, null, {
-                    status: true,
-                    message: (session.user.local ? session.user.local.name : session.user._id),
-                    userId: (session.user ? session.user._id : null),
-                    userName: (session.user && session.user.local ? session.user.local.name : null)
-                }, refId);
+                imageDAO.get(session.user.local.avatar, function(err, avatar){
+                    wsControl.build(ws, null, {
+                        status: true,
+                        message: (session.user.local ? session.user.local.name : session.user._id),
+                        userId: (session.user ? session.user._id : null),
+                        userName: (session.user && session.user.local ? session.user.local.name : null),
+                        userAvatar: (!err && avatar ? avatar.path : null)
+                    }, refId);
+                });
             }
         }
     });
