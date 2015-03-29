@@ -20,10 +20,10 @@ module.exports = function(app) {
         limits: config.multer.options,
         onFileUploadStart : function(file, req, res) {
             // set header
-            console.log(file);
+            
             res.setHeader('Content-Type', 'application/json');
             // do first checks on file
-            if (file === undefined) {
+            if (file === undefined || file === {}) {
                 res.write(JSON.stringify({error: "No image attached."}));
                 res.end();
                 return false; // don't call upload route
@@ -40,13 +40,13 @@ module.exports = function(app) {
                     return false;
                 }
             }
-            console.log("lol")
+            
         },
         onFileSizeLimit: function (file) {
           fs.unlink('../public/' + file.path); // delete the partially written file
         },
         onFileUploadComplete: function(file, req, res) {
-            console.log(file);
+            
             if (file.size >= config.multer.options.fileSize) {
                 res.write(JSON.stringify({error : "Filesize limit exceeded."}));
                 req.files = undefined; //indicator to upload route
@@ -72,7 +72,6 @@ module.exports = function(app) {
 
     app.post('/upload', function(req, res) {
         if (req.files) { // we still have files - so nice. perform virus check and create database entry
-            console.log(req.files);
             if (req.files.image) {
                 if (clamav) {
                     clamav.is_infected(__dirname + "/../" + req.files.image.path, function(err, file, isVirus) {
