@@ -61,12 +61,12 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         };
 
         $scope.addAnswer = function(question) {
-            if($scope.imageUploads[question] === undefined) {
-                $scope.imageUploads[question] = [];
+            if($scope.imageUploads[question._id] === undefined) {
+                $scope.imageUploads[question._id] = [];
             }            
-            rooms.addAnswer($scope.room, question, this.answerText[question._id], $scope.imageUploads[question]);
-            this.answerText[question] = "";
-            $scope.imageUploads[question] = [];
+            rooms.addAnswer($scope.room, question, this.answerText[question._id], $scope.imageUploads[question._id]);
+            this.answerText[question._id] = "";
+            $scope.imageUploads[question._id] = [];
         };
 
         $scope.voteQuestion = function(question) {
