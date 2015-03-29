@@ -20,7 +20,8 @@ module.exports = function(app) {
         limits: config.multer.options,
         onFileUploadStart : function(file, req, res) {
             // set header
-            
+            console.log(file);
+            console.log(req.files);
             res.setHeader('Content-Type', 'application/json');
             // do first checks on file
             if (file === undefined || file === {}) {
@@ -40,13 +41,13 @@ module.exports = function(app) {
                     return false;
                 }
             }
-            
+            console.log("lol")
         },
         onFileSizeLimit: function (file) {
           fs.unlink('../public/' + file.path); // delete the partially written file
         },
         onFileUploadComplete: function(file, req, res) {
-            
+            console.log(file);
             if (file.size >= config.multer.options.fileSize) {
                 res.write(JSON.stringify({error : "Filesize limit exceeded."}));
                 req.files = undefined; //indicator to upload route
@@ -91,7 +92,7 @@ module.exports = function(app) {
                     });
                 } else {
                     // only check if file is really a image and compress
-                    processFile(file, req, res);
+                    processFile(req.files.image, req, res);
                 }
             } else {
                 res.write(JSON.stringify({error : "Wrong Field"}));
