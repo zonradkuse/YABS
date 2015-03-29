@@ -1,5 +1,5 @@
-clientControllers.controller("courseController", ["$scope", "$routeParams", "rooms", "$location", "authentication", "rpc",
-    function($scope, $routeParams, rooms, $location, authentication, rpc) {
+clientControllers.controller("courseController", ["$scope", "$routeParams", "rooms", "$location", "authentication", "rpc", "$timeout", "$http",
+    function($scope, $routeParams, rooms, $location, authentication, rpc, $timeout, $http) {
         authentication.enforceLoggedIn();
 
         $scope.$watch(function() { return rooms.getById($routeParams.courseid); }, function(room) {
@@ -80,5 +80,25 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         $scope.disableRoom = function() {
             rooms.disablePanicEvents($scope.room);
         };
+
+        $scope.uploadImage = function($event) {
+            // Actually this should be an ng-directive, needs refactoring at some point of time
+            var fileInput = jQuery($event.currentTarget.children[0]);
+            fileInput.off().on("change", function() {
+                var formData = new FormData();
+                formData.append("image", this.files[0]);
+                $http.post("/upload", formData, {
+                        headers: {
+                            "Encoding-Type" : "multipart/form-data"
+                        }
+                    }).then(function(response) {
+                        console.log(response);
+                    });
+            });
+            $timeout(function() { // Without this the event will be triggered in the current digest, which might blow up things
+                fileInput.click(); // and causes an exception
+                return true;
+            });
+        };        
     }
 ]);
