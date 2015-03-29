@@ -12,6 +12,12 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 });
             });
 
+            rpc.attachFunction("room:panicStatus", function(data) {
+                $scope.$apply(function() {
+                    $scope.room.isRoomRegistered = data.isEnabled;
+                });  
+            }); 
+
             if($scope.room !== undefined) { // Happens while loading
                 rooms.hasUserAccess($scope.room).then(function(allowed) {
                     if(!allowed) {
@@ -59,10 +65,12 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
 
         $scope.panic = function() {
             rooms.panic($scope.room);
+            $scope.room.hasUserPanic = true;
         };
 
         $scope.unpanic = function() {
             rooms.unpanic($scope.room);
+            $scope.room.hasUserPanic = false;
         };
 
         $scope.enableRoom = function() {
