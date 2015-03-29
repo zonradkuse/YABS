@@ -112,7 +112,7 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		});
 		rpc.attachFunction("answer:add", function(data) {
 			self.upsertAnswer(data.roomId, data.questionId, data.answer);
-		});		
+		});
     };
 
     this.getQuestions = function(room) {
@@ -122,4 +122,29 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
     this.voteQuestion = function(room, question) {
     	rpc.call("user:vote", {roomId: room._id, questionId: question._id}, function(data) {});
     };
+
+    this.panic = function(room) {
+    	rpc.call("user:panic", {roomId: room._id}, function(data) {});
+    };
+
+    this.unpanic = function(room) {
+    	rpc.call("user:unpanic", {roomId: room._id}, function(data) {});
+    };
+
+    this.enablePanicEvents = function(room) {
+    	rpc.call("room:enablePanicEvents", {roomId: room._id, intervals: {}}, function(data) {});
+    };
+
+    this.disablePanicEvents = function(room) {
+    	rpc.call("room:disablePanicEvents", {roomId: room._id}, function(data) {});
+    };
+
+    this.getAccessLevel = function(room) {
+    	var deferred = $q.defer();
+		rpc.call("user:getAccessLevel", {roomId: room._id}, function(result) {
+			deferred.resolve(result.accessLevel);
+		});	
+		return deferred.promise;
+    };
+
 }]);

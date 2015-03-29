@@ -2,8 +2,10 @@
     <div class="background-course">
         <div class="container">
             <h1>{{room.name}}</h1>
-            
-            <div ng-include="'course_student.html'"></div>
+            <div ng-switch on="showAdmin">
+                <div ng-switch-when="false"><div ng-include="'course_student.html'"></div></div>
+                <div ng-switch-when="true"><div ng-include="'course_admin.html'"></div></div>
+            </div>
             <div ng-repeat="question in room.questions">
                 <h2>Frage</h2>
                 <div class="row question">

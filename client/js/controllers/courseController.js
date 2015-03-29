@@ -1,9 +1,17 @@
-clientControllers.controller("courseController", ["$scope", "$routeParams",  "rooms", "$location", "authentication",
-    function($scope, $routeParams, rooms, $location, authentication) {
+clientControllers.controller("courseController", ["$scope", "$routeParams", "rooms", "$location", "authentication", "rpc",
+    function($scope, $routeParams, rooms, $location, authentication, rpc) {
         authentication.enforceLoggedIn();
 
         $scope.$watch(function() { return rooms.getById($routeParams.courseid); }, function(room) {
             $scope.room = room;
+
+            $scope.panics = 0;
+            rpc.attachFunction("room:livePanic", function(data) {
+                $scope.$apply(function() {
+                    $scope.panics = data.panics;
+                });
+            });
+
             if($scope.room !== undefined) { // Happens while loading
                 rooms.hasUserAccess($scope.room).then(function(allowed) {
                     if(!allowed) {
@@ -12,6 +20,15 @@ clientControllers.controller("courseController", ["$scope", "$routeParams",  "ro
                 });
                 rooms.enter($scope.room);
                 rooms.getQuestions($scope.room);
+
+                rooms.getAccessLevel($scope.room).then(function(level) {
+                    if(level > 1) {
+                        $scope.showAdmin = true;
+                    }
+                    else {
+                        $scope.showAdmin = false;
+                    }    
+                });
             }
         });
         
@@ -38,6 +55,22 @@ clientControllers.controller("courseController", ["$scope", "$routeParams",  "ro
 
         $scope.voteQuestion = function(question) {
             rooms.voteQuestion($scope.room, question);
-        };        
+        };
+
+        $scope.panic = function() {
+            rooms.panic($scope.room);
+        };
+
+        $scope.unpanic = function() {
+            rooms.unpanic($scope.room);
+        };
+
+        $scope.enableRoom = function() {
+            rooms.enablePanicEvents($scope.room);
+        };
+
+        $scope.disableRoom = function() {
+            rooms.disablePanicEvents($scope.room);
+        };
     }
 ]);

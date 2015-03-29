@@ -1,12 +1,12 @@
 <div class="row row-panicbtn admin-quicklook">
     <div class="col-xs-4"><span class="h2">235<span class="small center-block">aktive Studierende</span></span></div>
-    <div class="col-xs-4"><span class="h2">5%<span class="small center-block">geht es zu schnell</span></span></div>
+    <div class="col-xs-4"><span class="h2">{{panics}}<span class="small center-block">geht es zu schnell</span></span></div>
     <div class="col-xs-4"><span class="h2">0<span class="small center-block">wichtige Fragen</span></span></div>
 </div>
 <div class="row row-chat-heading shadowed">
     <div class="col-md-12">
         <h2>Raumadministration</h2>               
-    </div>
+    </div><!-- Remove comment as soon as settings are implemented
     <div class="col-md-6">
         <h3>Aktivierte Komponenten</h3>
             <form class="form-horizontal">
@@ -49,13 +49,16 @@
                     </label>
                 </div>    
             </form>
-    </div>
+    </div>-->
     <div class="col-md-12">
         <button type="button" class="btn btn-default">
-        <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Verständnisstatistik anzeigen
+            <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Verständnisstatistik anzeigen
         </button>
-        <button type="button" class="btn btn-danger">
-        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Raum sperren
-        </button>     
+        <button type="button" ng-click="enableRoom()" ng-if="!room.isRoomRegistered" class="btn btn-primary">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Vorlesung starten
+        </button>
+        <button type="button" ng-click="disableRoom()" ng-if="room.isRoomRegistered" class="btn btn-primary">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Vorlesung beenden
+        </button> 
     </div>                      
 </div> 

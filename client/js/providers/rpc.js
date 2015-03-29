@@ -82,6 +82,12 @@ client.service("rpc", [function(){
             },
             "func": ""
         },{
+            "uri": "room:livePanic",
+            "parameters": {
+                panics: 0              
+            },
+            "func": ""
+        },{            
             "uri": "answer:add",
             "parameters": {
                 roomId: "",
