@@ -93,7 +93,7 @@ wss.roomAccessLevelBroadcast = function (ws, uri, data, roomId, options){
                 }
                 build(client, null, null, null, uri, data);
             } else {
-                build(ws, new Error("Access denied."));
+                if(ws === client) build(ws, new Error("Access denied."));
             }
 
         });

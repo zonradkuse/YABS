@@ -4,7 +4,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
 
         $scope.$watch(function() { return rooms.getById($routeParams.courseid); }, function(room) {
             $scope.room = room;
-
+            $scope.questionImageUploads = [];
             $scope.panics = 0;
             rpc.attachFunction("room:livePanic", function(data) {
                 $scope.$apply(function() {
@@ -50,8 +50,9 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         }, true);
 
         $scope.addQuestion = function() {
-            rooms.addQuestion($scope.room, this.questionText);
+            rooms.addQuestion($scope.room, this.questionText, $scope.questionImageUploads);
             this.questionText = "";
+            $scope.questionImageUploads = [];
         };
 
         $scope.addAnswer = function(question) {
@@ -89,10 +90,16 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 formData.append("image", this.files[0]);
                 $http.post("/upload", formData, {
                         headers: {
-                            "Encoding-Type" : "multipart/form-data"
-                        }
+                            "Content-Type" : undefined
+                        },
+                        transformRequest: angular.identity
                     }).then(function(response) {
-                        console.log(response);
+                        if("error" in response) {
+                            alert(response.error);
+                        }
+                        else {
+                            $scope.questionImageUploads.push(response.data);
+                        }
                     });
             });
             $timeout(function() { // Without this the event will be triggered in the current digest, which might blow up things

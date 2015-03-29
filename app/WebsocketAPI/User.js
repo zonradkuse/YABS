@@ -16,7 +16,7 @@ module.exports = function(wsControl){
     wsControl.on("user:vote", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
         if (authed) {
             if (params.questionId) {
-                userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, { population: 'author answers answers.author' }, function (err, user, question){
+                userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, { population: 'author images answers.images answers answers.author' }, function (err, user, question){
                     if (err) {
                         return logger.warn("could not check user access: " + err);
                     }
@@ -24,7 +24,7 @@ module.exports = function(wsControl){
                         return wsControl.build(ws, new Error("You already voted for this Question!"), null, refId);
                     }
                     questionDAO.vote(question, session.user, function(err, quest){
-
+                        console.log(quest);
                         if (err) {
                             logger.warn('Could not vote: ' + err);
                             return wsControl.build(ws, new Error('Could not vote.'), null, refId);
@@ -32,6 +32,10 @@ module.exports = function(wsControl){
                             question = question.toObject();
                             question.author = question.author.local;
                             question.votes = quest.votes;
+                            question.images = roomWSControl.removeOwnerFields(question.images);
+                            for (var i = question.answers.length - 1; i >= 0; i--) {
+                                question.answers[i].images = roomWSControl.removeOwnerFields(question.answers[i].images);
+                            };
                             question.answers = roomWSControl.removeAuthorTokens(question.answers);
 
                             wss.roomBroadcast(ws, 'question:add', {
