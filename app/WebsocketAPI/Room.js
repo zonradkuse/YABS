@@ -26,14 +26,14 @@ module.exports = function(wsControl){
     wsControl.on("room:getQuestions", function(wss, ws, session, params, interfaceEntry, refId, sId){
         //params.roomId
         if(session.user && params.roomId){
-			userDAO.hasAccessToRoom(session.user, { _id : params.roomId }, {population:'questions.author questions.answers.images questions.answers.images questions.answers questions.answers.author'}, function(err, user, room){
-				if(err)
+			userDAO.hasAccessToRoom(session.user, { _id : params.roomId }, {population:'questions.author questions.answers.images questions.images questions.answers questions.answers.author'}, function(err, user, room){
+                if(err)
 					return wsControl.build(ws, err, null, refId);
                 room = room.toObject();
                 room.questions = removeAuthorTokens(room.questions);
                 for (var j = room.questions.length - 1; j >= 0; j--) {
                     room.questions[j].answers = removeAuthorTokens(room.questions[j].answers);
-                    room.images = removeOwnerFields(room.images);
+                    room.questions[j].images = removeOwnerFields(room.questions[j].images);
                     if (room.questions[j].answers) {
                         for (var i = room.questions[j].answers.length - 1; i >= 0; i--) {
                             room.questions[j].answers[i].images = removeOwnerFields(room.questions[j].answers[i].images);
@@ -200,3 +200,4 @@ function removeOwnerFields(images) {
 
 module.exports.createVotesFields = createVotesFields;
 module.exports.removeAuthorTokens = removeAuthorTokens;
+module.exports.removeOwnerFields = removeOwnerFields;
