@@ -26,6 +26,7 @@
                 <div class="form-group">
                     <textarea class="form-control" style="max-width:100%" rows="5" ng-model="questionText" placeholder="Deine Frage..."></textarea>
                 </div>
+                <span>Angehängte Bilder: {{questionImageUploads.length}}</span>
                 <button ng-click="addQuestion()" type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden</button>
             </form>
         </p>
