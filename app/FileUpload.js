@@ -8,6 +8,8 @@ if (config.clamav.enabled) {
     } catch (e) {
         logger.warn("File Uploads are enabled without virus scan! This is not recommended. Install ClamAV." + e);
     }
+} else {
+    logger.warn("File Uploads are enabled without virus scan! This is not recommended. Install ClamAV.");
 }
 var multer = require('multer');
 var fs = require('fs');
@@ -91,7 +93,7 @@ module.exports = function(app) {
                     });
                 } else {
                     // only check if file is really a image and compress
-                    processFile(req.files.image, req, res);
+                    processFile(__dirname + "/../" + req.files.image.path, req, res);
                 }
             } else {
                 res.write(JSON.stringify({error : "Wrong Field"}));
