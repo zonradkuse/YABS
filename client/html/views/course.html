@@ -30,14 +30,14 @@
                 </div>
 
                 <h3>Antworten</h3>
-                <div class="row question answer" ng-repeat="answer in question.answers">
+                <div class="row question answer" ng-class="answer.isAnswer ? 'answer-correct' : ''" ng-repeat="answer in question.answers">
                     <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
                         <div class="row text-center shadowed userinfo">
                             <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" src="http://placehold.it/100x100" /></div><!--
                          --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{answer.author.name}}</span><span class="time">vor {{answer.elapsedSince}} Minuten</span></div><!--
-                         --><div class="col-xs-7 col-sm-12 votebutton vcenter">
-                                <button type="button" class="btn btn-success btn-sm">
-                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Als Antwort markieren
+                         --><div ng-if="showAdmin || answer.isAnswer" class="col-xs-7 col-sm-12 votebutton vcenter">
+                                <button ng-disabled="answer.isAnswer" ng-click="markAsAnswer(question, answer)" type="button" class="btn btn-success btn-sm">
+                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{answer.isAnswer ? 'Richtige Antwort' : 'Als Antwort markieren'}}
                                 </button>
                             </div>
                         </div>

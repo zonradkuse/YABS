@@ -147,6 +147,10 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
     	rpc.call("room:disablePanicEvents", {roomId: room._id}, function(data) {});
     };
 
+    this.markAsAnswer = function(room, question, answer) {
+    	rpc.call("mod:markAsAnswer", {roomId: room._id, questionId: question._id, answerId: answer._id}, function(data) {});
+    };    
+
     this.getAccessLevel = function(room) {
     	var deferred = $q.defer();
 		rpc.call("user:getAccessLevel", {roomId: room._id}, function(result) {

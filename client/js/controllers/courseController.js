@@ -73,6 +73,10 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
             rooms.voteQuestion($scope.room, question);
         };
 
+        $scope.markAsAnswer = function(question, answer) {
+            rooms.markAsAnswer($scope.room, question, answer);
+        };        
+
         $scope.panic = function() {
             rooms.panic($scope.room);
             $scope.room.hasUserPanic = true;
