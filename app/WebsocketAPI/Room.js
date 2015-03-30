@@ -14,7 +14,6 @@ module.exports = function(wsControl){
                         logger.warn("Could not get Usercount: " + err);
                         wsControl.build(ws, new Error("Could not get Usercount"), null, refId);
                     }
-                    console.log(num);
                     wsControl.build(ws, null, { count : num }, refId);
                 });
             } else {
@@ -175,7 +174,6 @@ function removeAuthorTokens(input) {
                 input[i].author = removeAuthorFields(input[i].author);
                 if(a.avatar && a.avatar.path !== undefined)
                 	input[i].author.avatar = a.avatar.path;
-                console.log(input[i]);
             }
         }
     }

@@ -85,7 +85,6 @@ module.exports = function(wsControl) {
                                 toSend = JSON.parse(JSON.stringify(ans));
                                 toSend.author = roomWSControl.removeAuthorFields(toSend.author);
                                 toSend.author.avatar = toSend.author.avatar.path;
-                                console.log(toSend);
                                 wss.roomBroadcast(ws, "answer:add", {
                                     'roomId': params.roomId,
                                     'questionId': params.questionId,

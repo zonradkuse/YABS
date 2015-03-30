@@ -24,14 +24,12 @@ module.exports = function(wsControl){
                         return wsControl.build(ws, new Error("You already voted for this Question!"), null, refId);
                     }
                     questionDAO.vote(question, session.user, function(err, quest){
-                        console.log(quest);
                         if (err) {
                             logger.warn('Could not vote: ' + err);
                             return wsControl.build(ws, new Error('Could not vote.'), null, refId);
                         } else if (quest) {
                             question = JSON.parse(JSON.stringify(question));
                             question.author = roomWSControl.removeAuthorFields(question.author);
-                            console.log()
                             question.author.avatar = question.author.avatar.path;
                             question.votes = quest.votes;
                             question.images = roomWSControl.removeOwnerFields(question.images);
@@ -277,7 +275,6 @@ function sendAndSaveQuestion(wsControl, wss, ws, roomId, q, qToSend, refId) {
             questionDAO.getByID(question._id, {population : 'author author.avatar images'}, function(err, quest) {
                 qToSend = JSON.parse(JSON.stringify(quest));
                 qToSend.author = roomWSControl.removeAuthorFields(qToSend.author);
-                console.log(qToSend);
                 qToSend.author.avatar = qToSend.author.avatar.path;
                 qToSend.answers = roomWSControl.removeAuthorTokens(quest.answers);
                 wss.roomBroadcast(ws, 'question:add', {
@@ -311,7 +308,6 @@ function sendAndSaveAnswer(wsControl, wss, ws, q, a, room, answerToSend, refId){
                 answerToSend = JSON.parse(JSON.stringify(ans));
                 answerToSend.author = roomWSControl.removeAuthorFields(answerToSend.author);
                 answerToSend.author.avatar = ans.author.avatar.path;
-                console.log(answerToSend);
                 wss.roomBroadcast(ws, 'answer:add', {
                     'roomId': room._id,
                     'questionId': question._id,
