@@ -36,15 +36,18 @@ wss.getActiveUsers = function(){
 wss.getActiveUsersByRoom = function(roomId, next) {
     var c = 0;
     for (var i = wss.clients.length - 1; i >= 0; i--) {
-        sessionStore.get(wss.clients[i].upgradeReq.signedCookies["connect.sid"], function(err, sess){
-            if (err) next(err);
-            if (sess && sess.room && sess.room == roomId) {
-                c++;
-            }
-            if (i == -1) { // this is bad and i should feel bad.
-                next(null, c);
-            }
-        });
+        var pos = i;
+        (function(p){
+            sessionStore.get(wss.clients[p].upgradeReq.signedCookies["connect.sid"], function(err, sess){
+                if (err) next(err);
+                if (sess && sess.room && sess.room == roomId) {
+                    c++;
+                }
+                if (p == 0) { // this is bad and i should feel bad.
+                    next(null, c);
+                }
+            });
+        })(pos);
     };
 };
 wss.roomBroadcast = function (ws, uri, data, roomId){

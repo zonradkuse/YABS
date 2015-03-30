@@ -186,9 +186,12 @@ var RoomWorker = function(roomID, wsControl, wss, ws, intervals) {
         getLiveEvents({_id:roomID},{population:''},function(err, events){
             if(err)
                 throw err;
-            var data = { panics: events.length };
-            wss.roomAccessLevelBroadcast(ws, 'room:livePanic', data, roomID,{
-                requiredAccess: roles.defaultMod, roomMember: true
+            wss.getActiveUsersByRoom(roomID, function(err, count){
+                var data = { panics: events.length };
+                data.activeUsers = !err ? count : 0;
+                wss.roomAccessLevelBroadcast(ws, 'room:livePanic', data, roomID,{
+                    requiredAccess: roles.defaultMod, roomMember: true
+                });
             });
         });
     }, intervals.live*1000);
