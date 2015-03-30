@@ -15,11 +15,11 @@ var UserSchema = mongoose.Schema({
       type: Boolean,
       default: false
     },
+    avatar: { type: ObjectId, ref: 'Image' },
     local: {
         name: String,
         password: String, // this and the next line are only needed for local register/login
-        mail: String,
-        avatar: { type: ObjectId, ref: 'Image' }
+        mail: String
     },
     rwth:{
         token: String,

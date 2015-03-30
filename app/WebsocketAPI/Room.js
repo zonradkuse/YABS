@@ -26,7 +26,7 @@ module.exports = function(wsControl){
     wsControl.on("room:getQuestions", function(wss, ws, session, params, interfaceEntry, refId, sId){
         //params.roomId
         if(session.user && params.roomId){
-			userDAO.hasAccessToRoom(session.user, { _id : params.roomId }, {population:'questions.author questions.answers.images questions.images questions.answers questions.answers.author'}, function(err, user, room){
+			userDAO.hasAccessToRoom(session.user, { _id : params.roomId }, {population:'questions.author.avatar questions.answers.images questions.images questions.answers.author.avatar'}, function(err, user, room){
                 if(err)
 					return wsControl.build(ws, err, null, refId);
                 room = room.toObject();
@@ -160,7 +160,10 @@ function removeAuthorTokens(input) {
     for (var i = input.length - 1; i >= 0; i--) {
         if(input[i].author) {
             if(input[i].author.rwth){
+            	var a = JSON.parse(JSON.stringify(input[i].author));
                 input[i].author = input[i].author.local;
+                if(a.avatar.path !== undefined)
+                	input[i].author.avatar = a.avatar.path;
             }
         }
     }
@@ -198,6 +201,14 @@ function removeOwnerFields(images) {
     return images;
 }
 
+function addAuthorAvatarPath(author){
+	var path = author.avatar.path;
+	delete author.avatar;
+	author.avatar = path;
+	return author;
+}
+
 module.exports.createVotesFields = createVotesFields;
 module.exports.removeAuthorTokens = removeAuthorTokens;
 module.exports.removeOwnerFields = removeOwnerFields;
+module.exports.addAuthorAvatarPath = addAuthorAvatarPath;

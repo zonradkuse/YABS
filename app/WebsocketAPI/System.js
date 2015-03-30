@@ -118,7 +118,7 @@ module.exports = function(wsControl){
                                             if(err)
                                                 logger.warn("User avatar could not created");
                                             _user.local.name = fancyNames.choose().replace(/\b(\w)/g, function(m){ return m.toUpperCase()});
-                                            _user.local.avatar = avatar;
+                                            _user.avatar = avatar;
                                             _user.rwth.token = response.access_token;
                                             _user.rwth.refresh_token = response.refresh_token;
                                             _user.rwth.expires_in = response.expires_in;
@@ -190,7 +190,7 @@ module.exports = function(wsControl){
                     message: "You are currently not logged in."
                 } , refId);
             } else {
-                imageDAO.get(session.user.local.avatar, function(err, avatar){
+                imageDAO.get(session.user.avatar, function(err, avatar){
                     wsControl.build(ws, null, {
                         status: true,
                         message: (session.user.local ? session.user.local.name : session.user._id),

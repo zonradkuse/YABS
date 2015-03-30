@@ -3,6 +3,7 @@ var Question = require('../models/Question.js');
 var User = require('../models/User.js');
 var Answer = require('../models/Answer.js');
 var Panic = require('../models/Panic.js');
+var Image = require('../models/Image.js');
 
 var mongoose = require('mongoose');
 var async = require('async');
@@ -48,10 +49,25 @@ db.once('open',function(callback){
 		});
 		
 	});*/
+	console.log(process.argv[2]);
+	Question.getByID(process.argv[2], {population:'author.avatar'}, function(err, q){
+		if(err)
+			throw err;
+		quest = q.toObject();
+		quest.author = addAuthorAvatarPath(q.author.toObject());
+		console.log(JSON.stringify(quest, null, 2));
+	});
+
+	function addAuthorAvatarPath(author){
+		var path = author.avatar.path;
+		delete author.avatar;
+		author.avatar = path;
+		return author;
+	}
 
 	//Panic.getEvents({_id: "12345"},{population:'', end: new Date()},function(err, graph){});
 	//Panic.panic({_id: mongoose.Types.ObjectId()},{_id: mongoose.Types.ObjectId()},function(err, panic){});
-	var roomID = mongoose.Types.ObjectId();
+	/*var roomID = mongoose.Types.ObjectId();
 	var userID1 = mongoose.Types.ObjectId();
 	var userID2 = mongoose.Types.ObjectId();
 	var userID3 = mongoose.Types.ObjectId();
@@ -86,5 +102,5 @@ db.once('open',function(callback){
 		Panic.getGraph({_id:roomID},{population:''},function(err, graph){
 			console.log(JSON.stringify(graph,null,2));
 		});
-	},13000);
+	},13000);*/
 });

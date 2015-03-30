@@ -272,9 +272,10 @@ function sendAndSaveQuestion(wsControl, wss, ws, roomId, q, qToSend, refId) {
             logger.warn("could not add or create question: " + err);
             wsControl.build(ws, new Error("could not add or create question"), null, refId);
         } else {
-            questionDAO.getByID(question._id, {population : 'author answers answers.author images answers.images'}, function(err, quest) {
+            questionDAO.getByID(question._id, {population : 'author answers answers.author answers.author.avatar images answers.images'}, function(err, quest) {
                 qToSend = JSON.parse(JSON.stringify(qToSend));
                 qToSend.author = quest.author.local;
+                qToSend.author.avatar = quest.author.avatar.path;
                 qToSend.answers = roomWSControl.removeAuthorTokens(quest.answers);
                 wss.roomBroadcast(ws, 'question:add', {
                     'roomId': room._id,
@@ -306,6 +307,7 @@ function sendAndSaveAnswer(wsControl, wss, ws, q, a, room, answerToSend, refId){
                 //ans.toObject();
                 answerToSend = JSON.parse(JSON.stringify(answerToSend));
                 answerToSend.author = ans.author.local;
+                answerToSend.author.avatar = ans.author.avatar.path;
                 wss.roomBroadcast(ws, 'answer:add', {
                     'roomId': room._id,
                     'questionId': question._id,
