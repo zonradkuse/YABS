@@ -3,11 +3,17 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
     function($scope, $routeParams, rooms, $location, authentication, rpc, $timeout, $http) {
         authentication.enforceLoggedIn();
 
+            $scope.chartist = {};
+            $scope.chartist.options = {
+                width: '700px',
+                height: '500px'
+            };
+            $scope.chartist.lineData = {labels: [], series: [[]]};
+
         $scope.$watch(function() { return rooms.getById($routeParams.courseid); }, function(room) {
             $scope.room = room;
             $scope.imageUploads = {};
             $scope.uploading = {};
-
             $scope.panics = 0;
             $scope.activeUsers = 0;
             // RPC shouldnt be handled here but is neccessary due to bad server api design (missing room ids in broadcasts)
@@ -36,9 +42,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 rooms.getAccessLevel($scope.room).then(function(level) {
                     if(level > 1) {
                         $scope.showAdmin = true;
-                        $scope.chartist = {};
-                        $scope.chartist.lineData = {labels: [], series: [[]]};
-                        $("#statModal").on("shown.bs.modal", function() {
+                        $("#statModal").off().on("shown.bs.modal", function() {
                             rooms.getPanicGraph($scope.room).then(function(data) {
                                 var labels = [];
                                 var values = [];
