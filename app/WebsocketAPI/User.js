@@ -16,7 +16,7 @@ module.exports = function(wsControl){
     wsControl.on("user:vote", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
         if (authed) {
             if (params.questionId) {
-                userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, { population: 'author images author.avatar answers.images answers answers.author' }, function (err, user, question){
+                userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, { population: 'author images author.avatar answers.images answers answers.author answers.author.avatar' }, function (err, user, question){
                     if (err) {
                         return logger.warn("could not check user access: " + err);
                     }
@@ -35,6 +35,7 @@ module.exports = function(wsControl){
                             question.images = roomWSControl.removeOwnerFields(question.images);
                             for (var i = question.answers.length - 1; i >= 0; i--) {
                                 question.answers[i].images = roomWSControl.removeOwnerFields(question.answers[i].images);
+                                question.answers[i].author.avatar = question.answers[i].author.avatar.path;
                             };
                             question.answers = roomWSControl.removeAuthorTokens(question.answers);
 
@@ -303,10 +304,11 @@ function sendAndSaveAnswer(wsControl, wss, ws, q, a, room, answerToSend, refId){
             logger.warn("could not add or create question: " + err);
             wsControl.build(ws, new Error("could not add or create answer"), null, refId);
         } else {
-            answerDAO.getByID(answer._id, {population: 'author author.avatar'}, function(err, ans){
+            answerDAO.getByID(answer._id, {population: 'author author.avatar images'}, function(err, ans){
                 //ans.toObject();
                 answerToSend = JSON.parse(JSON.stringify(ans));
                 answerToSend.author = roomWSControl.removeAuthorFields(answerToSend.author);
+                answerToSend.images = roomWSControl.removeOwnerFields(answerToSend.images);
                 answerToSend.author.avatar = ans.author.avatar.path;
                 wss.roomBroadcast(ws, 'answer:add', {
                     'roomId': room._id,
