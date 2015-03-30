@@ -42,17 +42,17 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="/#/">Aktuelle Vorlesung</a></li>
+                        <!--<li class="active"><a href="/#/">Aktuelle Vorlesung</a></li>-->
                         <li><a href="/rooms">Deine Kurse</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Angemeldet als {{username}}<b class="caret"></b></a>
+                        <!--<li class="dropdown">--><li>
+                            <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">--><a>Angemeldet als {{username}}</a><!--<b class="caret"></b></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="#">Avatar ändern</a></li>
                                 <li class="divider"></li>
                                 <li><a href="/logout">Abmelden</a></li>
-                            </ul>
+                            </ul>-->
                         </li>
                     </ul>
                 </div>    
@@ -60,5 +60,7 @@
         </div>
         </div>
         <div ng-view></div>
+        <div class="text-center">&copy; 2015 <a id="creators" title="Jens Piekenbrinck, Johannes Neuhaus, Daniel Klischies" data-toggle="tooltip" data-placement="top">The YABS Team</a> &ndash; <a>Benutzerhandbuch</a></span>
+
     </body>
 </html>
