@@ -42,6 +42,7 @@
 
     client.run(["rooms", function(rooms) {
         rooms.enableListeners();
+        $('#creators').tooltip();
     }]);
 
     var controllers = angular.module('clientControllers', ["angular-chartist"]);
