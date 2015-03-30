@@ -69,7 +69,7 @@ UserWorker.prototype.fetchRooms = function(refId, next){
                                     return;
                                 }
                                 if(user) {
-                                    panicDAO.hasUserPanic(self.user, function(err, panicEvent){
+                                    panicDAO.hasUserPanic(self.user, room, function(err, panicEvent){
                                         panicDAO.isRoomRegistered(room, function(isRegistered){
                                             var r = room.toObject();
                                             r.hasUserPanic = (!err && panicEvent) ? true : false;
@@ -204,19 +204,21 @@ UserWorker.prototype.getRooms = function(){
     var self = this;
     if(self.user && self.user._id){
         userDAO.getRoomAccess(self.user, {population: ''}, function(err, rooms){
-            panicDAO.hasUserPanic(self.user, function(err, panicEvent){
-                for (var room in rooms){
-                    if(rooms[room].l2pID !== undefined){
-                        panicDAO.isRoomRegistered(rooms[room], function(isRegistered){
-                            var r = rooms[room].toObject();
-                            r.hasUserPanic = (!err && panicEvent) ? true : false;
-                            r.isRoomRegistered = isRegistered;
-                            r.questions = [];
-                            self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': r });
+            for (var room in rooms){
+                if(rooms[room].l2pID !== undefined){
+                    var r = rooms[room].toObject();
+                    (function(room){
+                        panicDAO.hasUserPanic(self.user, room, function(err, panicEvent){
+                            panicDAO.isRoomRegistered(room, function(isRegistered){
+                                room.hasUserPanic = (!err && panicEvent) ? true : false;
+                                room.isRoomRegistered = isRegistered;
+                                room.questions = [];
+                                self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': room });
+                            });
                         });
-                    }
+                    })(r);
                 }
-            });
+            }            
         });
     } else {
         wsControl.build(ws, new Error("Your session is invalid."), null, refId);

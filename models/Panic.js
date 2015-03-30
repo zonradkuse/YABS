@@ -97,12 +97,13 @@ var removeLiveEvents = function(room, callback){
 
 /*
 * @param user the user object which should be checked
+* @param room the target room object
 * @param callback params: error, panic event object
 */
-module.exports.hasUserPanic = function(user, callback){
+module.exports.hasUserPanic = function(user, room, callback){
     if(callback === undefined)
         throw new Error("callback not defined");
-    PanicEvent.findOne({user: user._id}).exec(function(err, panicEvent){
+    PanicEvent.findOne({user: user._id, room: room._id}).exec(function(err, panicEvent){
         if(err)
             return callback(err, null);
         return callback(null, panicEvent);
@@ -132,7 +133,7 @@ module.exports.panic = function(user, room, callback){
         throw new Error("callback not defined");
     if(workerMap[room._id] === undefined)
         return callback(new Error("Room not registered"));
-    module.exports.hasUserPanic(user, function(err, panicEvent){
+    module.exports.hasUserPanic(user, room, function(err, panicEvent){
         if(err)
             return callback(err);
         if(panicEvent)

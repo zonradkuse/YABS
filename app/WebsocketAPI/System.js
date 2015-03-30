@@ -211,7 +211,7 @@ module.exports = function(wsControl){
                     wsControl.build(ws, err, null, refId);
                 } else {
                     panicDAO.isRoomRegistered({_id: params.roomId}, function(isRegistered){
-                        panicDAO.hasUserPanic(session.user, function(err, panicEvent){
+                        panicDAO.hasUserPanic(session.user, {_id: params.roomId}, function(err, panicEvent){
                             wsControl.build(ws, null, {
                                 status: true,
                                 hasRoomPanicRegistered: isRegistered,

@@ -76,18 +76,20 @@ module.exports = function(wsControl){
                         return logger.warn("could not get rooms: " + err);
                     }
                     rooms = rooms.toObject();
-                    panicDAO.hasUserPanic(session.user, function(err, panicEvent){
-                        for (var i = rooms.length - 1; i >= 0; i--) {
-                            panicDAO.isRoomRegistered(rooms[i],function(isRegistered){
-                                var r = rooms[i].toObject();
-                                r.hasUserPanic = (!err && panicEvent) ? true : false;
-                                r.isRoomRegistered = isRegistered;
-                                wsControl.build(ws, null, null, null, "room:add", {
-                                    'room': r
+                    for (var i = rooms.length - 1; i >= 0; i--) {
+                        var r = rooms[i].toObject();
+                        (function(room){
+                            panicDAO.hasUserPanic(session.user, room, function(err, panicEvent){
+                                panicDAO.isRoomRegistered(room, function(isRegistered){
+                                    room.hasUserPanic = (!err && panicEvent) ? true : false;
+                                    room.isRoomRegistered = isRegistered;
+                                    wsControl.build(ws, null, null, null, "room:add", {
+                                        'room': room
+                                    });
                                 });
                             });
-                        };
-                    });                    
+                        })(r);
+                    };                    
                 });
             } else {
                 wsControl.build(ws, new Error("Your session is invalid."), null, refId);
