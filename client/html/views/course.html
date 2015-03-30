@@ -26,24 +26,27 @@
                     </div>
                     <div ng-repeat="image in question.images" class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
                         <a href="{{image.path}}" target="_blank"><img src="{{image.path}}" class="col-sm-3 img-thumbnail" /></a>
-                    </div>                    
+                    </div>
                 </div>
 
                 <h3>Antworten</h3>
-                <div class="row question answer" ng-repeat="answer in question.answers">
+                <div class="row question answer" ng-class="answer.isAnswer ? 'answer-correct' : ''" ng-repeat="answer in question.answers">
                     <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
                         <div class="row text-center shadowed userinfo">
                             <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" src="http://placehold.it/100x100" /></div><!--
                          --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{answer.author.name}}</span><span class="time">vor {{answer.elapsedSince}} Minuten</span></div><!--
-                         --><div class="col-xs-7 col-sm-12 votebutton vcenter">
-                                <button type="button" class="btn btn-success btn-sm">
-                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Als Antwort markieren
+                         --><div ng-if="showAdmin || answer.isAnswer" class="col-xs-7 col-sm-12 votebutton vcenter">
+                                <button ng-disabled="answer.isAnswer" ng-click="markAsAnswer(question, answer)" type="button" class="btn btn-success btn-sm">
+                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{answer.isAnswer ? 'Richtige Antwort' : 'Als Antwort markieren'}}
                                 </button>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
                         {{answer.content}}
+                    </div>
+                    <div ng-repeat="image in answer.images" class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
+                        <a href="{{image.path}}" target="_blank"><img src="{{image.path}}" class="col-sm-3 img-thumbnail" /></a>
                     </div>
                 </div>
 
@@ -55,14 +58,16 @@
                         <form role="form" class="ng-pristine ng-valid">
                             <div class="form-group">
                                 <div class="btn-group" role="group" aria-label="...">
-                                  <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></button>
+                                  <button ng-click="uploadImage($event, question._id)" type="button" class="btn btn-default"><input type="file" accept="image/*" style="display:none"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></button>
                                   <button type="button" class="btn btn-default">LaTeX</button>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <textarea class="form-control" ng-model="answerText[question._id]" style="max-width:100%" rows="5" placeholder="Deine Antwort auf {{question.author.name}}s Frage..."></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary pull-right" ng-click="addAnswer(question)"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden</button>
+                            <span ng-if="imageUploads[question._id]">Angehängte Bilder: {{imageUploads[question._id].length}}</span>
+                            <span ng-if="uploading[question._id]">Bild wird hochgeladen <img src="loading.gif" style="height: 18px; width: 18px;" /></span>
+                            <button ng-disabled="uploading[question._id]" type="submit" class="btn btn-primary pull-right" ng-click="addAnswer(question)"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden</button>
                         </form>
                         <div class="clearfix"></div>
                     </div>                

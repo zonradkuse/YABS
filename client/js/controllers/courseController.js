@@ -4,7 +4,9 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
 
         $scope.$watch(function() { return rooms.getById($routeParams.courseid); }, function(room) {
             $scope.room = room;
-            $scope.questionImageUploads = [];
+            $scope.imageUploads = {};
+            $scope.uploading = {};
+
             $scope.panics = 0;
             rpc.attachFunction("room:livePanic", function(data) {
                 $scope.$apply(function() {
@@ -50,19 +52,30 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         }, true);
 
         $scope.addQuestion = function() {
-            rooms.addQuestion($scope.room, this.questionText, $scope.questionImageUploads);
+            if($scope.imageUploads.question === undefined) {
+                $scope.imageUploads.question = [];
+            }
+            rooms.addQuestion($scope.room, this.questionText, $scope.imageUploads.question);
             this.questionText = "";
-            $scope.questionImageUploads = [];
+            $scope.imageUploads.question = [];
         };
 
         $scope.addAnswer = function(question) {
-            rooms.addAnswer($scope.room, question, this.answerText[question._id]);
+            if($scope.imageUploads[question._id] === undefined) {
+                $scope.imageUploads[question._id] = [];
+            }            
+            rooms.addAnswer($scope.room, question, this.answerText[question._id], $scope.imageUploads[question._id]);
             this.answerText[question._id] = "";
+            $scope.imageUploads[question._id] = [];
         };
 
         $scope.voteQuestion = function(question) {
             rooms.voteQuestion($scope.room, question);
         };
+
+        $scope.markAsAnswer = function(question, answer) {
+            rooms.markAsAnswer($scope.room, question, answer);
+        };        
 
         $scope.panic = function() {
             rooms.panic($scope.room);
@@ -82,12 +95,13 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
             rooms.disablePanicEvents($scope.room);
         };
 
-        $scope.uploadImage = function($event) {
+        $scope.uploadImage = function($event, identifier) {
             // Actually this should be an ng-directive, needs refactoring at some point of time
             var fileInput = jQuery($event.currentTarget.children[0]);
             fileInput.off().on("change", function() {
                 var formData = new FormData();
                 formData.append("image", this.files[0]);
+                $scope.uploading[identifier] = true;
                 $http.post("/upload", formData, {
                         headers: {
                             "Content-Type" : undefined
@@ -96,9 +110,14 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                     }).then(function(response) {
                         if("error" in response) {
                             alert(response.error);
+                            $scope.uploading[identifier] = false;
                         }
                         else {
-                            $scope.questionImageUploads.push(response.data);
+                            if($scope.imageUploads[identifier] === undefined) {
+                                $scope.imageUploads[identifier] = [];
+                            }
+                            $scope.imageUploads[identifier].push(response.data);
+                            $scope.uploading[identifier] = false;
                         }
                     });
             });
