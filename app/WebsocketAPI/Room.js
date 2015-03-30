@@ -56,7 +56,7 @@ module.exports = function(wsControl){
         //params.roomId
         //params.questionId
         if(session.user && params.roomId && params.questionId){
-        	userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, {population:'answers.author'},function(err, user, question){
+        	userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, {population:'answers.author.avatar'},function(err, user, question){
 				if(err){
 					logger.warn("Cannot get question.: "+err);
 					wsControl.build(ws, new Error("Cannot get question."), null, refId);
