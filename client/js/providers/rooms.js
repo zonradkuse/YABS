@@ -159,4 +159,12 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		return deferred.promise;
     };
 
+    this.getPanicGraph = function(room) {
+  		var deferred = $q.defer();
+		rpc.call("room:getPanicGraph", {roomId: room._id}, function(result) {
+			deferred.resolve(result);
+		});	
+		return deferred.promise;  	
+    };
+
 }]);

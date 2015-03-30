@@ -44,6 +44,6 @@
         rooms.enableListeners();
     }]);
 
-    var controllers = angular.module('clientControllers', []);
+    var controllers = angular.module('clientControllers', ["angular-chartist"]);
     window.clientControllers = controllers;
 })();

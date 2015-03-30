@@ -1,4 +1,5 @@
-clientControllers.controller("courseController", ["$scope", "$routeParams", "rooms", "$location", "authentication", "rpc", "$timeout", "$http",
+clientControllers.controller("courseController", ["$scope", "$routeParams", "rooms", "$location",
+                                                    "authentication", "rpc", "$timeout", "$http",
     function($scope, $routeParams, rooms, $location, authentication, rpc, $timeout, $http) {
         authentication.enforceLoggedIn();
 
@@ -8,6 +9,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
             $scope.uploading = {};
 
             $scope.panics = 0;
+            // RPC shouldnt be handled here but is neccessary due to bad server api design (missing room ids in broadcasts)
             rpc.attachFunction("room:livePanic", function(data) {
                 $scope.$apply(function() {
                     $scope.panics = data.panics;
@@ -20,7 +22,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 });  
             }); 
 
-            if($scope.room !== undefined) { // Happens while loading
+            if($scope.room !== undefined) { // Room might be undefined while loading
                 rooms.hasUserAccess($scope.room).then(function(allowed) {
                     if(!allowed) {
                         $window.location = "/";
@@ -28,10 +30,25 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 });
                 rooms.enter($scope.room);
                 rooms.getQuestions($scope.room);
-
+                $scope.docentLogin = "/roles/admin/" + $scope.room._id;
                 rooms.getAccessLevel($scope.room).then(function(level) {
                     if(level > 1) {
                         $scope.showAdmin = true;
+                        $scope.chartist = {};
+                        $scope.chartist.lineData = {labels: [], series: [[]]};
+                        $("#statModal").on("shown.bs.modal", function() {
+                            rooms.getPanicGraph($scope.room).then(function(data) {
+                                var labels = [];
+                                var values = [];
+                                for (var i = 0; i < data.graph.length; i++) {
+                                    labels.push((new Date(data.graph[i].time)).toLocaleTimeString());
+                                    values.push(data.graph[i].panics);
+                                }
+                                $scope.chartist.lineData = {labels: labels, series: [values]};
+                            });
+
+                            window.dispatchEvent(new Event("resize")); // Rerenders chartist (crappy solution, but the directive doesnt allow direct access)
+                        });
                     }
                     else {
                         $scope.showAdmin = false;

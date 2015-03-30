@@ -7,15 +7,21 @@ var gulp = require('gulp'),
     flatten = require('gulp-flatten'),
     del = require('del');
     jsdoc = require('gulp-jsdoc');
+    rename = require('gulp-rename')
 
 gulp.task('build', function() {
     del.sync('public/*');
+
+    gulp.src(["client/bower_components/chartist/dist/chartist.min.css"])
+    .pipe(rename("chartist.css"))
+    .pipe(gulp.dest("public/"));
+
     gulp.src(['client/bower_components/**/*.{css,js,map}',
         '!client/bower_components/jquery/src/**/*.{css,js}',
         '!client/bower_components/bootstrap/{grunt,js}/*.{css,js}',
-        '!client/bower_components/angular-ui-bootstrap/{docs,misc,node_modules,src,template,dist/assets}/**/*.{css,js}',
+        '!client/bower_components/angular-chartist.js/{example,spec}/**/*.{css,js}',
         '!client/bower_components/bootstrap-switch/{src,dist/**/bootstrap2}/**/*.{css,js}',
-        '!client/bower_components/**/{grunt,gruntfile,Gruntfile,npm,karma.conf}.{css,js}',
+        '!client/bower_components/**/{grunt,gruntfile,Gruntfile,npm,karma.conf,gulpfile}.{css,js}',
         '!client/bower_components/**/*.min.{css,js}'])
         .pipe(flatten())
         .pipe(gulp.dest('public/'));
