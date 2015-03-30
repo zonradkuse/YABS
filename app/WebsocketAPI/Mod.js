@@ -1,6 +1,7 @@
 var answerDAO = require('../../models/Answer.js');
 var questionDAO = require('../../models/Question.js');
 var accessManager = require('../AccessManagement.js');
+var roomWSControl = require('./Room.js');
 
 module.exports = function(wsControl) {
     wsControl.on("mod:deleteAnswer", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
@@ -74,18 +75,21 @@ module.exports = function(wsControl) {
             if (params.roomId && params.questionId && params.answerId) {
                 accessManager.checkAccessBySId("mod:markAsAnswer", sId, params.roomId, function(err, bool){
                     if (bool) {
-                        answerDAO.getByID(params.answerId, {population: 'author'}, function(err, ans){
+                        answerDAO.getByID(params.answerId, {population: 'author author.avatar images'}, function(err, ans){
                             ans.isAnswer = true;
                             ans.save(function(err){
                                 if (err){
                                     wsControl.build(ws, new Error("Could not save the new state."), null, refId);
                                     return logger.err("Could not save the new state: " + err);
                                 }
-                                ans.author = ans.author.local;
+                                toSend = JSON.parse(JSON.stringify(ans));
+                                toSend.author = roomWSControl.removeAuthorFields(toSend.author);
+                                toSend.author.avatar = toSend.author.avatar.path;
+                                console.log(toSend);
                                 wss.roomBroadcast(ws, "answer:add", {
                                     'roomId': params.roomId,
                                     'questionId': params.questionId,
-                                    'answer': ans
+                                    'answer': toSend
                                 }, params.roomId);
                             });
                         });
@@ -106,7 +110,7 @@ module.exports = function(wsControl) {
             if (params.roomId && params.questionId && params.answerId) {
                 accessManager.checkAccessBySId("mod:markAsAnswer", sId, params.roomId, function(err, bool){
                     if (bool) {
-                        answerDAO.getByID(params.answerId, {population: 'author'}, function(err, ans){
+                        answerDAO.getByID(params.answerId, {population: 'author author.avatar images'}, function(err, ans){
                             ans.isAnswer = false;
                             
                             ans.save(function(err){
@@ -114,11 +118,13 @@ module.exports = function(wsControl) {
                                     wsControl.build("Could not save the new state.");
                                     return logger.err("Could not save the new state: " + err);
                                 }
-                                ans.author = ans.author.local;
+                                toSend = JSON.parse(JSON.stringify(ans));
+                                toSend.author = roomWSControl.removeAuthorFields(toSend.author);
+                                toSend.author.avatar = toSend.author.avatar.path;
                                 wss.roomBroadcast(ws, "answer:add", {
                                     'roomId': params.roomId,
                                     'questionId': params.questionId,
-                                    'answer': ans
+                                    'answer': toSend
                                 }, params.roomId);
                             });
                         });

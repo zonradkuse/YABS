@@ -16,6 +16,7 @@ var UserSchema = mongoose.Schema({
       default: false
     },
     avatar: { type: ObjectId, ref: 'Image' },
+    name: String,
     local: {
         name: String,
         password: String, // this and the next line are only needed for local register/login

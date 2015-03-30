@@ -156,14 +156,26 @@ module.exports = function(wsControl){
     });
 };
 
+function removeAuthorFields(author){
+    delete author.rwth;
+    delete author._id;
+    delete author.facebook;
+    delete author.github;
+    delete author.google;
+    delete author.access;
+    delete author.rights;
+    return author;
+}
+
 function removeAuthorTokens(input) {
     for (var i = input.length - 1; i >= 0; i--) {
         if(input[i].author) {
             if(input[i].author.rwth){
             	var a = JSON.parse(JSON.stringify(input[i].author));
-                input[i].author = input[i].author.local;
-                if(a.avatar.path !== undefined)
+                input[i].author = removeAuthorFields(input[i].author);
+                if(a.avatar && a.avatar.path !== undefined)
                 	input[i].author.avatar = a.avatar.path;
+                console.log(input[i]);
             }
         }
     }
@@ -212,3 +224,4 @@ module.exports.createVotesFields = createVotesFields;
 module.exports.removeAuthorTokens = removeAuthorTokens;
 module.exports.removeOwnerFields = removeOwnerFields;
 module.exports.addAuthorAvatarPath = addAuthorAvatarPath;
+module.exports.removeAuthorFields = removeAuthorFields;

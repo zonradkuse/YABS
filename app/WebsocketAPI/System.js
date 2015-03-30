@@ -117,7 +117,7 @@ module.exports = function(wsControl){
                                         avatarGenerator.generate(_user,gender,100, function(err, avatar){
                                             if(err)
                                                 logger.warn("User avatar could not created");
-                                            _user.local.name = fancyNames.choose().replace(/\b(\w)/g, function(m){ return m.toUpperCase()});
+                                            _user.name = fancyNames.choose().replace(/\b(\w)/g, function(m){ return m.toUpperCase()});
                                             _user.avatar = avatar;
                                             _user.rwth.token = response.access_token;
                                             _user.rwth.refresh_token = response.refresh_token;
@@ -193,9 +193,9 @@ module.exports = function(wsControl){
                 imageDAO.get(session.user.avatar, function(err, avatar){
                     wsControl.build(ws, null, {
                         status: true,
-                        message: (session.user.local ? session.user.local.name : session.user._id),
+                        message: (session.user.name ? session.user.name : session.user._id),
                         userId: (session.user ? session.user._id : null),
-                        userName: (session.user && session.user.local ? session.user.local.name : null),
+                        userName: (session.user && session.user.name ? session.user.name : null),
                         userAvatar: (!err && avatar ? avatar.path : null)
                     }, refId);
                 });

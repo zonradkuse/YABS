@@ -16,7 +16,7 @@ module.exports = function(wsControl){
     wsControl.on("user:vote", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
         if (authed) {
             if (params.questionId) {
-                userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, { population: 'author images answers.images answers answers.author' }, function (err, user, question){
+                userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, { population: 'author images author.avatar answers.images answers answers.author' }, function (err, user, question){
                     if (err) {
                         return logger.warn("could not check user access: " + err);
                     }
@@ -29,8 +29,10 @@ module.exports = function(wsControl){
                             logger.warn('Could not vote: ' + err);
                             return wsControl.build(ws, new Error('Could not vote.'), null, refId);
                         } else if (quest) {
-                            question = question.toObject();
-                            question.author = question.author.local;
+                            question = JSON.parse(JSON.stringify(question));
+                            question.author = roomWSControl.removeAuthorFields(question.author);
+                            console.log()
+                            question.author.avatar = question.author.avatar.path;
                             question.votes = quest.votes;
                             question.images = roomWSControl.removeOwnerFields(question.images);
                             for (var i = question.answers.length - 1; i >= 0; i--) {
@@ -272,10 +274,11 @@ function sendAndSaveQuestion(wsControl, wss, ws, roomId, q, qToSend, refId) {
             logger.warn("could not add or create question: " + err);
             wsControl.build(ws, new Error("could not add or create question"), null, refId);
         } else {
-            questionDAO.getByID(question._id, {population : 'author answers answers.author answers.author.avatar images answers.images'}, function(err, quest) {
-                qToSend = JSON.parse(JSON.stringify(qToSend));
-                qToSend.author = quest.author.local;
-                qToSend.author.avatar = quest.author.avatar.path;
+            questionDAO.getByID(question._id, {population : 'author author.avatar images'}, function(err, quest) {
+                qToSend = JSON.parse(JSON.stringify(quest));
+                qToSend.author = roomWSControl.removeAuthorFields(qToSend.author);
+                console.log(qToSend);
+                qToSend.author.avatar = qToSend.author.avatar.path;
                 qToSend.answers = roomWSControl.removeAuthorTokens(quest.answers);
                 wss.roomBroadcast(ws, 'question:add', {
                     'roomId': room._id,
@@ -303,11 +306,12 @@ function sendAndSaveAnswer(wsControl, wss, ws, q, a, room, answerToSend, refId){
             logger.warn("could not add or create question: " + err);
             wsControl.build(ws, new Error("could not add or create answer"), null, refId);
         } else {
-            answerDAO.getByID(answer._id, {population: 'author'}, function(err, ans){
+            answerDAO.getByID(answer._id, {population: 'author author.avatar'}, function(err, ans){
                 //ans.toObject();
-                answerToSend = JSON.parse(JSON.stringify(answerToSend));
-                answerToSend.author = ans.author.local;
+                answerToSend = JSON.parse(JSON.stringify(ans));
+                answerToSend.author = roomWSControl.removeAuthorFields(answerToSend.author);
                 answerToSend.author.avatar = ans.author.avatar.path;
+                console.log(answerToSend);
                 wss.roomBroadcast(ws, 'answer:add', {
                     'roomId': room._id,
                     'questionId': question._id,
