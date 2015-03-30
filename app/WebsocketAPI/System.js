@@ -52,7 +52,7 @@ module.exports = function(wsControl){
                         });
                     });
                 }
-            }, 700);
+            }, 600);
         });    
     });
     wsControl.on('system:ping', function(wss, ws, session, params, interfaceEntry, refId){

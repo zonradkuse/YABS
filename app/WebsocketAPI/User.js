@@ -120,8 +120,6 @@ module.exports = function(wsControl){
                                             q.images = params.images;// to save
                                             aCopy.images = images;
                                             for(var key in aCopy.images) {
-                                                if(images[key].owner != session.user._id) // a user can only use his own images
-                                                    return wsControl.build(ws, new Error("Access denied. Bad images."), null, refId);
                                                 aCopy.images[key].owner = undefined; // delete own user id
                                             }
                                             sendAndSaveQuestion(wsControl, wss, ws, params.roomId, q, aCopy, refId);
@@ -168,8 +166,6 @@ module.exports = function(wsControl){
                                             a.images = params.images;// to save
                                             aCopy.images = images;
                                             for(var key in aCopy.images) {
-                                                if(images[key].owner != session.user._id) // a user can only use his own images
-                                                    return wsControl.build(ws, new Error("Access denied. Bad images."), null, refId);
                                                 aCopy.images[key].owner = undefined; // delete own user id
                                             }
                                             sendAndSaveAnswer(wsControl, wss, ws, q, a, room, aCopy, refId);
