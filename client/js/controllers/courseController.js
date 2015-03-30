@@ -47,9 +47,12 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                                     values.push(data.graph[i].panics);
                                 }
                                 $scope.chartist.lineData = {labels: labels, series: [values]};
+                                $timeout(function() {
+                                    window.dispatchEvent(new Event("resize"));
+                                    // Rerenders chartist (crappy solution, but the directive doesnt allow direct access)
+                                    return true;
+                                });                                
                             });
-
-                            window.dispatchEvent(new Event("resize")); // Rerenders chartist (crappy solution, but the directive doesnt allow direct access)
                         });
                     }
                     else {
