@@ -11,7 +11,7 @@
                 <div class="row question">
                     <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
                         <div class="row text-center shadowed userinfo">
-                            <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" src="http://placehold.it/100x100" /></div><!--
+                            <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{question.author.avatar}}" /></div><!--
                          --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{question.author.name}}</span><span class="time">vor {{question.elapsedSince}} Minuten</span></div><!--
                          --><div class="col-xs-7 col-sm-12 votebutton vcenter">
                                 <button type="button" ng-click="voteQuestion(question)" class="btn btn-default" ng-disabled="question.hasVote" >
@@ -33,7 +33,7 @@
                 <div class="row question answer" ng-class="answer.isAnswer ? 'answer-correct' : ''" ng-repeat="answer in question.answers">
                     <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
                         <div class="row text-center shadowed userinfo">
-                            <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" src="http://placehold.it/100x100" /></div><!--
+                            <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{answer.author.avatar}}" /></div><!--
                          --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{answer.author.name}}</span><span class="time">vor {{answer.elapsedSince}} Minuten</span></div><!--
                          --><div ng-if="showAdmin || answer.isAnswer" class="col-xs-7 col-sm-12 votebutton vcenter">
                                 <button ng-disabled="answer.isAnswer" ng-click="markAsAnswer(question, answer)" type="button" class="btn btn-success btn-sm">
@@ -45,7 +45,7 @@
                     <div class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
                         {{answer.content}}
                     </div>
-                    <div ng-repeat="image in answer.images" class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
+                    <div ng-repeat="image in answer.images" class="row col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
                         <a href="{{image.path}}" target="_blank"><img src="{{image.path}}" class="col-sm-3 img-thumbnail" /></a>
                     </div>
                 </div>
