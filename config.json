@@ -10,6 +10,9 @@
       "l2p": {
          "clientID": "rwth client oauth",
          "scope": "l2p2013.rwth userinfo.rwth"
+      },
+      "other": {
+        "enabled" : false
       }
    },
    "general": {

@@ -3,7 +3,7 @@ var logger = require('./Logger.js');
 var imageDAO = require('../models/Image.js');
 var crypto = require('crypto');
 var fs = require('fs');
-var path = require('path').join(__dirname, '/../public/avatar');
+var path = require('path').join(__dirname, '/../images/avatar');
 
 //requires imagemagick (simple apt-get install)
 var gen = require('avatar-generator')({});
@@ -19,7 +19,7 @@ module.exports.generate = function(user, gender, resolution, callback){
 			var stats = fs.statSync(path+'/'+hash+'.png');  			
 			var avatar = new imageDAO.Image();
 	        avatar.owner = user._id;
-	        avatar.path = 'avatar/'+hash+'.png';
+	        avatar.path = '/images/avatar/'+hash+'.png';
 	        avatar.resolution.width = resolution;
 	        avatar.resolution.height = resolution;
 	        avatar.size = stats['size'];

@@ -2,6 +2,7 @@ var MainController = require('./MainController.js');
 var User = require('../models/User.js');
 var logger = require('./Logger.js');
 var authConf = require('../config/auth.json');
+var conf = require('../config.json');
 var LocalStrategy = require('passport-local').Strategy;
 var Twitter = require('./PassportTwitter.js');
 var Facebook = require('./PassportFacebook.js');
@@ -17,14 +18,16 @@ module.exports = function(passport) {
     passport.deserializeUser(function(obj, done) {
         done(null, obj);
     });
-    /* logger.info("Initialize Google OAuth.")
-    Google(passport);
-    logger.info("Initialize Facebook OAuth.")
-    Facebook(passport);
-    logger.info("Initialize Twitter OAuth.")
-    Twitter(passport);
-    logger.info("Initialize Github OAuth.")
-    Github(passport); */
+    if(conf.login.other.enabled) {
+        logger.info("Initialize Google OAuth.")
+        Google(passport);
+        logger.info("Initialize Facebook OAuth.")
+        Facebook(passport);
+        logger.info("Initialize Twitter OAuth.")
+        Twitter(passport);
+        logger.info("Initialize Github OAuth.")
+        Github(passport); 
+    }
 
 }
 /*

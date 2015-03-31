@@ -110,11 +110,11 @@ function processFile(file, req, res) {
             return res.end();
         } else {
             //seems like the image could be parsed
-            fs.mkdir(__dirname + "/../public/userimages", function(err){
+            fs.mkdir(__dirname + "/../images/userimages", function(err){
                 // TODO check if only not something bad.
                 //create a compressed real file
-                var webpath = "/userimages/" + req.files.image.name.split('.')[0] + ".jpg"; //webpath
-                image.writeFile(__dirname + "/../public/" + webpath,
+                var webpath = "/images/userimages/" + req.files.image.name.split('.')[0] + ".jpg"; //webpath
+                image.writeFile(__dirname + "/../" + webpath,
                     { quality : 50 }, function(err){
                         if (err) {
                             res.send(JSON.stringify({error: "An error occured on processing the image"}));

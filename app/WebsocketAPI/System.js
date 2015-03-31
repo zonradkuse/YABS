@@ -116,7 +116,7 @@ module.exports = function(wsControl){
                                         var _user = new User();
                                         avatarGenerator.generate(_user,gender,100, function(err, avatar){
                                             if(err)
-                                                logger.warn("User avatar could not created");
+                                                logger.warn("User avatar could not be created");
                                             _user.name = fancyNames.choose().replace(/\b(\w)/g, function(m){ return m.toUpperCase()});
                                             _user.avatar = avatar;
                                             _user.rwth.token = response.access_token;

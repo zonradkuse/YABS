@@ -92,7 +92,7 @@ module.exports = function(app){
                         if(req.session.rights) {
                             req.session.user.rights.push({roomId : req.params.roomId, accessLevel: roles.defaultAdmin});
                         } else {
-                            req.session.user.rights = [{roomId : req.params.roomId, accessLevel: roles.defaultAdmin}];
+                            req.session.user.rights.push({roomId : req.params.roomId, accessLevel: roles.defaultAdmin});
                         }
                         res.write("success");
                     } else {
@@ -102,7 +102,7 @@ module.exports = function(app){
                 res.end();
             });
         } else {
-            res.write("Missing Field.");
+            res.write("Missing Field or bad user. Use the browser you used to send the Request.");
             res.end();
         }
         

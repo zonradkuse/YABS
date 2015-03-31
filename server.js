@@ -13,6 +13,8 @@ var logger = require('./app/Logger.js');
 var passport = require('passport');
 var mongoose = require('mongoose');
 var flash = require('connect-flash');
+var fs = require('fs');
+fs.mkdir(__dirname + '/images', function(err){}); // create needed image root folder
 
 
 mongoose.connect(config.database.host);
