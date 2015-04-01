@@ -29,9 +29,11 @@
                         <a href="{{image.path}}" target="_blank"><img src="{{image.path}}" class="col-sm-3 img-thumbnail" /></a>
                     </div>
                 </div>
-                <div class="panel panel-default expander">
-                    <div class="panel-heading" data-toggle="collapse" data-target="#{{question._id}}">
-                        <h4>Antworten</h4>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <a data-toggle="collapse" data-target="#{{question._id}}">
+                            <h4>Antworten</h4> 
+                        </a>
                     </div>
                     <div class="out collapse" id="{{question._id}}">
                         
