@@ -1,4 +1,4 @@
-﻿<div class="container-course container-fluid">
+<div class="container-course container-fluid">
     <div class="background-course">
     <span style="color: #DDD; font-size:9px; position:absolute; right: 0;">Bild &copy; Peter Winandy</span>
         <div class="container">
@@ -30,13 +30,11 @@
                     </div>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4>
-                        <a class="collapsed" data-toggle="collapse" data-target="#{{question._id}}">
-                            Antworten 
-                        </a>
-                        </h4>
-                    </div>
+                    <a class="collapsed" data-toggle="collapse" data-target="#{{question._id}}">
+                        <div class="panel-heading">
+                            <h4>Antworten</h4>
+                        </div>
+                    </a>
                     <div class="out collapse" id="{{question._id}}">
                         
                         <div class="row question answer" ng-class="answer.isAnswer ? 'answer-correct' : ''" ng-repeat="answer in question.answers">
@@ -61,14 +59,14 @@
 
                         <div class="row question answer shadowed">
                             <div class="col-md-12">
-                                <h3>Deine Antwort</h3>               
+                                <h3>Deine Antwort</h3>
                             </div>
                             <div class="col-md-12 textpadding">
                                 <form role="form" class="ng-pristine ng-valid">
                                     <div class="form-group">
                                         <div class="btn-group" role="group" aria-label="...">
                                           <button ng-click="uploadImage($event, question._id)" type="button" class="btn btn-default"><input type="file" accept="image/*" style="display:none"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></button>
-                                          <button type="button" class="btn btn-default">LaTeX</button>
+                                          <!--<button type="button" class="btn btn-default">LaTeX</button>-->
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -79,13 +77,13 @@
                                     <button ng-disabled="uploading[question._id]" type="submit" class="btn btn-primary pull-right" ng-click="addAnswer(question)"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden</button>
                                 </form>
                                 <div class="clearfix"></div>
-                            </div>                
+                            </div>
                         </div>
                     <div>
                     <hr>
                 </div>
 
-            </div>    
+            </div>
         </div>
     </div>
 </div>

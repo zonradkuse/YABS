@@ -75,7 +75,7 @@ img.loading {
 
 .question-pane {
 	position: relative;
-	margin-top: 70px; 
+	margin-top: 70px;
 }
 
 .question-pane  > .avatar {
@@ -167,18 +167,18 @@ img.loading {
 .panel{
     background-color: #ddd;
 }
-.panel-heading a:hover {
+.panel a:hover {
     text-decoration:none;
 }
-.panel-heading a{
+.panel a{
     color:black;
 }
-.panel-heading a:after {
+.panel a h4:after {
     font-family:'Glyphicons Halflings';
     content:"\e114";
     float: right;
     color: grey;
 }
-.panel-heading a.collapsed:after {
-    content:"\e080";
+.panel-heading {
+	background-color: white;
 }
