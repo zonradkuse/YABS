@@ -7,7 +7,9 @@ client.service("rpc", [function(){
 	var wsUrl = (window.location.protocol == "http:" ? "ws" : "wss") + "://" + appUrl;
 	var ws = new WebSocket(wsUrl);
     var sendQueue = [];
+    var reconnecting = false;
     var queueTimer = false;
+    var reconnectIteration = 0;
     var self = this;
 
     var sendOutQueue = function() {
@@ -26,15 +28,46 @@ client.service("rpc", [function(){
         if (ws.readyState === 1) {
             sendOutQueue();
             ws.send(data);
-        }
-        else {
+        } else {
             sendQueue.push(data);
             if (!queueTimer) {
                 queueTimer = true;
                 setTimeout(sendOutQueue, 100);
             }
         }
+        
     };
+    
+    var reconnect = function(isForced) {
+        // generate some kind of random time in seconds
+        if ((ws.readyState >= 2  && !reconnecting) || isForced) {
+            reconnecting = true; // indicate that there is an existing reconnect timer.
+            var time = (2^reconnectIteration + Math.floor(Math.random() * reconnectIteration*5)) * 1000;
+            reconnectIteration += 1;
+            var timer = setTimeout(function(){ // start the timer
+                reconnecting = false; // time is up, indicate that a new reconnect is coming.
+                reconnect();
+            }, time);
+            ws = new WebSocket(wsUrl); // create new Websocket
+            ws.onmessage = receiveMessage; // attach receive Logic
+            setTimeout(function(){ //just in case that readyState is still 0
+                if(ws.readyState === 1) {
+                    clearTimeout(timer); // kill timer in case that reconnect has been successful
+                    reconnect(); // call again to reset
+                }
+            }, 200); 
+        } else {
+            reconnecting = false;
+            reconnectIteration = 0;
+        }
+    };
+
+    /* Check if a Websocket reconnect is needed */
+    setInterval(function(){
+        if (ws.readyState >= 3 && !reconnecting) {
+            reconnect(); // kick off reconnection
+        }
+    }, 2500);
 
 	this.call = function(method, params, callback) {
 		var id = Math.floor(Math.random() * 10000000);
@@ -47,7 +80,9 @@ client.service("rpc", [function(){
 	};
 
 
-	ws.onmessage = function(event) {
+	ws.onmessage = receiveMessage;
+	
+	function receiveMessage(event) {
 		var data = JSON.parse(event.data);
 		if ("error" in data && data.error !== null)
 			console.log("WS Error received: " + data.error);
@@ -61,7 +96,7 @@ client.service("rpc", [function(){
 			// Broadcast
 			self.handleBroadcast(data.uri, data.parameters);
 		}
-	};
+	}
 
 	/*
 	 * Code related to handling incoming broadcasts
@@ -78,22 +113,22 @@ client.service("rpc", [function(){
             "uri": "question:add",
             "parameters": {
                 roomId: "",
-                question: {}               
+                question: {}
             },
             "func": ""
         },{
             "uri": "room:livePanic",
             "parameters": {
-                panics: 0              
+                panics: 0
             },
             "func": ""
         },{
             "uri": "room:panicStatus",
             "parameters": {
-                isEnabled: false              
+                isEnabled: false
             },
             "func": ""
-        },{                 
+        },{
             "uri": "answer:add",
             "parameters": {
                 roomId: "",
