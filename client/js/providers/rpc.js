@@ -54,6 +54,11 @@ client.service("rpc", [function(){
                 if(ws.readyState === 1) {
                     clearTimeout(timer); // kill timer in case that reconnect has been successful
                     reconnect(); // call again to reset
+                    $('.reconnect').css('display', 'none');
+                    $('.reconnect').text("Neu verbinden...");
+                    sendOutQueue();
+                } else {
+                    $('.reconnect').text("Neu verbinden in " + time/1000 + "s...");
                 }
             }, 200); 
         } else {
@@ -66,8 +71,9 @@ client.service("rpc", [function(){
     setInterval(function(){
         if (ws.readyState >= 3 && !reconnecting) {
             reconnect(); // kick off reconnection
+            $('.reconnect').css('display', 'block');
         }
-    }, 2500);
+    }, 2000);
 
 	this.call = function(method, params, callback) {
 		var id = Math.floor(Math.random() * 10000000);

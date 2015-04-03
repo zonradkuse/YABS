@@ -182,3 +182,18 @@ img.loading {
 .panel-heading {
 	background-color: white;
 }
+
+.reconnect {
+    position: fixed;
+    z-index: 1000;
+    width: 40%;    
+    text-align:center;
+    min-height:3em;
+    padding-top:1em;
+    opacity:0.8;
+    right: 0;
+    left: 0;
+    margin-right: auto;
+    margin-left: auto;
+    display: none;
+}
