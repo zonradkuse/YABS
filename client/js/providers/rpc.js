@@ -41,7 +41,7 @@ client.service("rpc", [function(){
     
     var reconnect = function(isForced) {
         // generate some kind of random time in seconds
-        if ((ws.readyState >= 2  && !reconnecting) || isForced) {
+        if (!reconnecting || isForced) {
             reconnecting = true; // indicate that there is an existing reconnect timer.
             var time = (2^reconnectIteration + Math.floor(Math.random() * reconnectIteration*5)) * 1000;
             reconnectIteration += 1;
@@ -69,7 +69,7 @@ client.service("rpc", [function(){
 
     /* Check if a Websocket reconnect is needed */
     setInterval(function(){
-        if (ws.readyState >= 3 && !reconnecting) {
+        if (ws.readyState >= 2 && !reconnecting) {
             reconnect(); // kick off reconnection
             $('.reconnect').show();
         } else if (!reconnecting && doReset) {
