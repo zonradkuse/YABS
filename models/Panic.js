@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var roles = require('../config/UserRoles.json');
+var Room = require('./Room.js');
 var deepPopulate = require('mongoose-deep-populate');
 var ObjectId = mongoose.Schema.ObjectId;
 
@@ -187,11 +188,24 @@ var RoomWorker = function(roomID, wsControl, wss, ws, intervals) {
         getLiveEvents({_id:roomID},{population:''},function(err, events){
             if(err)
                 throw err;
-            wss.getActiveUsersByRoom(roomID, function(err, count){
-                var data = { panics: events.length };
-                data.activeUsers = !err ? count : 0;
-                wss.roomAccessLevelBroadcast(ws, 'room:livePanic', data, roomID,{
-                    requiredAccess: roles.defaultMod, roomMember: true
+            Room.getByID(roomID, {population: 'questions'},function(err, room){
+                if(err)
+                    throw err;
+                var important = 0;
+                var date = new Date().getTime()-2*60*1000;
+                console.log(room.questions.length);
+                for(var i=0; i<room.questions.length; i++){
+                    if(room.questions[i].creationTime.getTime() > date && room.questions[i].votes.length > 1)
+                        important++;
+                }
+
+                wss.getActiveUsersByRoom(roomID, function(err, count){
+                    var data = { panics: events.length };
+                    data.activeUsers = !err ? count : 0;
+                    data.importantQuestions = important;
+                    wss.roomAccessLevelBroadcast(ws, 'room:livePanic', data, roomID,{
+                        requiredAccess: roles.defaultMod, roomMember: true
+                    });
                 });
             });
         });
