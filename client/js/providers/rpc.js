@@ -54,7 +54,7 @@ client.service("rpc", [function(){
                 if(ws.readyState === 1) {
                     clearTimeout(timer); // kill timer in case that reconnect has been successful
                     reconnect(); // call again to reset
-                    $('.reconnect').css('display', 'none');
+                    $('.reconnect').hide();
                     $('.reconnect').text("Neu verbinden...");
                     sendOutQueue();
                 } else {
@@ -71,7 +71,7 @@ client.service("rpc", [function(){
     setInterval(function(){
         if (ws.readyState >= 3 && !reconnecting) {
             reconnect(); // kick off reconnection
-            $('.reconnect').css('display', 'block');
+            $('.reconnect').show();
         }
     }, 2000);
 
