@@ -8,6 +8,7 @@ client.service("rpc", [function(){
 	var ws = new WebSocket(wsUrl);
     var sendQueue = [];
     var reconnecting = false;
+    var doReset = false;
     var queueTimer = false;
     var reconnectIteration = 0;
     var self = this;
@@ -54,9 +55,8 @@ client.service("rpc", [function(){
                 if(ws.readyState === 1) {
                     clearTimeout(timer); // kill timer in case that reconnect has been successful
                     reconnect(); // call again to reset
-                    $('.reconnect').hide();
-                    $('.reconnect').text("Neu verbinden...");
-                    sendOutQueue();
+                    $('.reconnect').text("Verbunden!");
+                    doReset = true;
                 } else {
                     $('.reconnect').text("Neu verbinden in " + time/1000 + "s...");
                 }
@@ -72,6 +72,11 @@ client.service("rpc", [function(){
         if (ws.readyState >= 3 && !reconnecting) {
             reconnect(); // kick off reconnection
             $('.reconnect').show();
+        } else if (!reconnecting && doReset) {
+            $('.reconnect').hide();
+            $('.reconnect').text("Neu verbinden...");
+            sendOutQueue();
+            doReset = false;
         }
     }, 2000);
 
