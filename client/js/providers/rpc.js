@@ -57,10 +57,11 @@ client.service("rpc", [function(){
                     reconnect(); // call again to reset
                     $('.reconnect').text("Verbunden!");
                     doReset = true;
+                    reconnecting = false;
                 } else {
                     $('.reconnect').text("Neu verbinden in " + time/1000 + "s...");
                 }
-            }, 200); 
+            }, 600); 
         } else {
             reconnecting = false;
             reconnectIteration = 0;
