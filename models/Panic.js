@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var roles = require('../config/UserRoles.json');
 var Room = require('./Room.js');
+var System = require('../app/WebsocketAPI/System.js');
 var deepPopulate = require('mongoose-deep-populate');
 var ObjectId = mongoose.Schema.ObjectId;
 
@@ -143,6 +144,7 @@ module.exports.panic = function(user, room, callback){
         p.save(function(err, panicEvent){
             if(err)
                 return callback(err);
+            userMap[{room:room._id, user:user._id}] = createUserTimeout(room, user);
             return callback(null);
         });
     });
@@ -162,12 +164,34 @@ module.exports.unpanic = function(user, room, callback){
         if(err)
             return callback(err);
         if(count == 0)
-            return callback(new Error("User had already no panic"));
+            return callback(new Error("User has already no panic"));
+        var userTimeout = userMap[{room:room._id, user:user._id}];
+        if(userTimeout !== undefined){
+            clearTimeout(userTimeout);
+            delete userMap[{room:room._id, user:user._id}];
+        }
         return callback(null);
     });
 }
 
+function createUserTimeout(room, user){
+    return setTimeout(function(){
+        var roomWorker = workerMap[room._id];
+        if(roomWorker === undefined)
+            return;
+        PanicEvent.find({room:room._id, user:user._id}).remove(function(err, count){
+            if(err || count == 0)
+                return;
+            var userWorkerMap = System.getWorkerMap();
+            for(var key in userWorkerMap)
+                if(userWorkerMap[key].user && userWorkerMap[key].user._id == user._id)
+                    roomWorker.wsControl.build(userWorkerMap[key].ws, null, null, null, "room:panicStatus",{isEnabled: true, hasUserPanic: false});
+        });
+    }, workerMap[room._id].intervals.panicReset);
+}
+
 var workerMap = [];
+var userMap = [];
 
 /*
 * @param roomID the ID of the target room object
@@ -179,9 +203,17 @@ var RoomWorker = function(roomID, wsControl, wss, ws, intervals) {
         intervals.live = 30;
     if(intervals.graph === undefined)
         intervals.graph = 60;
+    if(intervals.panicReset === undefined)
+        intervals.panicReset = 7*60*1000+30*1000;
+    else
+        intervals.panicReset = intervals.panicReset*1000;
 
     var self = this;
 
+    this.wsControl = wsControl;
+    this.wss = wss;
+    this.ws = ws;
+    this.intervals = intervals;
     this.graphDaemonTime = new Date();
 
     this.liveDaemon = setInterval(function(){
@@ -193,7 +225,6 @@ var RoomWorker = function(roomID, wsControl, wss, ws, intervals) {
                     throw err;
                 var important = 0;
                 var date = new Date().getTime()-2*60*1000;
-                console.log(room.questions.length);
                 for(var i=0; i<room.questions.length; i++){
                     if(room.questions[i].creationTime.getTime() > date && room.questions[i].votes.length > 1)
                         important++;
@@ -239,7 +270,11 @@ module.exports.register = function(room, wsControl, wss, ws, intervals, callback
     if(workerMap[room._id] !== undefined)
         return callback(new Error("Room already registered")); 
     workerMap[room._id] = new RoomWorker(room._id, wsControl, wss, ws, intervals);
-    return callback(null);
+    PanicGraph.find({room: room._id}).remove(function(err){
+            if(err)
+                return callback(err);
+        return callback(null);
+    });
 }
 
 /*

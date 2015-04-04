@@ -30,6 +30,7 @@ module.exports = function(wsControl){
 					return wsControl.build(ws, err, null, refId);
                 room = room.toObject();
                 room.questions = removeAuthorTokens(room.questions);
+                var date = new Date().getTime()-8*24*60*60*1000;
                 for (var j = room.questions.length - 1; j >= 0; j--) {
                     room.questions[j].answers = removeAuthorTokens(room.questions[j].answers);
                     room.questions[j].images = removeOwnerFields(room.questions[j].images);
@@ -38,8 +39,7 @@ module.exports = function(wsControl){
                             room.questions[j].answers[i].images = removeOwnerFields(room.questions[j].answers[i].images);
                         };
                     }
-                    if (room.questions[j].content !== "") {
-                        
+                    if (room.questions[j].content !== "" && room.questions[j].creationTime.getTime() > date) {
                         wsControl.build(ws, null, null, null, "question:add", {
                             roomId : params.roomId,
                             question : createVotesFields(session.user, room.questions[j])
@@ -94,7 +94,7 @@ module.exports = function(wsControl){
 		        		panicDAO.register({_id: params.roomId}, wsControl, wss, ws, params.intervals, function(err){
 		        			if(err)
 		        				return wsControl.build(ws, new Error("Cannot enable panic events."), null, refId);
-		        			wss.roomBroadcast(ws, "room:panicStatus", {isEnabled: true}, params.roomId);
+		        			wss.roomBroadcast(ws, "room:panicStatus", {isEnabled: true, hasUserPanic: false}, params.roomId);
 		        		});
 		        	});
 	        	});
@@ -118,7 +118,7 @@ module.exports = function(wsControl){
 		        		panicDAO.unregister({_id: params.roomId}, function(err){
 		        			if(err)
 		        				return wsControl.build(ws, new Error("Cannot disable panic events."), null, refId);
-		        			wss.roomBroadcast(ws, "room:panicStatus", {isEnabled: false}, params.roomId);
+		        			wss.roomBroadcast(ws, "room:panicStatus", {isEnabled: false, hasUserPanic: false}, params.roomId);
 		        		});
 		        	});
 	        	});
@@ -142,6 +142,8 @@ module.exports = function(wsControl){
 		        		panicDAO.getGraph({_id: params.roomId}, {population:''}, function(err, graph){
 		        			if(err)
 		        				return wsControl.build(ws, new Error("Cannot get graph."), null, refId);
+		        			if(!graph)
+		        				return wsControl.build(ws, null, {'graph': []}, refId);
 		        			wsControl.build(ws, null, {'graph': removeIdFields(graph.data.toObject())}, refId);
 		        		});
 		        	});
