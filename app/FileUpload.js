@@ -1,6 +1,6 @@
 var config = require('../config.json');
 var logger = require('./Logger.js');
-var lwip = require('lwip');
+//var lwip = require('lwip');
 var imageDAO = require('../models/Image.js');
 if (config.clamav.enabled) {
     try {

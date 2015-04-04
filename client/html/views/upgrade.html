@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>YABS Account Upgrade</title>
+        <link href="/bootstrap.css" rel="stylesheet">
+        <style>
+            body, html {
+                width:100%,
+                height:100%;
+                margin: 4px;
+                background-color: #DDD;
+            }
+            .row {
+                padding: 1em;
+            }
+        </style>
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="html5shiv.min.js"></script>
+          <script src="respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <h1>Accountupgrade</h1>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-4" align="justify">
+                        <h2>Warum?</h2>
+                        Dies ist ein Workaround um sich als dozierende Person zu authentifizieren. Im Zuge der Überarbeitung der L2P Schnittstelle wird es in Zukunft möglich sein auf dieses Upgrade zu verzichten. Wir bitten die Umstände bis dahin zu entschuldigen.
+                    </div>
+                    <div class="col-lg-4" align="justify">
+                        <h2>Wer ist berechtigt?</h2>
+                        Berechtigt sind aktuell alle Personen, die eine "*@cs.rwth-aachen.de" besitzen oder eine E-Mailadresse, die auf der internen, nicht öffentlich zugänglichen Liste von Adressen stehen. Sollten Sie berechtigt sein, jedoch bisher nicht auf unserer Liste stehen, wenden Sie sich bitte an <a href="mailto:johannes.neuhaus@rwth-aachen.de">johannes.neuhaus@rwth-aachen.de</a>. Wir werden uns schnellstmöglich um Ihre Aufnahme in die Liste kümmern.
+                    </div>
+                    <div class="col-lg-4">
+                        <h2>Upgrade!</h2>
+                        <form action="" method="POST">
+                            <div class="form-group">
+                                <label for="emailInput">E-Mailadresse</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">@</span>
+                                    <input type="email" name="email" class="form-control" id="emailInput" placeholder="Ihre E-Mailadresse...">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Absenden</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

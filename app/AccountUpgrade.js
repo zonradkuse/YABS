@@ -31,19 +31,13 @@ module.exports = function(app){
      **/
      
     app.get('/roles/admin/:roomId', function (req, res){
+        var path = require('path');
         if (req.session && req.session.user) {
-            res.setHeader('Content-Type', 'text/html');
-            res.write('   </form>Please enter your mailadress to upgrade your account \
-                      <form action="/roles/admin/' + req.params.roomId +  '" method="post"> \
-                      E-Mail:<br> \
-                      <input type="text" name="email" value="Email"> \
-                      <br> \
-                      <input type="submit" value="Submit"> \
-                      </form>');
+            res.sendFile(path.resolve(__dirname, '../', 'public/upgrade.html'));
         } else {
             res.write('you are not logged in.');
+            res.end();
         }
-        res.end();
     });
 
     app.post('/roles/admin/:roomId', function(req, res){
@@ -94,12 +88,12 @@ module.exports = function(app){
                         } else {
                             req.session.user.rights.push({roomId : req.params.roomId, accessLevel: roles.defaultAdmin});
                         }
-                        res.write("success");
+                        res.redirect("/course/" + req.params.roomId);
                     } else {
                         res.write("bad key");
+                        res.end();
                     }
                 }
-                res.end();
             });
         } else {
             res.write("Missing Field or bad user. Use the browser you used to send the Request.");
