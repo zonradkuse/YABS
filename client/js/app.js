@@ -2,6 +2,7 @@
     var client = angular.module('client', [
             'ngRoute',
             'clientControllers',
+            'ngFitText',
         ]);
     window.client = client;
     window.appUrl = window.location.host;
@@ -38,6 +39,7 @@
                 $(this).collapse('hide');
             }
         });
+
     }]);
 
     client.run(["rooms", function(rooms) {

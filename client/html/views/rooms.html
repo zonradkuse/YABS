@@ -4,10 +4,25 @@
 			<h2>Raumübersicht</h2>
 		</div>
 		<!-- Gonna design this later -->
-		<div class="col-md-12" ng-repeat="room in rooms">
-			<a href="/course/{{room._id}}">
-				{{room.name}}
-			</a>
-		</div>
+		<table class="table table-hover table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Raum</th>
+					<th>Raum betreten</th>	
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="room in rooms">
+					<td>{{room.l2pID}}</td>
+					<td>
+						<a href="/course/{{room._id}}">
+							{{room.name}}
+						</a>
+					</td>
+					<td><a class="btn btn-success" href="/course/{{room._id}}" role="button">Los!</a></td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 </div>
