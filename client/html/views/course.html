@@ -19,6 +19,9 @@
                                     <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Frage unterstützen
                                 </button>
                                 <span>{{question.votes}} Studenten haben die selbe Frage</span>
+                                <button type="button" style="margin:5px" ng-if="showAdmin" ng-click="deleteQuestion(question)" class="btn btn-danger btn-sm">
+                                    <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Inhalt löschen
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -45,6 +48,9 @@
                                  --><div ng-if="showAdmin || answer.isAnswer" class="col-xs-7 col-sm-12 votebutton vcenter">
                                         <button ng-disabled="answer.isAnswer" ng-click="markAsAnswer(question, answer)" type="button" class="btn btn-success btn-sm">
                                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{answer.isAnswer ? 'Richtige Antwort' : 'Als Antwort markieren'}}
+                                        </button>
+                                        <button type="button" style="margin:5px" ng-if="showAdmin" ng-click="deleteAnswer(question, answer)" class="btn btn-danger btn-sm">
+                                            <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Inhalt löschen
                                         </button>
                                     </div>
                                 </div>

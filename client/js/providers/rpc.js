@@ -62,7 +62,7 @@ client.service("rpc", [function(){
                     try {
                         ws.close();
                     } catch (e) {
-                        // need to catch says jslint
+                        // no need to to anything. just supress possible error.
                     }
                     $('.reconnect').text("Neu verbinden in " + time/1000 + "s...");
                 }
