@@ -52,13 +52,16 @@ client.service("rpc", [function(){
             ws = new WebSocket(wsUrl); // create new Websocket
             ws.onmessage = receiveMessage; // attach receive Logic
             setTimeout(function(){ //just in case that readyState is still 0
-                if(ws.readyState === 1) {
+                if(ws.readyState === 1 || ws.readyState === 0) { //connecting or connected
                     clearTimeout(timer); // kill timer in case that reconnect has been successful
                     reconnect(); // call again to reset
                     $('.reconnect').text("Verbunden!");
                     doReset = true;
                     reconnecting = false;
                 } else {
+                    try {
+                        ws.close();
+                    }
                     $('.reconnect').text("Neu verbinden in " + time/1000 + "s...");
                 }
             }, 600); 

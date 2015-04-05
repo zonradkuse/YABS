@@ -74,6 +74,7 @@ UserWorker.prototype.fetchRooms = function(refId, next){
                                             var r = room.toObject();
                                             r.hasUserPanic = (!err && panicEvent) ? true : false;
                                             r.isRoomRegistered = isRegistered;
+                                            r.questions = [];
                                             self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': r });
                                             logger.info("added new room: " + r.l2pID);
                                         });
