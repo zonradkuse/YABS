@@ -1,7 +1,10 @@
 <div class="container rooms">
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-sm-12">
 			<h2>Raumübersicht</h2>
+		</div>
+		<div class="search">
+			<input type="search" class="form-control" placeholder="Suche..." ng-model="query">
 		</div>
 		<!-- Gonna design this later -->
 		<table class="table table-hover table-striped table-bordered">
@@ -13,7 +16,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="room in rooms">
+				<tr ng-repeat="room in rooms | filter:query">
 					<td>{{room.l2pID}}</td>
 					<td>
 						<a href="/course/{{room._id}}">
