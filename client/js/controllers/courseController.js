@@ -2,7 +2,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                                                     "authentication", "rpc", "$timeout", "$http",
     function($scope, $routeParams, rooms, $location, authentication, rpc, $timeout, $http) {
         authentication.enforceLoggedIn();
-
+            $scope.Math = window.Math;
             $scope.chartist = {};
             $scope.chartist.options = {
                 width: '700px',
@@ -151,6 +151,14 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 fileInput.click(); // and causes an exception
                 return true;
             });
+        };
+
+        $scope.deleteQuestion = function(question) {
+            rooms.deleteQuestion($scope.room, question);
+        };
+
+        $scope.deleteAnswer = function(question, answer) {
+            rooms.deleteAnswer($scope.room, question, answer);
         };        
     }
 ]);

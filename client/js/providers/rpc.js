@@ -54,7 +54,7 @@ client.service("rpc", [function(){
             setTimeout(function(){ //just in case that readyState is still 0
                 if(ws.readyState === 1 || ws.readyState === 0) { //connecting or connected
                     clearTimeout(timer); // kill timer in case that reconnect has been successful
-                    reconnect(); // call again to reset
+                    reconnectIteration = 0;
                     $('.reconnect').text("Verbunden!");
                     doReset = true;
                     reconnecting = false;

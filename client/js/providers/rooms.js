@@ -167,4 +167,12 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		return deferred.promise;  	
     };
 
+    this.deleteQuestion = function(room, question) {
+    	rpc.call("mod:deleteQuestion", {roomId: room._id , questionId: question._id}, function(data){});
+    };
+
+    this.deleteAnswer = function(room, question, answer) {
+    	rpc.call("mod:deleteAnswer", {roomId: room._id , questionId: question._id, answerId: answer._id}, function(data){});
+    };
+
 }]);

@@ -27,6 +27,10 @@ var AnswerSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
+    deleted: {
+        type: Boolean,
+        default: false
+    },
     content: String,
     images: [{ type: ObjectId, ref:'Image' }],
     visible: {

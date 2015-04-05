@@ -1,6 +1,6 @@
 <div class="container-course container-fluid">
     <div class="background-course">
-    <span style="color: #DDD; font-size:9px; position:absolute; right: 0;">Bild &copy; Peter Winandy</span>
+    <span style="color: #DDD; font-size:9px; position:absolute; opacity:0.8; right: 0;">Bild &copy; Peter Winandy</span>
         <div class="container">
             <h1>{{room.name}}</h1>
             <div ng-switch on="showAdmin">
@@ -8,19 +8,20 @@
                 <div ng-switch-when="true"><div ng-include="'course_admin.html'"></div></div>
             </div>
             <div ng-repeat="question in room.questions">
+                <div ng-if="question.visible">
                 <h2>Frage</h2>
                 <div class="row question">
                     <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
                         <div class="row text-center shadowed userinfo">
                             <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{question.author.avatar}}" /></div><!--
-                         --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{question.author.name}}</span><span class="time">vor {{question.elapsedSince}} Minuten</span></div><!--
+                         --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{question.author.name}}</span><span class="time">vor {{question.elapsedSince <= 60 ? question.elapsedSince + ' Minuten' : Math.floor(question.elapsedSince/60) + ' Stunden'}}</span></div><!--
                          --><div class="col-xs-7 col-sm-12 votebutton vcenter">
                                 <button type="button" ng-click="voteQuestion(question)" class="btn btn-default" ng-disabled="question.hasVote" >
                                     <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Frage unterstützen
                                 </button>
                                 <span>{{question.votes}} Studenten haben die selbe Frage</span>
                                 <button type="button" style="margin:5px" ng-if="showAdmin" ng-click="deleteQuestion(question)" class="btn btn-danger btn-sm">
-                                    <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Inhalt löschen
+                                    <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Frage löschen
                                 </button>
                             </div>
                         </div>
@@ -44,12 +45,13 @@
                             <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
                                 <div class="row text-center shadowed userinfo">
                                     <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{answer.author.avatar}}" /></div><!--
-                                 --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{answer.author.name}}</span><span class="time">vor {{answer.elapsedSince}} Minuten</span></div><!--
+                                 --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{answer.author.name}}</span><span class="time">vor {{answer.elapsedSince <= 60 ? answer.elapsedSince + ' Minuten' : Math.floor(answer.elapsedSince/60) + ' Stunden'}} </span></div><!--
                                  --><div ng-if="showAdmin || answer.isAnswer" class="col-xs-7 col-sm-12 votebutton vcenter">
-                                        <button ng-disabled="answer.isAnswer" ng-click="markAsAnswer(question, answer)" type="button" class="btn btn-success btn-sm">
+                                        <!-- refactor -->
+                                        <button ng-disabled="answer.isAnswer || answer.deleted" ng-click="markAsAnswer(question, answer)" type="button" class="btn btn-success btn-sm">
                                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{answer.isAnswer ? 'Richtige Antwort' : 'Als Antwort markieren'}}
                                         </button>
-                                        <button type="button" style="margin:5px" ng-if="showAdmin" ng-click="deleteAnswer(question, answer)" class="btn btn-danger btn-sm">
+                                        <button type="button" ng-disabled="answer.deleted" style="margin:5px" ng-if="showAdmin" ng-click="deleteAnswer(question, answer)" class="btn btn-danger btn-sm">
                                             <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Inhalt löschen
                                         </button>
                                     </div>
@@ -90,6 +92,7 @@
                 </div>
 
             </div>
+        </div>
         </div>
     </div>
 </div>
