@@ -53,7 +53,7 @@ module.exports = function(app){
                         transporter.sendMail(mailOptions, function(error, info){
                         if(error){
                             res.write("An error occured! This has been reported.");
-                            logger.err(err);
+                            logger.err(error);
                         }else{
                             res.write('Message sent: ' + info.response);
                         }
