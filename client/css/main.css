@@ -166,6 +166,7 @@ img.loading {
 /* Expander for Answers */
 .panel{
     background-color: #ddd;
+    border:0;
 }
 .panel a:hover {
     text-decoration:none;
