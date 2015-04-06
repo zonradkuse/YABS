@@ -13,7 +13,7 @@ module.exports = function(wsControl) {
                             ans.images = [];
                             ans.content = "Der Inhalt wurde gelöscht.";
                             ans.deleted = true;
-                            ans.insAnswer = false;
+                            ans.isAnswer = false;
                             ans.save(function(err){
                                 if (err){
                                     wsControl.build(ws, new Error("Could not save the new state."), null, refId);
@@ -23,7 +23,6 @@ module.exports = function(wsControl) {
                                 _ans.author.avatar = _ans.author.avatar.path;
                                 _ans.author = roomWSControl.removeAuthorFields(_ans.author);
                                 _ans.images = roomWSControl.removeOwnerFields(_ans.images);
-                                console.log(_ans)
                                 wss.roomBroadcast(ws, "answer:add", {
                                     'roomId': params.roomId,
                                     'questionId' : params.questionId,
@@ -64,7 +63,6 @@ module.exports = function(wsControl) {
                                 _q.author = roomWSControl.removeAuthorFields(_q.author);
                                 _q.images = roomWSControl.removeOwnerFields(_q.images);
                                 _q.answers = [];
-                                console.log(_q);
                                 wss.roomBroadcast(ws, "question:add", {
                                     'roomId': params.roomId,
                                     'question' : roomWSControl.createVotesFields(session.user, _q)
