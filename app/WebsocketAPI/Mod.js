@@ -13,6 +13,7 @@ module.exports = function(wsControl) {
                             ans.images = [];
                             ans.content = "Der Inhalt wurde gelöscht.";
                             ans.deleted = true;
+                            ans.insAnswer = false;
                             ans.save(function(err){
                                 if (err){
                                     wsControl.build(ws, new Error("Could not save the new state."), null, refId);
