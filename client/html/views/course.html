@@ -6,8 +6,29 @@
             <div ng-switch on="showAdmin">
                 <div ng-switch-when="false"><div ng-include="'course_student.html'"></div></div>
                 <div ng-switch-when="true"><div ng-include="'course_admin.html'"></div></div>
+            </div>            
+            <div class="container row shadowed">
+                <h2>Optionen</h2>
+                Im folgenden findest Du einige Optionen, die dir helfen, schneller auf Fragen zuzugreifen. Sortiere alle Fragen oder wende einen Volltextfilter auf jegliche Inhalte an. Die Filter werden automatisch auf neue Inhalte angewandt.
+                <br><br>
+                <div class="form-group">
+                    <label for="qSort" class="col-sm-2 control-label">Sortierung</label> 
+                    <div class="col-sm-10">
+                        <select id="qSort" class="form-control" ng-model="orderProp">
+                            <option value="-votes">Fragen mit den meisten Votes</option>
+                            <option value="elapsedSince">Neueste Fragen</option>
+                            <option value="-elapsedSince">Älteste Fragen</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="qSearch" class="col-sm-2 control-label">Volltextfilter</label> 
+                    <div class=" col-sm-10">
+                        <input id="qSearch" class="form-control col-sm-10" type="search" ng-model="query" placeholder="Suche...">
+                    </div>
+                </div>
             </div>
-            <div ng-repeat="question in room.questions">
+            <div ng-repeat="question in room.questions | filter:query | orderBy:orderProp">
                 <div ng-if="question.visible">
                 <h2>Frage</h2>
                 <div class="row question">

@@ -9,6 +9,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 height: '500px'
             };
             $scope.chartist.lineData = {labels: [], series: [[]]};
+            $scope.orderProp = '-votes';
 
         $scope.$watch(function() { return rooms.getById($routeParams.courseid); }, function(room) {
             $scope.room = room;
