@@ -22,12 +22,14 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 $scope.$apply(function() {
                     $scope.panics = data.panics;
                     $scope.activeUsers = data.activeUsers;
+                    $scope.importantQuestions = data.importantQuestions;
                 });
             });
 
             rpc.attachFunction("room:panicStatus", function(data) {
                 $scope.$apply(function() {
                     $scope.room.isRoomRegistered = data.isEnabled;
+                    $scope.room.hasUserPanic = data.hasUserPanic;
                 });  
             }); 
 
