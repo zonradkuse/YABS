@@ -11,9 +11,9 @@
                 <h2>Optionen</h2>
                 Im folgenden findest Du einige Optionen, die dir helfen, schneller auf Fragen zuzugreifen. Sortiere alle Fragen oder wende einen Volltextfilter auf jegliche Inhalte an. Die Filter werden automatisch auf neue Inhalte angewandt.
                 <br><br>
-                <div class="form-group">
-                    <label for="qSort" class="col-sm-2 control-label">Sortierung</label> 
-                    <div class="col-sm-10">
+                <div class="col-xs-12">
+                    <div class="form-group">
+                        <label for="qSort" class="control-label">Sortierung</label> 
                         <select id="qSort" class="form-control" ng-model="orderProp">
                             <option value="-votes">Fragen mit den meisten Unterstützern</option>
                             <option value="elapsedSince">Neueste Fragen</option>
@@ -22,10 +22,10 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="qSearch" class="col-sm-2 control-label">Volltextfilter</label> 
-                    <div class=" col-sm-10">
-                        <input id="qSearch" class="form-control col-sm-10" type="search" ng-model="query" placeholder="Suche...">
+                <div class="col-xs-12">
+                    <div class="form-group">
+                        <label for="qSearch" class="control-label">Volltextfilter</label> 
+                        <input id="qSearch" class="form-control" type="search" ng-model="query" placeholder="Suche...">
                     </div>
                 </div>
             </div>
