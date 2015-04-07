@@ -73,7 +73,12 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 			/*jshint loopfunc: true */
 			if (questions[i]._id === question._id) {
 				$rootScope.$apply(function() {
-					questions[i] = question;
+					questions[i].votes = question.votes;
+                    questions[i].visible = question.visible;
+                    questions[i].content = question.content;
+                    questions[i].elapsedSince = question.elapsedSince;
+                    questions[i].updateTime = question.updateTime;
+                    questions[i].hasVote = question.hasVote;
 				});
 				return;
 			}
