@@ -2,6 +2,6 @@ clientControllers.controller("roomsController", ["$scope", "$routeParams", "room
     function($scope, $routeParams, rooms, authentication) {
     	authentication.enforceLoggedIn();
     	$scope.rooms = rooms.toArray();
-    	rooms.enter({roomId: 0});
+    	rooms.enter({roomId: 1});
     }
 ]);
