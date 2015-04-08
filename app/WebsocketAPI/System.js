@@ -210,7 +210,7 @@ module.exports = function(wsControl){
                 if(err) {
                     wsControl.build(ws, err, null, refId);
                 } else {
-                    if (params.roomId == 0) {
+                    if (params.roomId == 1) {
                         wsControl.build(ws, null, {
                             status: true
                         });
