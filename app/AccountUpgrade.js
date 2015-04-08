@@ -55,7 +55,7 @@ module.exports = function(app){
                             res.write("An error occured! This has been reported.");
                             logger.err(error);
                         }else{
-                            res.write('Message sent: ' + info.response);
+                            res.write('Message sent! You can now close this window.');
                         }
                         res.end();
                         });

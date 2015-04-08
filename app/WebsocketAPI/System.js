@@ -210,15 +210,21 @@ module.exports = function(wsControl){
                 if(err) {
                     wsControl.build(ws, err, null, refId);
                 } else {
-                    panicDAO.isRoomRegistered({_id: params.roomId}, function(isRegistered){
-                        panicDAO.hasUserPanic(session.user, {_id: params.roomId}, function(err, panicEvent){
-                            wsControl.build(ws, null, {
-                                status: true,
-                                hasRoomPanicRegistered: isRegistered,
-                                hasUserPanic: (panicEvent && !err) ? true : false
-                            }, refId);
+                    if (params.roomId == 0) {
+                        wsControl.build(ws, null, {
+                            status: true
                         });
-                    });
+                    } else {
+                        panicDAO.isRoomRegistered({_id: params.roomId}, function(isRegistered){
+                            panicDAO.hasUserPanic(session.user, {_id: params.roomId}, function(err, panicEvent){
+                                wsControl.build(ws, null, {
+                                    status: true,
+                                    hasRoomPanicRegistered: isRegistered,
+                                    hasUserPanic: (panicEvent && !err) ? true : false
+                                }, refId);
+                            });
+                        });
+                    }
                 }
             });
         } else {
