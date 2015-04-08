@@ -224,9 +224,9 @@ var RoomWorker = function(roomID, wsControl, wss, ws, intervals) {
                 if(err)
                     throw err;
                 var important = 0;
-                var date = new Date().getTime()-2*60*1000;
+                var date = new Date().getTime()-15*60*1000;
                 for(var i=0; i<room.questions.length; i++){
-                    if(room.questions[i].creationTime.getTime() > date && room.questions[i].votes.length > 1)
+                    if(room.questions[i].creationTime.getTime() > date && room.questions[i].votes.length > 10)
                         important++;
                 }
 
