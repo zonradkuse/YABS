@@ -198,3 +198,15 @@ img.loading {
     margin-left: auto;
     display: none;
 }
+
+.tooltip{
+    position:absolute;
+    display:none;
+    text-align:center;
+    pointer-events:none;
+    opacity: 1;
+}
+
+chartist .panel {
+    background-color: white;
+}

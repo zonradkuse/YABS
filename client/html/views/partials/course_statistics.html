@@ -6,7 +6,10 @@
         <h4 class="modal-title" id="statModalLabel">Vorlesungsstatistik</h4>
       </div>
       <div class="modal-body">
-        <chartist class="ct-chart" chartist-data="chartist.lineData" chartist-chart-type="Line" chartist-chart-options="chartist.options"></chartist>
+        
+        <chartist class="ct-chart" chartist-data="chartist.lineData" chartist-chart-type="Line" chartist-chart-options="chartist.options">
+          <div class="tooltip shadowed panel panel-info"></div>
+        </chartist>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>

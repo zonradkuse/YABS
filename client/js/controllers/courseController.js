@@ -4,7 +4,18 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         authentication.enforceLoggedIn();
             $scope.Math = window.Math;
             $scope.chartist = {};
-            $scope.chartist.options = {};
+            $scope.chartist.options = {
+                lineSmooth: false, // disable interpolation
+                axisX: {
+                    showLabel: false
+                },
+                axisY: {
+                    labelInterpolationFnc: function(val) {
+                        return (val % 1 === 0 ? val : "");
+                    }
+                }
+            };
+
             $scope.chartist.lineData = {labels: [], series: [[]]};
             $scope.orderProp = '-votes';
 
@@ -38,7 +49,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                     }
                 });
                 rooms.enter($scope.room);
-                rooms.getQuestions($scope.room);
+                rooms.getQuestions($scope.room);    
                 $scope.docentLogin = "/roles/admin/" + $scope.room._id;
                 rooms.getAccessLevel($scope.room).then(function(level) {
                     if(level > 1) {
@@ -48,10 +59,41 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                                 var labels = [];
                                 var values = [];
                                 for (var i = 0; i < data.graph.length; i++) {
-                                    labels.push((new Date(data.graph[i].time)).toLocaleTimeString());
-                                    values.push(data.graph[i].panics);
+                                    var date = (new Date(data.graph[i].time)).toLocaleTimeString();
+                                    labels.push(date);
+                                    values.push({ value: data.graph[i].panics, meta: date });
                                 }
-                                $scope.chartist.lineData = {labels: labels, series: [values]};
+                                $scope.chartist.lineData = { labels: labels, series: [{
+                                        name: "Panics",
+                                        data: values }
+                                ]};
+
+                                // modified chartist example
+                                var $chart = $('.ct-chart');
+
+                                var $toolTip = $chart
+                                    .find('.tooltip');
+
+                                $('.ct-chart').on('mouseenter', '.ct-point', function() {
+                                    var $point = $(this);
+                                    var count = $point.attr('ct:value');
+                                    var time = $point.attr('ct:meta');
+                                    // this is bad but scope variables are too slow. gotta go for an angular module
+                                    $toolTip.html('<div class="panel-heading">' + time + 
+                                        '</div><div class="panel-body">' + count + '</div>').show();
+                                });
+
+                                $chart.on('mouseleave', '.ct-point', function() {
+                                    $toolTip.hide();
+                                });
+
+                                $chart.on('mousemove', function(event) {
+                                    $toolTip.css({
+                                        left: (event.offsetX || event.originalEvent.layerX) - $toolTip.width() / 2 + 14,
+                                        top: (event.offsetY || event.originalEvent.layerY) - $toolTip.height()
+                                    });
+                                });
+
                                 $timeout(function() {
                                     window.dispatchEvent(new Event("resize"));
                                     // Rerenders chartist (crappy solution, but the directive doesnt allow direct access)
