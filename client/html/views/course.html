@@ -4,9 +4,10 @@
         <div class="container">
             <h1 data-fittext="1.2" data-fittext-min="8" data-fittext-max="36">{{room.name}}</h1>
             <div ng-switch on="showAdmin">
-                <div ng-switch-when="false"><div ng-include="'course_panic.html'"></div></div>
-                <div ng-switch-when="true"><div ng-include="'course_admin.html'"></div></div>
+                <div ng-switch-when="false"><div ng-include="'course_panic.html'"></div></div><!--either panic-->
+                <div ng-switch-when="true"><div ng-include="'course_admin.html'"></div></div><!--or admin view-->
             </div>            
+            <div ng-include="'course_statistics.html'"></div>
             <div ng-include="'course_student.html'"></div>
             <div class="container row shadowed">
                 <h2>Optionen</h2>

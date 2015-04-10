@@ -4,10 +4,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         authentication.enforceLoggedIn();
             $scope.Math = window.Math;
             $scope.chartist = {};
-            $scope.chartist.options = {
-                width: '700px',
-                height: '500px'
-            };
+            $scope.chartist.options = {};
             $scope.chartist.lineData = {labels: [], series: [[]]};
             $scope.orderProp = '-votes';
 
