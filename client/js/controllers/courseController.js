@@ -7,11 +7,11 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
             $scope.chartist.options = {
                 lineSmooth: false, // disable interpolation
                 axisX: {
-                    showLabel: false
+                    showLabel: false // disable x label as data grows
                 },
                 axisY: {
-                    labelInterpolationFnc: function(val) {
-                        return (val % 1 === 0 ? val : "");
+                    labelInterpolationFnc: function(val) { // do not show half panics
+                        return (val % 1 === 0 ? val : ' ');
                     }
                 }
             };
@@ -80,7 +80,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                                     var time = $point.attr('ct:meta');
                                     // this is bad but scope variables are too slow. gotta go for an angular module
                                     $toolTip.html('<div class="panel-heading">' + time + 
-                                        '</div><div class="panel-body">' + count + '</div>').show();
+                                        '</div><div class="panel-body">' + count + ' Panics</div>').show();
                                 });
 
                                 $chart.on('mouseleave', '.ct-point', function() {
