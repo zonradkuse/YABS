@@ -17,6 +17,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
             $scope.uploading = {};
             $scope.panics = 0;
             $scope.activeUsers = 0;
+            $scope.importantQuestions = 0;
             // RPC shouldnt be handled here but is neccessary due to bad server api design (missing room ids in broadcasts)
             rpc.attachFunction("room:livePanic", function(data) {
                 $scope.$apply(function() {
