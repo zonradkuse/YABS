@@ -10,7 +10,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                     showLabel: true,
                     labelInterpolationFnc: function (val, index) {
                         var dataLength = $scope.chartist.lineData.labels.length;
-                        var dist = Math.round(dataLength/10);
+                        var dist = Math.ceil(dataLength/10);
                         if (dataLength - index > dist) { // have a padding from chart right border
                             return (index % dist === 0 ? val : '');
                         } else {
@@ -214,8 +214,8 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
 
                 $chart.on('mousemove', function(event) {
                     $toolTip.css({
-                        left: (event.offsetX || event.originalEvent.layerX) - $toolTip.width() / 2 + 14,
-                        top: (event.offsetY || event.originalEvent.layerY) - $toolTip.height()
+                        left: (event.offsetX || event.originalEvent.layerX) - $toolTip.width() / 2 + 1,
+                        top: (event.offsetY || event.originalEvent.layerY) - $toolTip.height() - 15
                     });
                 });
 
