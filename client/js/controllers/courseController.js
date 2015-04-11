@@ -7,7 +7,16 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
             $scope.chartist.options = {
                 lineSmooth: false, // disable interpolation
                 axisX: {
-                    showLabel: false, // disable x label as data grows and chart becomes ugly
+                    showLabel: true,
+                    labelInterpolationFnc: function (val, index) {
+                        var dataLength = $scope.chartist.lineData.labels.length;
+                        var dist = Math.round(dataLength/10);
+                        if (dataLength - index > dist) { // have a padding from chart right border
+                            return (index % dist === 0 ? val : '');
+                        } else {
+                            return '';
+                        }
+                    }
                 },
                 axisY: {
                     labelInterpolationFnc: function(val) { // do not show half panics
@@ -16,9 +25,10 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 } 
             };
 
-            $scope.chartist.lineData = { labels: ["Monday", "Tuesday", "Wednesday"], series: [
-                [1,2,3],
-                [1,2,7]
+            $scope.chartist.lineData = { labels: ["Monday", "Tuesday", "Wednesday"], series: [ {
+                    name: 'Panics',
+                    data: [1,2,3] 
+                }
             ]};
             $scope.orderProp = '-votes';
 
