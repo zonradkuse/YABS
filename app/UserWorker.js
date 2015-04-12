@@ -10,7 +10,7 @@ var userDAO = require('../models/User.js');
 var campusReq = require('./RWTH/CampusRequests.js');
 var config = require('../config.json');
 var querystring = require('querystring');
-var panicDAO = require('../models/Panic.js');
+var panicDAO = require('./Panic.js');
 
 /**
  * sets needed object attributes.

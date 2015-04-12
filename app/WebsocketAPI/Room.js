@@ -1,7 +1,8 @@
 var roomDAO = require('../../models/Room.js');
 var userDAO = require('../../models/User.js');
 var questionDAO = require('../../models/Question.js');
-var panicDAO = require('../../models/Panic.js');
+var panicDAO = require('../Panic.js');
+var panicGraphDAO = require('../../models/PanicGraph.js');
 var accessManager = require('../AccessManagement.js');
 var logger = require('../Logger.js');
 
@@ -91,7 +92,9 @@ module.exports = function(wsControl){
 		        	userDAO.hasAccessToRoom(session.user, {_id: params.roomId}, {population:''}, function(err, room){
 		        		if(err)
 		        			return wsControl.build(ws, new Error("Access denied."), null, refId);
-		        		panicDAO.register({_id: params.roomId}, wsControl, wss, ws, params.intervals, function(err){
+		        		var options = {};
+		        		options.intervals = params.intervals;
+		        		panicDAO.register({_id: params.roomId}, wsControl, wss, ws, options, function(err){
 		        			if(err)
 		        				return wsControl.build(ws, new Error("Cannot enable panic events."), null, refId);
 		        			wss.roomBroadcast(ws, "room:panicStatus", {isEnabled: true, hasUserPanic: false}, params.roomId);
@@ -139,7 +142,7 @@ module.exports = function(wsControl){
 		        	userDAO.hasAccessToRoom(session.user, {_id: params.roomId}, {population:''}, function(err, room){
 		        		if(err)
 		        			return wsControl.build(ws, new Error("Access denied."), null, refId);
-		        		panicDAO.getGraph({_id: params.roomId}, {population:''}, function(err, graph){
+		        		panicGraphDAO.getGraph({_id: params.roomId}, {population:''}, function(err, graph){
 		        			if(err)
 		        				return wsControl.build(ws, new Error("Cannot get graph."), null, refId);
 		        			if(!graph)
