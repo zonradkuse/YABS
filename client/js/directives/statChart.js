@@ -28,7 +28,7 @@ clientControllers.directive('statChart', ['$timeout', 'rooms', function($timeout
 	                    }
 	                } 
         		};
-	            scope.chartist.lineData = { labels: [], series: [[]]};
+	            scope.chartist.lineData = { labels: [], series: []};
 			},
 			post: function(scope, elem, attr){ 
 				// as this function is post-load binded by angular default we can now do all the initialization
