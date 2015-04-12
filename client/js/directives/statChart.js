@@ -1,7 +1,7 @@
 clientControllers.directive('statChart', ['$timeout', 'rooms', function($timeout, rooms){
 	return {
 		restrict: 'E',
-		scope: {},
+		scope: false,
 		templateUrl: 'course_statistics.html',
 		controller:  "courseController",
 		link: {
