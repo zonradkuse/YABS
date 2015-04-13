@@ -15,7 +15,7 @@ clientControllers.directive('statChart', ['$timeout', 'rooms', function($timeout
 	                    labelInterpolationFnc: function (val, index) {
 	                        var dataLength = scope.chartist.lineData.labels.length;
 	                        var dist = Math.ceil(dataLength/10);
-	                        if (dataLength - index > dist) { // have a padding from chart right border
+	                        if (dataLength - index > 1 || dataLength < 7) { // have a padding from chart right border
 	                            return (index % dist === 0 ? val : '');
 	                        } else {
 	                            return '';
@@ -28,7 +28,16 @@ clientControllers.directive('statChart', ['$timeout', 'rooms', function($timeout
 	                    }
 	                } 
         		};
-	            scope.chartist.lineData = { labels: [], series: []};
+        		try{
+	        		if (InstallTrigger !== 'undefined') { // really bad firefox detection
+	        			scope.chartist.options.height = '400px';
+	        			scope.chartist.options.width = '700px';
+	        			$('.ct-chart').removeClass('ct-major-eleventh');
+	        		}
+        		} catch (e) {
+        			// lol
+        		}
+	            scope.chartist.lineData = { labels: [], series: [[]]};
 			},
 			post: function(scope, elem, attr){ 
 				// as this function is post-load binded by angular default we can now do all the initialization
