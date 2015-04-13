@@ -1,4 +1,4 @@
-clientControllers.directive('statChart', ['$timeout', 'rooms', function($timeout, rooms){
+clientControllers.directive('statisticsModal', ['$timeout', 'rooms', function($timeout, rooms){
 	return {
 		restrict: 'E',
 		scope: false,
@@ -30,6 +30,7 @@ clientControllers.directive('statChart', ['$timeout', 'rooms', function($timeout
         		};
         		try{
 	        		if (InstallTrigger !== 'undefined') { // really bad firefox detection
+	        			// until now firefox needs a fixed width and height due to some svg api implementation
 	        			scope.chartist.options.height = '400px';
 	        			scope.chartist.options.width = '700px';
 	        			$('.ct-chart').removeClass('ct-major-eleventh');

@@ -141,8 +141,5 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         $scope.deleteAnswer = function(question, answer) {
             rooms.deleteAnswer($scope.room, question, answer);
         };        
-
-        $scope.retrievePanicGraph = rooms.getPanicGraph;
-
     }
 ]);
