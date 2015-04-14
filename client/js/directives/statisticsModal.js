@@ -1,7 +1,6 @@
 clientControllers.directive('statisticsModal', ['$timeout', 'rooms', function($timeout, rooms){
 	return {
 		restrict: 'E',
-		scope: false,
 		templateUrl: 'course_statistics.html',
 		controller:  "courseController",
 		link: {
@@ -51,7 +50,6 @@ clientControllers.directive('statisticsModal', ['$timeout', 'rooms', function($t
 	                    clearInterval(timer);
 	                });
 	            });
-				
 
 				scope.drawChart = function() {
 		            rooms.getPanicGraph(scope.room).then(function(data) {
