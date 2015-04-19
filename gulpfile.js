@@ -53,7 +53,8 @@ gulp.task('build', function() {
 
 gulp.task('release-build', function () {
     var assets = useref.assets();
-    return gulp.src('client/*.html')
+
+    return gulp.src('public/index.html')
         .pipe(assets)
         .pipe(gulpif('*.js', uglify()))
         .pipe(gulpif('*.css', minifyCss()))
