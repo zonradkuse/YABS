@@ -6,3 +6,6 @@ node_js:
 services:
   - redis-server
   - mongodb
+notifications:
+  - johannes.neuhaus@rwth-aachen.de
+  - jens.piekenbrinck@rwth-aachen.de
