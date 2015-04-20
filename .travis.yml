@@ -7,5 +7,6 @@ services:
   - redis-server
   - mongodb
 notifications:
-  - johannes.neuhaus@rwth-aachen.de
-  - jens.piekenbrinck@rwth-aachen.de
+  email:
+    - johannes.neuhaus@rwth-aachen.de
+    - jens.piekenbrinck@rwth-aachen.de
