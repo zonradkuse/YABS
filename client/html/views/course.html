@@ -78,7 +78,8 @@
                     </a>
                     <div class="out collapse" id="{{question._id}}">
                         
-                        <div class="row question answer" ng-class="answer.isAnswer ? 'answer-correct' : ''" ng-repeat="answer in question.answers">
+                        <div class="row question answer" ng-if="!answer.deleted" ng-class="answer.isAnswer ? 'answer-correct' : ''" ng-repeat="answer in question.answers">
+                            
                             <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
                                 <div class="row text-center shadowed userinfo">
                                     <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{answer.author.avatar}}" /></div><!--
@@ -93,7 +94,7 @@
                                             <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">
                                                 <li role="presentation" ng-class="answer.deleted ? 'disabled' : ''"  ng-if="showAdmin">
                                                     <a role="menuitem" tabindex="-1" href="#" ng-disabled="answer.deleted" ng-click="answer.deleted || deleteAnswer(question, answer)"> 
-                                                        Inhalt löschen    
+                                                        Antwort löschen    
                                                         <span class="label label-danger"> ! </span>
                                                     </a>
                                                 </li>
@@ -113,6 +114,7 @@
                             <div ng-repeat="image in answer.images" class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
                                 <a href="{{image.path}}" target="_blank"><img src="{{image.path}}" class="col-sm-3 img-thumbnail" /></a>
                             </div>
+                            
                         </div>
 
                         <div class="row question answer shadowed">
