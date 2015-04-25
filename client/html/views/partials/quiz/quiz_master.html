@@ -54,6 +54,9 @@
                     <div class="col-xs-12 col-sm-6">
                         <div class="list-group">
                             <a ng-repeat="item in items" href="#" ng-click="editAnswer(item)" class="list-group-item" ng-class="item == editItem ? 'active' : ''">
+                                <div ng-if="item.type.text"> <code> abc </code> </div>
+                                <input ng-if="item.type.checkbox" type="checkbox" disabled>
+                                <input ng-if="item.type.radiobox" type="radio" disabled>
                                 {{ item.answer }}
                             </a>
                         </div>
