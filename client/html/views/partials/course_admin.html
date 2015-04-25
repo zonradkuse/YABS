@@ -1,4 +1,5 @@
 <statistics-modal></statistics-modal>
+<quiz-master></quiz-master>
 <div class="row row-panicbtn admin-quicklook">
     <div class="col-xs-4"><span class="h2">{{activeUsers}}<span class="small center-block">aktive Studierende</span></span></div>
     <div class="col-xs-4"><span class="h2">{{panics}}<span class="small center-block">geht es zu schnell</span></span></div>
@@ -54,6 +55,9 @@
     <div class="col-md-12">
         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#statModal">
             <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Verständnisstatistik anzeigen
+        </button>
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#quizMasterModal">
+            <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Umfragen und Quizfragen verwalten
         </button>
         <button type="button" ng-click="enableRoom()" ng-if="!room.isRoomRegistered" class="btn btn-primary">
             <span class="glyphicon glyphicon-play" aria-hidden="true"></span> Vorlesung starten

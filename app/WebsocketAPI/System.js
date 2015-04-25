@@ -53,7 +53,7 @@ module.exports = function(wsControl){
                     });
                 }
             }, 600);
-        });    
+        });
     });
     wsControl.on('system:ping', function(wss, ws, session, params, interfaceEntry, refId){
         wsControl.build(ws, null, { message: "pong" }, refId);

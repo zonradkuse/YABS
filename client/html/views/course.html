@@ -47,11 +47,11 @@
                             </div>
                             <div ng-if="showAdmin" class="col-xs-4 col-sm-12 vcenter votebutton">
                                 <div class="dropdown" aria-expanded="false">
-                                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="false"> 
+                                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="optionsDropdown1" data-toggle="dropdown" aria-expanded="false"> 
                                         Optionen 
                                         <span class="caret"></span>
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">
+                                    <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="optionsDropdown1">
                                         <li role="presentation">
                                             <a role="menuitem" tabindex="-1" href="#" ng-click="deleteQuestion(question)"> 
                                                 Frage löschen    
@@ -87,11 +87,11 @@
                                  --><div ng-if="showAdmin || answer.isAnswer" class="col-xs-7 col-sm-12 votebutton vcenter">
                                         <!-- refactor -->
                                         <div class="dropdown" ng-if="showAdmin" aria-expanded="false">
-                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="false"> 
+                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="optionsDropdown2" data-toggle="dropdown" aria-expanded="false"> 
                                                 Optionen 
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">
+                                            <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="optionsDropdown2">
                                                 <li role="presentation" ng-class="answer.deleted ? 'disabled' : ''"  ng-if="showAdmin">
                                                     <a role="menuitem" tabindex="-1" href="#" ng-disabled="answer.deleted" ng-click="answer.deleted || deleteAnswer(question, answer)"> 
                                                         Antwort löschen    
