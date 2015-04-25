@@ -34,19 +34,32 @@
             <div ng-repeat="question in room.questions | filter:query | orderBy:orderProp">
                 <div ng-if="question.visible">
                 <h2>Frage</h2>
-                <div class="row question">
+                <div class="row question" ng-class="question.goodQuestion ? 'question-good' : ''">
                     <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
                         <div class="row text-center shadowed userinfo">
                             <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{question.author.avatar}}" /></div><!--
-                         --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{question.author.name}}</span><span class="time">vor {{question.elapsedSince < 60 ? question.elapsedSince + ' Minuten' : (Math.floor(question.elapsedSince/60) < 24 ? Math.floor(question.elapsedSince/60) + ' Stunden' : Math.floor(question.elapsedSince/60/24) + ' Tagen')}}</span></div><!--
-                         --><div class="col-xs-7 col-sm-12 votebutton vcenter">
-                                <button type="button" ng-click="voteQuestion(question)" class="btn btn-default" ng-disabled="question.hasVote" >
+                         --><div class="col-xs-3 col-sm-12 vcenter"><span class="username">{{question.author.name}}</span><span class="time">vor {{question.elapsedSince < 60 ? question.elapsedSince + ' Minuten' : (Math.floor(question.elapsedSince/60) < 24 ? Math.floor(question.elapsedSince/60) + ' Stunden' : Math.floor(question.elapsedSince/60/24) + ' Tagen')}}</span></div><!--
+                         --><div class="col-xs-4 col-sm-12 votebutton vcenter">
+                                <button type="button" ng-if="!showAdmin" ng-click="voteQuestion(question)" class="btn btn-default" ng-disabled="question.hasVote" >
                                     <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Frage unterstützen
                                 </button>
-                                <span>{{question.votes}} Studenten haben die selbe Frage</span>
-                                <button type="button" style="margin:5px" ng-if="showAdmin" ng-click="deleteQuestion(question)" class="btn btn-danger btn-sm">
-                                    <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Frage löschen
-                                </button>
+                                <span>{{question.votes}} Studierende haben die selbe Frage</span>
+                            </div>
+                            <div class="col-xs-4 col-sm-12 vcenter votebutton">
+                                <div class="dropdown" aria-expanded="false">
+                                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="false"> 
+                                        Optionen 
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">
+                                        <li role="presentation">
+                                            <a role="menuitem" tabindex="-1" href="#" ng-click="deleteQuestion(question)"> 
+                                                Frage löschen    
+                                                <span class="label label-danger"> ! </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -72,13 +85,26 @@
                                  --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{answer.author.name}}</span><span class="time">vor {{answer.elapsedSince <= 60 ? answer.elapsedSince + ' Minuten' : (Math.floor(answer.elapsedSince/60) < 24 ? Math.floor(answer.elapsedSince/60) + ' Stunden' : Math.floor(answer.elapsedSince/60/24) + ' Tagen')}} </span></div><!--
                                  --><div ng-if="showAdmin || answer.isAnswer" class="col-xs-7 col-sm-12 votebutton vcenter">
                                         <!-- refactor -->
-                                        <button ng-disabled="answer.isAnswer || answer.deleted" ng-click="markAsAnswer(question, answer)" type="button" class="btn btn-success btn-sm">
-                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{answer.isAnswer ? 'Richtige Antwort' : 'Als Antwort markieren'}}
-                                        </button>
-                                        <button type="button" ng-disabled="answer.deleted" style="margin:5px" ng-if="showAdmin" ng-click="deleteAnswer(question, answer)" class="btn btn-danger btn-sm">
-                                            <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Inhalt löschen
-                                        </button>
-                                    </div>
+                                        <div class="dropdown" ng-if="showAdmin" aria-expanded="false">
+                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="false"> 
+                                                Optionen 
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">
+                                                <li role="presentation" ng-class="answer.deleted ? 'disabled' : ''"  ng-if="showAdmin">
+                                                    <a role="menuitem" tabindex="-1" href="#" ng-disabled="answer.deleted" ng-click="answer.deleted || deleteAnswer(question, answer)"> 
+                                                        Inhalt löschen    
+                                                        <span class="label label-danger"> ! </span>
+                                                    </a>
+                                                </li>
+                                                <li role="presentation" ng-class="(answer.isAnswer || answer.deleted) ? 'disabled' : ''" ng-if="showAdmin">
+                                                    <a role="menuitem" ng-click="answer.isAnswer || answer.deleted || markAsAnswer(question, answer)" tabindex="-1"> 
+                                                        {{answer.isAnswer ? 'Richtige Antwort' : 'Als Antwort markieren'}}   
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>                                   
                                 </div>
                             </div>
                             <div class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">

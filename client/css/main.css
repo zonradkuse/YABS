@@ -102,6 +102,10 @@ img.loading {
     background-color: rgb(207, 236, 207);
 }
 
+.question.question-good .userinfo {
+    background-color: rgb(255, 253, 238);
+}
+
 .question .username {
     font-weight: 600;
     display: block;
