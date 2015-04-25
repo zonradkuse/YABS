@@ -47,8 +47,8 @@ wss.getActiveUsersByRoom = function(roomId, next) {
                     next(null, c);
                 }
             });
-        })(pos);
-    };
+        })(pos); 
+    }
 };
 wss.roomBroadcast = function (ws, uri, data, roomId){
     var oldQ;
@@ -204,7 +204,7 @@ function build(ws, err, data, refId, uri, param){
     }
 
     if(ws.readyState === 1) ws.send(JSON.stringify(json));
-};
+}
 
 
 util.inherits(WebsocketHandler, events.EventEmitter);

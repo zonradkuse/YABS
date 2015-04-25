@@ -114,7 +114,7 @@ module.exports = function(wsControl){
                                         clearInterval(timer);
                                         var gender = (Math.random() <= 0.5) ? 'male' : 'female';
                                         var _user = new User();
-                                        avatarGenerator.generate(_user,gender,100, function(err, avatar){
+                                        avatarGenerator.generate(_user,gender,70, function(err, avatar){
                                             if(err)
                                                 logger.warn("User avatar could not be created");
                                             _user.name = fancyNames.choose().replace(/\b(\w)/g, function(m){ return m.toUpperCase()});

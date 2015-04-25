@@ -38,14 +38,14 @@
                     <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
                         <div class="row text-center shadowed userinfo">
                             <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{question.author.avatar}}" /></div><!--
-                         --><div class="col-xs-3 col-sm-12 vcenter"><span class="username">{{question.author.name}}</span><span class="time">vor {{question.elapsedSince < 60 ? question.elapsedSince + ' Minuten' : (Math.floor(question.elapsedSince/60) < 24 ? Math.floor(question.elapsedSince/60) + ' Stunden' : Math.floor(question.elapsedSince/60/24) + ' Tagen')}}</span></div><!--
-                         --><div class="col-xs-4 col-sm-12 votebutton vcenter">
+                         --><div class="col-sm-12 vcenter" ng-class="!showAdmin ? 'col-xs-5' : 'col-xs-3'"><span class="username">{{question.author.name}}</span><span class="time">vor {{question.elapsedSince < 60 ? question.elapsedSince + ' Minuten' : (Math.floor(question.elapsedSince/60) < 24 ? Math.floor(question.elapsedSince/60) + ' Stunden' : Math.floor(question.elapsedSince/60/24) + ' Tagen')}}</span></div><!--
+                         --><div class="col-sm-12 votebutton vcenter" ng-class="!showAdmin ? 'col-xs-6' : 'col-xs-4'">
                                 <button type="button" ng-if="!showAdmin" ng-click="voteQuestion(question)" class="btn btn-default" ng-disabled="question.hasVote" >
                                     <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Frage unterstützen
                                 </button>
                                 <span>{{question.votes}} Studierende haben die selbe Frage</span>
                             </div>
-                            <div class="col-xs-4 col-sm-12 vcenter votebutton">
+                            <div ng-if="showAdmin" class="col-xs-4 col-sm-12 vcenter votebutton">
                                 <div class="dropdown" aria-expanded="false">
                                     <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="false"> 
                                         Optionen 
