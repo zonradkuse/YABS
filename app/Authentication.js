@@ -1,4 +1,3 @@
-var MainController = require('./MainController.js');
 var User = require('../models/User.js');
 var logger = require('./Logger.js');
 var authConf = require('../config/auth.json');
@@ -19,17 +18,17 @@ module.exports = function(passport) {
         done(null, obj);
     });
     if(conf.login.other.enabled) {
-        logger.info("Initialize Google OAuth.")
+        logger.info("Initialize Google OAuth.");
         Google(passport);
-        logger.info("Initialize Facebook OAuth.")
+        logger.info("Initialize Facebook OAuth.");
         Facebook(passport);
-        logger.info("Initialize Twitter OAuth.")
+        logger.info("Initialize Twitter OAuth.");
         Twitter(passport);
-        logger.info("Initialize Github OAuth.")
-        Github(passport); 
+        logger.info("Initialize Github OAuth.");
+        Github(passport);
     }
 
-}
+};
 /*
  * Log In. Looks user up or sets error on next callback (first parameter).
  */
@@ -51,7 +50,7 @@ module.exports.loginLocal = function(email, password, success, fail) {
                 }
         }
     });
-}
+};
 
 /**
  * Register user locally. The request will not! be checked. A logged in user should set information on its own.
@@ -89,5 +88,5 @@ module.exports.registerLocal = function(name, password, email, next) {
             next(new Error("E-Mail already taken."));
         }
     });
-}
+};
 

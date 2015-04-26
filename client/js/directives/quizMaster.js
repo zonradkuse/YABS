@@ -87,7 +87,7 @@ clientControllers.directive('quizMaster', ['$timeout', 'rooms', function($timeou
 				$('#quizMasterModal').modal({
 					keyboard: false,
 					backdrop: 'static'
-				});
+				}).out();
 			}
 		}
 	};

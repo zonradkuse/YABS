@@ -8,7 +8,6 @@
 var logger = require('./../Logger.js');
 var interface = require('./InterfaceHandler.js');
 var config = require('./../../config.json');
-var dataController = require('./../MainController.js');
 
 /**
  *   Logic for sending messages to a(ll) client(s). Do a sanitiy check beforehand and send error message back
