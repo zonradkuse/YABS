@@ -53,12 +53,17 @@
                     </div>
                     <div class="col-xs-12 col-sm-6">
                         <div class="list-group">
+                            
                             <a ng-repeat="item in items" href="#" ng-click="editAnswer(item)" class="list-group-item" ng-class="item == editItem ? 'active' : ''">
-                                <div ng-if="item.type.text"> <code> abc </code> </div>
-                                <input ng-if="item.type.checkbox" type="checkbox" disabled>
-                                <input ng-if="item.type.radiobox" type="radio" disabled>
-                                {{ item.answer }}
+                                <form>
+                                    <div class="checkbox">
+                                            <label ng-if="item.type.text"> <kbd>abc</kbd>   {{ item.answer }}</label>
+                                            <label ng-if="item.type.checkbox"><input type="checkbox" disabled> {{ item.answer }} </label>
+                                            <label ng-if="item.type.radiobox"><input type="radio" disabled> {{ item.answer }} </label>
+                                    </div>
+                                </form>
                             </a>
+
                         </div>
                     </div>
                 </div>
