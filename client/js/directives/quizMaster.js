@@ -7,7 +7,7 @@ clientControllers.directive('quizMaster', ['$timeout', 'rooms', function($timeou
 				//define default data for initialization and define options
 				scope.optionQuiz = "Umfragebeschreibung";
 				scope.id = 0;
-				scope.editItem = {};
+				scope.editItem = undefined;
 				scope.items = [{
 					tId: scope.id,
 					type: {
@@ -78,8 +78,9 @@ clientControllers.directive('quizMaster', ['$timeout', 'rooms', function($timeou
 					scope.editItem = item;
 				};
 
-				scope.remove = function(item){
-					delete scope.items[item];
+				scope.delete = function(item){
+					scope.items.splice(scope.items.indexOf(item), 1 );
+					scope.editItem = undefined;
 				};
 
 			},
@@ -87,7 +88,7 @@ clientControllers.directive('quizMaster', ['$timeout', 'rooms', function($timeou
 				$('#quizMasterModal').modal({
 					keyboard: false,
 					backdrop: 'static'
-				}).out();
+				});
 			}
 		}
 	};

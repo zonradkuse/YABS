@@ -17,53 +17,57 @@
 
                 <div class="row" >
                     <div class="col-xs-12 col-sm-6">
-                        <textarea style="width:100%;height: 100%;" ng-model="qsInputText" placeholder="Ihre {{ optionQuiz }}"></textarea>
+                        <div class="form-group" style="width:100%;">
+                            <label for"qsTextInput"> Ihre Frage... </label>
+                            <textarea style="width:100%;height: 100%;" id="qsTextInput" ng-model="qsInputText" placeholder="Ihre {{ optionQuiz }}..."></textarea>
+                        </div>
                     </div>
                     <div class="col-xs-12 col-sm-6">
                         <div class="dropdown" aria-expanded="false">
-                            <button class="btn btn-default dropdown-toggle" style="width:100%" type="button" id="addFieldDropdown" data-toggle="dropdown" aria-expanded="false"> 
-                                Hinzufügen 
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-right" style="width:100%;" role="menu" aria-labelledby="addFieldDropdown">
-                                <li role="presentation" ng-class="!type.checkbox ? 'disabled' : ''">
-                                    <a role="menuitem" tabindex="-1" href="#" ng-click="!type.checkbox || addCheckbox()"> 
-                                        Checkbox
-                                    </a>
-                                </li>
-                                <li role="presentation" ng-class="!type.radiobox ? 'disabled' : ''">
-                                    <a role="menuitem" tabindex="-1" href="#" ng-click="!type.radiobox || addRadiobox()"> 
-                                        Radiobox
-                                    </a>
-                                </li>
-                                <li role="presentation" ng-class="!type.text ? 'disabled' : ''">
-                                    <a role="menuitem" tabindex="-1" href="#" ng-click="!type.text || addTextfield()"> 
-                                        Textfeld
-                                    </a>
-                                </li>
-                            </ul>
+                            <div class="form-group" style="width:100%;">
+                                <label for=""> Fügen Sie ein Antwortelement hinzu... </label>
+                                <button class="btn btn-default dropdown-toggle" id="addFieldDropdown" style="width:100%" type="button" id="addFieldDropdown" data-toggle="dropdown" aria-expanded="false"> 
+                                    Hinzufügen 
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right" style="width:100%;" role="menu" aria-labelledby="addFieldDropdown">
+                                    <li role="presentation">
+                                        <a role="menuitem" tabindex="-1" href="#" ng-click="addCheckbox()"> 
+                                            Checkbox
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a role="menuitem" tabindex="-1" href="#" ng-click="addRadiobox()"> 
+                                            Radiobox
+                                        </a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a role="menuitem" tabindex="-1" href="#" ng-click="addTextfield()"> 
+                                            Textfeld
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="row" style="margin-bottom:0;">
                     <div class="col-xs-12 col-sm-6">
-                        <div class="form-group">
-                            <textarea style="width:100%;" ng-model="editItem.answer" placeholder="Wählen Sie zum Bearbeiten eine Antwort aus..."></textarea>
+                        <div class="form-group-inline" ng-if="editItem">
+                            <textarea style="width:100%;" ng-model="editItem.answer" placeholder="Geben Sie den gewünschten Beschreibungstext ein..."></textarea>
+                            <button type="button" style="width:30%" ng-click="delete(editItem)" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-delete"></span> Löschen </button>
+                            <select style="width:68%" class="form-control">
+                                <option value="checkbox" ng-model="editItem.type">Checkbox</option>
+                                <option value="text" ng-model="editItem.type">Textfeld</option>
+                                <option value="radiobox" ng-model="editItem.type">Radiobox</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-6">
                         <div class="list-group">
-                            
                             <a ng-repeat="item in items" href="#" ng-click="editAnswer(item)" class="list-group-item" ng-class="item == editItem ? 'active' : ''">
-                                <form>
-                                    <div class="checkbox">
-                                            <label ng-if="item.type.text"> <kbd>abc</kbd>   {{ item.answer }}</label>
-                                            <label ng-if="item.type.checkbox"><input type="checkbox" disabled> {{ item.answer }} </label>
-                                            <label ng-if="item.type.radiobox"><input type="radio" disabled> {{ item.answer }} </label>
-                                    </div>
-                                </form>
+                                {{ item.answer }}
                             </a>
-
                         </div>
                     </div>
                 </div>
