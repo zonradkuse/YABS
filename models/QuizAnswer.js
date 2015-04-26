@@ -16,3 +16,30 @@ var QuizAnswerSchema = mongoose.Schema({
 QuizAnswerSchema.plugin(deepPopulate);
 var QuizAnswer = mongoose.model('QuizAnswer', QuizAnswerSchema);
 module.exports.QuizAnswer = QuizAnswer;
+
+module.exports.Types = {
+	QA_ID: 0, //Quiz answer with an ObjectId in field 'answer'
+	QA_INPUT: 1, //Quiz answer with an String in field 'answer'
+	UA_ID: 10, //Users answer with an ObjectId in field 'answer'
+	UA_INPUT: 11 //Users answer with an String in field 'answer'  
+};
+
+module.exports.getAllByUser = function(user, options, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	if(options.population === undefined)
+		options.population = "";
+	QuizAnswer.find({creator: user._id}).deepPopulate(options.population).exec(function(err,answers){
+		return callback(err,answers);
+	});
+}
+
+module.exports.getAllByQuestion = function(question, options, callback){
+	if(callback === undefined)
+		throw new Error("callback not defined");
+	if(options.population === undefined)
+		options.population = "";
+	QuizAnswer.find({question: question._id}).deepPopulate(options.population).exec(function(err,answers){
+		return callback(err,answers);
+	});	
+}
