@@ -1,3 +1,4 @@
+/// <reference path="typings/node/node.d.ts"/>
 var gulp = require('gulp'),
     useref = require('gulp-useref'),
     gulpif = require('gulp-if'),
@@ -5,9 +6,10 @@ var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     minifyCss = require('gulp-minify-css'),
     flatten = require('gulp-flatten'),
-    del = require('del');
-    jsdoc = require('gulp-jsdoc');
-    rename = require('gulp-rename')
+    del = require('del'),
+    jsdoc = require('gulp-jsdoc'),
+    rename = require('gulp-rename'),
+    exec = require('child_process').exec;
 
 //build the client and only the client
 gulp.task('build', function() {
@@ -49,7 +51,7 @@ gulp.task('build', function() {
     
     gulp.src(['client/img/**/*.{jpg,gif}'])
         .pipe(flatten())
-        .pipe(gulp.dest('public/'));           
+        .pipe(gulp.dest('public/'));  
 });
 
 gulp.task('check', function() {
@@ -76,6 +78,33 @@ gulp.task('release-build', function () {
         .pipe(useref())
         .pipe(gulp.dest('public'));
 });
+
+gulp.task('install', function(cb){
+    // npm install
+    exec('npm install', function(err, stdout, stderr) {
+        if(err) return cb(err);
+        if(stdout) {
+            process.stdout.write("STDOUT: \n" + stdout + "\n\0");
+        }
+        if(stderr) {
+            process.stdout.write("STDERR: \n" + stderr + "\n\0");
+        }
+        // bower install
+        exec('bower install', function(err, stdout, stderr) {
+            if(stdout) {
+                process.stdout.write("STDOUT: \n" + stdout + "\n\0");
+            }
+            if(stderr) {
+                process.stdout.write("STDERR: \n" + stderr + "\n\0");
+            }
+            if(err) return cb(err);
+            cb();
+        });
+         
+    });
+});
+
+gulp.task('full', ['check', 'install', 'build']);
 
 gulp.task('doc', function() {
     del.sync('doc/*');
