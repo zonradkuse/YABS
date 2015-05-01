@@ -6,25 +6,25 @@ var sessionStore = new sessionStore();
 var logger = require('./Logger.js');
 
 function getEntry(uri) {
-    for(var key in inter.data){
-        if (inter.data[key].uri === uri){
-            return inter.data[key];
-        }
-    }
-    return null;
+	for (var key in inter.data) {
+		if (inter.data[ key ].uri === uri) {
+			return inter.data[ key ];
+		}
+	}
+	return null;
 }
 
 function getAccessLevel(uri) {
-    return getEntry(uri).accessLevel;
+	return getEntry(uri).accessLevel;
 }
 
 function checkAccess(uri, myAccess) {
-    var aL = getAccessLevel(uri);
-    if (aL) {
-        return aL <= myAccess;
-    } else {
-        return roles.default;
-    }
+	var aL = getAccessLevel(uri);
+	if (aL) {
+		return aL <= myAccess;
+	} else {
+		return roles.default;
+	}
 }
 
 /**
@@ -34,25 +34,29 @@ function checkAccess(uri, myAccess) {
  * @param {sId} the sessionId to check
  * @param {next} callback with params (err, bool). bool is set true when access is granted.
  **/
-function checkAccessBySId(uri, sId, roomId, next){
-    sessionStore.get(sId, function(err, session){
-        if (err) return next(err, false);
-        if (!session) return next(null, false);
-        // check if there is anything defined in rights array
-        if (session.user && session.user.rights) {
-            for (var key in session.user.rights) {
-                if(session.user.rights[key].roomId == roomId){
-                    return next(null, checkAccess(uri, session.user.rights[key].accessLevel));
-                }
-            }
-        }
-        if (session.user) {
-            return next(null, checkAccess(uri, roles.defaultLoggedIn));
-        } else {
-            next(null, checkAccess(uri, roles.default));
-        }
+function checkAccessBySId(uri, sId, roomId, next) {
+	sessionStore.get(sId, function (err, session) {
+		if (err) {
+			return next(err, false);
+		}
+		if (!session) {
+			return next(null, false);
+		}
+		// check if there is anything defined in rights array
+		if (session.user && session.user.rights) {
+			for (var key in session.user.rights) {
+				if (session.user.rights[ key ].roomId == roomId) {
+					return next(null, checkAccess(uri, session.user.rights[ key ].accessLevel));
+				}
+			}
+		}
+		if (session.user) {
+			return next(null, checkAccess(uri, roles.defaultLoggedIn));
+		} else {
+			next(null, checkAccess(uri, roles.default));
+		}
         
-    });
+	});
 }
 
 /**
@@ -63,34 +67,40 @@ function checkAccessBySId(uri, sId, roomId, next){
  * @param {roomId} id of room to check
  * @param {next} callback with params (err, bool). bool is set true when access is granted.
  **/
-function checkAccessLevel(sId, options, roomId, next){
-    if(options.requiredAccess === undefined)
-        throw new Error("options must have requiredAccess field.");
-    var roomMember = false;
-    if(options.roomMember !== undefined)
-        roomMember = options.roomMember;
+function checkAccessLevel(sId, options, roomId, next) {
+	if (options.requiredAccess === undefined) {
+		throw new Error("options must have requiredAccess field.");
+	}
+	var roomMember = false;
+	if (options.roomMember !== undefined) {
+		roomMember = options.roomMember;
+	}
 
-    sessionStore.get(sId, function(err, session){
-        if (err) return next(err, false);
-        if (!session) return next(null, false);
-        // check if there is anything defined in rights array
-        if (session.user && session.user.rights) {
-            if(!roomMember || session.room == roomId){
-                for (var key in session.user.rights) {
-                    if(session.user.rights[key].roomId == roomId){
-                        return next(null, options.requiredAccess <= session.user.rights[key].accessLevel);
-                    }
-                }
-            } else {
-                return next(null, false);
-            }
-        }
-        if (session.user) {
-            return next(null, options.requiredAccess <= roles.defaultLoggedIn);
-        } else {
-            next(null, options.requiredAccess <= roles.default);
-        }
-    });
+	sessionStore.get(sId, function (err, session) {
+		if (err) {
+			return next(err, false);
+		}
+		if (!session) {
+			return next(null, false);
+		}
+		// check if there is anything defined in rights array
+		if (session.user && session.user.rights) {
+			if (!roomMember || session.room == roomId) {
+				for (var key in session.user.rights) {
+					if (session.user.rights[ key ].roomId == roomId) {
+						return next(null, options.requiredAccess <= session.user.rights[ key ].accessLevel);
+					}
+				}
+			} else {
+				return next(null, false);
+			}
+		}
+		if (session.user) {
+			return next(null, options.requiredAccess <= roles.defaultLoggedIn);
+		} else {
+			next(null, options.requiredAccess <= roles.default);
+		}
+	});
 }
 
 /**
@@ -101,18 +111,24 @@ function checkAccessLevel(sId, options, roomId, next){
  * @param {next} callback with params (err, bool). bool is set true on success.
  **/
 function setAccessBySId(level, sId, roomId, next) {
-    sessionStore.get(sId, function(err, session){
-        if (err) next(err, false);
-        if (!session) next(null, false);
+	sessionStore.get(sId, function (err, session) {
+		if (err) {
+			next(err, false);
+		}
+		if (!session) {
+			next(null, false);
+		}
         
-        session.user.rights.push({ "roomId" : roomId, "accessLevel" : level});
+		session.user.rights.push({ "roomId" : roomId, "accessLevel" : level});
 
-        sessionStore.set(sId, session, function(err){
-            if (err) return next(err);
+		sessionStore.set(sId, session, function (err) {
+			if (err) {
+				return next(err);
+			}
             
-            return next(null, true);
-        });
-    });
+			return next(null, true);
+		});
+	});
 }
 
 /**
@@ -124,17 +140,17 @@ function setAccessBySId(level, sId, roomId, next) {
  *
  **/
 function setAccessByRWTH(rwthRole, sId, roomId, next) {
-    for (var key in roles.rwth) {
-        if (roles.rwth[key] === rwthRole) {
-            for (var r in roles) {
-                if (roles.rwth[key] === roles[r]) {
-                    return setAccessBySId(roles[r], sId, roomId, next);
-                }
-            }
-            logger.warn("Potential misconfiguration on UserRoles.json!! " + roles.rwth[key] + " seems not to be existing.");
-        }
-    }
-    return next(null, false);
+	for (var key in roles.rwth) {
+		if (roles.rwth[ key ] === rwthRole) {
+			for (var r in roles) {
+				if (roles.rwth[ key ] === roles[ r ]) {
+					return setAccessBySId(roles[ r ], sId, roomId, next);
+				}
+			}
+			logger.warn("Potential misconfiguration on UserRoles.json!! " + roles.rwth[ key ] + " seems not to be existing.");
+		}
+	}
+	return next(null, false);
 }
 
 module.exports.checkAccessBySId = checkAccessBySId;

@@ -28,10 +28,11 @@ module.exports.generate = function (user, gender, resolution, callback) {
 			avatar.type = 'png';
 
 			avatar.save(function (err) {
-				if (err)
+				if (err) {
 					return callback(new Error("Could not save avatar."), null);
-				else
+				} else {
 					return callback(null, avatar);
+				}
 			});
 		});
 	});

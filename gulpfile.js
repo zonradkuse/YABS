@@ -9,10 +9,11 @@ var gulp = require('gulp'),
     del = require('del'),
     jsdoc = require('gulp-jsdoc'),
     rename = require('gulp-rename'),
-    exec = require('child_process').exec;
+    exec = require('child_process').exec,
+    jscs = require('gulp-jscs');
 
 //build the client and only the client
-gulp.task('build', ['install'], function() {
+gulp.task('fast-build', function() {
     del.sync('public/*');
 
     gulp.src(["client/bower_components/chartist/dist/chartist.min.css"])
@@ -52,6 +53,26 @@ gulp.task('build', ['install'], function() {
     gulp.src(['client/img/**/*.{jpg,gif}'])
         .pipe(flatten())
         .pipe(gulp.dest('public/'));  
+});
+
+gulp.task('build', ['install', 'fast-build']);
+
+gulp.task('jscs-app', ['jscs-models'], function(){
+    gulp.src(['app/**/*.js',])
+        .pipe(jscs({
+            configPath: '.jscsrc',
+            fix: true
+        }))
+        .pipe(gulp.dest('app'));
+});
+
+gulp.task('jscs-models', function(){
+    gulp.src(['models/**/*.js',])
+        .pipe(jscs({
+            configPath: '.jscsrc',
+            fix: true
+        }))
+        .pipe(gulp.dest('models'));
 });
 
 gulp.task('check', function(cb) {
@@ -103,7 +124,7 @@ gulp.task('install', ['check'], function(cb){
     });
 });
 
-gulp.task('full', ['check', 'install' ,'build']);
+gulp.task('full', ['check', 'install' ,'build', 'jscs-app']);
 
 gulp.task('doc', function() {
     del.sync('doc/*');

@@ -1,5 +1,5 @@
 //Survey worker
 
-module.exports.hasUserAlreadyAnswered = function(user, callback){
+module.exports.hasUserAlreadyAnswered = function (user, callback) {
 
 };

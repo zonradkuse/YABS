@@ -9,14 +9,14 @@ var ObjectId = mongoose.Schema.ObjectId;
 var RoomSchema = mongoose.Schema({
 	l2pID: { type: String, unique: true },
 	name: String,
-    creationTime: { type: Date, default: Date.now },
-    updateTime: { type: Date, default: Date.now },
-    questions: [{ type: ObjectId, ref: 'Question' }],
-    visible: { type: Boolean, default: true },
-    description: String,
-    url: String,
-    status: String,
-    semester: String
+	creationTime: { type: Date, default: Date.now },
+	updateTime: { type: Date, default: Date.now },
+	questions: [{ type: ObjectId, ref: 'Question' }],
+	visible: { type: Boolean, default: true },
+	description: String,
+	url: String,
+	status: String,
+	semester: String
 });
 
 RoomSchema.plugin(deepPopulate);
@@ -85,8 +85,9 @@ module.exports.create = function (room, callback) {
 * @param callback params: error, room object, question object
 */
 module.exports.addQuestion = function (room, question, callback) {
-	if (callback === undefined)
+	if (callback === undefined) {
 		throw new Error("callback not defined");
+	}
 	question.save(function (err) {
 		if (err) {
 			return callback(err);

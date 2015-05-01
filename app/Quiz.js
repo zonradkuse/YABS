@@ -4,51 +4,59 @@ var QuizQuestion = require('../models/QuizQuestion.js');
 var QuizAnswer = require('../models/QuizAnswer.js');
 var async = require('async');
 
-var hasUserAlreadyAnswered = function(question, user, callback){
-	QuizAnswer.QuizAnswer.find({question: question._id, creator: user._id, type: {$gte: 10}}).exec(function(err, answers){
-		if(err)
+var hasUserAlreadyAnswered = function (question, user, callback) {
+	QuizAnswer.QuizAnswer.find({question: question._id, creator: user._id, type: {$gte: 10}}).exec(function (err, answers) {
+		if (err) {
 			return callback(err);
-		if(answers !== null && answers.length > 0)
+		}
+		if (answers !== null && answers.length > 0) {
 			return callback(null, true);
-		else
+		} else {
 			return callback(null, false);
+		}
 	});
 };
 
-var areUsersAnswersCorrect = function(question, user, callback){
-	QuizQuestion.getByID(question._id, { population:"rightAnswers" }, function(err, question){
-		if(err)
+var areUsersAnswersCorrect = function (question, user, callback) {
+	QuizQuestion.getByID(question._id, { population: "rightAnswers" }, function (err, question) {
+		if (err) {
 			return callback(err);
-		QuizAnswer.QuizAnswer.find({question: question._id, creator: user._id, type: {$gte: 10}}).exec(function(err, answers){
-			if(err)
+		}
+		QuizAnswer.QuizAnswer.find({question: question._id, creator: user._id, type: {$gte: 10}}).exec(function (err, answers) {
+			if (err) {
 				return callback(err);
-			if(answers){
+			}
+			if (answers) {
 				var rightAnswersCount = 0;
-				for(var i=0; i < question.rightAnswers.length; i++){
-					for(var j=0; j < answers.length; j++){
-						if(checkAnswer(question.rightAnswers[i], answers[j]))
+				for (var i= 0; i < question.rightAnswers.length; i++) {
+					for (var j= 0; j < answers.length; j++) {
+						if (checkAnswer(question.rightAnswers[ i ], answers[ j ])) {
 							rightAnswersCount++;
+						}
 					}	
 				}
-				if(rightAnswersCount == question.rightAnswers.length)
+				if (rightAnswersCount == question.rightAnswers.length) {
 					return callback(null, true, answers);
+				}
 			}
 			return callback(null, false, answers);
 		});
 	});
 };
 
-module.exports.isAnswerCorrect = function(question, answer, callback){
-	QuizQuestion.getByID(question._id, { population:"rightAnswers" }, function(err, question){
-		if(err)
+module.exports.isAnswerCorrect = function (question, answer, callback) {
+	QuizQuestion.getByID(question._id, { population: "rightAnswers" }, function (err, question) {
+		if (err) {
 			return callback(err);
-		QuizAnswer.QuizAnswer.find({question: question._id, _id: answer._id}).exec(function(err, answer){
-			if(err)
+		}
+		QuizAnswer.QuizAnswer.find({question: question._id, _id: answer._id}).exec(function (err, answer) {
+			if (err) {
 				return callback(err);
-			if(answer){
+			}
+			if (answer) {
 				var isAnswerCorrect = false;
-				for(var i=0; i < question.rightAnswers.length; i++){
-					if(checkAnswer(question.rightAnswers[i], answer)){
+				for (var i= 0; i < question.rightAnswers.length; i++) {
+					if (checkAnswer(question.rightAnswers[ i ], answer)) {
 						isAnswerCorrect = true;
 						break;
 					}
@@ -60,7 +68,7 @@ module.exports.isAnswerCorrect = function(question, answer, callback){
 	});
 };
 
-var checkAnswer = function(rightAnswer, userAnswer){
+var checkAnswer = function (rightAnswer, userAnswer) {
 	var qa_id = rightAnswer.type == QuizAnswer.Types.QA_ID && userAnswer.type == QuizAnswer.Types.UA_ID && 
 				rightAnswer._id == userAnswer.answer;
 	var qa_input = rightAnswer.type == QuizAnswer.Types.QA_INPUT && userAnswer.type == QuizAnswer.Types.UA_INPUT && 
@@ -69,56 +77,61 @@ var checkAnswer = function(rightAnswer, userAnswer){
 };
 
 //TODO regex?
-var checkInput = function(rightAnswer, userAnswer){
-	if(rightAnswer.answer == userAnswer.answer)
+var checkInput = function (rightAnswer, userAnswer) {
+	if (rightAnswer.answer == userAnswer.answer) {
 		return true;
+	}
 	return false;
 };
 
-module.exports.loadQuiz = function(quiz, user, callback){
-	Quiz.getByID(quiz._id, {population:"questions.answers"}, function(err, quiz){
-		if(err)
+module.exports.loadQuiz = function (quiz, user, callback) {
+	Quiz.getByID(quiz._id, {population: "questions.answers"}, function (err, quiz) {
+		if (err) {
 			return callback(err);
+		}
 		var questions = [];
-		async.each(quiz.questions, function(q, eachCallback){
+		async.each(quiz.questions, function (q, eachCallback) {
 			var question = q.toObject();
 			delete question.userAnswers;
 			delete question.creator;
 			delete question.creationTime;
-			hasUserAlreadyAnswered(question, user, function(err, hasAnswered){
-				if(err)
+			hasUserAlreadyAnswered(question, user, function (err, hasAnswered) {
+				if (err) {
 					return callback(err);
-				if(hasAnswered){
-					areUsersAnswersCorrect(question, user, function(err, isRight, userAnswers){
+				}
+				if (hasAnswered) {
+					areUsersAnswersCorrect(question, user, function (err, isRight, userAnswers) {
 						var answers = [];
-						for(var j=0; j<question.answers.length; j++){
+						for (var j= 0; j<question.answers.length; j++) {
 							var isRightAnswer = false;
 							var hasUserSelected = false;
 
-							for(var k=0; k<question.rightAnswers.length; k++){
-								if(""+question.rightAnswers[k] == ""+question.answers[j]._id){
+							for (var k= 0; k<question.rightAnswers.length; k++) {
+								if (""+ question.rightAnswers[ k ] == ""+ question.answers[ j ]._id) {
 									isRightAnswer = true;
 									break;
 								}
 							}
 
-							for(var m=0; m<userAnswers.length; m++){
-								if(userAnswers[m].type == QuizAnswer.Types.UA_ID && userAnswers[m].answer == question.answers[j]._id){
+							for (var m= 0; m<userAnswers.length; m++) {
+								if (userAnswers[ m ].type == QuizAnswer.Types.UA_ID && userAnswers[ m ].answer == question.answers[ j ]._id) {
 									hasUserSelected = true;
 									break;
 								}
 							}
 
-							var answer = {_id: question.answers[j]._id };
-							if(isRightAnswer)
+							var answer = {_id: question.answers[ j ]._id };
+							if (isRightAnswer) {
 								answer.isRightAnswer = isRightAnswer;
-							if(hasUserSelected)
+							}
+							if (hasUserSelected) {
 								answer.hasUserSelected = hasUserSelected;
-							if(question.answers[j].type == QuizAnswer.Types.QA_ID){
+							}
+							if (question.answers[ j ].type == QuizAnswer.Types.QA_ID) {
 								answer.type = "id";
-								answer.answer = question.answers[j].answer;
+								answer.answer = question.answers[ j ].answer;
 								answers.push(answer);
-							} else if(question.answer.type == QuizAnswer.Types.QA_INPUT){
+							} else if (question.answer.type == QuizAnswer.Types.QA_INPUT) {
 								answer.type = "input";
 								answers.push(answer);
 							}
@@ -129,21 +142,22 @@ module.exports.loadQuiz = function(quiz, user, callback){
 						questions.push(question);
 						eachCallback();
 					});
-				}else{
+				}else {
 					delete question.rightAnswers;
 					var answers = [];
-					for(var j=0; j<question.answers.length; j++){
-						if(question.answers[j].type == QuizAnswer.Types.QA_ID)
-							answers.push({_id: question.answers[j]._id, type:"id", answer: question.answers[j].answer});
-						else if(question.answer.type == QuizAnswer.Types.QA_INPUT)
-							answers.push({_id: question[i].answers[j]._id, type:"input"});
+					for (var j= 0; j<question.answers.length; j++) {
+						if (question.answers[ j ].type == QuizAnswer.Types.QA_ID) {
+							answers.push({_id: question.answers[ j ]._id, type: "id", answer: question.answers[ j ].answer});
+						} else if (question.answer.type == QuizAnswer.Types.QA_INPUT) {
+							answers.push({_id: question[ i ].answers[ j ]._id, type: "input"});
+						}
 					}
 					question.answers = answers;
 					questions.push(question);
 					eachCallback();
 				}
 			});
-		},function(err){
+		}, function (err) {
 			var q = quiz.toObject();
 			q.questions = questions;
 			delete q.creator;

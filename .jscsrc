@@ -1,0 +1,76 @@
+{
+	"requireCurlyBraces": [
+	    "if",
+	    "else",
+	    "for",
+	    "while",
+	    "do",
+	    "try",
+	    "catch",
+	    "case",
+	    "default"
+	],
+	"requireLineFeedAtFileEnd": true,
+	"requireOperatorBeforeLineBreak": [
+        "?",
+        "=",
+        "+",
+        "-",
+        "/",
+        "*",
+        "==",
+        "===",
+        "!=",
+        "!==",
+        ">",
+        ">=",
+        "<",
+        "<="
+    ],
+    "requireSemicolons": true,
+    "requireSpaceAfterKeywords": [
+        "do",
+        "for",
+        "if",
+        "else",
+        "switch",
+        "case",
+        "try",
+        "catch",
+        "while",
+        "with",
+        "return",
+        "typeof",
+        "function"
+    ],
+    "requireSpaceBetweenArguments": true,
+    "requireSpacesInConditionalExpression": {
+        "afterTest": true,
+        "beforeConsequent": true,
+        "afterConsequent": true,
+        "beforeAlternate": true
+    },
+    "requireSpacesInForStatement": true,
+    "requireSpaceAfterBinaryOperators": [
+        "=",
+        ",",
+        "+",
+        "-",
+        "/",
+        "*",
+        "==",
+        "===",
+        "!=",
+        "!=="
+    ],
+    "requireLineBreakAfterVariableAssignment": true,
+    "disallowEmptyBlocks": true,
+    "disallowNewlineBeforeBlockStatements": true,
+    "requireSpaceBeforeBlockStatements": 1,
+    "requireSpaceBeforeObjectValues": true,
+    "requireSpacesInsideBrackets": {
+        "allExcept": [ "[", "]", "{", "}" ]
+    },
+    "validateParameterSeparator": ", "
+
+}
