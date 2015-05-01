@@ -54,7 +54,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "node_modules/mocha/bin/mocha --reporter nyan"
+    "test": "gulp check"
   },
   "description": "YABS ====",
   "main": "server.js",

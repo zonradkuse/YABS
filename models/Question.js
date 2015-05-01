@@ -38,7 +38,7 @@ module.exports.setContent = function(question, content, callback){
 	Question.findByIdAndUpdate(question._id,{ 'content': content, 'updateTime': Date.now() },function(err, question){
 		return callback(err,question);
 	});
-}
+};
 
 /*
 * @param question the target question object
@@ -51,7 +51,7 @@ module.exports.setVisibility = function(question, visible, callback){
 	Question.findByIdAndUpdate(question._id,{ 'visible': visible, 'updateTime': Date.now() },function(err, question){
 		return callback(err,question);
 	});
-}
+};
 
 /*
 * @param question the question object which should be removed
@@ -67,7 +67,7 @@ module.exports.remove = function(question, callback){
 			return callback(err);
 		});
 	});
-}
+};
 
 /*
 * @param questionID the ID of the target question object
@@ -80,7 +80,7 @@ module.exports.getByID = function(questionID, options, callback){
 	Question.findById(questionID).deepPopulate(options.population).exec(function(err,question){
 		return callback(err,question);
 	});
-}
+};
 
 /*
 * @param question the target question object
@@ -93,7 +93,7 @@ module.exports.vote = function(question, user, callback){
 	Question.findByIdAndUpdate(question._id,{$push:{'votes': user._id}},function(err,question){
 		return callback(err,question);
 	});
-}
+};
 
 /*
 * @param question the target question object
@@ -106,7 +106,7 @@ module.exports.getVotes = function(question, options, callback){
 	Question.findById(question._id,'votes').deepPopulate(options.population).exec(function(err,question){
 		return callback(err,question.votes);
 	});
-}
+};
 
 /*
 * @param question the target question object
@@ -118,11 +118,11 @@ module.exports.getVotesCount = function(question, callback){
 	Question.aggregate([{$match:{'_id':new mongoose.Types.ObjectId(question._id)}},{$project:{count:{$size:'$votes'}}}],function(err,questions){
 		if(err)
 			throw err;
-		if(questions.length == 0)
+		if(questions.length === 0)
 			return callback(new Error("Question not found."),null);
 		return callback(err,questions[0].count);
 	});
-}
+};
 
 /*
 * @param question the target question object
@@ -139,4 +139,4 @@ module.exports.addAnswer = function(question, answer, callback){
             return callback(err, question, answer);
         });
     });
-}
+};

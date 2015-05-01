@@ -1,3 +1,4 @@
+/* global __dirname */
 var express = require('express');
 var app = express();
 var config = require('./config.json');
@@ -14,16 +15,16 @@ var passport = require('passport');
 var mongoose = require('mongoose');
 var flash = require('connect-flash');
 var fs = require('fs');
-fs.mkdir(__dirname + '/images', function(err){}); // create needed image root folder
+fs.mkdir(__dirname + '/images', function (err) { }); // create needed image root folder
 
 
 mongoose.connect(config.database.host);
 
-    /*
-     * Initiate Express.js Webserver with
-     *  default sessioncookie
-     *  /public static file provider
-     */
+/*
+ * Initiate Express.js Webserver with
+ *  default sessioncookie
+ *  /public static file provider
+ */
 app.use(morgan('dev', {
     stream: logger.stream
 }));
@@ -60,9 +61,9 @@ var routes = require('./app/Routes.js');
 routes(app);
 routes.routes();
 logger.info('initialized routes!');
-app.use(function(req, res) {
-  // Use res.sendfile, as it streams instead of reading the file into memory.
-  res.sendFile(__dirname + '/public/index.html');
+app.use(function (req, res) {
+    // Use res.sendfile, as it streams instead of reading the file into memory.
+    res.sendFile(__dirname + '/public/index.html');
 });
 var auth = require('./app/Authentication.js')(passport);
 

@@ -1,3 +1,4 @@
+/// <reference path="typings/node/node.d.ts"/>
 var gulp = require('gulp'),
     useref = require('gulp-useref'),
     gulpif = require('gulp-if'),
@@ -5,11 +6,13 @@ var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     minifyCss = require('gulp-minify-css'),
     flatten = require('gulp-flatten'),
-    del = require('del');
-    jsdoc = require('gulp-jsdoc');
-    rename = require('gulp-rename')
+    del = require('del'),
+    jsdoc = require('gulp-jsdoc'),
+    rename = require('gulp-rename'),
+    exec = require('child_process').exec;
 
-gulp.task('build', function() {
+//build the client and only the client
+gulp.task('build', ['install'], function() {
     del.sync('public/*');
 
     gulp.src(["client/bower_components/chartist/dist/chartist.min.css"])
@@ -48,7 +51,20 @@ gulp.task('build', function() {
     
     gulp.src(['client/img/**/*.{jpg,gif}'])
         .pipe(flatten())
-        .pipe(gulp.dest('public/'));           
+        .pipe(gulp.dest('public/'));  
+});
+
+gulp.task('check', function(cb) {
+    return gulp.src(['app/**/*.{js, json}',
+              'models/**/*.{js,json}',
+              'config/**/*.{json, js}',
+              '*.{json, js}'])
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'), { 
+            verbose: true,
+            strict: true
+        })
+        .pipe(jshint.reporter('fail'));    
 });
 
 gulp.task('release-build', function () {
@@ -62,6 +78,32 @@ gulp.task('release-build', function () {
         .pipe(useref())
         .pipe(gulp.dest('public'));
 });
+
+gulp.task('install', ['check'], function(cb){
+    // npm install
+    exec('npm install', function(err, stdout, stderr) {
+        if(err) return cb(err);
+        if(stdout) {
+            process.stdout.write("NPM STDOUT: \n" + stdout + "\n\0");
+        }
+        if(stderr) {
+            process.stdout.write("NPM STDERR: \n" + stderr + "\n\0");
+        }
+        // bower install
+        exec('bower install', function(err, stdout, stderr) {
+            if(stdout) {
+                process.stdout.write("BOWER STDOUT: \n" + stdout + "\n\0");
+            }
+            if(stderr) {
+                process.stdout.write("BOWER STDERR: \n" + stderr + "\n\0");
+            }
+            if(err) return cb(err);
+            cb();
+        });
+    });
+});
+
+gulp.task('full', ['check', 'install' ,'build']);
 
 gulp.task('doc', function() {
     del.sync('doc/*');

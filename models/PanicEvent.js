@@ -26,7 +26,7 @@ module.exports.getAll = function(room, options, callback){
             return callback(err,null);
         return callback(null,events);
     });
-}
+};
 
 /*
 * @param room the room object of the live events
@@ -40,6 +40,6 @@ module.exports.remove = function(room, callback){
             return callback(err);
         return callback(null);
     });
-}
+};
 
 

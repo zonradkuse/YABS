@@ -60,6 +60,6 @@ function removeAuthorTokens(input) {
                 console.log(input[i]);
             }
         }
-    };
+    }
     return input;
 }

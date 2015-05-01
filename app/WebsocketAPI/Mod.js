@@ -2,6 +2,7 @@ var answerDAO = require('../../models/Answer.js');
 var questionDAO = require('../../models/Question.js');
 var accessManager = require('../AccessManagement.js');
 var roomWSControl = require('./Room.js');
+var logger = require('../Logger.js');
 
 module.exports = function(wsControl) {
     wsControl.on("mod:deleteAnswer", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
@@ -92,7 +93,7 @@ module.exports = function(wsControl) {
                                     wsControl.build(ws, new Error("Could not save the new state."), null, refId);
                                     return logger.err("Could not save the new state: " + err);
                                 }
-                                toSend = JSON.parse(JSON.stringify(ans));
+                                var toSend = JSON.parse(JSON.stringify(ans));
                                 toSend.author = roomWSControl.removeAuthorFields(toSend.author);
                                 toSend.author.avatar = toSend.author.avatar.path;
                                 wss.roomBroadcast(ws, "answer:add", {
@@ -127,7 +128,7 @@ module.exports = function(wsControl) {
                                     wsControl.build("Could not save the new state.");
                                     return logger.err("Could not save the new state: " + err);
                                 }
-                                toSend = JSON.parse(JSON.stringify(ans));
+                                var toSend = JSON.parse(JSON.stringify(ans));
                                 toSend.author = roomWSControl.removeAuthorFields(toSend.author);
                                 toSend.author.avatar = toSend.author.avatar.path;
                                 wss.roomBroadcast(ws, "answer:add", {

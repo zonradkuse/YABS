@@ -13,7 +13,7 @@ var hasUserAlreadyAnswered = function(question, user, callback){
 		else
 			return callback(null, false);
 	});
-}
+};
 
 var areUsersAnswersCorrect = function(question, user, callback){
 	QuizQuestion.getByID(question._id, { population:"rightAnswers" }, function(err, question){
@@ -36,7 +36,7 @@ var areUsersAnswersCorrect = function(question, user, callback){
 			return callback(null, false, answers);
 		});
 	});
-}
+};
 
 module.exports.isAnswerCorrect = function(question, answer, callback){
 	QuizQuestion.getByID(question._id, { population:"rightAnswers" }, function(err, question){
@@ -58,7 +58,7 @@ module.exports.isAnswerCorrect = function(question, answer, callback){
 			return callback(null, false);
 		});
 	});
-}
+};
 
 var checkAnswer = function(rightAnswer, userAnswer){
 	var qa_id = rightAnswer.type == QuizAnswer.Types.QA_ID && userAnswer.type == QuizAnswer.Types.UA_ID 
@@ -66,14 +66,14 @@ var checkAnswer = function(rightAnswer, userAnswer){
 	var qa_input = rightAnswer.type == QuizAnswer.Types.QA_INPUT && userAnswer.type == QuizAnswer.Types.UA_INPUT 
 		&& checkInput(rightAnswer, userAnswer);
 	return qa_id || qa_input;
-}
+};
 
 //TODO regex?
 var checkInput = function(rightAnswer, userAnswer){
 	if(rightAnswer.answer == userAnswer.answer)
 		return true;
 	return false;
-}
+};
 
 module.exports.loadQuiz = function(quiz, user, callback){
 	Quiz.getByID(quiz._id, {population:"questions.answers"}, function(err, quiz){
@@ -150,4 +150,4 @@ module.exports.loadQuiz = function(quiz, user, callback){
 			return callback(null, q);
 		});
 	});
-}
+};

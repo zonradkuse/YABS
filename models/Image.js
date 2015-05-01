@@ -41,4 +41,4 @@ module.exports.get = function(imageID, callback){
             return callback(new Error("Image not found."), null);
         callback(err, img);
     });
-}
+};

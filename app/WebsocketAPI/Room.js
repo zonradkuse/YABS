@@ -20,7 +20,7 @@ module.exports = function(wsControl){
             } else {
                 wsControl.build(ws, new Error("Access Denied"), null, refId);
             }
-        })
+        });
 
     });
     wsControl.on("room:getQuestions", function(wss, ws, session, params, interfaceEntry, refId, sId){
@@ -38,7 +38,7 @@ module.exports = function(wsControl){
                     if (room.questions[j].answers) {
                         for (var i = room.questions[j].answers.length - 1; i >= 0; i--) {
                             room.questions[j].answers[i].images = removeOwnerFields(room.questions[j].answers[i].images);
-                        };
+                        }
                     }
                     if (room.questions[j].content !== "" && room.questions[j].creationTime.getTime() > date) {
                         wsControl.build(ws, null, null, null, "question:add", {

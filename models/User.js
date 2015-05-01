@@ -79,7 +79,7 @@ module.exports.create = function(user, callback){
   user.save(function(err, user){
     return callback(err, user);
   });
-}
+};
 
 /*
 * @param userID ID of the target user object
@@ -91,7 +91,7 @@ module.exports.get = function(userID, callback){
   User.findById(userID,function(err, user){
     return callback(err, user);
   });
-}
+};
 
 /*
 * @param callback params: error, user object
@@ -102,7 +102,7 @@ module.exports.getAll = function(callback){
   User.find({},function(err, users){
     return callback(err, users);
   });
-}
+};
 
 /*
 * @param user the target user object
@@ -115,7 +115,7 @@ module.exports.addRoomAccess = function(user, roomID, callback){
   User.findOneAndUpdate({'_id':user._id,'access':{$nin:[roomID]}},{$pushAll:{'access':[roomID]}},function(err, user){
       return callback(err, user);
   });
-}
+};
 
 /*
 * @param user the target user object
@@ -128,7 +128,7 @@ module.exports.getRoomAccess = function(user, options, callback){
   User.findById(user._id).deepPopulate('access access.'+options.population).exec(function(err, user){
     return callback(err, user.access);
   });
-}
+};
 
 /*
 * @param user the target user object
@@ -147,7 +147,7 @@ module.exports.addRoomToUser = function(user, room, callback){
       return callback(err, user, room);
     });
   });
-}
+};
 
 /*
 * @param user the target user object
@@ -156,24 +156,28 @@ module.exports.addRoomToUser = function(user, room, callback){
 * @param callback params: error, user object, room object
 */
 module.exports.hasAccessToRoom = function(user, room, options, callback){
-  if(callback === undefined)
-    throw new Error("callback not defined");
+    if(callback === undefined) {
+      throw new Error("callback not defined");
+    }
     module.exports.getRoomAccess(user, {population:''}, function(err, rooms){
-      if(err)
-        return callback(new Error("Cannot check user's room access."), null, null);
-      for(var i=0; i<rooms.length; i++){
-        if(rooms[i]._id == room._id){
-          Room.getByID(room._id, {population: options.population}, function(err, room){
-            if(err)
-              return callback(new Error("Room not found."), null, null);
-            return callback(null, user, room);
-          });
-          return;
+        if(err) {
+            return callback(new Error("Cannot check user's room access."), null, null);
         }
-      }
-      return callback(new Error("Access denied."), null, null);
+        var _cb = function(err, room){
+            if(err) {
+                return callback(new Error("Room not found."), null, null);
+            }
+            return callback(null, user, room);
+        };
+        for(var i=0; i<rooms.length; i++){
+            if(rooms[i]._id == room._id){
+                Room.getByID(room._id, {population: options.population}, _cb);
+                return;
+            }
+        }
+        return callback(new Error("Access denied."), null, null);
     });
-}
+};
 
 /*
 * @param user the target user object
@@ -183,24 +187,28 @@ module.exports.hasAccessToRoom = function(user, room, options, callback){
 * @param callback params: error, user object, question object
 */
 module.exports.hasAccessToQuestion = function(user, room, question, options, callback){
-  if(callback === undefined)
-    throw new Error("callback not defined");
-  module.exports.hasAccessToRoom(user, room, {population:''}, function(err, user, room){
-    if(err)
-      return callback(err, null, null);
-    for(var i=0; i<room.questions.length; i++){
-      if(room.questions[i] == question._id){
-        Question.getByID(question._id, {population: options.population}, function(err, question){
-          if(err)
-            return callback(new Error("Question not found."), null, null);
-          return callback(null, user, question);
-        });
-        return;
-      }
+    if(callback === undefined) {
+        throw new Error("callback not defined");
     }
-    return callback(new Error("Access denied."), null, null);
-  });
-}
+    module.exports.hasAccessToRoom(user, room, {population:''}, function(err, user, room){
+        if(err) {
+            return callback(err, null, null);
+        }
+        var _cb = function(err, question){
+            if(err) {
+                return callback(new Error("Question not found."), null, null);
+            }
+            return callback(null, user, question);
+        };
+        for(var i=0; i<room.questions.length; i++){
+            if(room.questions[i] == question._id){
+                Question.getByID(question._id, {population: options.population}, _cb);
+                return;
+            }
+        }
+        return callback(new Error("Access denied."), null, null);
+    });
+};
 
 /*
 * @param user the target user object
@@ -211,21 +219,24 @@ module.exports.hasAccessToQuestion = function(user, room, question, options, cal
 * @param callback params: error, user object, answer object
 */
 module.exports.hasAccessToAnswer = function(user, room, question, answer, options, callback){
-  if(callback === undefined)
-    throw new Error("callback not defined");
-  module.exports.hasAccessToQuestion(user, room, question, {population:''}, function(err, user, question){
-    if(err)
-      return callback(err, null, null);
-    for(var i=0; i<question.answers.length; i++){
-      if(question.answers[i] == answer._id){
-        Answer.getByID(answer._id, {population: options.population}, function(err, answer){
-          if(err)
-            return callback(new Error("Answer not found."), null, null);
-          return callback(null, user, answer);
-        });
-        return;
-      }
-    }
-    return callback(new Error("Access denied."), null, null);
-  });
-}
+    if(callback === undefined)
+        throw new Error("callback not defined");
+    module.exports.hasAccessToQuestion(user, room, question, {population:''}, function(err, user, question){
+        if(err) {
+            return callback(err, null, null);
+        }
+        var _cb = function(err, answer){
+            if(err) {
+              return callback(new Error("Answer not found."), null, null);
+            }
+            return callback(null, user, answer);
+        };
+        for(var i=0; i<question.answers.length; i++){
+            if(question.answers[i] == answer._id){
+                Answer.getByID(answer._id, {population: options.population}, _cb);
+                return;
+            }
+        }
+        return callback(new Error("Access denied."), null, null);
+    });
+};

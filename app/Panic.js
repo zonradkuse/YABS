@@ -80,7 +80,7 @@ var RoomWorker = function(roomID, wsControl, wss, ws, options) {
 RoomWorker.prototype.stop = function(){
     clearInterval(this.liveDaemon);
     clearInterval(this.graphDaemon);
-}
+};
 
 /*
 * @param room the room object to be registered
@@ -103,7 +103,7 @@ module.exports.register = function(room, wsControl, wss, ws, options, callback){
             return callback(null);
         });
     });
-}
+};
 
 /*
 * @param room the room object to be unregistered
@@ -121,7 +121,7 @@ module.exports.unregister = function(room, callback){
             return callback(err);
         return callback(null);
     });
-}
+};
 
 /*
 * @param room the room object of the target graph
@@ -146,11 +146,11 @@ var clusterEvents = function(room, options, callback){
         PanicGraph.PanicGraph.update({room: room._id},{$push:{'data': data}},
             {upsert:true},function(err, graph){
                 if(err)
-                    return callback(err)
+                    return callback(err);
             return callback(null);
         });        
     });
-}
+};
 
 /*
 * @param user the user object which should be checked
@@ -165,7 +165,7 @@ module.exports.hasUserPanic = function(user, room, callback){
             return callback(err, null);
         return callback(null, panicEvent);
     });
-}
+};
 
 /*
 * @param room the room object which should be registered
@@ -178,7 +178,7 @@ module.exports.isRoomRegistered = function(room, callback){
         return callback(true);
     else
         return callback(false);
-}
+};
 
 /*
 * @param user the user object which has panic
@@ -203,7 +203,7 @@ module.exports.panic = function(user, room, callback){
             return callback(null);
         });
     });
-}
+};
 
 /*
 * @param user the user object which has no panic anymore
@@ -218,7 +218,7 @@ module.exports.unpanic = function(user, room, callback){
     PanicEvent.PanicEvent.find({room:room._id, user:user._id}).remove(function(err, count){
         if(err)
             return callback(err);
-        if(count == 0)
+        if(count === 0)
             return callback(new Error("User has already no panic"));
         var userTimeout = userMap[{room:room._id, user:user._id}];
         if(userTimeout !== undefined){
@@ -227,7 +227,7 @@ module.exports.unpanic = function(user, room, callback){
         }
         return callback(null);
     });
-}
+};
 
 function createUserTimeout(room, user){
     return setTimeout(function(){
@@ -235,7 +235,7 @@ function createUserTimeout(room, user){
         if(roomWorker === undefined)
             return;
         PanicEvent.PanicEvent.find({room:room._id, user:user._id}).remove(function(err, count){
-            if(err || count == 0)
+            if(err || count === 0)
                 return;
             var userWorkerMap = System.getWorkerMap();
             for(var key in userWorkerMap)

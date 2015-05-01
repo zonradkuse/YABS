@@ -32,7 +32,7 @@ module.exports.getAllByUser = function(user, options, callback){
 	QuizAnswer.find({creator: user._id}).deepPopulate(options.population).exec(function(err,answers){
 		return callback(err,answers);
 	});
-}
+};
 
 module.exports.getAllByQuestion = function(question, options, callback){
 	if(callback === undefined)
@@ -42,4 +42,4 @@ module.exports.getAllByQuestion = function(question, options, callback){
 	QuizAnswer.find({question: question._id}).deepPopulate(options.population).exec(function(err,answers){
 		return callback(err,answers);
 	});	
-}
+};

@@ -1,3 +1,4 @@
+/* global __dirname */
 var config = require('../config.json');
 var logger = require('./Logger.js');
 var lwip = require('lwip');
@@ -56,21 +57,6 @@ module.exports = function(app) {
             }
         }
     }));
-     
-    if (config.general.env.dev) {
-        // a route for testing the upload
-        app.get('/upload', function(req, res) {
-            res.setHeader('Content-Type', 'text/html');
-            res.write('image upload \
-                        <form action="/upload" method="post" enctype="multipart/form-data"> \
-                        File:<br> \
-                        <input type="file" name="image" value="Your File..."> \
-                        <br><br> \
-                        <input type="submit" value="Submit"> \
-                        </form>');
-            res.end();
-        });
-    }
 
     app.post('/upload', function(req, res) {
         if (req.files) { // we still have files - so nice. perform virus check and create database entry
