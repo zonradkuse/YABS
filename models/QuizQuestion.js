@@ -28,7 +28,7 @@ module.exports.getByID = function(questionID, options, callback){
     QuizQuestion.findById(questionID).deepPopulate(options.population).exec(function(err, question){
         return callback(err, question);
     });
-}
+};
 
 module.exports.addQuizAnswer = function(question, answer, callback){
     if(callback === undefined)

@@ -61,10 +61,10 @@ module.exports.isAnswerCorrect = function(question, answer, callback){
 };
 
 var checkAnswer = function(rightAnswer, userAnswer){
-	var qa_id = rightAnswer.type == QuizAnswer.Types.QA_ID && userAnswer.type == QuizAnswer.Types.UA_ID 
-		&& rightAnswer._id == userAnswer.answer;
-	var qa_input = rightAnswer.type == QuizAnswer.Types.QA_INPUT && userAnswer.type == QuizAnswer.Types.UA_INPUT 
-		&& checkInput(rightAnswer, userAnswer);
+	var qa_id = rightAnswer.type == QuizAnswer.Types.QA_ID && userAnswer.type == QuizAnswer.Types.UA_ID && 
+				rightAnswer._id == userAnswer.answer;
+	var qa_input = rightAnswer.type == QuizAnswer.Types.QA_INPUT && userAnswer.type == QuizAnswer.Types.UA_INPUT && 
+				checkInput(rightAnswer, userAnswer);
 	return qa_id || qa_input;
 };
 
@@ -80,8 +80,8 @@ module.exports.loadQuiz = function(quiz, user, callback){
 		if(err)
 			return callback(err);
 		var questions = [];
-		async.each(quiz.questions, function(question, eachCallback){
-			var question = question.toObject();
+		async.each(quiz.questions, function(q, eachCallback){
+			var question = q.toObject();
 			delete question.userAnswers;
 			delete question.creator;
 			delete question.creationTime;
@@ -102,8 +102,8 @@ module.exports.loadQuiz = function(quiz, user, callback){
 								}
 							}
 
-							for(var k=0; k<userAnswers.length; k++){
-								if(userAnswers[k].type == QuizAnswer.Types.UA_ID && userAnswers[k].answer == question.answers[j]._id){
+							for(var m=0; m<userAnswers.length; m++){
+								if(userAnswers[m].type == QuizAnswer.Types.UA_ID && userAnswers[m].answer == question.answers[j]._id){
 									hasUserSelected = true;
 									break;
 								}
