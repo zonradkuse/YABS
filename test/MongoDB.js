@@ -2,20 +2,25 @@ var Room = require('../models/Room.js');
 var Question = require('../models/Question.js');
 var User = require('../models/User.js');
 var Answer = require('../models/Answer.js');
-var Panic = require('../models/Panic.js');
 var Image = require('../models/Image.js');
+
+var Quiz = require('../models/Quiz.js');
+var QuizQuestion = require('../models/QuizQuestion.js');
+var QuizAnswer = require('../models/QuizAnswer.js');
+var QuizWorker = require('../app/Quiz.js');
+
 
 var mongoose = require('mongoose');
 var async = require('async');
 
-mongoose.connect('mongodb://localhost/yabs');
+mongoose.connect('mongodb://localhost/yabsTest');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open',function(callback){
 
-	/*mongoose.connection.db.dropDatabase(function(error) {
+	mongoose.connection.db.dropDatabase(function(error) {
 	    console.log('db dropped');
-	    var u = new User.User({name: "Jens"});
+	    /*var u = new User.User({name: "Jens"});
 		var r = new Room.Room({l2pID: "L2P", name: "DSAL"});
 		var r2 = new Room.Room({l2pID: "L2P", name: "DSAL"});
 		var a = new Answer.Answer({author: u._id, content: "Answering"});
@@ -46,61 +51,40 @@ db.once('open',function(callback){
 			if(err)
 				throw err;
 			console.log(JSON.stringify(res,null,2));
+		});*/
+		var u = new User.User({name: "Jens"});
+		User.create(u, function(err, user){
+
+			var quiz = new Quiz.Quiz({creator: u._id});
+			var quizQuestion = new QuizQuestion.QuizQuestion({creator: u._id, question:"Favorite song?"});
+			var quizAnswer = new QuizAnswer.QuizAnswer({creator: u._id, question: quizQuestion._id, type: QuizAnswer.Types.QA_ID, answer:"Who let's the dog out!"});
+			var quizAnswer2 = new QuizAnswer.QuizAnswer({creator: u._id, question: quizQuestion._id, type: QuizAnswer.Types.QA_ID, answer:"Lollipop!"});
+			var userAnswer = new QuizAnswer.QuizAnswer({creator: u._id, question: quizQuestion._id, type: QuizAnswer.Types.UA_ID, answer:quizAnswer._id});
+			quiz.save(function(err){
+				Quiz.addQuestion(quiz, quizQuestion, function(err, quiz){
+					QuizQuestion.addQuizAnswer(quizQuestion, quizAnswer2, function(err, quizQuestion, quizAnswer2){
+						QuizQuestion.addQuizAnswer(quizQuestion, quizAnswer, function(err, quizQuestion, quizAnswer){
+							//QuizQuestion.markAnswerAsRight(quizQuestion, quizAnswer2, function(err, quizQuestion){
+								QuizQuestion.markAnswerAsRight(quizQuestion, quizAnswer, function(err, quizQuestion){
+									QuizWorker.loadQuiz(quiz, u, function(err, quiz2){
+										QuizQuestion.addUserAnswer(quizQuestion, userAnswer, function(err, quizQuestion, userAnswer){
+											QuizWorker.loadQuiz(quiz, u, function(err, quiz){
+												if(err)
+													throw err;
+												console.log("\n\n\n\nQUIZ:");
+												console.log(JSON.stringify(quiz,null,2));
+											});
+										});
+									});
+								});
+							//});
+						});
+					});
+				});
+			});
+
 		});
-		
-	});*/
-	console.log(process.argv[2]);
-	Question.getByID(process.argv[2], {population:'author.avatar'}, function(err, q){
-		if(err)
-			throw err;
-		quest = q.toObject();
-		quest.author = addAuthorAvatarPath(q.author.toObject());
-		console.log(JSON.stringify(quest, null, 2));
+	
 	});
 
-	function addAuthorAvatarPath(author){
-		var path = author.avatar.path;
-		delete author.avatar;
-		author.avatar = path;
-		return author;
-	}
-
-	//Panic.getEvents({_id: "12345"},{population:'', end: new Date()},function(err, graph){});
-	//Panic.panic({_id: mongoose.Types.ObjectId()},{_id: mongoose.Types.ObjectId()},function(err, panic){});
-	/*var roomID = mongoose.Types.ObjectId();
-	var userID1 = mongoose.Types.ObjectId();
-	var userID2 = mongoose.Types.ObjectId();
-	var userID3 = mongoose.Types.ObjectId();
-
-	Panic.register({_id: roomID}, null, {live: 1000, graph: 6000},function(err){});
-
-	setTimeout(function(){
-		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){if(err) throw err});
-		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
-	},1000);
-
-	setTimeout(function(){
-		Panic.panic({_id:userID1},{_id:roomID},function(err){
-			//Panic.panic({_id:userID1},{_id:roomID},function(err){if(err) throw err});
-		});
-		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
-	},6500);
-
-	setTimeout(function(){
-		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
-		Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
-	},7000);
-
-	setTimeout(function(){
-		Panic.unpanic({_id:userID1},{_id:roomID},function(err){});
-		//Panic.panic({_id:mongoose.Types.ObjectId()},{_id:roomID},function(err){});
-	},7800);
-
-	setTimeout(function(){
-		console.log("unregister");
-		Panic.unregister({_id: roomID},function(err){});
-		Panic.getGraph({_id:roomID},{population:''},function(err, graph){
-			console.log(JSON.stringify(graph,null,2));
-		});
-	},13000);*/
 });
