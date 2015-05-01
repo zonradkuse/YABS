@@ -75,7 +75,7 @@ gulp.task('jscs-models', function(){
         .pipe(gulp.dest('models'));
 });
 
-gulp.task('check', function(cb) {
+gulp.task('check', ['jscs-app'], function(cb) {
     return gulp.src(['app/**/*.{js, json}',
               'models/**/*.{js,json}',
               'config/**/*.{json, js}',
