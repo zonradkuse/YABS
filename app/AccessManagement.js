@@ -3,6 +3,7 @@ var roles = require('../config/UserRoles.json');
 var session = require('express-session');
 var sessionStore = require('connect-redis')(session);
 var sessionStore = new sessionStore();
+var logger = require('./Logger.js');
 
 function getEntry(uri) {
     for(var key in inter.data){

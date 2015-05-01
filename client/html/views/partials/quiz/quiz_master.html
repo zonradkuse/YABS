@@ -56,20 +56,20 @@
                         <div class="form-group-inline" ng-if="editItem">
                             <textarea style="width:100%;" ng-model="editItem.answer" placeholder="Geben Sie den gewünschten Beschreibungstext ein..."></textarea>
                             <button type="button" style="width:30%" ng-click="delete(editItem)" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-delete"></span> Löschen </button>
-                            <select style="width:68%" class="form-control">
-                                <option value="checkbox" ng-model="editItem.type">Checkbox</option>
-                                <option value="text" ng-model="editItem.type">Textfeld</option>
-                                <option value="radiobox" ng-model="editItem.type">Radiobox</option>
+                            <select style="width:68%" class="form-control" ng-model="editItem.type">
+                                <option value="checkbox">Checkbox</option>
+                                <option value="text">Textfeld</option>
+                                <option value="radiobox">Radiobox</option>
                             </select>
-                            <div ng-if="editItem.type.text">
-                                    Akzeptierte Eingabe für dieses Textfeld
-                                    <input type="text">
+                            <div ng-if="editItem.type == 'text'">
+                                Akzeptierte Eingabe für dieses Textfeld
+                                <input type="text">
                             </div>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-6">
                         <div class="list-group">
-                            <a ng-repeat="item in items" href="#" ng-click="editAnswer(item)" class="list-group-item" ng-class="item == editItem ? 'active' : ''" ng-class="item.answer ? '' : 'label label-danger'">
+                            <a ng-repeat="item in items" href="#" ng-style="item.answer ? '' : {color: 'red'}" ng-click="editAnswer(item)" class="list-group-item" ng-class="item == editItem ? 'active' : ''">
                                 {{ item.answer ? item.answer : 'Dieses Feld hat noch keine Beschreibung!'}}
                             </a>
                         </div>

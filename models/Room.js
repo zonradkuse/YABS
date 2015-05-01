@@ -11,7 +11,7 @@ var RoomSchema = mongoose.Schema({
 	name: String,
     creationTime: { type: Date, default: Date.now },
     updateTime: { type: Date, default: Date.now },
-    questions: [{ type : ObjectId, ref: 'Question' }],
+    questions: [{ type: ObjectId, ref: 'Question' }],
     visible: { type: Boolean, default: true },
     description: String,
     url: String,
@@ -21,7 +21,7 @@ var RoomSchema = mongoose.Schema({
 
 RoomSchema.plugin(deepPopulate);
 RoomSchema.plugin(findOrCreate);
-var Room = mongoose.model('Room',RoomSchema);
+var Room = mongoose.model('Room', RoomSchema);
 module.exports.Room = Room;
 module.exports.RoomSchema = RoomSchema;
 
@@ -30,11 +30,12 @@ module.exports.RoomSchema = RoomSchema;
 * @param options used for deepPopulation
 * @param callback params: error, room object
 */
-module.exports.getByID = function(roomID, options, callback){
-	if(callback === undefined)
+module.exports.getByID = function (roomID, options, callback) {
+	if (callback === undefined) {
 		throw new Error("callback not defined");
-	Room.findById(roomID).deepPopulate(options.population).exec(function(err,room){
-		return callback(err,room);
+	}
+	Room.findById(roomID).deepPopulate(options.population).exec(function (err, room) {
+		return callback(err, room);
 	});
 }
 
@@ -43,11 +44,12 @@ module.exports.getByID = function(roomID, options, callback){
 * @param options used for deepPopulation
 * @param callback params: error, room object
 */
-module.exports.getByL2PID = function(l2pID, options, callback){
-	if(callback === undefined)
+module.exports.getByL2PID = function (l2pID, options, callback) {
+	if (callback === undefined) {
 		throw new Error("callback not defined");
-	Room.findOne({'l2pID':l2pID}).deepPopulate(options.population).exec(function(err,room){
-		return callback(err,room);
+	}
+	Room.findOne({ 'l2pID': l2pID }).deepPopulate(options.population).exec(function (err, room) {
+		return callback(err, room);
 	});
 }
 
@@ -55,11 +57,12 @@ module.exports.getByL2PID = function(l2pID, options, callback){
 * @param options used for deepPopulation
 * @param callback params: error, array of room objects
 */
-module.exports.getAll = function(options, callback){
-	if(callback === undefined)
+module.exports.getAll = function (options, callback) {
+	if (callback === undefined) {
 		throw new Error("callback not defined");
-	Room.find({}).deepPopulate(options.population).exec(function(err,rooms){
-		return callback(err,rooms);
+	}
+	Room.find({}).deepPopulate(options.population).exec(function (err, rooms) {
+		return callback(err, rooms);
 	});
 }
 
@@ -67,10 +70,11 @@ module.exports.getAll = function(options, callback){
 * @param room the room object which should be created
 * @param callback params: error, room object
 */
-module.exports.create = function(room, callback){
-	if(callback === undefined)
+module.exports.create = function (room, callback) {
+	if (callback === undefined) {
 		throw new Error("callback not defined");
-	room.save(function(err, room){
+	}
+	room.save(function (err, room) {
 		return callback(err, room);
 	});
 }
@@ -80,13 +84,14 @@ module.exports.create = function(room, callback){
 * @param question the question object which should be added
 * @param callback params: error, room object, question object
 */
-module.exports.addQuestion = function(room, question, callback){
-	if(callback === undefined)
+module.exports.addQuestion = function (room, question, callback) {
+	if (callback === undefined)
 		throw new Error("callback not defined");
-	question.save(function(err){
-		if(err)
+	question.save(function (err) {
+		if (err) {
 			return callback(err);
-		Room.findByIdAndUpdate(room._id,{$push:{'questions': question._id}},function(err){
+		}
+		Room.findByIdAndUpdate(room._id, { $push: { 'questions': question._id } }, function (err) {
 			return callback(err, room, question);
 		});
 	});

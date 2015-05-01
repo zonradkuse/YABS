@@ -1,3 +1,5 @@
+/* global clientControllers */
+/* global $ */
 clientControllers.directive('quizMaster', ['$timeout', 'rooms', function($timeout, rooms){
 	return {
 		restrict: 'E',
@@ -10,56 +12,32 @@ clientControllers.directive('quizMaster', ['$timeout', 'rooms', function($timeou
 				scope.editItem = undefined;
 				scope.items = [{
 					tId: scope.id,
-					type: {
-						text : 0,
-						radiobox: 0,
-						checkbox: 1,
-					},
+					type: "checkbox",
 					answer: "wundertoll...",
 					active: false
 				}];
-				scope.type = {
-					text: 1,
-					radiobox: 1,
-					checkbox: 1
-				};
+				scope.type = "";
 
 				scope.reset = function () {
 					scope.optionQuiz = "Umfragebeschreibung";
 					scope.qsInputText = "";
 					scope.editItem = "";
-					scope.type = {
-						text: 1,
-						radiobox: 1,
-						checkbox: 1
-					};
+					scope.type = "";
 					scope.items = [];
 				};
 
 				scope.addCheckbox = function() {
-					scope.type = {
-						text : 0,
-						radiobox: 0,
-						checkbox: 1,
-					};
+					scope.type = "checkbox";
 					scope.addItem();
 				};
 
 				scope.addRadiobox = function() {
-					scope.type = {
-						text : 0,
-						radiobox: 1,
-						checkbox: 0,
-					};
+					scope.type = "radiobox";
 					scope.addItem();
 				};
 
 				scope.addTextfield = function() {
-					scope.type = {
-						text : 1,
-						radiobox: 0,
-						checkbox: 0,
-					};
+					scope.type = "text";
 					scope.addItem();
 				};
 
@@ -85,7 +63,7 @@ clientControllers.directive('quizMaster', ['$timeout', 'rooms', function($timeou
 
 			},
 			post: function(scope, elem, attr){
-				$('#quizMasterModal').modal({
+				$('#quizMasterModal').out().modal({
 					keyboard: false,
 					backdrop: 'static'
 				});
