@@ -3,7 +3,6 @@
  *   if the called uri is okay and emits those events for easy handling.
  */
 var logger = require('./Logger.js');
-var local = require('./RPC/Local.js');
 var config = require('../config.json');
 var app = require('../server.js').app;
 var WebSocketServer = require('ws').Server;
@@ -35,19 +34,20 @@ wss.getActiveUsers = function(){
 
 wss.getActiveUsersByRoom = function(roomId, next) {
     var c = 0;
+    var _countFunc = function(p){
+        sessionStore.get(wss.clients[p].upgradeReq.signedCookies["connect.sid"], function(err, sess){
+            if (err) next(err);
+            if (sess && sess.room && sess.room == roomId) {
+                c++;
+            }
+            if (p === 0) { // this is bad and i should feel bad.
+                next(null, c);
+            }
+        });
+    };
     for (var i = wss.clients.length - 1; i >= 0; i--) {
         var pos = i;
-        (function(p){
-            sessionStore.get(wss.clients[p].upgradeReq.signedCookies["connect.sid"], function(err, sess){
-                if (err) next(err);
-                if (sess && sess.room && sess.room == roomId) {
-                    c++;
-                }
-                if (p == 0) { // this is bad and i should feel bad.
-                    next(null, c);
-                }
-            });
-        })(pos); 
+        (_countFunc)(pos); 
     }
 };
 wss.roomBroadcast = function (ws, uri, data, roomId){
@@ -115,7 +115,7 @@ var WebsocketHandler = function() {
             // Upgrade ws to request in order to get the user out of session
             cookieParser(config.general.cookie.secret)(ws.upgradeReq, null, function(err) {
                 var session;
-                sessionID = ws.upgradeReq.signedCookies["connect.sid"];
+                var sessionID = ws.upgradeReq.signedCookies["connect.sid"];
                 sessionStore.get(sessionID, function(err, sess) {
                     if (err) return self.build(ws, new Error("Error on session init.")); // TODO HANDLE ERROR CORRECTLY
                     session = sess;

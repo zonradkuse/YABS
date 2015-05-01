@@ -55,7 +55,7 @@ module.exports.setContent = function(answer, content, callback){
     Answer.findByIdAndUpdate(answer._id,{ 'content': content, 'updateTime': Date.now() },function(err, answer){
         return callback(err, answer);
     });
-}
+};
 
 /*
 * @param answer the target answer object
@@ -68,7 +68,7 @@ module.exports.setContent = function(answer, bool, callback){
     Answer.findByIdAndUpdate(answer._id,{ 'isAnswer': bool, 'updateTime': Date.now() },function(err, answer){
         return callback(err, answer);
     });
-}
+};
 
 /*
 * @param answer the target answer object
@@ -81,7 +81,7 @@ module.exports.setVisibility = function(answer, visible, callback){
     Answer.findByIdAndUpdate(answer._id,{ 'visible': visible, 'updateTime': Date.now() },function(err, answer){
         return callback(err, answer);
     });
-}
+};
 
 /*
 * @param answer the target answer object which should be removed
@@ -97,7 +97,7 @@ module.exports.remove = function(answer, callback){
             return callback(err);
         });
     });
-}
+};
 
 /*
 * @param answerID the ID of the target answer object
@@ -110,4 +110,4 @@ module.exports.getByID = function(answerID, options, callback){
     Answer.findById(answerID).deepPopulate(options.population).exec(function(err,answer){
         return callback(err,answer);
     });
-}
+};

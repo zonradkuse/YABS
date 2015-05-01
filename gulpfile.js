@@ -58,7 +58,10 @@ gulp.task('check', function() {
               'config/**/*.{json, js}',
               '*.{json, js}'])
         .pipe(jshint())
-        .pipe(jshint.reporter('default'))
+        .pipe(jshint.reporter('default'), { 
+            verbose: true,
+            strict: true
+        })
         .pipe(jshint.reporter('fail'));    
 });
 

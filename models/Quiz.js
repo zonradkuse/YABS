@@ -22,7 +22,7 @@ module.exports.getAllByRoom = function(room, options, callback){
 	Quiz.find({room: room._id}).deepPopulate(options.population).exec(function(err,quiz){
 		return callback(err,quiz);
 	});
-}
+};
 
 module.exports.addQuestion = function(quiz, question, callback){
     if(callback === undefined)
@@ -34,4 +34,4 @@ module.exports.addQuestion = function(quiz, question, callback){
             return callback(err, quiz, question);
         });
     });
-}
+};

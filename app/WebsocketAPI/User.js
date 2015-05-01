@@ -36,7 +36,7 @@ module.exports = function(wsControl){
                             for (var i = question.answers.length - 1; i >= 0; i--) {
                                 question.answers[i].images = roomWSControl.removeOwnerFields(question.answers[i].images);
                                 question.answers[i].author.avatar = question.answers[i].author.avatar.path;
-                            };
+                            }
                             question.answers = roomWSControl.removeAuthorTokens(question.answers);
 
                             wss.roomBroadcast(ws, 'question:add', {
@@ -76,20 +76,21 @@ module.exports = function(wsControl){
                         return logger.warn("could not get rooms: " + err);
                     }
                     rooms = rooms.toObject();
-                    for (var i = rooms.length - 1; i >= 0; i--) {
-                        var r = rooms[i].toObject();
-                        (function(room){
-                            panicDAO.hasUserPanic(session.user, room, function(err, panicEvent){
-                                panicDAO.isRoomRegistered(room, function(isRegistered){
-                                    room.hasUserPanic = (!err && panicEvent) ? true : false;
-                                    room.isRoomRegistered = isRegistered;
-                                    wsControl.build(ws, null, null, null, "room:add", {
-                                        'room': room
-                                    });
+                    var _roomSend = function(room){
+                        panicDAO.hasUserPanic(session.user, room, function(err, panicEvent){
+                            panicDAO.isRoomRegistered(room, function(isRegistered){
+                                room.hasUserPanic = (!err && panicEvent) ? true : false;
+                                room.isRoomRegistered = isRegistered;
+                                wsControl.build(ws, null, null, null, "room:add", {
+                                    'room': room
                                 });
                             });
-                        })(r);
-                    };                    
+                        });
+                    };
+                    for (var i = rooms.length - 1; i >= 0; i--) {
+                        var r = rooms[i].toObject();
+                        (_roomSend)(r);
+                    }                    
                 });
             } else {
                 wsControl.build(ws, new Error("Your session is invalid."), null, refId);
@@ -100,12 +101,22 @@ module.exports = function(wsControl){
         if (authed) {
             if(params && params.question && params.roomId){
 
-                if(params.question == "" || typeof params.question !== 'string')
+                if(params.question === "" || typeof params.question !== 'string')
                     return wsControl.build(ws, new Error("invalid question format"), null, refId);
                 userDAO.getRoomAccess(session.user, {population: ''}, function(err, access){
                     if(err) {
                         logger.warn("error on getting room access array " + err);
                     } else {
+                        var _answerSaveSend = function(err, images){
+                            //images = images.toObject();
+                            aCopy = JSON.parse(JSON.stringify(q)); // to send
+                            q.images = params.images;// to save
+                            aCopy.images = images;
+                            for(var key in aCopy.images) {
+                                aCopy.images[key].owner = undefined; // delete own user id
+                            }
+                            sendAndSaveQuestion(wsControl, wss, ws, params.roomId, q, aCopy, refId);
+                        };
                         for (var i = access.length - 1; i >= 0; i--) {
                             if(access[i]._id == params.roomId){
                                     var q = new questionDAO.Question();
@@ -116,26 +127,16 @@ module.exports = function(wsControl){
                                     
                                     if(params.images && params.images !== [] && Object.prototype.toString.call(params.images) === '[object Array]') {
                                         //check if valid image ids
-                                        imageDAO.Image.find({_id: { $in : params.images }}, function(err, images){
-                                            //images = images.toObject();
-                                            aCopy = JSON.parse(JSON.stringify(q)); // to send
-                                            q.images = params.images;// to save
-                                            aCopy.images = images;
-                                            for(var key in aCopy.images) {
-                                                aCopy.images[key].owner = undefined; // delete own user id
-                                            }
-                                            sendAndSaveQuestion(wsControl, wss, ws, params.roomId, q, aCopy, refId);
-                                        });
+                                        imageDAO.Image.find({_id: { $in : params.images }}, _answerSaveSend);
                                     } else {
                                         sendAndSaveQuestion(wsControl, wss, ws, params.roomId, q, q, refId);
-                                    }
-                                    
+                                    }      
                                 return;
                             }
-                        };
+                        }
                         wsControl.build(ws, new Error("Access Denied."), null, refId);
                     }
-                })
+                });
             } else {
                 wsControl.build(ws, new Error("Malformed Parameters."), null, refId);
             }
@@ -147,40 +148,42 @@ module.exports = function(wsControl){
     wsControl.on("user:answer", function(wss, ws, session, params, interfaceEntry, refId, sId, authed){
         if (authed){
             if(params && params.roomId && params.questionId && params.answer) {
-                if(params.answer == "" || typeof params.answer !== 'string')
+                if(params.answer === "" || typeof params.answer !== 'string')
                     return wsControl.build(ws, new Error("invalid question format"), null, refId);
                 userDAO.getRoomAccess(session.user, {population: 'questions'}, function(err, access){
                     var hasAccess = false;
+                    var _answerSend = function(err, q){
+                        if (q){
+                            var a = new answerDAO.Answer();
+                            a.author = session.user._id;
+                            a.content = params.answer;
+                            if(params.images && params.images !== [] && Object.prototype.toString.call(params.images) === '[object Array]') {
+                                //check if valid image ids
+                                imageDAO.Image.find({_id: { $in : params.images }}, function(err, images){
+                                    //images = images.toObject();
+                                    aCopy = JSON.parse(JSON.stringify(a)); // to send
+                                    a.images = params.images;// to save
+                                    aCopy.images = images;
+                                    for(var key in aCopy.images) {
+                                        aCopy.images[key].owner = undefined; // delete own user id
+                                    }
+                                    sendAndSaveAnswer(wsControl, wss, ws, q, a, room, aCopy, refId);
+                                });
+                                
+                            } else {
+                                sendAndSaveAnswer(wsControl, wss, ws, q, a, room, a, refId);
+                            }
+                            return;
+                        }
+                    };
                     for (var i = access.length - 1; i >= 0; i--) {
                         if (access[i]._id == params.roomId) {
                             hasAccess = true;
                             var room = access[i];
-                            questionDAO.getByID(params.questionId, {population : ''}, function(err, q){
-                                if (q){
-                                    var a = new answerDAO.Answer();
-                                    a.author = session.user._id;
-                                    a.content = params.answer;
-                                    if(params.images && params.images !== [] && Object.prototype.toString.call(params.images) === '[object Array]') {
-                                        //check if valid image ids
-                                        imageDAO.Image.find({_id: { $in : params.images }}, function(err, images){
-                                            //images = images.toObject();
-                                            aCopy = JSON.parse(JSON.stringify(a)); // to send
-                                            a.images = params.images;// to save
-                                            aCopy.images = images;
-                                            for(var key in aCopy.images) {
-                                                aCopy.images[key].owner = undefined; // delete own user id
-                                            }
-                                            sendAndSaveAnswer(wsControl, wss, ws, q, a, room, aCopy, refId);
-                                        });
-                                        
-                                    } else {
-                                        sendAndSaveAnswer(wsControl, wss, ws, q, a, room, a, refId);
-                                    }
-                                    return;
-                                }
-                            });
+                            
+                            questionDAO.getByID(params.questionId, {population : ''}, _answerSend);
                         }
-                    };
+                    }
                     if (!hasAccess) {
                         wsControl.build(ws, new Error("Access Denied."), null, refId);
                     }

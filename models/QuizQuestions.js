@@ -29,7 +29,7 @@ module.exports.addQuizAnswer = function(question, answer, callback){
             return callback(err, question, answer);
         });
     });
-}
+};
 
 module.exports.markAnswerAsRight = function(question, answer, callback){
     if(callback === undefined)
@@ -37,7 +37,7 @@ module.exports.markAnswerAsRight = function(question, answer, callback){
     QuizQuestion.findByIdAndUpdate(question._id,{$push:{'rightAnswers': answer._id}},function(err, question){
         return callback(err, question);
     });
-}
+};
 
 module.exports.addUserAnswer = function(question, answer, callback){
     if(callback === undefined)
@@ -47,4 +47,4 @@ module.exports.addUserAnswer = function(question, answer, callback){
     QuizQuestion.findByIdAndUpdate(question._id,{$push:{'userAnswers': answer._id}},function(err, question){
         return callback(err, question);
     });
-}
+};

@@ -37,7 +37,7 @@ module.exports.getByID = function (roomID, options, callback) {
 	Room.findById(roomID).deepPopulate(options.population).exec(function (err, room) {
 		return callback(err, room);
 	});
-}
+};
 
 /*
 * @param l2pID the l2pID of the target room object
@@ -51,7 +51,7 @@ module.exports.getByL2PID = function (l2pID, options, callback) {
 	Room.findOne({ 'l2pID': l2pID }).deepPopulate(options.population).exec(function (err, room) {
 		return callback(err, room);
 	});
-}
+};
 
 /*
 * @param options used for deepPopulation
@@ -64,7 +64,7 @@ module.exports.getAll = function (options, callback) {
 	Room.find({}).deepPopulate(options.population).exec(function (err, rooms) {
 		return callback(err, rooms);
 	});
-}
+};
 
 /*
 * @param room the room object which should be created
@@ -77,7 +77,7 @@ module.exports.create = function (room, callback) {
 	room.save(function (err, room) {
 		return callback(err, room);
 	});
-}
+};
 
 /*
 * @param room the target room object
@@ -95,4 +95,4 @@ module.exports.addQuestion = function (room, question, callback) {
 			return callback(err, room, question);
 		});
 	});
-}
+};

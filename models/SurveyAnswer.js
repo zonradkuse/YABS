@@ -30,7 +30,7 @@ module.exports.getAllByUser = function(user, options, callback){
 	SurveyAnswer.find({creator: user._id}).deepPopulate(options.population).exec(function(err,answers){
 		return callback(err,answers);
 	});
-}
+};
 
 module.exports.getAllBySurvey = function(survey, options, callback){
 	if(callback === undefined)
@@ -40,4 +40,4 @@ module.exports.getAllBySurvey = function(survey, options, callback){
 	SurveyAnswer.find({survey: survey._id}).deepPopulate(options.population).exec(function(err,answers){
 		return callback(err,answers);
 	});
-}
+};

@@ -25,4 +25,4 @@ module.exports.getGraph = function(room, options, callback){
             return callback(err, null);
         return callback(null,graph);
     });
-}
+};

@@ -1,3 +1,4 @@
+/* global process */
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var authConf = require('../config/auth.json');
 var User = require('../models/User.js').User;
@@ -13,7 +14,7 @@ module.exports = function(passport) {
         passReqToCallback: true
     }, function(req, token, refreshToken, profile, done) {
         process.nextTick(function() {
-            logger.info("google OAuth request.")
+            logger.info("google OAuth request.");
             if (!req.user) {
                 User.findOne({
                         'google.id': profile.id
@@ -45,12 +46,12 @@ module.exports = function(passport) {
                                     if (err) return done(err);
                                     logger.info("successful authentication. created new User: " + user._id);
                                     done(null, nUser);
-                                })
+                                });
                                 //created user - success
 
                         }
                         
-                    })
+                    });
             } else {
                 // there is already an existing user. Link the data
                 var _user = req.user; // pull the user out of the session
@@ -65,7 +66,7 @@ module.exports = function(passport) {
                         logger.info("added credentials to user: " + user._id);
                         return done(null, user);
                     });
-                })
+                });
             }
         });
     }));
@@ -81,4 +82,4 @@ module.exports = function(passport) {
         });
     });
 
-}
+};
