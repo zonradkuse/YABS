@@ -9,6 +9,7 @@ var gulp = require('gulp'),
     jsdoc = require('gulp-jsdoc');
     rename = require('gulp-rename')
 
+//build the client and only the client
 gulp.task('build', function() {
     del.sync('public/*');
 
@@ -49,6 +50,16 @@ gulp.task('build', function() {
     gulp.src(['client/img/**/*.{jpg,gif}'])
         .pipe(flatten())
         .pipe(gulp.dest('public/'));           
+});
+
+gulp.task('check', function() {
+    gulp.src(['app/**/*.{js, json}',
+              'models/**/*.{js,json}',
+              'config/**/*.{json, js}',
+              '*.{json, js}'])
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'))
+        .pipe(jshint.reporter('fail'));    
 });
 
 gulp.task('release-build', function () {
