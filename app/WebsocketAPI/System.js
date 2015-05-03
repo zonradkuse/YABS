@@ -1,3 +1,4 @@
+/// <reference path="../../typings/node/node.d.ts"/>
 var logger = require('../Logger.js');
 var config = require('../../config.json');
 var querystring = require('querystring');
@@ -20,30 +21,30 @@ module.exports = function (wsControl) {
 	/*
 	     * This method performs a big database query and sends it back to the client.
 	     */
-	wsControl.on("system:benchmark", function (wss, ws, session, params, interfaceEntry, refId, sId) {
+	wsControl.on("system:benchmark", function (req) {
 		if (config.general.env.dev) {
 			roomDAO.getAll({ population: 'questions questions.author questions.votes questions.votes.access questions.answers questions.answers.author questions.author.access questions.answers.author.access' }, function (err, rooms) {
-				wsControl.build(ws, err, rooms, refId);
+				wsControl.build(req.ws, err, rooms, req.refId);
 			});
 		}
 	});
 
-	wsControl.on('system:close', function (ws, sId) {
-		//workerMap[sId].stop();
+	wsControl.on('system:close', function (req) {
+		//workerMap[req.sId].stop();
 		logger.info("a client disconnected.");
 		process.nextTick(function () {
-			delete workerMap[ sId ];
+			delete workerMap[ req.sId ];
 		});
 	});
-	wsControl.on('system:open', function (wss, ws, session, sId) {
+	wsControl.on('system:open', function (req) {
 		logger.info("new client arrived.");
-		wsControl.build(ws, null, { message: 'welcome' }, null);
+		wsControl.build(req.ws, null, { message: 'welcome' }, null);
 		process.nextTick(function () {
 			setTimeout(function () {
-				if (session && session.user && session.user._id) {
-					UserModel.get(session.user._id, function (err, _user) {
-						var worker = new userWorker(sId, ws, _user, wsControl, true);
-						workerMap[ sId ] = worker;
+				if (req.session && req.session.user && req.session.user._id) {
+					UserModel.get(req.session.user._id, function (err, _user) {
+						var worker = new userWorker(req.sId, req.ws, _user, wsControl, true);
+						workerMap[ req.sId ] = worker;
 						worker.fetchRooms(null, function () { //get new rooms
 							worker.getRooms(); //send all rooms
 						});
@@ -55,38 +56,38 @@ module.exports = function (wsControl) {
 			}, 600);
 		});
 	});
-	wsControl.on('system:ping', function (wss, ws, session, params, interfaceEntry, refId) {
-		wsControl.build(ws, null, { message: "pong" }, refId);
+	wsControl.on('system:ping', function (req) {
+		wsControl.build(req.ws, null, { message: "pong" }, req.refId);
 	});
     
 	//Campus Device OAuth. Webapplication OAuth is not accessible. //TODO: Therefor a solution for multi-sessions is needed!
-	wsControl.on('system:login', function (wss, ws, session, params, interfaceEntry, refId, sId) {
+	wsControl.on('system:login', function (req) {
 		postReqCampus('code', querystring.stringify({
 			"client_id": config.login.l2p.clientID,
 			"scope": config.login.l2p.scope
 		}), function (err, answer) {
 			if (err) {
-				wsControl.build(ws, err, null, refId);
+				wsControl.build(req.ws, err, null, req.refId);
 				logger.warn(err);
 				return;
 			} else if (answer) {
 				try {
 					answer = JSON.parse(answer);
 				} catch (e) {
-					wsControl.build(ws, new Error("An error occured when communicating with Campus. lol."), null, refId);
+					wsControl.build(req.ws, new Error("An error occured when communicating with Campus. lol."), null, req.refId);
 					logger.warn('An error occured whon communicating with Campus OAuth. Response was: ' + answer);
 					return;
 				}
 				var _url = answer.verification_url + '?q=verify&d=' + answer.user_code;
 				logger.debug(_url);
-				wsControl.build(ws, null, {
+				wsControl.build(req.ws, null, {
 					message: "Please visit the provided url.",
 					url: _url
-				}, refId);
+				}, req.refId);
 				var auth = false;
 				var reqTime = 0;
 				var timer = setInterval(function () {
-					if (!auth && reqTime < answer.expires_in && ws.readyState === 1) {
+					if (!auth && reqTime < answer.expires_in && req.ws.readyState === 1) {
 						// poll
 						postReqCampus('token', querystring.stringify({
 							"client_id": config.login.l2p.clientID,
@@ -94,7 +95,7 @@ module.exports = function (wsControl) {
 							"grant_type": "device"
 						}), function (err, response) {
 							if (err) {
-								wsControl.build(ws, err, null, refId);
+								wsControl.build(req.ws, err, null, req.refId);
 								logger.warn(err);
 								return;
 							} else if (response) {
@@ -103,7 +104,7 @@ module.exports = function (wsControl) {
 									response = JSON.parse(response);
 								} catch (e) {
 									logger.error();
-									wsControl.build(ws, new Error("An error occured when communicating with Campus. lol."), null, refId);
+									wsControl.build(req.ws, new Error("An error occured when communicating with Campus. lol."), null, req.refId);
 									logger.warn('An error occured when communicating with Campus OAuth. Response was: ' + response);
 								}
 								if (response.status) {
@@ -127,25 +128,25 @@ module.exports = function (wsControl) {
 											_user.rwth.expires_in = response.expires_in;
 											_user.save(function (err) {
 												if (err) {
-													wsControl.build(ws, err, null, refId);
+													wsControl.build(req.ws, err, null, req.refId);
 													logger.warn(err);
 													return;
 												}
-												if (session) {
-													session.user = _user;
-													sessionStore.set(sId, session, function (err) {
+												if (req.session) {
+													req.session.user = _user;
+													sessionStore.set(req.sId, req.session, function (err) {
 														if (err) {
-															wsControl.build(ws, err, null, refId);
+															wsControl.build(req.ws, err, null, req.refId);
 															return;
 														}
-														wsControl.build(ws, null, { status: true }, refId);
+														wsControl.build(req.ws, null, { status: true }, req.refId);
 														// start a worker that fetches rooms.
-														var worker = new userWorker(sId, ws, _user, wsControl, false);
-														if (!workerMap[ sId ]) {
-															workerMap[ sId ] = worker;
+														var worker = new userWorker(req.sId, req.ws, _user, wsControl, false);
+														if (!workerMap[ req.sId ]) {
+															workerMap[ req.sId ] = worker;
 														} else {
-															worker = workerMap[ sId ];
-															worker.ws = ws; // this is necessary!
+															worker = workerMap[ req.sId ];
+															worker.req.ws = req.ws; // this is necessary!
 															worker.user = _user;
 														}
 														process.nextTick(function () {
@@ -155,18 +156,18 @@ module.exports = function (wsControl) {
 														logger.info("created new user.");
 													});
 												} else {
-													wsControl.build(ws, new Error("Your session is invalid"), null, refId);
+													wsControl.build(req.ws, new Error("Your req.session is invalid"), null, req.refId);
 												}
 											});
 										});
 									}
 								} else {
-									wsControl.build(ws, new Error("There was no status in Campus answer."), null, refId);
+									wsControl.build(req.ws, new Error("There was no status in Campus answer."), null, req.refId);
 								}
 							}
 						});
 					} else if (reqTime >= answer.expires_in) {
-						wsControl.build(ws, new Error("Your authentication request failed. Please try again."), null, refId);
+						wsControl.build(req.ws, new Error("Your authentication request failed. Please try again."), null, req.refId);
 						clearInterval(timer);
 					} else { // authenticated or connection was dumped
 						clearInterval(timer);
@@ -175,75 +176,75 @@ module.exports = function (wsControl) {
 				}, answer.interval * 1000);
 				// Campus currently responds with 30 minutes polltime. srsly?
 			} else {
-				wsControl.build(ws, new Error("Campus Response not set."));
+				wsControl.build(req.ws, new Error("Campus Response not set."));
 				logger.debug("Campus Response not set. Answer was " + answer); //yes, it must have been empty
 			}
 		});
 	});
 
-	wsControl.on("system:whoami", function (wss, ws, session, params, interfaceEntry, refId, sId) {
-		if (refId) {
-			if (!session || !session.user || !session.user._id) {
-				wsControl.build(ws, null, {
+	wsControl.on("system:whoami", function (req) {
+		if (req.refId) {
+			if (!req.session || !req.session.user || !req.session.user._id) {
+				wsControl.build(req.ws, null, {
 					status: false,
 					message: "You are currently not logged in."
-				}, refId);
+				}, req.refId);
 			} else {
-				imageDAO.get(session.user.avatar, function (err, avatar) {
-					wsControl.build(ws, null, {
+				imageDAO.get(req.session.user.avatar, function (err, avatar) {
+					wsControl.build(req.ws, null, {
 						status: true,
-						message: (session.user.name ? session.user.name : session.user._id),
-						userId: (session.user ? session.user._id : null),
-						userName: (session.user && session.user.name ? session.user.name : null),
+						message: (req.session.user.name ? req.session.user.name : req.session.user._id),
+						userId: (req.session.user ? req.session.user._id : null),
+						userName: (req.session.user && req.session.user.name ? req.session.user.name : null),
 						userAvatar: (!err && avatar ? avatar.path : null)
-					}, refId);
+					}, req.refId);
 				});
 			}
 		}
 	});
 
-	wsControl.on("system:enterRoom", function (wss, ws, session, params, interfaceEntry, refId, sId, authed) {
-		if (authed && params.roomId !== undefined) {
-			session.room = params.roomId;
-			sessionStore.set(sId, session, function (err) {
+	wsControl.on("system:enterRoom", function (req) {
+		if (req.authed && req.params.roomId !== undefined) {
+			req.session.room = req.params.roomId;
+			sessionStore.set(req.sId, req.session, function (err) {
 				if (err) {
-					wsControl.build(ws, err, null, refId);
+					wsControl.build(req.ws, err, null, req.refId);
 				} else {
-					if (params.roomId == 1) {
-						wsControl.build(ws, null, {
+					if (req.params.roomId == 1) {
+						wsControl.build(req.ws, null, {
 							status: true
 						});
 					} else {
-						panicDAO.isRoomRegistered({ _id: params.roomId }, function (isRegistered) {
-							panicDAO.hasUserPanic(session.user, { _id: params.roomId }, function (err, panicEvent) {
-								wsControl.build(ws, null, {
+						panicDAO.isRoomRegistered({ _id: req.params.roomId }, function (isRegistered) {
+							panicDAO.hasUserPanic(req.session.user, { _id: req.params.roomId }, function (err, panicEvent) {
+								wsControl.build(req.ws, null, {
 									status: true,
 									hasRoomPanicRegistered: isRegistered,
 									hasUserPanic: (panicEvent && !err) ? true : false
-								}, refId);
+								}, req.refId);
 							});
 						});
 					}
 				}
 			});
 		} else {
-			wsControl.build(ws, null, {
+			wsControl.build(req.ws, null, {
 				status: false,
-			}, refId);
+			}, req.refId);
 		}
 	});
 
-	wsControl.on("system:logout", function (wss, ws, session, params, interfaceEntry, refId, sId, authed) {
-		if (authed) {
-			sessionStore.destroy(sId, function (err) {
+	wsControl.on("system:logout", function (req) {
+		if (req.authed) {
+			sessionStore.destroy(req.sId, function (err) {
 				if (err) {
-					wsControl.build(ws, new Error("Could not delete your session."), { status: false, message: "An error occured." }, refId);
-					return logger.warn("could not delete session: " + err);
+					wsControl.build(req.ws, new Error("Could not delete your req.session."), { status: false, message: "An error occured." }, req.refId);
+					return logger.warn("could not delete req.session: " + err);
 				}
-				wsControl.build(ws, null, { status: true, message: "Goodbye." }, refId);
+				wsControl.build(req.ws, null, { status: true, message: "Goodbye." }, req.refId);
 			});
 		} else {
-			wsControl.build(ws, null, { status: false, message: "You are not logged in." }, refId);
+			wsControl.build(req.ws, null, { status: false, message: "You are not logged in." }, req.refId);
 		}
 	});
 };

@@ -5,148 +5,129 @@ var roomWSControl = require('./Room.js');
 var logger = require('../Logger.js');
 
 module.exports = function (wsControl) {
-	wsControl.on("mod:deleteAnswer", function (wss, ws, session, params, interfaceEntry, refId, sId, authed) {
-		if (authed) {
-			if (params.roomId && params.questionId && params.answerId) {
-				accessManager.checkAccessBySId("mod:markAsAnswer", sId, params.roomId, function (err, bool) {
-					if (bool) {
-						answerDAO.getByID(params.answerId, {population: 'author author.avatar'}, function (err, ans) {
-							ans.images = [];
-							ans.content = "Der Inhalt wurde gelöscht.";
-							ans.deleted = true;
-							ans.isAnswer = false;
-							ans.save(function (err) {
-								if (err) {
-									wsControl.build(ws, new Error("Could not save the new state."), null, refId);
-									return logger.err("Could not save the new state: " + err);
-								}
-								var _ans = JSON.parse(JSON.stringify(ans));
-								_ans.author.avatar = _ans.author.avatar.path;
-								_ans.author = roomWSControl.removeAuthorFields(_ans.author);
-								_ans.images = roomWSControl.removeOwnerFields(_ans.images);
-								wss.roomBroadcast(ws, "answer:add", {
-									'roomId': params.roomId,
-									'questionId' : params.questionId,
-									'answer' : _ans
-								}, params.roomId);
-							});
-						});
-					} else {
-						wsControl.build(ws, new Error("Access Denied."), null, refId);
+	wsControl.on('mod:markAsGoodQuestion', function (req) {
+		checkAccess(wsControl, req, function () {
+			
+		});
+	});
+	
+	wsControl.on("mod:deleteAnswer", function (req) {
+		checkAccess(wsControl, req, function () {
+			answerDAO.getByID(req.params.answerId, {population: 'author author.avatar'}, function (err, ans) {
+				ans.images = [];
+				ans.content = "Der Inhalt wurde gelöscht.";
+				ans.deleted = true;
+				ans.isAnswer = false;
+				ans.save(function (err) {
+					if (err) {
+						wsControl.build(req.ws, new Error("Could not save the new state."), null, req.refId);
+						return logger.err("Could not save the new state: " + err);
 					}
+					var _ans = JSON.parse(JSON.stringify(ans));
+					_ans.author.avatar = _ans.author.avatar.path;
+					_ans.author = roomWSControl.removeAuthorFields(_ans.author);
+					_ans.images = roomWSControl.removeOwnerFields(_ans.images);
+					req.wss.roomBroadcast(req.ws, "answer:add", {
+						'roomId': req.params.roomId,
+						'questionId' : req.params.questionId,
+						'answer' : _ans
+					}, req.params.roomId);
 				});
-			} else {
-				wsControl.build(ws, new Error("Missing Parameters."), null, refId);
-			}
-		} else {
-			wsControl.build(ws, new Error("Access Denied."), null, refId);
-		}
+			});
+		});
 	});
 
-	wsControl.on("mod:deleteQuestion", function (wss, ws, session, params, interfaceEntry, refId, sId, authed) {
-		if (authed) {
-			if (params.roomId && params.questionId) {
-				accessManager.checkAccessBySId("mod:markAsAnswer", sId, params.roomId, function (err, bool) {
-					if (bool) {
-						questionDAO.getByID(params.questionId, {population: 'author author.avatar'}, function (err, q) {
-							q.images = [];
-							q.content = "Der Inhalt wurde gelöscht.";
-							q.votes = [];
-							q.answers = [];
-							q.visible = false;
-							q.save(function (err) {
-								if (err) {
-									wsControl.build(ws, new Error("Could not save the new state."), null, refId);
-									return logger.err("Could not save the new state: " + err);
-								}
-								var _q = JSON.parse(JSON.stringify(q));
-								_q.author.avatar = _q.author.avatar.path;
-								_q.author = roomWSControl.removeAuthorFields(_q.author);
-								_q.images = roomWSControl.removeOwnerFields(_q.images);
-								_q.answers = [];
-								wss.roomBroadcast(ws, "question:add", {
-									'roomId': params.roomId,
-									'question' : roomWSControl.createVotesFields(session.user, _q)
-								}, params.roomId);
-							});
-						});
-					} else {
-						wsControl.build(ws, new Error("Access Denied."), null, refId);
+	wsControl.on("mod:deleteQuestion", function (req) {
+		checkAccess(wsControl, req, function () {
+			questionDAO.getByID(req.params.questionId, {population: 'author author.avatar'}, function (err, q) {
+				q.images = [];
+				q.content = "Der Inhalt wurde gelöscht.";
+				q.votes = [];
+				q.answers = [];
+				q.visible = false;
+				q.save(function (err) {
+					if (err) {
+						wsControl.build(req.ws, new Error("Could not save the new state."), null, req.refId);
+						return logger.err("Could not save the new state: " + err);
 					}
+					var _q = JSON.parse(JSON.stringify(q));
+					_q.author.avatar = _q.author.avatar.path;
+					_q.author = roomWSControl.removeAuthorFields(_q.author);
+					_q.images = roomWSControl.removeOwnerFields(_q.images);
+					_q.answers = [];
+					req.wss.roomBroadcast(req.ws, "question:add", {
+						'roomId': req.params.roomId,
+						'question' : roomWSControl.createVotesFields(req.session.user, _q)
+					}, req.params.roomId);
 				});
-			} else {
-				wsControl.build(ws, new Error("Missing Parameters."), null, refId);
-			}
-		} else {
-			wsControl.build(ws, new Error("Access Denied."), null, refId);
-		}
+			});
+		});
 	});
-	wsControl.on("mod:markAsAnswer", function (wss, ws, session, params, interfaceEntry, refId, sId, authed) {
-		if (authed) {
-			if (params.roomId && params.questionId && params.answerId) {
-				accessManager.checkAccessBySId("mod:markAsAnswer", sId, params.roomId, function (err, bool) {
-					if (bool) {
-						answerDAO.getByID(params.answerId, {population: 'author author.avatar images'}, function (err, ans) {
-							ans.isAnswer = true;
-							ans.save(function (err) {
-								if (err) {
-									wsControl.build(ws, new Error("Could not save the new state."), null, refId);
-									return logger.err("Could not save the new state: " + err);
-								}
-								var toSend = JSON.parse(JSON.stringify(ans));
-								toSend.author = roomWSControl.removeAuthorFields(toSend.author);
-								toSend.author.avatar = toSend.author.avatar.path;
-								wss.roomBroadcast(ws, "answer:add", {
-									'roomId': params.roomId,
-									'questionId': params.questionId,
-									'answer': toSend
-								}, params.roomId);
-							});
-						});
-					} else {
-						wsControl.build(ws, new Error("Access Denied."), null, refId);
+	
+	wsControl.on("mod:markAsAnswer", function (req) {
+		checkAccess(wsControl, req, function () {
+			answerDAO.getByID(req.params.answerId, {population: 'author author.avatar images'}, function (err, ans) {
+				ans.isAnswer = true;
+				ans.save(function (err) {
+					if (err) {
+						wsControl.build(req.ws, new Error("Could not save the new state."), null, req.refId);
+						return logger.err("Could not save the new state: " + err);
 					}
+					var toSend = JSON.parse(JSON.stringify(ans));
+					toSend.author = roomWSControl.removeAuthorFields(toSend.author);
+					toSend.author.avatar = toSend.author.avatar.path;
+					req.wss.roomBroadcast(req.ws, "answer:add", {
+						'roomId': req.params.roomId,
+						'questionId': req.params.questionId,
+						'answer': toSend
+					}, req.params.roomId);
 				});
-			} else {
-				wsControl.build(ws, new Error("Missing Parameters."), null, refId);
-			}
-		} else {
-			wsControl.build(ws, new Error("Access Denied."), null, refId);
-		}
+			});
+		});
 	});
     
-	wsControl.on("mod:unmarkAsAnswer", function (wss, ws, session, params, interfaceEntry, refId, sId, authed) {
-		if (authed) {
-			if (params.roomId && params.questionId && params.answerId) {
-				accessManager.checkAccessBySId("mod:markAsAnswer", sId, params.roomId, function (err, bool) {
-					if (bool) {
-						answerDAO.getByID(params.answerId, {population: 'author author.avatar images'}, function (err, ans) {
-							ans.isAnswer = false;
-                            
-							ans.save(function (err) {
-								if (err) {
-									wsControl.build("Could not save the new state.");
-									return logger.err("Could not save the new state: " + err);
-								}
-								var toSend = JSON.parse(JSON.stringify(ans));
-								toSend.author = roomWSControl.removeAuthorFields(toSend.author);
-								toSend.author.avatar = toSend.author.avatar.path;
-								wss.roomBroadcast(ws, "answer:add", {
-									'roomId': params.roomId,
-									'questionId': params.questionId,
-									'answer': toSend
-								}, params.roomId);
-							});
-						});
-					} else {
-						wsControl.build(ws, new Error("Access Denied."), null, refId);
+	wsControl.on("mod:unmarkAsAnswer", function (req) {
+		checkAccess(wsControl, req, function () {
+			answerDAO.getByID(req.params.answerId, {population: 'author author.avatar images'}, function (err, ans) {
+				ans.isAnswer = false;
+                
+				ans.save(function (err) {
+					if (err) {
+						wsControl.build("Could not save the new state.");
+						return logger.err("Could not save the new state: " + err);
 					}
+					var toSend = JSON.parse(JSON.stringify(ans));
+					toSend.author = roomWSControl.removeAuthorFields(toSend.author);
+					toSend.author.avatar = toSend.author.avatar.path;
+					req.wss.roomBroadcast(req.ws, "answer:add", {
+						'roomId': req.params.roomId,
+						'questionId': req.params.questionId,
+						'answer': toSend
+					}, req.params.roomId);
 				});
-			} else {
-				wsControl.build(ws, new Error("Missing Parameters."), null, refId);
-			}
-		} else {
-			wsControl.build(ws, new Error("Access Denied."), null, refId);
-		}
+			});
+		});
 	});
+};
+
+/**
+ * Calls Callback iff all requirements are met.
+ */
+var checkAccess = function (wsControl, req, cb) {
+	if (req.authed) {
+		if ((req.uri.indexOf("nswer") > -1 && req.params.roomId && req.params.questionId && req.params.answerId) ||
+			(req.uri.indexOf("uestion") > -1 && req.params.roomId && req.params.questionId)) {
+			accessManager.checkAccessBySId("mod:markAsAnswer", req.sId, req.params.roomId, function (err, bool) {
+				if (bool) {
+					cb();
+				} else {
+					wsControl.build(req.ws, new Error("Access Denied."), null, req.refId);
+				}
+			});
+		} else {
+			wsControl.build(req.ws, new Error("Missing Parameters."), null, req.refId);
+		}
+	} else {
+		wsControl.build(req.ws, new Error("Access Denied."), null, req.refId);
+	}
 };

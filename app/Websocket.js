@@ -130,7 +130,12 @@ var WebsocketHandler = function () {
 						return self.build(ws, new Error("Error on session init.")); // TODO HANDLE ERROR CORRECTLY
 					}
 					session = sess;
-					self.emit('system:open', wss, ws, session, ws.upgradeReq.signedCookies[ "connect.sid" ]);
+					var req = {};
+					req.ws = ws;
+					req.wss = wss;
+					req.session = session;
+					req.sId = ws.upgradeReq.signedCookies[ "connect.sid" ];
+					self.emit('system:open', req);
 				});
 				//check for binary data
 				//parse message string and call the attached functions in the interface
@@ -162,8 +167,22 @@ var WebsocketHandler = function () {
                                          *  to be checked by the event handler. They will maybe build into the interface
                                         **/
 										var authed = session && session.user && session.user._id;
-										self.emit(message.uri, wss, ws, session, message.parameters,
-										interf.data[ i ], message.refId, ws.upgradeReq.signedCookies[ "connect.sid" ], authed);
+										// build a request object.
+										var req = {};
+										req.uri = message.uri;
+										req.wss = wss;
+										req.session = session;
+										req.ws = ws;
+										req.params = message.parameters;
+										req.interfaceEntry = interf.data[ i ];
+										req.refId = message.refId;
+										req.sId = ws.upgradeReq.signedCookies[ "connect.sid" ];
+										req.authed = authed;
+										/*
+										* self.emit(message.uri, wss, ws, session, message.parameters,
+										*	interf.data[ i ], message.refId, ws.upgradeReq.signedCookies[ "connect.sid" ], authed);
+										*/
+										self.emit(message.uri, req);
 										logger.info('emitted ' + message.uri + ' WSAPI event.');
 										return;
 									}
@@ -181,7 +200,10 @@ var WebsocketHandler = function () {
 				});
 				ws.on('close', function (code, message) {
 					// emit the close event and give some more information.
-					self.emit('system:close', ws, ws.upgradeReq.signedCookies[ "connect.sid" ]);
+					var req = {};
+					req.ws = ws;
+					req.sId = ws.upgradeReq.signedCookies[ "connect.sid" ]; 
+					self.emit('system:close', req);
 				});
 				ws.on('error', function (err) {
 					logger.warn("An error occured on socket connection. " + err); // TODO What to handle here?

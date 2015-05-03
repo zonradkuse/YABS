@@ -4,59 +4,59 @@ var questionDAO = require('../../models/Question.js');
 var logger = require('../Logger.js');
 
 module.exports = function (wsControl) {
-	wsControl.on("question:getVotes", function (wss, ws, session, params, interfaceEntry, refId, sId) {
-		if (session.user && params.questionId) {
-			questionDAO.getVotesCount({_id: params.questionId}, function (err, votes) {
+	wsControl.on("question:getVotes", function (req) {
+		if (req.session.user && req.params.questionId) {
+			questionDAO.getVotesCount({_id: req.params.questionId}, function (err, votes) {
 				if (err) {
-					return wsControl.build(ws, new Error("Cannot get votes of question."), null, refId);
+					return wsControl.build(req.ws, new Error("Cannot get votes of question."), null, req.refId);
 				}
-				wsControl.build(ws, null, {'votes': votes}, refId);
+				wsControl.build(req.ws, null, {'votes': votes}, req.refId);
 			});			
 		} else {
-			wsControl.build(ws, new Error("Your session is invalid."), null, refId);
+			wsControl.build(req.ws, new Error("Your req.session is invalid."), null, req.refId);
 		}
 	});
 
-	wsControl.on("question:setContent", function (wss, ws, session, params, interfaceEntry, refId, sId) {
-		if (session.user && params.roomId && params.questionId && params.content) {
-			userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, {population: ''}, function (err, user, question) {
+	wsControl.on("question:setContent", function (req) {
+		if (req.session.user && req.params.roomId && req.params.questionId && req.params.content) {
+			userDAO.hasAccessToQuestion(req.session.user, { _id : req.params.roomId }, { _id : req.params.questionId }, {population: ''}, function (err, user, question) {
 				if (err) {
-					return wsControl.build(ws, new Error("Cannot get question."), null, refId);
+					return wsControl.build(req.ws, new Error("Cannot get question."), null, req.refId);
 				}
 				if (question.author != user._id) {
-					return wsControl.build(ws, new Error("Your not author of the question."), null, refId);
+					return wsControl.build(req.ws, new Error("Your not author of the question."), null, req.refId);
 				}
-				questionDAO.setContent(question, params.content, function (err, question) {
+				questionDAO.setContent(question, req.params.content, function (err, question) {
 					if (err) {
-						return wsControl.build(ws, new Error("Cannot update content."), null, refId);
+						return wsControl.build(req.ws, new Error("Cannot update content."), null, req.refId);
 					}
-					wsControl.build(ws, null, {'question': question}, refId);
+					wsControl.build(req.ws, null, {'question': question}, req.refId);
 				});
 			}); 
 		} else {
-			wsControl.build(ws, new Error("Your session is invalid."), null, refId);
+			wsControl.build(req.ws, new Error("Your req.session is invalid."), null, req.refId);
 		}
 	});
 
-	wsControl.on("question:setVisibility", function (wss, ws, session, params, interfaceEntry, refId, sId) {
-		if (session.user && params.roomId && params.questionId && params.isVisible) {
-			userDAO.hasAccessToQuestion(session.user, { _id : params.roomId }, { _id : params.questionId }, {population: ''}, function (err, user, question) {
+	wsControl.on("question:setVisibility", function (req) {
+		if (req.session.user && req.params.roomId && req.params.questionId && req.params.isVisible) {
+			userDAO.hasAccessToQuestion(req.session.user, { _id : req.params.roomId }, { _id : req.params.questionId }, {population: ''}, function (err, user, question) {
 				if (err) {
-					return wsControl.build(ws, new Error("Cannot get question."), null, refId);
+					return wsControl.build(req.ws, new Error("Cannot get question."), null, req.refId);
 				}
 				//TODO check admin
 				if (question.author != user._id) {
-					return wsControl.build(ws, new Error("Your not author of the question."), null, refId);
+					return wsControl.build(req.ws, new Error("Your not author of the question."), null, req.refId);
 				}
-				questionDAO.setVisibility(question, params.isVisible, function (err, question) {
+				questionDAO.setVisibility(question, req.params.isVisible, function (err, question) {
 					if (err) {
-						return wsControl.build(ws, new Error("Cannot update content."), null, refId);
+						return wsControl.build(req.ws, new Error("Cannot update content."), null, req.refId);
 					}
-					wsControl.build(ws, null, {'question': question}, refId);
+					wsControl.build(req.ws, null, {'question': question}, req.refId);
 				});
 			});
 		} else {
-			wsControl.build(ws, new Error("Your session is invalid."), null, refId);
+			wsControl.build(req.ws, new Error("Your req.session is invalid."), null, req.refId);
 		}
 	});
 };
