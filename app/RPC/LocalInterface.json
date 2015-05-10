@@ -67,6 +67,13 @@
         "func": "",
         "accessLevel": 1
     },{
+        "uri": "user:changeName",
+        "parameters": {
+            "username" : ""
+        },
+        "func": "",
+        "accessLevel": 1
+    },{
         "uri": "room:getQuestions",
         "parameters": {
             "roomId": ""

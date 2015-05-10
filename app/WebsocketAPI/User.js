@@ -260,6 +260,41 @@ module.exports = function (wsControl) {
 			wsControl.build(req.ws, new Error("Your req.session is invalid."), null, req.refId);
 		}
 	});
+
+	wsControl.on('user:changeName', function (req) {
+		if (req.authed) {
+			if (req.params.username) {
+				req.session.user.name = req.params.username;
+				//save the session and update the real user in database.
+				sessionStore.set(req.sId, req.session, function (err) {
+					if (err) {
+						logger.warn("Saving Session Name failed.");
+						wsControl.build(req.ws, err, { status : false }, req.refId);
+					}
+				});
+				userDAO.get(req.session.user._id, function (err, user) {
+					if (err) {
+						logger.warn("Saving User Name failed.");
+						wsControl.build(req.ws, err, { status : false }, req.refId);
+					} else {
+						user.name = req.params.username;
+						user.save(function (err) {
+							if (err) {
+								logger.warn("Saving Username into Database failed.");
+								wsControl.build(req.ws, err, { status : false }, req.refId);
+							} else {
+								wsControl.build(req.ws, null, { status : true }, req.refId);
+							}
+						});
+					}
+				});
+			} else {
+				wsControl.build(req.ws, null, { status : false }, req.refId);
+			}
+		} else {
+			wsControl.build(req.ws, null, { status : false }, req.refId);
+		}
+	});
 };
 
 /**

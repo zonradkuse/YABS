@@ -63,10 +63,10 @@ clientControllers.directive('quizMaster', ['$timeout', 'rooms', function($timeou
 
 			},
 			post: function(scope, elem, attr){
-				$('#quizMasterModal').out().modal({
+				/*$('#quizMasterModal').hide().modal({
 					keyboard: false,
 					backdrop: 'static'
-				});
+				});*/
 			}
 		}
 	};

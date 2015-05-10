@@ -25,11 +25,15 @@
             when('/rooms', {
                 templateUrl: 'rooms.html',
                 controller: 'roomsController'
-            }).                    
+            }).
+            when('/dashboard', {
+                templateUrl: 'dash.html',
+                controller: 'dashController'
+            }).
             when('/', {
                 templateUrl: 'frontpage.html',
                 controller: 'frontpageController'
-            }).            
+            }).
             otherwise({
                 redirectTo: '/404'
         });

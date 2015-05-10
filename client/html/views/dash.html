@@ -1,0 +1,84 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <h2>Deine persönlichen Informationen</h2>
+            Hier kannst Du Deine persönlichen Einstellungen bearbeiten.
+            Dein initialer Benutzername ist generiert um deine Identität zu wahren. Möchtest Du auch weiterhin nicht mit Deinem echten Namen Fragen oder Antworten verfassen, solltest Du ein Pseudonym verwenden.
+            Um die Änderungen zu speichern, musst Du auf "Speichern" klicken.
+            <br><br>
+            <table class="table table-hover table-striped table-responsive">
+                <tbody>
+                    <tr>
+                        <th scope="row">
+                            Dein Name
+                        </th>
+                        <td align="center">
+                            <div ng-if="editUser">
+                                <input type="text" ng-model="user.name">
+                            </div>
+                            <div ng-if="!editUser">
+                                {{username}}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            Deine eindeutige Nutzer ID
+                        </th>
+                        <td align="center">
+                            {{user.userId}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            Dein Profilbild
+                        </th>
+                        <td align="center">
+                            <img class="img-circle" src="{{user.userAvatar}}">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button ng-click="saveUser(user)" class="btn btn-default pull-right">{{!editUser ? 'Bearbeiten' : 'Speichern'}}</button>
+            <br>
+        </div>
+        <div class="col-sm-6">
+            <h2>Soziale Netzwerke</h2>
+            Hier hast Du die Möglichkeit, dich mit einem sozialen Netzwerk zu authentifizieren.
+            Dadurch kannst Du Dich jederzeit ohne L2P Zugriff anmelden. Wenn Du dies wünschst,
+            speichern wir lediglich den API-Key eines sozialen Netzwerks, nicht aber deinen Namen.
+            Sollten wir deinen Namen speichern dürfen, wird Dir ein entsprechender, unverbindlicher Namensvorschlag gemacht.
+
+            <hr>
+
+            Coming Soon...
+
+            <div ng-if="user.social">
+                <div ng-if="user.facebook">
+
+                </div>
+                <div ng-if="!user.facebook">
+
+                </div>
+                <div ng-if="user.github">
+
+                </div>
+                <div ng-if="!user.github">
+
+                </div>
+                <div ng-if="user.google">
+
+                </div>
+                <div ng-if="!user.google">
+
+                </div>
+                <div ng-if="user.twitter">
+
+                </div>
+                <div ng-if="!user.twitter">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

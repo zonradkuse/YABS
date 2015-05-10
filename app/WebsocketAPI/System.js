@@ -190,7 +190,7 @@ module.exports = function (wsControl) {
 					message: "You are currently not logged in."
 				}, req.refId);
 			} else {
-				imageDAO.get(req.session.user.avatar, function (err, avatar) {
+				imageDAO.get(req.session.user.avatar._id, function (err, avatar) {
 					wsControl.build(req.ws, null, {
 						status: true,
 						message: (req.session.user.name ? req.session.user.name : req.session.user._id),

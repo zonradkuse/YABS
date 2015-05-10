@@ -20,42 +20,42 @@ module.exports = function (passport) {
 					'google.id': profile.id
 				},
                     function (err, user) {
-	if (err) {
-		return done(err);
-	}
-	if (user) {
-		if (!user.google.token) {
-			// there is an existing user but the token is not set
-			user.google.token = token;
-			user.google.name = profile.name.givenName;
-			user.google.email = (profile.emails[ 0 ].value || '').toLowerCase();
+						if (err) {
+							return done(err);
+						}
+						if (user) {
+							if (!user.google.token) {
+								// there is an existing user but the token is not set
+								user.google.token = token;
+								user.google.name = profile.name.givenName;
+								user.google.email = (profile.emails[ 0 ].value || '').toLowerCase();
 
-			user.save(function (err) {
-				if (err) { 
-					return done(err);
-				}
-				logger.info("successful authentication. Altered User info of " + user._id);
-				return done(null, user); //success
-			});
-		}
-		return done(null, user); // success
-	} else { // we could not find a user
-		var nUser = new User();
+								user.save(function (err) {
+									if (err) {
+										return done(err);
+									}
+									logger.info("successful authentication. Altered User info of " + user._id);
+									return done(null, user); //success
+								});
+							}
+							return done(null, user); // success
+						} else { // we could not find a user
+							var nUser = new User();
 
-		nUser.google.id = profile.id;
-		nUser.google.token = token;
-		nUser.google.name = profile.name.givenName;
-		nUser.google.email = (profile.emails[ 0 ].value || '').toLowerCase();
-		nUser.save(function (err) {
-			if (err) {
-				return done(err);
-			}
-			logger.info("successful authentication. created new User: " + user._id);
-			done(null, nUser);
-		});
-		//created user - success
+							nUser.google.id = profile.id;
+							nUser.google.token = token;
+							nUser.google.name = profile.name.givenName;
+							nUser.google.email = (profile.emails[ 0 ].value || '').toLowerCase();
+							nUser.save(function (err) {
+								if (err) {
+									return done(err);
+								}
+								logger.info("successful authentication. created new User: " + user._id);
+								done(null, nUser);
+							});
+							//created user - success
 
-	}
+						}
                         
                     });
 			} else {

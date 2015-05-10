@@ -1,5 +1,6 @@
 client.service("authentication", ["$window", "$q", "rpc", function($window, $q, rpc){
 	var username = false;
+	var user = {};
 
 	this.enforceLoggedIn = function() {
 		this.isUserLoggedIn().then(function(status) {
@@ -29,6 +30,10 @@ client.service("authentication", ["$window", "$q", "rpc", function($window, $q, 
 		return username;
 	};
 
+	this.getUser = function() {
+		return user;
+	};
+
 	this.fetchUserName = function() {
 		var deferred = $q.defer();
 		if (username)
@@ -37,7 +42,8 @@ client.service("authentication", ["$window", "$q", "rpc", function($window, $q, 
 			if (loggedin) {
 				rpc.call("system:whoami", {}, function(data) {
 					username = data.message;
-					deferred.resolve(data.message);
+					user = data;
+					deferred.resolve(data);
 				});
 			}
 			else {
