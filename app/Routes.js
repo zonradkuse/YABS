@@ -76,13 +76,13 @@
 			scope: 'email',
 		}));
 		app.get('/auth/facebook/callback', passport.authenticate('facebook', {
-			successRedirect: '/',
+			successRedirect: '/dashboard',
 			failureRedirect: '/login'
 		}));
 		// Twitter OAuth
 		app.get('/login/twitter', passport.authenticate('twitter'));
 		app.get('/auth/twitter/callback', passport.authenticate('twitter', {
-			successRedirect: '/',
+			successRedirect: '/dashboard',
 			failureRedirect: '/login'
 		}));
 		// GitHub OAuth
@@ -90,7 +90,7 @@
 			scope: 'user'
 		}));
 		app.get('/auth/github/callback', passport.authenticate('github', {
-			successRedirect: '/',
+			successRedirect: '/dashboard',
 			failureRedirect: '/login'
 		}));
 		// Google OAuth
@@ -98,7 +98,7 @@
 			scope: 'email'
 		}));
 		app.get('/auth/google/callback', passport.authenticate('google', {
-			successRedirect: '/',
+			successRedirect: '/dashoboard',
 			failureRedirect: '/login'
 		}));
 	}

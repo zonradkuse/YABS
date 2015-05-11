@@ -52,7 +52,10 @@
             <div class="row">
                 <div class="col-md-6">
                     <div ng-if="user.user.facebook">
-                        {{user.user.facebook}}
+                        <a class="disabled btn btn-block btn-social btn-facebook">
+                            <i class="fa fa-facebook"></i>
+                            Erfolgreich verlinkt!
+                        </a>
                     </div>
                     <div ng-if="!user.user.facebook">
                         <a target="_self" href="/login/facebook" class="btn btn-block btn-social btn-facebook">
@@ -63,7 +66,10 @@
                 </div>
                 <div class="col-md-6">
                     <div ng-if="user.user.github">
-                        {{user.user.github}}
+                        <a class="disabled btn btn-block btn-social btn-github">
+                            <i class="fa fa-github"></i>
+                            Erfolgreich verlinkt!
+                        </a>
                     </div>
                     <div ng-if="!user.user.github">
                         <a target="_self" href="/login/github" class="btn btn-block btn-social btn-github">
@@ -74,7 +80,10 @@
                 </div>
                 <div class="col-md-6">
                     <div ng-if="user.user.google">
-                        {{user.user.google}}
+                        <a class="disabled btn btn-block btn-social btn-google">
+                            <i class="fa fa-google"></i>
+                            Erfolgreich verlinkt!
+                        </a>
                     </div>
                     <div ng-if="!user.user.google">
                         <a target="_self" href="/login/google" class="btn btn-block btn-social btn-google">
@@ -85,7 +94,10 @@
                 </div>
                 <div class="col-md-6">
                     <div ng-if="user.user.twitter">
-                        {{user.user.twitter}}
+                        <a class="disabled btn btn-block btn-social btn-twitter">
+                            <i class="fa fa-twitter"></i>
+                            Erfolgreich verlinkt!
+                        </a>
                     </div>
                     <div ng-if="!user.user.twitter">
                         <a target="_self" href="/login/twitter" class="btn btn-block btn-social btn-twitter">
