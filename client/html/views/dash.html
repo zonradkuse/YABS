@@ -51,10 +51,10 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <div ng-if="user.facebook">
-                        {{user.facebook}}
+                    <div ng-if="user.user.facebook">
+                        {{user.user.facebook}}
                     </div>
-                    <div ng-if="!user.facebook">
+                    <div ng-if="!user.user.facebook">
                         <a target="_self" href="/login/facebook" class="btn btn-block btn-social btn-facebook">
                             <i class="fa fa-facebook"></i>
                             Mit Facebook verlinken!
@@ -62,10 +62,10 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div ng-if="user.github">
-                        {{user.github}}
+                    <div ng-if="user.user.github">
+                        {{user.user.github}}
                     </div>
-                    <div ng-if="!user.github">
+                    <div ng-if="!user.user.github">
                         <a target="_self" href="/login/github" class="btn btn-block btn-social btn-github">
                             <i class="fa fa-github"></i>
                             Mit GitHub verlinken!
@@ -73,10 +73,10 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div ng-if="user.google">
-                        {{user.google}}
+                    <div ng-if="user.user.google">
+                        {{user.user.google}}
                     </div>
-                    <div ng-if="!user.google">
+                    <div ng-if="!user.user.google">
                         <a target="_self" href="/login/google" class="btn btn-block btn-social btn-google">
                             <i class="fa fa-google"></i>
                             Mit Google verlinken!
@@ -84,10 +84,10 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div ng-if="user.twitter">
-                        {{user.twitter}}
+                    <div ng-if="user.user.twitter">
+                        {{user.user.twitter}}
                     </div>
-                    <div ng-if="!user.twitter">
+                    <div ng-if="!user.user.twitter">
                         <a target="_self" href="/login/twitter" class="btn btn-block btn-social btn-twitter">
                             <i class="fa fa-twitter"></i>
                             Mit Twitter verlinken!
