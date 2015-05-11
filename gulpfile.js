@@ -34,6 +34,10 @@ gulp.task('fast-build', function() {
         .pipe(flatten())
         .pipe(gulp.dest('public/fonts/'));
         
+    gulp.src(['client/bower_components/font-awesome/fonts/*.*'])
+        .pipe(flatten())
+        .pipe(gulp.dest('public/fonts/'));
+        
     gulp.src(['client/html/**/*.html'])
         .pipe(flatten())
         .pipe(gulp.dest('public/'));

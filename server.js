@@ -43,7 +43,7 @@ app.use(session({
         expires: new Date(Date.now() + 15778463000), // 6 month
         httpOnly: false,
     },
-    resave: false,
+    resave: true,
     saveUninitialized: true
 }));
 

@@ -12,7 +12,7 @@
          "scope": "l2p2013.rwth userinfo.rwth"
       },
       "other": {
-        "enabled" : false
+        "enabled" : true
       }
    },
    "general": {

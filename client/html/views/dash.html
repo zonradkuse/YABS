@@ -44,39 +44,55 @@
         </div>
         <div class="col-sm-6">
             <h2>Soziale Netzwerke</h2>
-            Hier hast Du die Möglichkeit, dich mit einem sozialen Netzwerk zu authentifizieren.
-            Dadurch kannst Du Dich jederzeit ohne L2P Zugriff anmelden. Wenn Du dies wünschst,
-            speichern wir lediglich den API-Key eines sozialen Netzwerks, nicht aber deinen Namen.
-            Sollten wir deinen Namen speichern dürfen, wird Dir ein entsprechender, unverbindlicher Namensvorschlag gemacht.
-
+            Hier hast Du die Möglichkeit, Dich mit einem sozialen Netzwerk zu authentifizieren.
+            Dadurch kannst Du Dich jederzeit ohne L2P Zugriff anmelden. Wir speichern lediglich 
+            deine Nutzer ID des jeweiligen Netzwerks, um Dich beim nächsten Mal wieder zu erkennen.
             <hr>
 
-            Coming Soon...
-
-            <div ng-if="user.social">
-                <div ng-if="user.facebook">
-
+            <div class="row">
+                <div class="col-md-6">
+                    <div ng-if="user.facebook">
+                        {{user.facebook}}
+                    </div>
+                    <div ng-if="!user.facebook">
+                        <a target="_self" href="/login/facebook" class="btn btn-block btn-social btn-facebook">
+                            <i class="fa fa-facebook"></i>
+                            Mit Facebook verlinken!
+                        </a>
+                    </div>
                 </div>
-                <div ng-if="!user.facebook">
-
+                <div class="col-md-6">
+                    <div ng-if="user.github">
+                        {{user.github}}
+                    </div>
+                    <div ng-if="!user.github">
+                        <a target="_self" href="/login/github" class="btn btn-block btn-social btn-github">
+                            <i class="fa fa-github"></i>
+                            Mit GitHub verlinken!
+                        </a>
+                    </div>
                 </div>
-                <div ng-if="user.github">
-
+                <div class="col-md-6">
+                    <div ng-if="user.google">
+                        {{user.google}}
+                    </div>
+                    <div ng-if="!user.google">
+                        <a target="_self" href="/login/google" class="btn btn-block btn-social btn-google">
+                            <i class="fa fa-google"></i>
+                            Mit Google verlinken!
+                        </a>
+                    </div>
                 </div>
-                <div ng-if="!user.github">
-
-                </div>
-                <div ng-if="user.google">
-
-                </div>
-                <div ng-if="!user.google">
-
-                </div>
-                <div ng-if="user.twitter">
-
-                </div>
-                <div ng-if="!user.twitter">
-
+                <div class="col-md-6">
+                    <div ng-if="user.twitter">
+                        {{user.twitter}}
+                    </div>
+                    <div ng-if="!user.twitter">
+                        <a target="_self" href="/login/twitter" class="btn btn-block btn-social btn-twitter">
+                            <i class="fa fa-twitter"></i>
+                            Mit Twitter verlinken!
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
