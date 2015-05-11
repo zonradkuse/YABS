@@ -197,7 +197,7 @@ module.exports = function (wsControl) {
 						userId: (req.session.user ? req.session.user._id : null),
 						userName: (req.session.user && req.session.user.name ? req.session.user.name : null),
 						userAvatar: (!err && avatar ? avatar.path : null),
-						user: req.session.user
+						user: req.session.passport.user
 					}, req.refId);
 				});
 			}
