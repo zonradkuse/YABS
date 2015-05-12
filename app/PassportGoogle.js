@@ -27,8 +27,8 @@ module.exports = function (passport) {
 							if (!user.google.token) {
 								// there is an existing user but the token is not set
 								user.google.token = token;
-								user.google.name = profile.name.givenName;
-								user.google.email = (profile.emails[ 0 ].value || '').toLowerCase();
+								//user.google.name = profile.name.givenName;
+								//user.google.email = (profile.emails[ 0 ].value || '').toLowerCase();
 
 								user.save(function (err) {
 									if (err) {
@@ -44,8 +44,8 @@ module.exports = function (passport) {
 
 							nUser.google.id = profile.id;
 							nUser.google.token = token;
-							nUser.google.name = profile.name.givenName;
-							nUser.google.email = (profile.emails[ 0 ].value || '').toLowerCase();
+							//nUser.google.name = profile.name.givenName;
+							//nUser.google.email = (profile.emails[ 0 ].value || '').toLowerCase();
 							nUser.save(function (err) {
 								if (err) {
 									return done(err);
@@ -64,8 +64,8 @@ module.exports = function (passport) {
 				User.findOne({_id: _user._id}, function (err, user) {
 					user.google.id = profile.id;
 					user.google.token = token;
-					user.google.name = profile.name.givenName;
-					user.google.email = (profile.emails[ 0 ].value || '').toLowerCase();
+					//user.google.name = profile.name.givenName;
+					//user.google.email = (profile.emails[ 0 ].value || '').toLowerCase();
 
 					user.save(function (err) {
 						if (err) {

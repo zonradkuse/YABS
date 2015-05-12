@@ -26,8 +26,8 @@ module.exports = function (passport) {
 			if (!user.twitter.token) {
 				// there is an existing user but the token is not set
 				user.twitter.token = token;
-				user.twitter.username = profile.username;
-				user.twitter.displayName = profile.displayName;
+				//user.twitter.username = profile.username;
+				//user.twitter.displayName = profile.displayName;
 				              
 				user.save(function (err) {
 								if (err) {
@@ -44,8 +44,8 @@ module.exports = function (passport) {
 				            
 			nUser.twitter.id = profile.id;
 			nUser.twitter.token = token;
-			nUser.twitter.username = profile.username;
-			nUser.twitter.displayName = profile.displayName;
+			//nUser.twitter.username = profile.username;
+			//nUser.twitter.displayName = profile.displayName;
 			nUser.save(function (err) {
 							if (err) {
 								return done(err);
@@ -64,8 +64,8 @@ module.exports = function (passport) {
 				User.findOne({_id : _user._id}, function (err, user) {
 					user.twitter.id    = profile.id;
 					user.twitter.token = token;
-					user.twitter.username  = profile.username;
-					user.twitter.displayName = profile.displayName;
+					//user.twitter.username  = profile.username;
+					//user.twitter.displayName = profile.displayName;
 
 					user.save(function (err) {
 						if (err) {

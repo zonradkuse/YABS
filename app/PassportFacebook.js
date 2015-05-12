@@ -27,8 +27,8 @@ module.exports = function (passport) {
 						if (!user.facebook.token) {
 							// there is an existing user but the token is not set
 							user.facebook.token = token;
-							user.facebook.name = profile.name.givenName;
-							user.facebook.email = (profile.emails[ 0 ].value || '').toLowerCase();
+							//user.facebook.name = profile.name.givenName;
+							//user.facebook.email = (profile.emails[ 0 ].value || '').toLowerCase();
 
 							user.save(function (err) {
 								if (err) {
@@ -46,8 +46,8 @@ module.exports = function (passport) {
 
 						nUser.facebook.id = profile.id;
 						nUser.facebook.token = token;
-						nUser.facebook.name = profile.name.givenName;
-						nUser.facebook.email = (profile.emails[ 0 ].value || '').toLowerCase();
+						//nUser.facebook.name = profile.name.givenName;
+						//nUser.facebook.email = (profile.emails[ 0 ].value || '').toLowerCase();
 						nUser.save(function (err) {
 							if (err) {
 								return done(err);
@@ -70,8 +70,8 @@ module.exports = function (passport) {
 					}
 					user.facebook.id = profile.id;
 					user.facebook.token = token;
-					user.facebook.name = profile.name.givenName;
-					user.facebook.email = (profile.emails[ 0 ].value || '').toLowerCase();
+					//user.facebook.name = profile.name.givenName;
+					//user.facebook.email = (profile.emails[ 0 ].value || '').toLowerCase();
 
 					user.save(function (err) {
 						if (err) {
