@@ -27,8 +27,8 @@ module.exports = function (passport) {
                             if (!user.github.token) {
                                 // there is an existing user but the token is not set
                                 user.github.token = token;
-                                user.github.name = profile.name;
-                                user.github.email = (profile.email || '').toLowerCase();
+                                //user.github.name = profile.name;
+                                //user.github.email = (profile.email || '').toLowerCase();
 
                                 user.save(function (err) {
                                     if (err) {
@@ -46,8 +46,8 @@ module.exports = function (passport) {
 
                             nUser.github.id = profile.id;
                             nUser.github.token = token;
-                            nUser.github.name = profile.name;
-                            nUser.github.email = (profile.email || '').toLowerCase();
+                            //nUser.github.name = profile.name;
+                            //nUser.github.email = (profile.email || '').toLowerCase();
                             nUser.save(function (err) {
                                 if (err) {
                                     return done(err);
@@ -70,8 +70,8 @@ module.exports = function (passport) {
                     }
                     user.github.id = profile.id;
                     user.github.token = token;
-                    user.github.name = profile.name;
-                    user.github.email = (profile.email || '').toLowerCase();
+                    //user.github.name = profile.name;
+                    //user.github.email = (profile.email || '').toLowerCase();
 
                     user.save(function (err) {
                         if (err) {
