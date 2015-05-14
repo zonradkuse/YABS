@@ -40,8 +40,8 @@ app.use(session({
     accessLevel: 0,
     secret: config.general.cookie.secret,
     cookie: {
-        expires: new Date(Date.now() + 15778463000), // 6 month
-        httpOnly: false,
+        //expires: new Date(Date.now() + 15778463000), // 6 month
+        maAge: 15778463000
     },
     resave: true,
     saveUninitialized: true
