@@ -35,7 +35,7 @@
                 controller: 'frontpageController'
             }).
             otherwise({
-                redirectTo: '/404'
+                redirectTo: '/'
         });
         
         $(document).on('click','.navbar-collapse.in',function(e) { // Stolen from http://stackoverflow.com/a/22917099
