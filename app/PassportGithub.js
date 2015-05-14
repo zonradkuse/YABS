@@ -13,11 +13,12 @@ module.exports = function (passport) {
     }, function (req, token, refreshToken, profile, done) {
 
         process.nextTick(function () {
-            if (!req.user) {
+            if (!req.session.user) {
                 logger.info("Github login attempt");
                 User.findOne({
                         'github.id': profile.id
-                    },
+                    }).populate('avatar').
+                    exec(
                     function (err, user) {
                         if (err) {
                             //error getting github id
@@ -35,27 +36,16 @@ module.exports = function (passport) {
                                         return done(err);
                                     }
                                     logger.info("user successfully altered");
+                                    req.session.user = user.toObject();
                                     return done(null, user); //success
                                 });
                             }
                             logger.info("user successfully authenticated");
+                            req.session.user = user.toObject();
                             return done(null, user); // success
                         } else { // we could not find a user
-                            logger.info("creating a new user");
-                            var nUser = new User();
-
-                            nUser.github.id = profile.id;
-                            nUser.github.token = token;
-                            //nUser.github.name = profile.name;
-                            //nUser.github.email = (profile.email || '').toLowerCase();
-                            nUser.save(function (err) {
-                                if (err) {
-                                    return done(err);
-                                }
-                                logger.info("new user created: " + nUser._id);
-                                done(null, nUser);
-                            });
-                            //created user - success
+                            // new users via 3rd party oauth is not allowed
+                            return done(new Error("You did not authorize with L2P yet"));
                         }
                     });
             } else {
@@ -64,7 +54,8 @@ module.exports = function (passport) {
 
                 User.findOne({
                     _id: _user._id
-                }, function (err, user) {
+                }).populate('avatar').
+                    exec( function (err, user) {
                     if (err) {
                         done(err);
                     }
@@ -78,6 +69,7 @@ module.exports = function (passport) {
                             return done(err);
                         }
                         logger.info("added credentials to user: " + user._id);
+                        req.session.user = user.toObject();
                         return done(null, user);
                     });
                 });

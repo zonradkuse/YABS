@@ -18,7 +18,8 @@ module.exports = function (passport) {
 			if (!req.user) {
 				User.findOne({
 					'google.id': profile.id
-				},
+				}).populate('avatar').
+					exec(
                     function (err, user) {
 						if (err) {
 							return done(err);
@@ -35,33 +36,23 @@ module.exports = function (passport) {
 										return done(err);
 									}
 									logger.info("successful authentication. Altered User info of " + user._id);
+									req.session.user = user.toObject();
 									return done(null, user); //success
 								});
 							}
+							req.session.user = user.toObject();
 							return done(null, user); // success
 						} else { // we could not find a user
-							var nUser = new User();
-
-							nUser.google.id = profile.id;
-							nUser.google.token = token;
-							//nUser.google.name = profile.name.givenName;
-							//nUser.google.email = (profile.emails[ 0 ].value || '').toLowerCase();
-							nUser.save(function (err) {
-								if (err) {
-									return done(err);
-								}
-								logger.info("successful authentication. created new User: " + user._id);
-								done(null, nUser);
-							});
-							//created user - success
-
+							// new users via 3rd party oauth is not allowed
+							return done(new Error("You did not authorize with L2P yet"));
 						}
                         
                     });
 			} else {
 				// there is already an existing user. Link the data
 				var _user = req.user; // pull the user out of the session
-				User.findOne({_id: _user._id}, function (err, user) {
+				User.findOne({_id: _user._id}).populate('avatar').
+					exec( function (err, user) {
 					user.google.id = profile.id;
 					user.google.token = token;
 					//user.google.name = profile.name.givenName;
@@ -72,6 +63,7 @@ module.exports = function (passport) {
 							return done(err);
 						}
 						logger.info("added credentials to user: " + user._id);
+						req.session.user = user.toObject();
 						return done(null, user);
 					});
 				});

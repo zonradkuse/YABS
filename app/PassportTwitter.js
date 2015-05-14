@@ -16,52 +16,42 @@ module.exports = function (passport) {
 		process.nextTick(function () {
 			if (!req.user) {
 				logger.info("Twitter login attempt");
-				User.findOne({'twitter.id' : profile.id},
+				User.findOne({'twitter.id' : profile.id}).populate('avatar').
+					exec(
 	            function (err, user) {
-		if (err) {
-			return done(err);
-		}
-				            
-		if (user) {
-			if (!user.twitter.token) {
-				// there is an existing user but the token is not set
-				user.twitter.token = token;
-				//user.twitter.username = profile.username;
-				//user.twitter.displayName = profile.displayName;
-				              
-				user.save(function (err) {
+					if (err) {
+						return done(err);
+					}
+
+					if (user) {
+						if (!user.twitter.token) {
+							// there is an existing user but the token is not set
+							user.twitter.token = token;
+							//user.twitter.username = profile.username;
+							//user.twitter.displayName = profile.displayName;
+
+							user.save(function (err) {
 								if (err) {
 									return done(err);
 								}
 								logger.info("user successfully altered");
+								req.session.user = user.toObject();
 								return done(null, user); //success
 							});
-			}
-			return done(null, user); // success
-		} else { // we could not find a user
-			logger.info("creating a new user");
-			var nUser = new User();
-				            
-			nUser.twitter.id = profile.id;
-			nUser.twitter.token = token;
-			//nUser.twitter.username = profile.username;
-			//nUser.twitter.displayName = profile.displayName;
-			nUser.save(function (err) {
-							if (err) {
-								return done(err);
-							}
-							logger.info("new user created: " + nUser._id);
-							done(null, nUser);
-						});
-			//created user - success
-				                    
-		}
-		return done(null); //can not be reached. just for reasons of completeness.
-	});
+						}
+						req.session.user = user.toObject();
+						return done(null, user); // success
+					} else { // we could not find a user
+						// new users via 3rd party oauth is not allowed
+						return done(new Error("You did not authorize with L2P yet"));
+					}
+					return done(null); //can not be reached. just for reasons of completeness.
+				});
 			} else {
 				// there is already an existing user. Link the data
 				var _user = req.user; // pull the user out of the session
-				User.findOne({_id : _user._id}, function (err, user) {
+				User.findOne({_id : _user._id}).populate('avatar').
+					exec( function (err, user) {
 					user.twitter.id    = profile.id;
 					user.twitter.token = token;
 					//user.twitter.username  = profile.username;
@@ -71,7 +61,8 @@ module.exports = function (passport) {
 						if (err) {
 							return done(err);
 						}
-						logger.info("added credentials to user: " + user._id);            
+						logger.info("added credentials to user: " + user._id);
+						req.session.user = user.toObject();
 						return done(null, user);
 					});
 				});
