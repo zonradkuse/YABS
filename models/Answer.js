@@ -1,9 +1,4 @@
-/*! Model of Answer
- * @param {Number} author The user identifier.
- * @param {Number} qid The question identifier.
- * @param {Timestamp} time Timestamp of creation
- * @param {String} content The content of this question
- */
+/** @module Answer Model */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
@@ -40,15 +35,29 @@ var AnswerSchema = mongoose.Schema({
 });
 
 AnswerSchema.plugin(deepPopulate);
+/**
+ * @class
+ * @classdesc This is a moongose schema for an answer of a question.
+ * @property {ObjectId} author - user refId
+ * @property {Date} creationTime=Date.now - creation time
+ * @property {Date} updateTime=Date.now - the time when the last change has been performed
+ * @property {Boolean} isAnswer=false - ???
+ * @property {Boolean} deleted=false - ???
+ * @property {String} content - the question text
+ * @property {ObjectId[]} images - image refId, images in answer
+ * @property {Boolean} visible=true - visibility
+ * @example
+ * new Answer({author: ObjectId{User}, content: "Sunny weather!"});
+ */
 var Answer = mongoose.model('Answer', AnswerSchema);
 module.exports.Answer = Answer;
 module.exports.AnswerSchema = AnswerSchema;
 
-/*
-* @param answer the target answer object
-* @param content the new content of the answer
-* @param callback params: error, answer object
-*/
+/** Set new content of answer.
+ * @param {Answer} answer - answer object
+ * @param {String} content - new content
+ * @param {answerCallback} callback - callback function
+ */
 module.exports.setContent = function (answer, content, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -58,11 +67,11 @@ module.exports.setContent = function (answer, content, callback) {
 	});
 };
 
-/*
-* @param answer the target answer object
-* @param bool the new bool of the answer
-* @param callback params: error, answer object
-*/
+/** WTF???.
+ * @param {Answer} answer - answer object
+ * @param {Boolean} bool - ???
+ * @param {answerCallback} callback - callback function
+ */
 module.exports.setContent = function (answer, bool, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -72,11 +81,11 @@ module.exports.setContent = function (answer, bool, callback) {
 	});
 };
 
-/*
-* @param answer the target answer object
-* @param visible set true for visible, false otherwise
-* @param callback params: error, answer object
-*/
+/** Set visibility of answer.
+ * @param {Answer} answer - answer object
+ * @param {Boolean} visible - visibility
+ * @param {answerCallback} callback - callback function
+ */
 module.exports.setVisibility = function (answer, visible, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -86,10 +95,10 @@ module.exports.setVisibility = function (answer, visible, callback) {
 	});
 };
 
-/*
-* @param answer the target answer object which should be removed
-* @param callback params: error
-*/
+/** Remove answer from system.
+ * @param {Answer} answer - answer object
+ * @param {errorCallback} callback - callback function
+ */
 module.exports.remove = function (answer, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -104,11 +113,12 @@ module.exports.remove = function (answer, callback) {
 	});
 };
 
-/*
-* @param answerID the ID of the target answer object
-* @param options used for deepPopulation
-* @param callback params: error, answer object
-*/
+/** Get answer by the ObjectId.
+ * @param {Answer} answer - answer object
+ * @param {Object} options - options
+ * @param {String} [options.population=""] - param for deepPopulate plugin
+ * @param {answerCallback} callback - callback function
+ */
 module.exports.getByID = function (answerID, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -117,3 +127,14 @@ module.exports.getByID = function (answerID, options, callback) {
 		return callback(err, answer);
 	});
 };
+
+/**
+ * @callback answerCallback
+ * @param {Error} err - if an error occurs
+ * @param {Answer} answer - updated answer object
+ */
+
+ /**
+ * @callback errorCallback
+ * @param {Error} err - if an error occurs
+ */

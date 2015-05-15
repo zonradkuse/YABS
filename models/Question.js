@@ -1,10 +1,4 @@
-/** Model of Question
-* @param {Number} author The user identifier.
-* @param {Timestamp} time Timestamp of creation
-* @param {List} vote List of uids of voters
-* @param {String} content The content of this question
-* @param {Answers[]} answers The list of answers
-*/
+/** @module Question Model */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
@@ -23,15 +17,29 @@ var QuestionSchema = mongoose.Schema({
 });
 
 QuestionSchema.plugin(deepPopulate);
+/**
+ * @class
+ * @classdesc This is a moongose schema for a question of a room.
+ * @property {ObjectId} author - user refId
+ * @property {Date} creationTime=Date.now - creation time
+ * @property {Date} updateTime=Date.now - the time when the last change has been performed
+ * @property {String} content - the question text
+ * @property {ObjectId[]} votes - user refId, users who have voted
+ * @property {ObjectId[]} images - image refId, images in question
+ * @property {ObjectId[]} answers - answer refId
+ * @property {Boolean} visible=true - visibility
+ * @example
+ * new Question({author: ObjectId{User}, content: "Who are you?"});
+ */
 var Question = mongoose.model('Question', QuestionSchema);
 module.exports.Question = Question;
 module.exports.QuestionSchema = QuestionSchema;
 
-/*
-* @param question the target question object
-* @param content the new content of the question
-* @param callback params: error, question object
-*/
+/** Set content of question.
+ * @param {Question} question - question object
+ * @param {String} content - new content
+ * @param {questionCallback} callback - callback function
+ */
 module.exports.setContent = function (question, content, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -41,11 +49,11 @@ module.exports.setContent = function (question, content, callback) {
 	});
 };
 
-/*
-* @param question the target question object
-* @param visible set true for visible, false otherwise
-* @param callback params: error, question object
-*/
+/** Set visibility of question.
+ * @param {Question} question - question object
+ * @param {Boolean} visible - visibility
+ * @param {questionCallback} callback - callback function
+ */
 module.exports.setVisibility = function (question, visible, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -55,10 +63,10 @@ module.exports.setVisibility = function (question, visible, callback) {
 	});
 };
 
-/*
-* @param question the question object which should be removed
-* @param callback params: error
-*/
+/** Remove question from the system.
+ * @param {Question} question - question object
+ * @param {errorCallback} callback - callback function
+ */
 module.exports.remove = function (question, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -73,25 +81,29 @@ module.exports.remove = function (question, callback) {
 	});
 };
 
-/*
-* @param questionID the ID of the target question object
-* @param options used for deepPopulation
-* @param callback params: error, question object
-*/
+/** Get question by the ObjectId.
+ * @param {ObjectId} questionID - ObjectId of question
+ * @param {Object} options - options
+ * @param {String} [options.population=""] - param for deepPopulate plugin
+ * @param {questionCallback} callback - callback function
+ */
 module.exports.getByID = function (questionID, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
+	}
+	if (options.population === undefined) {
+		options.population = "";
 	}
 	Question.findById(questionID).deepPopulate(options.population).exec(function (err, question) {
 		return callback(err, question);
 	});
 };
 
-/*
-* @param question the target question object
-* @param user the user object, which voted
-* @param callback params: error, question object
-*/
+/** Add a vote from an user to question.
+ * @param {Question} question - question object
+ * @param {User} user - user who has voted
+ * @param {questionCallback} callback - callback function
+ */
 module.exports.vote = function (question, user, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -101,24 +113,28 @@ module.exports.vote = function (question, user, callback) {
 	});
 };
 
-/*
-* @param question the target question object
-* @param options used for deepPopulation
-* @param callback params: error, array of user objects which voted
-*/
+/** Get all votes from question.
+ * @param {Question} question - question object
+ * @param {Object} options - options
+ * @param {String} [options.population=""] - param for deepPopulate plugin
+ * @param {votesCallback} callback - callback function
+ */
 module.exports.getVotes = function (question, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
+	}
+	if (options.population === undefined) {
+		options.population = "";
 	}
 	Question.findById(question._id, 'votes').deepPopulate(options.population).exec(function (err, question) {
 		return callback(err, question.votes);
 	});
 };
 
-/*
-* @param question the target question object
-* @param callback params: error, number of votes
-*/
+/** Count the votes of question.
+ * @param {Question} question - question object
+ * @param {votesCountCallback} callback - callback function
+ */
 module.exports.getVotesCount = function (question, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -134,11 +150,11 @@ module.exports.getVotesCount = function (question, callback) {
 	});
 };
 
-/*
-* @param question the target question object
-* @param answer the answer object which should be added
-* @param callback params: error, question object, answer object
-*/
+/** Add answer to question and store it to the database.
+ * @param {Question} question - question object
+ * @param {Answer} answer - answer object
+ * @param {questionAnswerCallback} callback - callback function
+ */
 module.exports.addAnswer = function (question, answer, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -152,3 +168,33 @@ module.exports.addAnswer = function (question, answer, callback) {
 		});
 	});
 };
+
+/**
+ * @callback questionCallback
+ * @param {Error} err - if an error occurs
+ * @param {Question} question - updated question object
+ */
+
+/**
+ * @callback errorCallback
+ * @param {Error} err - if an error occurs
+ */
+
+/**
+ * @callback votesCallback
+ * @param {Error} err - if an error occurs
+ * @param {User[]} votes - array of voters
+ */
+
+/**
+ * @callback votesCountCallback
+ * @param {Error} err - if an error occurs
+ * @param {Number} votesCount - amount of votes
+ */
+
+ /**
+ * @callback questionAnswerCallback
+ * @param {Error} err - if an error occurs
+ * @param {Question} question - updated question object
+ * @param {Answer} answer - updated answer object
+ */

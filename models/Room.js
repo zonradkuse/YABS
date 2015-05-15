@@ -1,10 +1,9 @@
-/** Model of a Thread. A Thread will contain questions with a list of answers. */
+/** @module Room Model */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
 var findOrCreate = require('mongoose-findorcreate');
 var ObjectId = mongoose.Schema.ObjectId;
-//var Question = require('../models/Question.js');
 
 var RoomSchema = mongoose.Schema({
 	l2pID: { type: String, unique: true },
@@ -21,55 +20,83 @@ var RoomSchema = mongoose.Schema({
 
 RoomSchema.plugin(deepPopulate);
 RoomSchema.plugin(findOrCreate);
+/**
+ * @class
+ * @classdesc This is a moongose schema for a room.
+ * @property {String} l2pID - unique identifier of the l2p-system
+ * @property {String} name - name (or title)
+ * @property {Date} creationTime=Date.now - creation time
+ * @property {Date} updateTime=Date.now - the time when the last change has been performed
+ * @property {ObjectId[]} questions - question refId
+ * @property {Boolean} visible=true - visibility
+ * @property {String} description - a short description
+ * @property {String} url - external link to the l2p-system room site
+ * @property {String} status - status
+ * @property {String} semester - in which semester the room is
+ * @example
+ * new Room({l2pID: "", name: "", description: "", url: "", status: "", semester: ""});
+ */
 var Room = mongoose.model('Room', RoomSchema);
 module.exports.Room = Room;
 module.exports.RoomSchema = RoomSchema;
 
-/*
-* @param roomID ID of the target room object
-* @param options used for deepPopulation
-* @param callback params: error, room object
-*/
+/** Get room by the ObjectId.
+ * @param {ObjectId} roomID - ObjectId of the room
+ * @param {Object} options - options
+ * @param {String} [options.population=""] - param for deepPopulate plugin
+ * @param {roomCallback} callback - callback function
+ */
 module.exports.getByID = function (roomID, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
+	}
+	if (options.population === undefined) {
+		options.population = "";
 	}
 	Room.findById(roomID).deepPopulate(options.population).exec(function (err, room) {
 		return callback(err, room);
 	});
 };
 
-/*
-* @param l2pID the l2pID of the target room object
-* @param options used for deepPopulation
-* @param callback params: error, room object
-*/
+/** Get room by the l2p identifier.
+ * @param {String} l2pID - l2pID of the room
+ * @param {Object} options - options
+ * @param {String} [options.population=""] - param for deepPopulate plugin
+ * @param {roomCallback} callback - callback function
+ */
 module.exports.getByL2PID = function (l2pID, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
+	}
+	if (options.population === undefined) {
+		options.population = "";
 	}
 	Room.findOne({ 'l2pID': l2pID }).deepPopulate(options.population).exec(function (err, room) {
 		return callback(err, room);
 	});
 };
 
-/*
-* @param options used for deepPopulation
-* @param callback params: error, array of room objects
-*/
+/** Get all rooms
+ * @param {Object} options - options
+ * @param {String} [options.population=""] - param for deepPopulate plugin
+ * @param {roomsCallback} callback - callback function
+ */
 module.exports.getAll = function (options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
+	}
+	if (options.population === undefined) {
+		options.population = "";
 	}
 	Room.find({}).deepPopulate(options.population).exec(function (err, rooms) {
 		return callback(err, rooms);
 	});
 };
 
-/*
-* @param room the room object which should be created
-* @param callback params: error, room object
-*/
+/** Create a room. The room is stored in the database.
+ * @param {Room} room - room object which should be saved
+ * @param {roomCallback} callback - callback function
+ */
 module.exports.create = function (room, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -79,11 +106,11 @@ module.exports.create = function (room, callback) {
 	});
 };
 
-/*
-* @param room the target room object
-* @param question the question object which should be added
-* @param callback params: error, room object, question object
-*/
+/** Add a question from a user to the room object.
+ * @param {Room} room - target room object
+ * @param {Question} question - question object which should be added
+ * @param {roomQuestionCallback} callback - callback function
+ */
 module.exports.addQuestion = function (room, question, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -97,3 +124,22 @@ module.exports.addQuestion = function (room, question, callback) {
 		});
 	});
 };
+
+/**
+ * @callback roomCallback
+ * @param {Error} err - if an error occurs
+ * @param {Room} room - updated room object
+ */
+
+/**
+ * @callback roomsCallback
+ * @param {Error} err - if an error occurs
+ * @param {Room[]} rooms - array of updated room objects
+ */
+
+ /**
+ * @callback roomQuestionCallback
+ * @param {Error} err - if an error occurs
+ * @param {Room} room - updated room object
+ * @param {Question} question - updated question object
+ */

@@ -1,3 +1,5 @@
+/** @module PanicGraph Model */
+
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
 var ObjectId = mongoose.Schema.ObjectId;
@@ -9,14 +11,25 @@ var PanicGraphSchema = mongoose.Schema({
 });
 
 PanicGraphSchema.plugin(deepPopulate);
+/**
+ * @class
+ * @classdesc This is a moongose schema for a panic graph.
+ * @property {ObjectId} room - room refId
+ * @property {Object[]} data - array of events
+ * @property {Date} data.time=Date.now - time
+ * @property {Number} data.panics - amount of events at time
+ * @example
+ * new PanicGraph({room: ObjectId{Room}});
+ */
 var PanicGraph = mongoose.model('PanicGraph', PanicGraphSchema);
 module.exports.PanicGraph = PanicGraph;
 
-/*
-* @param room the room object of the target graph
-* @param options used for deepPopulation
-* @param callback params: error, graph object
-*/
+/** Get image object by ObjectId.
+ * @param {Room} room - room object
+ * @param {Object} options - options
+ * @param {String} [options.population=""] - param for deepPopulate plugin
+ * @param {graphCallback} callback - callback function
+ */
 module.exports.getGraph = function (room, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -28,3 +41,9 @@ module.exports.getGraph = function (room, options, callback) {
 		return callback(null, graph);
 	});
 };
+
+/**
+ * @callback graphCallback
+ * @param {Error} err - if an error occurs
+ * @param {PanicGraph} graph - updated graph object
+ */

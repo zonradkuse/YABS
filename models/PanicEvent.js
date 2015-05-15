@@ -1,3 +1,5 @@
+/** @module PanicEvent Model */
+
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
 var ObjectId = mongoose.Schema.ObjectId;
@@ -9,15 +11,24 @@ var PanicEventSchema = mongoose.Schema({
 });
 
 PanicEventSchema.plugin(deepPopulate);
+/**
+ * @class
+ * @classdesc This is a moongose schema for panic event.
+ * @property {ObjectId} user - user refId
+ * @property {ObjectId} room - room refId
+ * @property {Date} time=Date.now - time when event occured
+ * @example
+ * new PanicEvent({user: ObjectId{User}, room: ObjectId{Room}});
+ */
 var PanicEvent = mongoose.model('PanicEvent', PanicEventSchema);
 module.exports.PanicEvent = PanicEvent;
 
-
-/*
-* @param room the room object of the target graph
-* @param options used for deepPopulation
-* @param callback params: error, panic event objects
-*/
+/** Get all panic events.
+ * @param {Room} room - room object
+ * @param {Object} options - options
+ * @param {String} [options.population=""] - param for deepPopulate plugin
+ * @param {eventsCallback} callback - callback function
+ */
 module.exports.getAll = function (room, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -30,10 +41,10 @@ module.exports.getAll = function (room, options, callback) {
 	});
 };
 
-/*
-* @param room the room object of the live events
-* @param callback params: error
-*/
+/** Remove all panic events from room.
+ * @param {Room} room - room object
+ * @param {errorCallback} callback - callback function
+ */
 module.exports.remove = function (room, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -46,4 +57,14 @@ module.exports.remove = function (room, callback) {
 	});
 };
 
+/**
+ * @callback eventsCallback
+ * @param {Error} err - if an error occurs
+ * @param {PanicEvent[]} events - array of updated panic event objects
+ */
+
+/**
+ * @callback errorCallback
+ * @param {Error} err - if an error occurs
+ */
 

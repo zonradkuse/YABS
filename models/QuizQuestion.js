@@ -1,10 +1,8 @@
+/** @module QuizQuestion Model */
+
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
 var ObjectId = mongoose.Schema.ObjectId;
-
-//answers = answers of the question, like A,B,C,D
-//rightAnswers = right answers of question, maybe input field
-//userAnswers = the answers of all users
 
 var QuizQuestionSchema = mongoose.Schema({
 	creator: { type : ObjectId, ref: 'User' },
@@ -17,9 +15,28 @@ var QuizQuestionSchema = mongoose.Schema({
 });
 
 QuizQuestionSchema.plugin(deepPopulate);
+/**
+ * @class
+ * @classdesc This is a moongose schema for questions of a quiz.
+ * @property {ObjectId} creator - user refId
+ * @property {Date} creationTime=Date.now - creation time
+ * @property {String} question - question
+ * @property {ObjectId[]} answers - answers of the question, like A,B,C,D
+ * @property {ObjectId[]} rightAnswers - right answers of question, maybe input field
+ * @property {ObjectId[]} userAnswers - the answers from all users
+ * @property {Boolean} visible=true - visibility
+ * @example
+ * new QuizQuestion({creator: ObjectId, question: "Who are you?"});
+ */
 var QuizQuestion = mongoose.model('QuizQuestion', QuizQuestionSchema);
 module.exports.QuizQuestion = QuizQuestion;
 
+/** Get question by the ObjectId.
+ * @param {ObjectId} questionID - ObjectId of question
+ * @param {Object} options - options
+ * @param {String} [options.population=""] - param for deepPopulate plugin
+ * @param {quizQuestionCallback} callback - callback function
+ */
 module.exports.getByID = function (questionID, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -32,6 +49,11 @@ module.exports.getByID = function (questionID, options, callback) {
 	});
 };
 
+/** Add a possible answer to a question object.
+ * @param {QuizQuestion} question - question object
+ * @param {QuizAnswer} answer - answer object that should be added
+ * @param {addAnswerCallback} callback - callback function
+ */
 module.exports.addQuizAnswer = function (question, answer, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -46,6 +68,11 @@ module.exports.addQuizAnswer = function (question, answer, callback) {
 	});
 };
 
+/** With this function you can mark a QuizAnswer object as right answer.
+ * @param {QuizQuestion} question - question object
+ * @param {QuizAnswer} answer - answer object that should be right
+ * @param {quizQuestionCallback} callback - callback function
+ */
 module.exports.markAnswerAsRight = function (question, answer, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -55,6 +82,11 @@ module.exports.markAnswerAsRight = function (question, answer, callback) {
 	});
 };
 
+/** Save an answer from an user, given on a specific question, and add it to the question object.
+ * @param {QuizQuestion} question - question object
+ * @param {QuizAnswer} answer - answer from user
+ * @param {addAnswerCallback} callback - callback function
+ */
 module.exports.addUserAnswer = function (question, answer, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -71,3 +103,16 @@ module.exports.addUserAnswer = function (question, answer, callback) {
 		});
 	});
 };
+
+/**
+ * @callback quizQuestionCallback
+ * @param {Error} err - if an error occurs
+ * @param {QuizQuestion} question - updated question object
+ */
+
+/**
+ * @callback addAnswerCallback
+ * @param {Error} err - if an error occurs
+ * @param {QuizQuestion} question - updated question object
+ * @param {QuizAnswer} answer - updated answer object
+ */

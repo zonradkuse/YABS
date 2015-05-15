@@ -1,6 +1,5 @@
-/** The User Model
- * @param {String} pName The useres name as it is visible for the system.
- * @param {String[]} pAccess This holds the access rights.
+/** @module User Model */
+ /* @param {String[]} pAccess This holds the access rights.
  */
 
 var mongoose = require('mongoose');
@@ -11,7 +10,7 @@ var Question = require('../models/Question.js');
 var Answer = require('../models/Answer.js');
 
 var UserSchema = mongoose.Schema({
-	active: { // needed for local registration in future to check if email has been verified.
+	active: {
 		type: Boolean,
 		default: false
 	},
@@ -64,15 +63,57 @@ var UserSchema = mongoose.Schema({
 });
 
 UserSchema.plugin(deepPopulate);
+/**
+ * @class
+ * @classdesc This is a moongose schema for an user.
+ * @property {Boolean} active=false - needed for local registration in future to check if email has been verified.
+ * @property {ObjectId} avatar - image refId
+ * @property {String} name - user's name as it is visible for the system
+ * @property {Object} local - local user data
+ * @property {String} local.name - user name
+ * @property {String} local.password - only needed for local register/login
+ * @property {String} local.mail - only needed for local register/login
+ * @property {Object} rwth - local user data
+ * @property {String} rwth.token - RWTH access token
+ * @property {String} rwth.refresh_token - RWTH refresh token
+ * @property {Number} rwth.expires_in - time in which the RWTH refresh token will be expire
+ * @property {Date} creationTime=Date.now - creation time
+ * @property {Object[]} rights - rights of the rooms
+ * @property {ObjectId} rights.roomID - ObjectId of room
+ * @property {Number} rights.rights - user's rights
+ * @property {ObjectId[]} access - ObjectIds of rooms in which the user is
+ * @property {Object} facebook - user's facebook account data
+ * @property {String} facebook.id
+ * @property {String} facebook.token
+ * @property {String} facebook.name
+ * @property {String} facebook.username
+ * @property {Object} google - user's google account data
+ * @property {String} google.id
+ * @property {String} google.token
+ * @property {String} google.email
+ * @property {String} google.name
+ * @property {Object} github - user's github account data
+ * @property {String} github.id
+ * @property {String} github.token
+ * @property {String} github.email
+ * @property {String} github.name
+ * @property {Object} twitter - user's twitter account data
+ * @property {String} twitter.id
+ * @property {String} twitter.token
+ * @property {String} twitter.displayName
+ * @property {String} twitter.username
+ * @example
+ * new User({});
+ */
 var User = mongoose.model('User', UserSchema);
 module.exports.User = User;
 module.exports.UserSchema = UserSchema;
 
 
-/*
-* @param user the user object which should be created
-* @param callback params: error, user object
-*/
+/** Create an user. The user is stored in the database.
+ * @param {User} user - user object which should be saved
+ * @param {userCallback} callback - callback function
+ */
 module.exports.create = function (user, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -82,10 +123,10 @@ module.exports.create = function (user, callback) {
 	});
 };
 
-/*
-* @param userID ID of the target user object
-* @param callback params: error, user object
-*/
+/** Get user by ObjectID.
+ * @param {ObjectId} userID - ObjectId of user
+ * @param {userCallback} callback - callback function
+ */
 module.exports.get = function (userID, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -95,9 +136,9 @@ module.exports.get = function (userID, callback) {
 	});
 };
 
-/*
-* @param callback params: error, user object
-*/
+/** Get all users.
+ * @param {usersCallback} callback - callback function
+ */
 module.exports.getAll = function (callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -107,11 +148,11 @@ module.exports.getAll = function (callback) {
 	});
 };
 
-/*
-* @param user the target user object
-* @param roomID the ID of room which should add to the user
-* @param callback params: error, user object
-*/
+/** User get access to a room.
+ * @param {User} user - user object
+ * @param {ObjectId} roomID - ObjectId of room which should add to the user
+ * @param {userCallback} callback - callback function
+ */
 module.exports.addRoomAccess = function (user, roomID, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -121,25 +162,29 @@ module.exports.addRoomAccess = function (user, roomID, callback) {
 	});
 };
 
-/*
-* @param user the target user object
-* @param options used for deepPopulation
-* @param callback params: error, array of rooms which the user have access to
-*/
+/** Get user's room access.
+ * @param {User} user - user object
+ * @param {Object} options - options
+ * @param {String} [options.population=""] - param for deepPopulate plugin
+ * @param {userAccessCallback} callback - callback function
+ */
 module.exports.getRoomAccess = function (user, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
+	}
+	if (options.population === undefined) {
+		options.population = "";
 	}
 	User.findById(user._id).deepPopulate('access access.'+ options.population).exec(function (err, user) {
 		return callback(err, user.access);
 	});
 };
 
-/*
-* @param user the target user object
-* @param room the room object which the user should get access to
-* @param callback params: error, user object, room object
-*/
+/** Add a room to a user. The user get access to this room. If the room does not exists, it will be created.
+ * @param {User} user - user object
+ * @param {Room} room - room object
+ * @param {userRoomCallback} callback - callback function
+ */
 module.exports.addRoomToUser = function (user, room, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -157,16 +202,21 @@ module.exports.addRoomToUser = function (user, room, callback) {
 	});
 };
 
-/*
-* @param user the target user object
-* @param room room object to check
-* @oaram options used for deepPopulation of the room object
-* @param callback params: error, user object, room object
-*/
+/** Check if user have access to room.
+ * @param {User} user - user object
+ * @param {Room} room - room object
+ * @param {Object} options - options
+ * @param {String} [options.population=""] - param for deepPopulate plugin
+ * @param {userRoomCallback} callback - callback function
+ */
 module.exports.hasAccessToRoom = function (user, room, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
 	}
+	if (options.population === undefined) {
+		options.population = "";
+	}
+
 	module.exports.getRoomAccess(user, {population: ''}, function (err, rooms) {
 		if (err) {
 			return callback(new Error("Cannot check user's room access."), null, null);
@@ -187,16 +237,20 @@ module.exports.hasAccessToRoom = function (user, room, options, callback) {
 	});
 };
 
-/*
-* @param user the target user object
-* @param room room object 
-* @param question question object to check
-* @oaram options used for deepPopulation of the question object
-* @param callback params: error, user object, question object
-*/
+/** Check if user have access to question.
+ * @param {User} user - user object
+ * @param {Room} room - room object
+ * @param {Question} question - question object
+ * @param {Object} options - options
+ * @param {String} [options.population=""] - param for deepPopulate plugin
+ * @param {userQuestionCallback} callback - callback function
+ */
 module.exports.hasAccessToQuestion = function (user, room, question, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
+	}
+	if (options.population === undefined) {
+		options.population = "";
 	}
 	module.exports.hasAccessToRoom(user, room, {population: ''}, function (err, user, room) {
 		if (err) {
@@ -218,17 +272,21 @@ module.exports.hasAccessToQuestion = function (user, room, question, options, ca
 	});
 };
 
-/*
-* @param user the target user object
-* @param room room object
-* @param question question object
-* @param answer answer object to check
-* @oaram options used for deepPopulation of the answer object
-* @param callback params: error, user object, answer object
-*/
+/** Check if user have access to answer.
+ * @param {User} user - user object
+ * @param {Room} room - room object
+ * @param {Question} question - question object
+ * @param {Answer} answer - answer object
+ * @param {Object} options - options
+ * @param {String} [options.population=""] - param for deepPopulate plugin
+ * @param {userAnswerCallback} callback - callback function
+ */
 module.exports.hasAccessToAnswer = function (user, room, question, answer, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
+	}
+	if (options.population === undefined) {
+		options.population = "";
 	}
 	module.exports.hasAccessToQuestion(user, room, question, {population: ''}, function (err, user, question) {
 		if (err) {
@@ -249,3 +307,36 @@ module.exports.hasAccessToAnswer = function (user, room, question, answer, optio
 		return callback(new Error("Access denied."), null, null);
 	});
 };
+
+/**
+ * @callback userCallback
+ * @param {Error} err - if an error occurs
+ * @param {User} user - updated user object
+ */
+
+/**
+ * @callback usersCallback
+ * @param {Error} err - if an error occurs
+ * @param {User[]} users - array of updated user objects
+ */
+
+/**
+ * @callback userRoomCallback
+ * @param {Error} err - if an error occurs
+ * @param {User} user - updated user object
+ * @param {Room} room - updated room object
+ */
+
+/**
+ * @callback userQuestionCallback
+ * @param {Error} err - if an error occurs
+ * @param {User} user - updated user object
+ * @param {Question} question - updated question object
+ */
+
+ /**
+ * @callback userAnswerCallback
+ * @param {Error} err - if an error occurs
+ * @param {User} user - updated user object
+ * @param {Answer} answer - updated answer object
+ */
