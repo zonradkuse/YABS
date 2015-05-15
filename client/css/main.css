@@ -67,8 +67,8 @@ img.loading {
 .background-frontpage > .container {
     border-top: 5px solid #337AB7;
     background-color: #fff;
-    padding-left: 40px;
-    padding-right: 40px;
+    padding-left: 25px;
+    padding-right: 25px;
 }
 
 /* Questionmodule */
@@ -218,3 +218,8 @@ chartist .panel {
 .social .btn {
     margin-top: 10px;
 }
+
+.justify {
+    text-align: justify;
+}
+
