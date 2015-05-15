@@ -1,0 +1,18 @@
+<div class="modal fade out" id="quizStudentModal" tabindex="-1" role="dialog" aria-labelledby="quizStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="quizStudentModalLabel">{{ type == 'quiz' ? "Quiz" : "Umfrage" }}</h4>
+            </div>
+            <div class="modal-body">
+				<!-- Begin Student Quiz/Poll -->
+				
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn pull-left btn-default" ng-click="reset()" data-dismiss="modal"> {{qsInputText ? 'Abbrechen' : 'Schließen'}} </button>
+                <button type="button" ng-disabled="!qsInputText || (!items && !qsInput)" class="btn btn-primary pull-right" data-dismiss="modal"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden </button>
+
+            </div>
+        </div>
+    </div>
+</div>

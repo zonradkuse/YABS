@@ -34,6 +34,10 @@
                 templateUrl: 'frontpage.html',
                 controller: 'frontpageController'
             }).
+            when('/news', {
+                templateUrl: 'news.html',
+                //controller: 'frontpageController'
+            }).
             otherwise({
                 redirectTo: '/'
         });

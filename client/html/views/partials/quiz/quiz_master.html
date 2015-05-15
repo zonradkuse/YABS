@@ -15,7 +15,7 @@
                 </form>
                 <hr>
 
-                <div class="row" >
+                <div class="row" style="margin-bottom:0">
                     <div class="col-xs-12 col-sm-6">
                         <div class="form-group" style="width:100%;">
                             <label for"qsTextInput"> Ihre Frage... </label>
@@ -51,7 +51,16 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="row" style="margin-bottom:0;">
+                     <div class="col-xs-12 hidden-lg hidden-md hidden-sm">
+                         <h4>Bisher definierte Antworten</h4>
+                        <div class="list-group">
+                            <a ng-repeat="item in items" href="#" ng-style="item.answer ? '' : {color: 'red'}" ng-click="editAnswer(item)" class="list-group-item" ng-class="item == editItem ? 'active' : ''">
+                                {{ item.answer ? item.answer : 'Dieses Feld hat noch keine Beschreibung!'}}
+                            </a>
+                        </div>
+                    </div>
                     <div class="col-xs-12 col-sm-6">
                         <div class="form-group-inline" ng-if="editItem">
                             <textarea style="width:100%;" ng-model="editItem.answer" placeholder="Geben Sie den gewünschten Beschreibungstext ein..."></textarea>
@@ -61,13 +70,20 @@
                                 <option value="text">Textfeld</option>
                                 <option value="radiobox">Radiobox</option>
                             </select>
-                            <div ng-if="editItem.type == 'text'">
-                                Akzeptierte Eingabe für dieses Textfeld
-                                <input type="text">
+                            <div class="checkbox" ng-if="editItem.type == 'radiobox' && optionQuiz == 'Quizfrage'">
+                                 <label class="checkbox"> <input type="checkbox"> Ist richtige Antwort </label>
+                            </div>
+                            <div class="checkbox" ng-if="editItem.type == 'checkbox' && optionQuiz == 'Quizfrage'">
+                                <label class="checkbox"> <input type="checkbox"> Ist richtige Antwort </label>
+                            </div>
+                            <br>
+                            <div class="form-group" ng-if="editItem.type == 'text' && optionQuiz == 'Quizfrage'">
+                                <label for="answerInput"> Akzeptierte Eingabe für dieses Textfeld </label>
+                                <input id="answerInput" placeholder="Antworttext..." class="form-control" type="text">
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12 col-sm-6">
+                    <div class="hidden-xs col-sm-6">
                         <div class="list-group">
                             <a ng-repeat="item in items" href="#" ng-style="item.answer ? '' : {color: 'red'}" ng-click="editAnswer(item)" class="list-group-item" ng-class="item == editItem ? 'active' : ''">
                                 {{ item.answer ? item.answer : 'Dieses Feld hat noch keine Beschreibung!'}}
@@ -75,6 +91,7 @@
                         </div>
                     </div>
                 </div>
+                
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn pull-left btn-default" ng-click="reset()" data-dismiss="modal"> {{qsInputText ? 'Abbrechen' : 'Schließen'}} </button>
