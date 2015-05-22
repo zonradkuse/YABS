@@ -57,7 +57,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "gulp check"
+    "test": "gulp check && ./node_modules/mocha/bin/mocha --timeout 5000 ./test/*test.js"
   },
   "description": "YABS ====",
   "main": "server.js",
