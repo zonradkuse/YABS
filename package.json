@@ -53,7 +53,8 @@
     "gulp-uglify": "~1.0.1",
     "gulp-useref": "~1.0.2",
     "jscs": "^1.13.1",
-    "mocha": "^2.0.1"
+    "mocha": "^2.0.1",
+    "gulp-shell": "~0.4.1"
   },
   "scripts": {
     "start": "node server.js",

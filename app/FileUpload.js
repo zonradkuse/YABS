@@ -1,3 +1,5 @@
+/** @module FileUpload */
+
 /* global __dirname */
 var config = require('../config.json');
 var logger = require('./Logger.js');
@@ -15,7 +17,9 @@ if (config.clamav.enabled) {
 var multer = require('multer');
 var fs = require('fs');
 
-
+/** Init file upload.
+ * @param {Object} app - global app object
+ */
 module.exports = function (app) {
 	// use and configure multer for uploads
 	app.use(multer({
@@ -89,6 +93,11 @@ module.exports = function (app) {
 	});
 };
 
+/** Store file to database and save it to filesystem.
+ * @param {Object} file - uploaded file object
+ * @param {Object} req - request
+ * @param {Object} res - response
+ */
 function processFile(file, req, res) {
 	lwip.open(file, function (err, image) {
 		if (err) {

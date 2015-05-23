@@ -299,12 +299,12 @@ module.exports = function (wsControl) {
 
 /**
  * Helper Function to broadcast questions.
- * @param  {[type]} wss     [description]
- * @param  {[type]} ws      [description]
- * @param  {[type]} roomId  [description]
- * @param  {[type]} q       [description]
- * @param  {[type]} qToSend [description]
- * @return {[type]}         [description]
+ * @param  {type} wss - description
+ * @param  {type} ws - description
+ * @param  {type} roomId - description
+ * @param  {type} q - description
+ * @param  {type} qToSend - description
+ * @return {type} description
  */
 function sendAndSaveQuestion(wsControl, wss, ws, roomId, q, qToSend, refId) {
 
@@ -329,7 +329,7 @@ function sendAndSaveQuestion(wsControl, wss, ws, roomId, q, qToSend, refId) {
 }
 
 
-/**
+/*
  * Helper Function to broadcast answers.
  * @param  {[type]} wss          [description]
  * @param  {[type]} ws           [description]

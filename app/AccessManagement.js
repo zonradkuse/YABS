@@ -1,3 +1,5 @@
+/** @module AccessManagement */
+
 var inter = require('./RPC/LocalInterface.json');
 var roles = require('../config/UserRoles.json');
 var session = require('express-session');
@@ -5,6 +7,10 @@ var sessionStore = require('connect-redis')(session);
 var sessionStore = new sessionStore();
 var logger = require('./Logger.js');
 
+/** Get uri from rpc interface.
+ * @param {String} uri - rpc uri
+ * @returns {Object} rpc object 
+ */
 function getEntry(uri) {
 	for (var key in inter.data) {
 		if (inter.data[ key ].uri === uri) {
@@ -14,10 +20,19 @@ function getEntry(uri) {
 	return null;
 }
 
+/** Get required access level of rpc uri.
+ * @param {String} uri - rpc uri
+ * @returns {Number} access level 
+ */
 function getAccessLevel(uri) {
 	return getEntry(uri).accessLevel;
 }
 
+/** Check if user has permission to call rpc uri.
+ * @param {String} uri - rpc uri
+ * @param {Number} myAccess - user access
+ * @returns {Boolean} true if user has access, false otherwise
+ */
 function checkAccess(uri, myAccess) {
 	var aL = getAccessLevel(uri);
 	if (aL) {
@@ -27,13 +42,11 @@ function checkAccess(uri, myAccess) {
 	}
 }
 
-/**
- * Gets session out of sessionStore and checks wether the accessLevel is high enough.
- *
- * @param {uri} uri to check
- * @param {sId} the sessionId to check
- * @param {next} callback with params (err, bool). bool is set true when access is granted.
- **/
+/** Gets session out of sessionStore and checks wether the accessLevel is high enough.
+ * @param {String} uri - uri to check
+ * @param {SessionId} sId - the sessionId to check
+ * @param {nextCallback} next - callback function
+ */
 function checkAccessBySId(uri, sId, roomId, next) {
 	sessionStore.get(sId, function (err, session) {
 		if (err) {
@@ -59,14 +72,14 @@ function checkAccessBySId(uri, sId, roomId, next) {
 	});
 }
 
-/**
- * Gets session out of sessionStore and compare the accessLevel to the expected one.
- *
- * @param {sId} the sessionId to check
- * @param {options} fields (requiredAccess, roomMember). roomMember equals true then user have to be active room member
- * @param {roomId} id of room to check
- * @param {next} callback with params (err, bool). bool is set true when access is granted.
- **/
+/** Gets session out of sessionStore and compare the accessLevel to the expected one.
+ * @param {SessionId} sId the sessionId to check
+ * @param {Object} options - options
+ * @param {Boolean} options.requiredAccess - equals true then user must have this access level or higher
+ * @param {Boolean} [options.roomMember] - equals true then user have to be active room member
+ * @param {ObjectId} roomId - id of room to check
+ * @param {nextCallback} next - callback function
+ */
 function checkAccessLevel(sId, options, roomId, next) {
 	if (options.requiredAccess === undefined) {
 		throw new Error("options must have requiredAccess field.");
@@ -103,13 +116,11 @@ function checkAccessLevel(sId, options, roomId, next) {
 	});
 }
 
-/**
- * Sets a new accessLevel to session.
- *
- * @param {level} accessLevel to set
- * @param {sId} the sessionId to check
- * @param {next} callback with params (err, bool). bool is set true on success.
- **/
+/** Sets a new accessLevel to session.
+ * @param {Number} level - accessLevel to set
+ * @param {SessionId} sId - the sessionId to check
+ * @param {nextCallback} next - callback function
+ */
 function setAccessBySId(level, sId, roomId, next) {
 	sessionStore.get(sId, function (err, session) {
 		if (err) {
@@ -131,14 +142,11 @@ function setAccessBySId(level, sId, roomId, next) {
 	});
 }
 
-/**
- * Sets accessLevel by rwth role.
- *
- * @param {rwthRole} rwthRole string that is set in UserRoles.json
- * @param {sId} the sessionId to check
- * @param {next} callback with params (err, bool). bool is set true on success.
- *
- **/
+/** Sets accessLevel by rwth role.
+ * @param {String} rwthRole - is set in UserRoles.json
+ * @param {SessionId} sId - the sessionId to check
+ * @param {nextCallback} next - callback function
+ */
 function setAccessByRWTH(rwthRole, sId, roomId, next) {
 	for (var key in roles.rwth) {
 		if (roles.rwth[ key ] === rwthRole) {
@@ -157,3 +165,8 @@ module.exports.checkAccessBySId = checkAccessBySId;
 module.exports.checkAccessLevel = checkAccessLevel;
 module.exports.setAccessBySId = setAccessBySId;
 
+/**
+ * @callback nextCallback
+ * @param {Error} err - if an error occurs
+ * @param {Boolean} bool - true if successful
+ */

@@ -10,7 +10,8 @@ var gulp = require('gulp'),
     jsdoc = require('gulp-jsdoc'),
     rename = require('gulp-rename'),
     exec = require('child_process').exec,
-    jscs = require('gulp-jscs');
+    jscs = require('gulp-jscs'),
+    shell = require('gulp-shell');
 
 //build the client and only the client
 gulp.task('fast-build', function() {
@@ -130,10 +131,15 @@ gulp.task('install', ['check'], function(cb){
 
 gulp.task('full', ['check', 'install' ,'build', 'jscs-app']);
 
-gulp.task('doc', function() {
-    del.sync('doc/*');
+gulp.task('docOld', function() {
+    del.sync('docOld/*');
     gulp.src(['app/**/*.js', 'models/**/*.js'])
-        .pipe(jsdoc('doc/server'));
+        .pipe(jsdoc('docOld/server'));
     gulp.src(['client/**/*.js', '!client/bower_components/**/*.js'])
-        .pipe(jsdoc('doc/client'));
+        .pipe(jsdoc('docOld/client'));
 });
+
+gulp.task('doc', shell.task(
+    ['./node_modules/.bin/jsdoc models/* app/* -c jsdoc-conf.json -d doc/server',
+    './node_modules/.bin/jsdoc client/* -c jsdoc-conf.json -d doc/client']
+));

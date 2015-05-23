@@ -1,6 +1,6 @@
-/**
- *  Websocket.js manages the websocket events emittet by einaros/ws. It also checks
- *   if the called uri is okay and emits those events for easy handling.
+/** Websocket.js manages the websocket events emittet by einaros/ws. It also checks
+ * if the called uri is okay and emits those events for easy handling.
+ * @module Websocket
  */
 var logger = require('./Logger.js');
 var config = require('../config.json');
@@ -17,21 +17,34 @@ var roomWSControl = require('./WebsocketAPI/Room.js');
 var accessManager = require('./AccessManagement.js');
 
 // ------------- begin Websocket Server init with helper functions
-
+/** WebSocketServer
+ * @namespace
+ */
 var wss = new WebSocketServer({
 	server: app
 });
 
+/** Send a broadcast to all clients.
+ * @param {Object} data - data which should have sent to the user
+ */
 wss.broadcast = function broadcast(data) {
 	wss.clients.forEach(function each(client) {
 		client.send(data);
 	});
 };
 
+/** Count all active users.
+ * @memberof! wss#
+ * @returns {Number} count of users
+ */
 wss.getActiveUsers = function () {
 	return wss.clients.length;
 };
 
+/** Count active users of a room.
+ * @returns {Number} count of users
+ * @todo async count
+ */
 wss.getActiveUsersByRoom = function (roomId, next) {
 	var c = 0;
 	var _countFunc = function (p) {
@@ -49,9 +62,16 @@ wss.getActiveUsersByRoom = function (roomId, next) {
 	};
 	for (var i = wss.clients.length - 1; i >= 0; i--) {
 		var pos = i;
-		(_countFunc)(pos); 
+		(_countFunc)(pos);
 	}
 };
+
+/** Send a broadcast to all users in a room.
+ * @param {Websocket} ws - ws object of initiator
+ * @param {String} uri - rpc uri
+ * @param {Object} data - data which should have sent to the user
+ * @param {ObjectId} roomId - ObjectId of target room
+ */
 wss.roomBroadcast = function (ws, uri, data, roomId) {
 	var oldQ;
 	if (data.question) {
@@ -84,6 +104,15 @@ wss.roomBroadcast = function (ws, uri, data, roomId) {
 	});
 };
 
+/** Send a broadcast to all users, in a room, which have a required access level or higher.
+ * @param {Websocket} ws - ws object of initiator
+ * @param {String} uri - rpc uri
+ * @param {Object} data - data which should have sent to the user
+ * @param {ObjectId} roomId - ObjectId of target room
+ * @param {Object} options - options
+ * @param {Boolean} options.requiredAccess - equals true then user must have this access level or higher
+ * @param {Boolean} [options.roomMember] - equals true then user have to be active room member
+ */
 wss.roomAccessLevelBroadcast = function (ws, uri, data, roomId, options) {
 	var oldQ;
 	if (data.question) {
@@ -113,6 +142,9 @@ wss.roomAccessLevelBroadcast = function (ws, uri, data, roomId, options) {
 };
 
 // ------------ begin WebsocketHandler Object extending EventEmitter.
+/** Handler for websockets. Receive requests, check uri and parameters of rpc event, etc.
+ * @constructor
+ */
 var WebsocketHandler = function () {
 	events.EventEmitter.call(this);
 	var self = this;
@@ -217,6 +249,14 @@ var WebsocketHandler = function () {
 	};
 };
 
+/** Build a json object for a response or a broadcast, which will be send via websocket.
+ * @param {Websocket} ws - websocket of receiver
+ * @param {Error} err - if an error should be send, otherwise null
+ * @param {Object} data - data
+ * @param {String} refId - refId of request, when needed
+ * @param {String} uri - rpc uri
+ * @param {Object} param - parameters for a broadcast
+ */
 function build(ws, err, data, refId, uri, param) {
 	if (!ws || !ws.send) {
 		throw new Error("Websocket not set.");

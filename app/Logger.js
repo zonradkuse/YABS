@@ -1,3 +1,5 @@
+/** @module Logger */
+
 var winston = require('winston');
 winston.emitErrs = true;
 

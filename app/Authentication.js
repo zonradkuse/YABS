@@ -1,3 +1,5 @@
+/** @module Authentication */
+
 var User = require('../models/User.js');
 var logger = require('./Logger.js');
 var authConf = require('../config/auth.json');
@@ -8,7 +10,9 @@ var Facebook = require('./PassportFacebook.js');
 var Google = require('./PassportGoogle.js');
 var Github = require('./PassportGithub.js');
 
-// Passport Functionality
+/** Passport functionality.
+ * @param {Object} passport
+ */
 module.exports = function (passport) {
 	passport.serializeUser(function (user, done) {
 		done(null, user);
@@ -29,8 +33,12 @@ module.exports = function (passport) {
 	}
 
 };
-/*
- * Log In. Looks user up or sets error on next callback (first parameter).
+
+ /** Local login.
+ * @param {String} email
+ * @param {String} password
+ * @param {successCallback} success - callback if success
+ * @param {failCallback} fail - callback if fail
  */
 module.exports.loginLocal = function (email, password, success, fail) {
 	User.User.findOne({
@@ -56,8 +64,11 @@ module.exports.loginLocal = function (email, password, success, fail) {
 
 /**
  * Register user locally. The request will not! be checked. A logged in user should set information on its own.
+ * @param {String} name - user name
+ * @param {String} password
+ * @param {String} email
+ * @param {nextCallback} next - callback function
  */
-
 module.exports.registerLocal = function (name, password, email, next) {
 	//perform checks
 	if (arguments.length < 4) {
@@ -96,3 +107,19 @@ module.exports.registerLocal = function (name, password, email, next) {
 	});
 };
 
+/**
+ * @callback successCallback
+ * @param {Error} err - if an error occurs
+ * @param {User} user - user object
+ */
+
+ /**
+ * @callback failCallback
+ * @param {Error} err - occured error
+ */
+
+ /**
+ * @callback nextCallback
+ * @param {Error} err - if an error occurs
+ * @param {User} user - user object
+ */
