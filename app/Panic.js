@@ -1,17 +1,31 @@
+/** @module Panic */
+
 var roles = require('../config/UserRoles.json');
 var Room = require('../models/Room.js');
 var System = require('./WebsocketAPI/System.js');
 var PanicGraph = require('../models/PanicGraph.js');
 var PanicEvent = require('../models/PanicEvent.js');
 
+/**Map with roomId as key and RoomWorker as objects. */
 var workerMap = [];
+/**{room: roomId, user: userId} as key. Timeout function handler as objects.*/
 var userMap = [];
 
-/*
-* @param roomID the ID of the target room object
-* @param wss the websocket object to communicate
-* @param intervals object within intervals for live update and graph clustering
-*/
+/** Worker class which manages the processing of live data and creation of graph
+ * @constructor
+ * @param {ObjectId} roomID - ObjectId of the target room object
+ * @param {Object} wsControl
+ * @param {WebsocketServer} wss - websocket server
+ * @param {Websocket} wss - websocket of initiator
+ * @param {Object} options
+ * @param {Object} [options.intervals]
+ * @param {Number} [options.intervals.live=30] - live update 
+ * @param {Number} [options.intervals.graph=60] - graph clustering
+ * @param {Number} [options.intervals.panicReset=450] - user panic reset
+ * @param {Object} [options.inportantQuestions]
+ * @param {Number} [options.inportantQuestions.interval=900]
+ * @param {Number} [options.inportantQuestions.votes=10] - minimum votes of an important question
+ */
 var RoomWorker = function (roomID, wsControl, wss, ws, options) {
 	if (options.intervals === undefined) {
 		options.intervals = {};
@@ -93,12 +107,14 @@ RoomWorker.prototype.stop = function () {
 	clearInterval(this.graphDaemon);
 };
 
-/*
-* @param room the room object to be registered
-* @param ws the websocket object to communicate
-* @param options object with options for intervals and other things
-* @param callback params: error
-*/
+/** Register room for tracking live panics.
+ * @param {Room} room - room the room object to be registered
+ * @param {wsControl} wsControl
+ * @param {WebsocketServer} wss - websocket server
+ * @param {Websocket} ws - websocket of initiator
+ * @param {Object} options - options for RoomWorker class
+ * @param {errorCallback} callback - callback function
+ */
 module.exports.register = function (room, wsControl, wss, ws, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -120,10 +136,10 @@ module.exports.register = function (room, wsControl, wss, ws, options, callback)
 	});
 };
 
-/*
-* @param room the room object to be unregistered
-* @param callback params: error
-*/
+/** Unregister room from panic tracking.
+ * @param {Room} room - room object to be unregistered
+ * @param {errorCallback} callback - callback function
+ */
 module.exports.unregister = function (room, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -141,11 +157,11 @@ module.exports.unregister = function (room, callback) {
 	});
 };
 
-/*
-* @param room the room object of the target graph
-* @param options used for interval [begin, end]
-* @param callback params: error
-*/
+/** Cluster the live events and store them in the graph.
+ * @param {Room} room - room object of the target graph
+ * @param {Object} options - options used for interval [begin, end]
+ * @param {errorCallback} callback - callback function
+ */
 var clusterEvents = function (room, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -174,11 +190,11 @@ var clusterEvents = function (room, options, callback) {
 	});
 };
 
-/*
-* @param user the user object which should be checked
-* @param room the target room object
-* @param callback params: error, panic event object
-*/
+/** Check if user has panic.
+ * @param {User} user - user object which should be checked
+ * @param {Room} room - target room object
+ * @param {panicEventCallback} callback - callback function
+ */
 module.exports.hasUserPanic = function (user, room, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -191,10 +207,10 @@ module.exports.hasUserPanic = function (user, room, callback) {
 	});
 };
 
-/*
-* @param room the room object which should be registered
-* @param callback params: bool
-*/
+/** Check if room is registered.
+ * @param {Room} room - room object which should be registered
+ * @param {boolCallback} callback - callback function
+ */
 module.exports.isRoomRegistered = function (room, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -206,11 +222,11 @@ module.exports.isRoomRegistered = function (room, callback) {
 	}
 };
 
-/*
-* @param user the user object which has panic
-* @param room the room object of the panic event
-* @param callback params: error
-*/
+/** Set user to panic mode.
+ * @param {User} user - user object which has panic
+ * @param {Room} room - room object of the panic event
+ * @param {errorCallback} callback - callback function
+ */
 module.exports.panic = function (user, room, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -236,11 +252,11 @@ module.exports.panic = function (user, room, callback) {
 	});
 };
 
-/*
-* @param user the user object which has no panic anymore
-* @param room the room object of the panic event
-* @param callback params: error
-*/
+/** User leaves panic mode. 
+ * @param {User} user - user object which has no panic anymore
+ * @param {Room} room - room object of the panic event
+ * @param {errorCallback} callback - callback function
+ */
 module.exports.unpanic = function (user, room, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
@@ -264,6 +280,10 @@ module.exports.unpanic = function (user, room, callback) {
 	});
 };
 
+/** Creates the timeout when user should automatically leave the panic mode. 
+ * @param {Room} room - room object
+ * @param {User} user - user object
+ */
 function createUserTimeout(room, user) {
 	return setTimeout(function () {
 		var roomWorker = workerMap[ room._id ];
@@ -283,3 +303,20 @@ function createUserTimeout(room, user) {
 		});
 	}, workerMap[ room._id ].options.intervals.panicReset);
 }
+
+/**
+ * @callback errorCallback
+ * @param {Error} err - if an error occurs
+ */
+
+/**
+ * @callback panicEventCallback
+ * @param {Error} err - if an error occurs
+ * @param {PanicEvent} panicEvent - panic event object
+ */
+
+/**
+ * @callback boolCallback
+ * @param {Error} err - if an error occurs
+ * @param {Boolean} bool - true on success
+ */ 

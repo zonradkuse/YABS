@@ -1,9 +1,15 @@
-//Quiz worker
+/** @module Quiz */
+
 var Quiz = require('../models/Quiz.js');
 var QuizQuestion = require('../models/QuizQuestion.js');
 var QuizAnswer = require('../models/QuizAnswer.js');
 var async = require('async');
 
+/** Check if user has already answered.
+ * @param {QuizQuestion} question
+ * @param {User} user
+ * @param {boolCallback} callback - callback function
+ */
 var hasUserAlreadyAnswered = function (question, user, callback) {
 	QuizAnswer.QuizAnswer.find({question: question._id, creator: user._id, type: {$gte: 10}}).exec(function (err, answers) {
 		if (err) {
@@ -17,6 +23,11 @@ var hasUserAlreadyAnswered = function (question, user, callback) {
 	});
 };
 
+/** Check if the answers of an user to a specific question are right.
+ * @param {Question} question
+ * @param {User} user
+ * @param {boolAnswersCallback} callback - callback function
+ */
 var areUsersAnswersCorrect = function (question, user, callback) {
 	QuizQuestion.getByID(question._id, { population: "rightAnswers" }, function (err, question) {
 		if (err) {
@@ -44,6 +55,11 @@ var areUsersAnswersCorrect = function (question, user, callback) {
 	});
 };
 
+/** Check if an answer is a correct answer.
+ * @param {Question} question
+ * @param {Answer} answer
+ * @param {boolCallback} callback - callback function
+ */
 module.exports.isAnswerCorrect = function (question, answer, callback) {
 	QuizQuestion.getByID(question._id, { population: "rightAnswers" }, function (err, question) {
 		if (err) {
@@ -68,6 +84,10 @@ module.exports.isAnswerCorrect = function (question, answer, callback) {
 	});
 };
 
+/** Check answer.
+ * @param {QuizAnswer} rightAnswer - a right answer of a question
+ * @param {QuizAnswer} userAnswer - an answer from user to this question
+ */
 var checkAnswer = function (rightAnswer, userAnswer) {
 	var qa_id = rightAnswer.type == QuizAnswer.Types.QA_ID && userAnswer.type == QuizAnswer.Types.UA_ID && 
 				rightAnswer._id == userAnswer.answer;
@@ -76,7 +96,11 @@ var checkAnswer = function (rightAnswer, userAnswer) {
 	return qa_id || qa_input;
 };
 
-//TODO regex?
+/** Checks the input string of answer, if it is a input answer.
+ * @todo regex check
+ * @param {QuizAnswer} rightAnswer
+ * @param {UserAnswer} userAnswer 
+ */
 var checkInput = function (rightAnswer, userAnswer) {
 	if (rightAnswer.answer == userAnswer.answer) {
 		return true;
@@ -84,6 +108,11 @@ var checkInput = function (rightAnswer, userAnswer) {
 	return false;
 };
 
+/** Load a complete quiz for a specific user.
+ * @param {Quiz} quiz
+ * @param {User} user
+ * @param {quizCallback} callback - callback function
+ */
 module.exports.loadQuiz = function (quiz, user, callback) {
 	Quiz.getByID(quiz._id, {population: "questions.answers"}, function (err, quiz) {
 		if (err) {
@@ -165,3 +194,22 @@ module.exports.loadQuiz = function (quiz, user, callback) {
 		});
 	});
 };
+
+/**
+ * @callback boolCallback
+ * @param {Error} err - if an error occurs
+ * @param {Boolean} bool - true on success
+ */
+
+/**
+ * @callback boolAnswerCallback
+ * @param {Error} err - if an error occurs
+ * @param {Boolean} bool - true on success
+ * @param {QuizAnswers[]} - array of quiz answer objects
+ */
+
+/**
+ * @callback quizCallback
+ * @param {Error} err - if an error occurs
+ * @param {Quiz} quiz - quiz object
+ */

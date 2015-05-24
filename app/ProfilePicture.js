@@ -1,3 +1,4 @@
+/** @module ProfilePicture */
 /* global __dirname */
 
 var config = require('../config.json');
@@ -7,9 +8,15 @@ var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path').join(__dirname, '/../images/avatar');
 
-//requires imagemagick (simple apt-get install)
+/**Avatar generator. Requires imagemagick!!! (apt-get install)*/
 var gen = require('avatar-generator')({});
 
+/**Generate an avatar for an user profile.
+ * @param {User} user - target user object
+ * @param {String} gender - gender of avatar
+ * @param {Number} resolution - width and height, because of a square profile avatar
+ * @param {imageCallback} callback - callback function
+ */
 module.exports.generate = function (user, gender, resolution, callback) {
 	var hash = crypto.createHash('sha256').update(user._id.toString()).digest('hex');
 	console.log(hash);
@@ -36,5 +43,9 @@ module.exports.generate = function (user, gender, resolution, callback) {
 			});
 		});
 	});
-
 };
+
+/**
+ * @callback errorCallback
+ * @param {Error} err - if an error occurs
+ */

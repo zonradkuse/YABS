@@ -1,3 +1,5 @@
+/** @module UserWorker */
+
 var websocket = require('ws').WebSocket;
 var session = require('express-session');
 var sessionStore = require('connect-redis')(session);
@@ -12,14 +14,14 @@ var config = require('../config.json');
 var querystring = require('querystring');
 var panicDAO = require('./Panic.js');
 
-/**
- * sets needed object attributes.
- *
+/** sets needed object attributes.
  * @constructor
- * @param sId User SessionId.
- * @param ws The to the user specific websocket.
- * @param user User Data Access Object
- **/
+ * @param {SessionId} sId - user SessionId
+ * @param {Websocket} ws - user specific websocket
+ * @param {User} user - user data access object
+ * @param {Object} wsFrame
+ * @param {Boolean} initialBool
+ */
 var UserWorker = function (sId, ws, user, wsFrame, initialBool) {
 	this.sId = sId;
 	this.ws = ws;
@@ -28,9 +30,10 @@ var UserWorker = function (sId, ws, user, wsFrame, initialBool) {
 	this.initialized = initialBool;
 };
 
-/**
- * checks if there are new rooms that need to be added to the database and adds them.
- **/
+/** Checks if there are new rooms that need to be added to the database and adds them.
+ * @param {String} refId - request refId
+ * @param {UserWorker~callback} next - callback function
+ */
 UserWorker.prototype.fetchRooms = function (refId, next) {
 	var self = this;
 	this.checkSession(function (err, value) {
@@ -98,9 +101,9 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 	});
 };
 
-/**
- * sets next true if the user session is still valid.
- **/
+/** Sets next true if the user session is still valid.
+ * @param {UserWorker~boolCallback} next - callback function
+ */
 UserWorker.prototype.checkSession = function (next) {
 	var self = this;
 	sessionStore.get(self.sId, function (err, user) {
@@ -116,9 +119,9 @@ UserWorker.prototype.checkSession = function (next) {
 	});
 };
 
-/**
- * renews the Campus access_token if called and the user is still logged in/has a valid session.
- **/
+/** Renews the Campus access_token if called and the user is still logged in/has a valid session.
+ * @param {UserWorker~errorCallback} next - callback function
+ */
 UserWorker.prototype.refreshAccessToken = function (next) {
 	var self = this;
 	this.checkToken(function (err, expires) {
@@ -177,6 +180,9 @@ UserWorker.prototype.refreshAccessToken = function (next) {
 
 };
 
+/** Check token.
+ * @param {UserWorker~tokenCallback} next - callback function
+ */
 UserWorker.prototype.checkToken = function (next) {
 	var self = this;
 
@@ -203,13 +209,14 @@ UserWorker.prototype.checkToken = function (next) {
 	});
 
 };
-/**
- * merges this.user with the given userId and sets (err, mergedUser) as parameters in next.
- **/
+/** Merges this.user with the given userId and sets (err, mergedUser) as parameters in next.
+ * @todo implement
+ */
 UserWorker.prototype.mergeWithUser = function (userId, next) {
 
 };
 
+/** Get all rooms. */
 UserWorker.prototype.getRooms = function () {
 	var self = this;
 	if (self.user && self.user._id) {
@@ -240,3 +247,25 @@ UserWorker.prototype.getRooms = function () {
 
 
 module.exports = UserWorker;
+
+
+/**
+ * @callback UserWorker~callback
+ */
+
+/**
+ * @callback UserWorker~errorCallback
+ * @param {Error} err - if an error occurs
+ */
+
+/**
+ * @callback UserWorker~boolCallback
+ * @param {Error} err - if an error occurs
+ * @param {Boolean} bool - true on success
+ */
+
+/**
+ * @callback UserWorker~tokenCallback
+ * @param {Error} err - if an error occurs
+ * @param {Number} expires_in - time it will be expired
+ */
