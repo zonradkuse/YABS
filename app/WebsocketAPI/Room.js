@@ -41,7 +41,7 @@ module.exports = function (wsControl) {
 							room.questions[ j ].answers[ i ].images = removeOwnerFields(room.questions[ j ].answers[ i ].images);
 						}
 					}
-					if (room.questions[ j ].content !== "" && room.questions[ j ].creationTime.getTime() > date) {
+					if (room.questions[ j ].content !== "") {
 						wsControl.build(req.ws, null, null, null, "question:add", {
 							roomId : req.params.roomId,
 							question : createVotesFields(req.session.user, room.questions[ j ])
