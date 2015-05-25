@@ -109,30 +109,29 @@ function processFile(file, req, res) {
 				// TODO check if only not something bad.
 				//create a compressed real file
 				var webpath = "/images/userimages/" + req.files.image.name.split('.')[ 0 ] + ".jpg"; //webpath
-				image.writeFile(__dirname + "/../" + webpath,
-                    { quality : 50 }, function (err) {
-	if (err) {
-		res.send(JSON.stringify({error: "An error occured on processing the image"}));
-                            
-		return res.end();
-	}
-	var im = new imageDAO.Image();
-	im.owner = req.session.user._id;
-	im.path = webpath;
-	im.resolution.width = image.width();
-	im.resolution.height = image.height();
-	im.size = req.files.image.size;
-	im.type = 'jpg';
-	im.save(function (err) {
-		if (err) {
-			res.write(JSON.stringify({error: "Could not save new Image"}));
-		} else {
-			var i = JSON.parse(JSON.stringify(im.toObject()));
-			i.owner = undefined;
-			res.write(JSON.stringify(i));
-		}
-		res.end();
-	});
+				image.writeFile(__dirname + "/../" + webpath, { quality : 50 }, function (err) {
+					if (err) {
+						res.send(JSON.stringify({error: "An error occured on processing the image"}));
+				                            
+						return res.end();
+					}
+					var im = new imageDAO.Image();
+					im.owner = req.session.user._id;
+					im.path = webpath;
+					im.resolution.width = image.width();
+					im.resolution.height = image.height();
+					im.size = req.files.image.size;
+					im.type = 'jpg';
+					im.save(function (err) {
+						if (err) {
+							res.write(JSON.stringify({error: "Could not save new Image"}));
+						} else {
+							var i = JSON.parse(JSON.stringify(im.toObject()));
+							i.owner = undefined;
+							res.write(JSON.stringify(i));
+						}
+						res.end();
+					});
                 });
 
 			});

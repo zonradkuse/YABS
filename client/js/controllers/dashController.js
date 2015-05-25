@@ -1,8 +1,3 @@
-/**
- * Created by j0h on 10.05.15.
- */
-
-
 clientControllers.controller("dashController", ["$scope", "$rootScope", "users", "authentication",
     function($scope, $rootScope, users, auth){
         auth.fetchUserName();

@@ -1,21 +1,20 @@
-/* global clientControllers */
-/* global $ */
-clientControllers.directive('quizMaster', ['$timeout', 'rooms', function($timeout, rooms){
+clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeout, rooms){
 	return {
 		restrict: 'E',
-		templateUrl: 'quiz_master.html',
+		templateUrl: 'ars_creator.html',
+		controller: 'arsMaster',
 		link: {
 			pre: function(scope, elem, attr){
 				//define default data for initialization and define options
 				scope.optionQuiz = "Umfragebeschreibung";
 				scope.id = 0;
-				scope.editItem = undefined;
 				scope.items = [{
-					tId: scope.id,
+					_id: scope.id,
 					type: "checkbox",
 					answer: "wundertoll...",
 					active: false
 				}];
+				scope.editItem = scope.items[0];
 				scope.type = "";
 
 				scope.reset = function () {
@@ -43,7 +42,7 @@ clientControllers.directive('quizMaster', ['$timeout', 'rooms', function($timeou
 
 				scope.addItem = function() {
 					var item = {
-						tId: scope.id++,
+						_id: scope.id++,
 						active: false,
 						answer: "",
 						type: scope.type,
@@ -63,10 +62,11 @@ clientControllers.directive('quizMaster', ['$timeout', 'rooms', function($timeou
 
 			},
 			post: function(scope, elem, attr){
-				/*$('#quizMasterModal').hide().modal({
+				$('#quizMasterModal').modal({
 					keyboard: false,
-					backdrop: 'static'
-				});*/
+					backdrop: 'static',
+					show : false
+				});
 			}
 		}
 	};

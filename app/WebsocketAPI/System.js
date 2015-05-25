@@ -19,8 +19,8 @@ var workerMap = {};
 
 module.exports = function (wsControl) {
 	/*
-	     * This method performs a big database query and sends it back to the client.
-	     */
+     * This method performs a big database query and sends it back to the client.
+     */
 	wsControl.on("system:benchmark", function (req) {
 		if (config.general.env.dev) {
 			roomDAO.getAll({ population: 'questions questions.author questions.votes questions.votes.access questions.answers questions.answers.author questions.author.access questions.answers.author.access' }, function (err, rooms) {
@@ -60,7 +60,6 @@ module.exports = function (wsControl) {
 		wsControl.build(req.ws, null, { message: "pong" }, req.refId);
 	});
     
-	//Campus Device OAuth. Webapplication OAuth is not accessible. //TODO: Therefor a solution for multi-sessions is needed!
 	wsControl.on('system:login', function (req) {
 		postReqCampus('code', querystring.stringify({
 			"client_id": config.login.l2p.clientID,

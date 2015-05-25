@@ -1,0 +1,35 @@
+<div class="modal fade out" id="pollStudentModal" tabindex="-1" role="dialog" aria-labelledby="pollStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="pollStudentModalLabel"> Umfrage </h4>
+            </div>
+            <div class="modal-body">
+                <h2>{{question.description}}</h2>
+                <form>
+    				<div ng-repeat="option in question.options">
+                        <div class="checkbox" ng-if="option.checkbox">
+                            <label for="{{option._id}}"> <input ng-model="option.checked" id="{{option._id}}" type="checkbox"> {{option.description}} </label>
+                        </div>
+                        <div ng-if="option.radiobox">
+                            <input name="poll" ng-model="option.checked" id="{{option._id}}" type="radio">
+                            <label for="{{option._id}}"> {{option.description}} </label>
+                        </div>
+                        <div ng-if="option.text">
+                            <label for="{{option._id}}"> {{option.description}} </label>
+                            <input ng-model="option.checked" id="{{option._id}}" type="text">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div ng-if="!sending">
+                    <button type="button" ng-click="send()" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden </button>
+                </div>
+                <div ng-if="sending">
+                    <img src="loading.gif" style="height: 20px; width: 20px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

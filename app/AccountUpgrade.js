@@ -8,10 +8,10 @@ var roles = require('../config/UserRoles.json');
 module.exports = function (app) {
 
 	/**
-	     *
-	     * ONLY UNTIL L2P ROLE MANAGEMENT IS FIXED
-	     *
-	     **/
+     *
+     * ONLY UNTIL L2P ROLE MANAGEMENT IS FIXED
+     *
+     **/
 	
 	app.get('/roles/admin/:roomId', function (req, res) {
 		var path = require('path');

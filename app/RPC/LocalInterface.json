@@ -205,5 +205,41 @@
         },
         "func": "",
         "accessLevel": 1
+    },
+    {
+        "uri": "quiz:create",
+        "parameters": {
+            "roomId" : ""
+        },
+        "func": "",
+        "accessLevel": 2
+    },
+    {
+        "uri": "survey:create",
+        "parameters": {
+            "roomId" : ""
+        },
+        "func": "",
+        "accessLevel": 2
+    },
+    {
+        "uri": "survey:answer",
+        "parameters": {
+            "roomId" : "",
+            "surveyId" :"",
+            "answer" : "" 
+        },
+        "func": "",
+        "accessLevel": 1
+    },
+    {
+        "uri": "quiz:answer",
+        "parameters": {
+            "roomId" : "",
+            "quizId" :"",
+            "answer" : []
+        },
+        "func": "",
+        "accessLevel": 1
     }]
 }

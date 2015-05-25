@@ -23,6 +23,12 @@
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-6">
+                        <div class="form-group" style="width:100%;">
+                            <label for"qsTextInput"> Laufzeit </label>
+                            <input style="width:100%;height: 100%;" id="qsTextInput" ng-model="qsRuntime" placeholder="Eine Laufzeit in Sekunden. 0 meint ewige Laufzeit.">
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
                         <div class="dropdown" aria-expanded="false">
                             <div class="form-group" style="width:100%;">
                                 <label for=""> Fügen Sie ein Antwortelement hinzu... </label>
@@ -71,15 +77,15 @@
                                 <option value="radiobox">Radiobox</option>
                             </select>
                             <div class="checkbox" ng-if="editItem.type == 'radiobox' && optionQuiz == 'Quizfrage'">
-                                 <label class="checkbox"> <input type="checkbox"> Ist richtige Antwort </label>
+                                 <label class="checkbox"> <input type="checkbox" ng-model="editItem.rightAnswer"> Ist richtige Antwort </label>
                             </div>
                             <div class="checkbox" ng-if="editItem.type == 'checkbox' && optionQuiz == 'Quizfrage'">
-                                <label class="checkbox"> <input type="checkbox"> Ist richtige Antwort </label>
+                                <label class="checkbox"> <input type="checkbox" ng-model="editItem.rightAnswer"> Ist richtige Antwort </label>
                             </div>
                             <br>
                             <div class="form-group" ng-if="editItem.type == 'text' && optionQuiz == 'Quizfrage'">
                                 <label for="answerInput"> Akzeptierte Eingabe für dieses Textfeld </label>
-                                <input id="answerInput" placeholder="Antworttext..." class="form-control" type="text">
+                                <input id="answerInput" ng-model="editItem.rightAnswer" placeholder="Antworttext..." class="form-control" type="text">
                             </div>
                         </div>
                     </div>

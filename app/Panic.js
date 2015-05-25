@@ -319,4 +319,5 @@ function createUserTimeout(room, user) {
  * @callback boolCallback
  * @param {Error} err - if an error occurs
  * @param {Boolean} bool - true on success
- */ 
+ */
+ 
