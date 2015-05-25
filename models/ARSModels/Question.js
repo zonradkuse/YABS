@@ -5,10 +5,12 @@ var ObjectId = mongoose.Schema.ObjectId;
 var ARSQuestionSchema = mongoose.Schema({
 	creator: { type : ObjectId, ref: 'User' },
     timestamp: { type: Date, default: Date.now },
-    quiz: { type : ObjectId, ref: 'Quiz' }, // reference to a quiz
-    survey: { type : ObjectId, ref: 'Survey' }, // reference to a survey - having both defined is unexpected behaviour
-    type: { type: Number, default: 0 }, // type can be 0 (quiz) or 1 (survey)
-    visible: { type: Boolean, default: true }
+    description: String,
+    quiz: { type : ObjectId, ref: 'ARSQuiz' }, // reference to a quiz
+    poll: { type : ObjectId, ref: 'ARSPoll' }, // reference to a poll - having both defined is unexpected behaviour
+    visible: { type: Boolean, default: true },
+    next : { type: ObjectId, ref: 'ARSQuestion'}, // nice to have for the client
+    previous : { type: ObjectId, ref: 'ARSQuestion'} // because we can
 });
 
 ARSQuestionSchema.plugin(deepPopulate);

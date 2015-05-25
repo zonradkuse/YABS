@@ -24,36 +24,7 @@
 	fileup(app);
 	// route account upgrades
 	upgrade(app);
-    
-	/*
-	     * DEPRECTED
-	    app.post('/login/local', function(req, res) {
-	      var auth = require('./Authentication.js');
-	      auth.loginLocal(req, function(err, user) {
-	        req.flash('message', 'Welcome' + res.name);
-	        req.session.user = user;
-	        res.redirect("/sessiontest");
-	      }, function(err) {
-	        req.flash('message', err);
-	        res.redirect("/");
-	      });
-	    });
 
-	    app.post('/register/local', function(req, res) {
-	      var auth = require('./Authentication.js');
-	      auth.registerLocal(req, function(err, user) {
-	        if (err) {
-	          req.flash('message', '' + err);
-	          res.redirect('/sessiontest');
-	        } else {
-	          req.flash('message', '' + err);
-	          req.session.user = user;
-	          res.redirect('/');
-	        }
-
-	      });
-	    }); */
-	
 	/** A short sessiontest
 	     */
 	app.get('/sessiontest', function (req, res, next) {

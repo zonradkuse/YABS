@@ -4,8 +4,14 @@ var ObjectId = mongoose.Schema.ObjectId;
 
 var ARSAnswerSchema = mongoose.Schema({
 	creator: { type : ObjectId, ref: 'User' },
-    timestamp: { type: Date, default: Date.now },
-    visible: { type: Boolean, default: true }
+    timestamp: { type : Date, default: Date.now },
+    visible: { type : Boolean, default: true },
+    description : String, 
+    // boolean to have it "clean" without building some kind of struct that needs to be handled. easily expandable
+    checkbox: { type : Boolean }, 
+    radiobox: { type : Boolean },
+    text: { type : Boolean },
+    checked : Boolean // for real answers, made by users
 });
 
 ARSAnswerSchema.plugin(deepPopulate);

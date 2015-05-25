@@ -13,7 +13,8 @@ var QuestionSchema = mongoose.Schema({
 	votes: [{ type : ObjectId, ref: 'User', unique: true }],
 	images: [{ type: ObjectId, ref: 'Image' }],
 	answers: [{ type : ObjectId, ref: 'Answer' }],
-	visible: { type: Boolean, default: true }
+	visible: { type: Boolean, default: true },
+	markedAsGood : Boolean
 });
 
 QuestionSchema.plugin(deepPopulate);
