@@ -167,6 +167,10 @@ img.loading {
     margin-top: 70px;
 }
 
+.container.news {
+    margin-top: 70px;
+}
+
 /* Expander for Answers */
 .panel{
     background-color: #ddd;
@@ -226,7 +230,7 @@ chartist .panel {
 .box {
     background-color: #fff;
     padding:10px;
-    margin-top:40px;
+    margin-bottom:40px;
     border-top: 5px solid #337AB7;
 }
 
