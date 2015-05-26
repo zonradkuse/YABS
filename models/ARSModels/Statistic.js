@@ -11,12 +11,4 @@ var ARSStatisticSchema = mongoose.Schema({
 ARSStatisticSchema.plugin(deepPopulate);
 var ARSStatistic = mongoose.model('ARSStatistic', ARSStatisticSchema);
 
-var applyNewAnswer = function (statAnswerId) {
-	ARSStatistic.findById( {_id : statAnswerId}).deepPopulate( ,function (err, res) {
-
-	});
-};
-
-
-
 module.exports.ARSStatistic = ARSStatistic;
