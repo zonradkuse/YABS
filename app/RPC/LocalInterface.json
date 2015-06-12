@@ -2,44 +2,36 @@
     "data": [{
         "uri": "system:ping",
         "parameters": {},
-        "func": "",
         "accessLevel": 0
     },{
         "uri": "system:benchmark",
         "parameters": {},
-        "func": "",
         "accessLevel": 42
     },{
         "uri": "system:login",
         "parameters": {},
-        "func": "",
         "accessLevel": 0
     },{
         "uri": "system:logout",
         "parameters": {},
-        "func": "",
         "accessLevel": 0
     },{
         "uri": "system:enterRoom",
         "parameters": {
             "roomId" : ""
         },
-        "func": "",
         "accessLevel": 1
     },{
         "uri": "system:whoami",
         "parameters": {},
-        "func": "",
         "accessLevel": 0
     },{
         "uri": "user:fetchRooms",
         "parameters": {},
-        "func": "",
         "accessLevel": 1
     },{
         "uri": "user:getRooms",
         "parameters": {},
-        "func": "",
         "accessLevel": 1
     },{
         "uri": "user:ask",
@@ -47,7 +39,6 @@
             "roomId": "",
             "question": ""
             },
-        "func": "",
         "accessLevel": 1
     },{
         "uri": "user:answer",
@@ -56,7 +47,6 @@
             "questionId": "",
             "answer": ""
             },
-        "func": "",
         "accessLevel": 1
     },{
         "uri": "user:vote",
@@ -64,21 +54,18 @@
             "roomId" : "",
             "questionId": ""
             },
-        "func": "",
         "accessLevel": 1
     },{
         "uri": "user:changeName",
         "parameters": {
             "username" : ""
         },
-        "func": "",
         "accessLevel": 1
     },{
         "uri": "room:getQuestions",
         "parameters": {
             "roomId": ""
             },
-        "func": "",
         "accessLevel": 1
     },{
         "uri": "room:getAnswers",
@@ -86,14 +73,12 @@
             "roomId": "",
             "questionId": ""
             },
-        "func": "",
         "accessLevel": 1
     },{
         "uri": "room:exists",
         "parameters": {
             "roomId": ""
             },
-        "func": "",
         "accessLevel": 1
     },{
         "uri": "room:enablePanicEvents",
@@ -101,28 +86,24 @@
             "roomId": "",
             "intervals": {}
             },
-        "func": "",
         "accessLevel": 2
     },{
         "uri": "room:disablePanicEvents",
         "parameters": {
             "roomId": ""
             },
-        "func": "",
         "accessLevel": 2
     },{
         "uri": "room:getPanicGraph",
         "parameters": {
             "roomId": ""
             },
-        "func": "",
         "accessLevel": 2
     },{
         "uri": "question:getVotes",
         "parameters": {
             "questionId": ""
             },
-        "func": "",
         "accessLevel": 1
     },{
         "uri": "question:setContent",
@@ -131,7 +112,6 @@
             "questionId": "",
             "content": ""
             },
-        "func": "",
         "accessLevel": 2
     },{
         "uri": "question:setVisibility",
@@ -140,7 +120,6 @@
             "questionId": "",
             "isVisible": ""
             },
-        "func": "",
         "accessLevel": 2
     },{
         "uri": "mod:markAsAnswer",
@@ -149,7 +128,6 @@
             "questionId": "",
             "answerId": ""
             },
-        "func": "",
         "accessLevel": 2
     },{
         "uri": "mod:unmarkAsAnswer",
@@ -158,7 +136,6 @@
             "questionId": "",
             "answerId": ""
             },
-        "func": "",
         "accessLevel": 2
     },{
         "uri": "mod:deleteQuestion",
@@ -166,7 +143,6 @@
             "roomId": "",
             "questionId": ""
             },
-        "func": "",
         "accessLevel": 2
     },{
         "uri": "mod:deleteAnswer",
@@ -175,35 +151,30 @@
             "questionId": "",
             "answerId": ""
             },
-        "func": "",
         "accessLevel": 2
     },{
         "uri": "room:userCount",
         "parameters": {
             "roomId": ""
             },
-        "func": "",
         "accessLevel": 2
     },{
         "uri": "user:panic",
         "parameters": {
             "roomId": ""
             },
-        "func": "",
         "accessLevel": 1
     },{
         "uri": "user:unpanic",
         "parameters": {
             "roomId": ""
             },
-        "func": "",
         "accessLevel": 1
     },{
         "uri": "user:getAccessLevel",
         "parameters": {
             "roomId" : ""
         },
-        "func": "",
         "accessLevel": 1
     },
     {
@@ -211,7 +182,6 @@
         "parameters": {
             "roomId" : ""
         },
-        "func": "",
         "accessLevel": 2
     },
     {
@@ -219,7 +189,6 @@
         "parameters": {
             "roomId" : ""
         },
-        "func": "",
         "accessLevel": 2
     },
     {
@@ -229,7 +198,6 @@
             "surveyId" :"",
             "answer" : "" 
         },
-        "func": "",
         "accessLevel": 1
     },
     {
@@ -239,7 +207,6 @@
             "quizId" :"",
             "answer" : []
         },
-        "func": "",
         "accessLevel": 1
     }]
 }
