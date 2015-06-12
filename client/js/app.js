@@ -20,7 +20,7 @@
             }).
             when('/logout', {
                 controller: "logoutController",
-                templateUrl: 'frontpage.html',
+                templateUrl: 'frontpage.html'
             }).        
             when('/rooms', {
                 templateUrl: 'rooms.html',
@@ -36,7 +36,7 @@
             }).
             when('/news', {
                 templateUrl: 'news.html',
-                //controller: 'frontpageController'
+                //controller: 'frontpageController' // no controller needed yet. TODO build some news controller with API
             }).
             otherwise({
                 redirectTo: '/'

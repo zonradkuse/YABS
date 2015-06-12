@@ -34,7 +34,7 @@ module.exports = function (passport) {
 								if (err) {
 									return done(err);
 								}
-								logger.info("user successfully altered");
+								logger.debug("user successfully altered");
 								req.session.user = user.toObject();
 								return done(null, user); //success
 							});
