@@ -214,8 +214,30 @@ var WebsocketHandler = function () {
 										* self.emit(message.uri, wss, ws, session, message.parameters,
 										*	interf.data[ i ], message.refId, ws.upgradeReq.signedCookies[ "connect.sid" ], authed);
 										*/
-										self.emit(message.uri, req);
-										logger.info('emitted ' + message.uri + ' WSAPI event.');
+
+										if (req.params && req.params.roomId) {
+											var roomAccess = false;
+											accessManager.checkAccessBySId(req.uri, req.sId, req.params.roomId, function(err, access) {
+												if (access) {
+													roomAccess = true;
+												}
+
+												if (req.authed && roomAccess) {
+													self.emit(message.uri, req);
+													logger.info('emitted ' + message.uri + ' WSAPI event.');
+												} else {
+													logger.warn("Detected unprivileged access try by user " +
+													req.session.user ? req.session.user._id : '<<unauthenticated>>');
+												}
+											});
+										} else {
+											if (req.authed) {
+												self.emit(message.uri, req);
+												logger.info('emitted ' + message.uri + ' WSAPI event.');
+											} else {
+												logger.warn("Detected unprivileged access try by user " + req.session.user ? req.session.user._id : '<<unauthenticated>>');
+											}
+										}
 										return;
 									}
 								}

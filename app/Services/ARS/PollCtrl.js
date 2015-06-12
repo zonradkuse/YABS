@@ -24,7 +24,7 @@ var StatisticModel = require('../../../models/ARSStatistic.js').ARSStatistic;
  * @param {Function} cb Callback for errors and full question on success
  * @param {Function} tcb Callback for timer timeout.
  */
-var newPoll = function newPoll (description, answers, options, cb, tcb) {
+var newPoll = function (description, answers, options, cb, tcb) {
 	var _question = new QuestionModel();
 	_question.description = description;
 	var _poll = new QuestionModel();
