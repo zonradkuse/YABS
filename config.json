@@ -31,7 +31,9 @@
       },
       "env": {
          "dev": true
-      }
+      },
+     "loglevelFile" : "info",
+     "loglevelConsole" : "warn"
    },
    "clamav" : {
        "enabled" : true,

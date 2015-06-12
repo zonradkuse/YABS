@@ -1,24 +1,27 @@
 /** @module Logger */
 
 var winston = require('winston');
+var config = require('../config.json');
 winston.emitErrs = true;
 
 var logger = new winston.Logger({
 	levels: {
-		'info': 0,
-		'debug' : 1,
+		'info': 1,
+		'debug' : 0,
 		'warn' : 2,
-		'err' : 3
+		'err' : 3,
+		'yabs': 42
 	},
 	colors: {
 		'info' : 'green',
 		'debug' : 'blue',
 		'warn' : 'yellow',
-		'err' : 'red'
+		'err' : 'red',
+		'yabs': 'cyan'
 	},
 	transports: [
         new winston.transports.File({
-			level: 'info',
+			level: config.general.loglevelFile ? config.general.loglevelFile : "info",
 			filename: './system.log',
 			handleExceptions: true,
 			json: true,
@@ -27,7 +30,7 @@ var logger = new winston.Logger({
 			colorize: false
 		}),
 		new winston.transports.Console({
-			//level: 'debug',
+			level: config.general.loglevelConsole ? config.general.loglevelConsole : "debug",
 			handleExceptions: true,
 			prettyPrint: true,
 			//json: false,
