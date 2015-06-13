@@ -294,12 +294,12 @@ function build(ws, err, data, refId, uri, param) {
 		json = {
 			"error": (err ? err.message : null),
 			"uri": uri,
-			"parameters": param,
+			"parameters": param
 		};
 	}
 
 	if (ws.readyState === 1) {
-		ws.send(JSON.stringify(json));
+		ws.send(JSON.stringify(json)); // TODO here we should do some queueing
 	}
 }
 
