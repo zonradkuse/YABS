@@ -1,11 +1,20 @@
+/** @module Angular-Service rooms*/
+
 client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q){
 	var rooms = [];
 	var self = this;
 
+	/** Get the array of rooms.
+ 	* @returns {Room[]} - array of room objects
+ 	*/
 	this.toArray = function() {
 		return rooms;
 	};
 
+	/** Check if user has access to room.
+	* @param {Room} room - room object to check
+ 	* @returns {Boolean} - true if user has access, false otherwise
+ 	*/
 	this.hasUserAccess = function(room) {
 		var deferred = $q.defer();
 		rpc.call("room:exists", {roomId: room._id}, function(result) {
@@ -14,6 +23,9 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		return deferred.promise;
 	};
 
+	/** Upsert room object.
+ 	* @param {Room} room - room object to check
+ 	*/
 	this.upsertRoom = function(room) {
 		for(var i = 0; i < rooms.length; i++) {
 			/*jshint loopfunc: true */
@@ -29,6 +41,10 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		});
 	};
 
+	/** Get room by id.
+	* @param {ObjectId} id - object id of target room object
+ 	* @returns {Room} - room object to check
+	*/
 	this.getById = function(id) {
 		for(var i = 0; i < rooms.length; i++) {
 			if (rooms[i]._id === id) {
@@ -37,6 +53,9 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		}
 	};
 
+	/** Enter a room.
+	* @param {Room} room - target room object
+	*/
 	this.enter = function(room) {
 		rpc.call("system:enterRoom", {roomId: room._id}, function(result) {
 			if (result.status === false) {
@@ -45,6 +64,11 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		});
 	};
 
+	/** Add question to room, optional with images.
+	* @param {Room} room - target room object
+	* @param {Question} question - asked question
+	* @param {Image[]} images - array of image objects
+ 	*/
 	this.addQuestion = function(room, question, images) {
 		var imageIds = [];
 		for (var i = 0; i < images.length; i++) {
@@ -55,6 +79,12 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		});
 	};
 
+	/** Add answer to question, optional with images.
+	* @param {Room} room - target room object
+	* @param {Question} question - target question object
+	* @param {Answer} answer - given answer
+	* @param {Image[]} images - array of image objects
+ 	*/
 	this.addAnswer = function(room, question, answer, images) {
 		var imageIds = [];
 		for (var i = 0; i < images.length; i++) {
@@ -65,6 +95,10 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		});
 	};
 
+	/** Upsert a question.
+	* @param {ObjectId} roomId - object id of room of question
+	* @param {Question} question - question object to upsert
+	*/
 	this.upsertQuestion = function(roomId, question) {
 		var room = this.getById(roomId);
 		var questions = room.questions;
@@ -88,6 +122,10 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		});
 	};
 
+	/** Get a question by id.
+	* @param {Room} room - room object of question
+	* @param {ObjectId} questionId - object id of target question
+	*/
 	this.getQuestionById = function(room, questionId) {
 		for(var i = 0; i < room.questions.length; i++) {
 			if (room.questions[i]._id === questionId) {
@@ -97,6 +135,11 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		return null;
 	};
 
+	/** Upsert an answer.
+	* @param {ObjectId} roomId - object id of room of question
+	* @param {ObjectId} questionId - question of target answer
+	* @param {Answer} answer - answer object to upsert
+	*/
 	this.upsertAnswer = function(roomId, questionId, answer) {
 		var room = this.getById(roomId);
 		var question = this.getQuestionById(room, questionId);
@@ -116,6 +159,7 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 
 	};
 
+	/** Enable listeners for room:add, question:add and answer:add.*/
 	this.enableListeners = function() {
 		rpc.attachFunction("room:add", function(data) {
 			self.upsertRoom(data.room);
@@ -128,34 +172,61 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		});	
     };
 
+    /** Get all questions of a room.
+	* @param {Room} room - room object of questions
+	*/
     this.getQuestions = function(room) {
     	rpc.call("room:getQuestions", {roomId: room._id}, function(data) {});
     };
 
+    /** Vote for a question.
+	* @param {Room} room - room object of questions
+	* @param {Question} question - voted question object
+	*/
     this.voteQuestion = function(room, question) {
     	rpc.call("user:vote", {roomId: room._id, questionId: question._id}, function(data) {});
     };
 
+    /** User has panic.
+	* @param {Room} room - room object of panic event
+	*/
     this.panic = function(room) {
     	rpc.call("user:panic", {roomId: room._id}, function(data) {});
     };
 
+    /** User has no panic anymore.
+	* @param {Room} room - room object of panic event
+	*/
     this.unpanic = function(room) {
     	rpc.call("user:unpanic", {roomId: room._id}, function(data) {});
     };
 
+	/** Enable panic events of room.
+	* @param {Room} room - room object which should be enabled
+	*/
     this.enablePanicEvents = function(room) {
     	rpc.call("room:enablePanicEvents", {roomId: room._id, intervals: {live: 5}}, function(data) {});
     };
 
+    /** Disable panic events of room.
+	* @param {Room} room - room object which should be disabled
+	*/
     this.disablePanicEvents = function(room) {
     	rpc.call("room:disablePanicEvents", {roomId: room._id}, function(data) {});
     };
 
+    /** Mark answer as right answer.
+	* @param {Room} room - room object
+	* @param {Question} question - question object
+	* @param {Answer} answer - answer object which should be marked as right
+	*/
     this.markAsAnswer = function(room, question, answer) {
     	rpc.call("mod:markAsAnswer", {roomId: room._id, questionId: question._id, answerId: answer._id}, function(data) {});
     };    
 
+    /** Get access level of user for a specific room.
+	* @param {Room} room - target room object
+	*/
     this.getAccessLevel = function(room) {
     	var deferred = $q.defer();
 		rpc.call("user:getAccessLevel", {roomId: room._id}, function(result) {
@@ -164,6 +235,9 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		return deferred.promise;
     };
 
+    /** Get panic graph data.
+	* @param {Room} room - room object of panic graph
+	*/
     this.getPanicGraph = function(room) {
   		var deferred = $q.defer();
 		rpc.call("room:getPanicGraph", {roomId: room._id}, function(result) {
@@ -172,10 +246,19 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		return deferred.promise;  	
     };
 
+    /** Delete question from room.
+	* @param {Room} room - room object
+	* @param {Question} question - question object which should be deleted
+	*/
     this.deleteQuestion = function(room, question) {
     	rpc.call("mod:deleteQuestion", {roomId: room._id , questionId: question._id}, function(data){});
     };
 
+    /** Delete answer of specific question.
+	* @param {Room} room - room object
+	* @param {Question} question - question object
+	* @param {Answer} answer - answer object which should be deleted
+	*/
     this.deleteAnswer = function(room, question, answer) {
     	rpc.call("mod:deleteAnswer", {roomId: room._id , questionId: question._id, answerId: answer._id}, function(data){});
     };

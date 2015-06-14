@@ -1,7 +1,7 @@
-/**
+/*
  * Created by j0h on 10.05.15.
  */
-
+ /** @module Angular-Controller dashController*/
 
 clientControllers.controller("dashController", ["$scope", "$rootScope", "users", "authentication",
     function($scope, $rootScope, users, auth){
