@@ -35,7 +35,7 @@ function getAccessLevel(uri) {
  */
 function checkAccess(uri, myAccess) {
 	var aL = getAccessLevel(uri);
-	if (aL) {
+	if (aL !== null && aL !== undefined) {
 		return aL <= myAccess;
 	} else {
 		return roles.default;
@@ -63,6 +63,7 @@ function checkAccessBySId(uri, sId, roomId, next) {
 				}
 			}
 		}
+
 		if (session.user) {
 			return next(null, checkAccess(uri, roles.defaultLoggedIn));
 		} else {
