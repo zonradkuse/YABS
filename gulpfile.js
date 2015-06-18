@@ -141,5 +141,5 @@ gulp.task('docOld', function() {
 
 gulp.task('doc', shell.task(
     ['./node_modules/.bin/jsdoc models/* app/* -c .jsdoc -d doc/server',
-    './node_modules/.bin/jsdoc client/* -c .jsdoc -d doc/client']
+    './node_modules/.bin/jsdoc client/js/* -c .jsdoc -d doc/client']
 ));
