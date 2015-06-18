@@ -180,23 +180,26 @@
     {
         "uri": "quiz:create",
         "parameters": {
-            "roomId" : ""
+            "roomId" : "",
+            "answers" : ""
         },
         "accessLevel": 2
     },
     {
-        "uri": "survey:create",
-        "parameters": {
-            "roomId" : ""
-        },
-        "accessLevel": 2
-    },
-    {
-        "uri": "survey:answer",
+        "uri": "poll:create",
         "parameters": {
             "roomId" : "",
-            "surveyId" :"",
-            "answer" : "" 
+            "answers" : "",
+            "timeout" : ""
+        },
+        "accessLevel": 2
+    },
+    {
+        "uri": "poll:answer",
+        "parameters": {
+            "roomId" : "",
+            "pollId" :"",
+            "answerIds" : []
         },
         "accessLevel": 1
     },
@@ -205,7 +208,7 @@
         "parameters": {
             "roomId" : "",
             "quizId" :"",
-            "answer" : []
+            "answerIds" : []
         },
         "accessLevel": 1
     }]

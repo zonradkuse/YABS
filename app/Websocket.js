@@ -98,7 +98,7 @@ wss.roomBroadcast = function (ws, uri, data, roomId) {
 				}
 			} else {
 				logger.warn("There is a sessionId without a session. sId: " + sId + 
-				" session: " + JSON.stringify(sess) + " data to be sent: " + JSON.stringify(data));
+					" session: " + JSON.stringify(sess) + " data to be sent: " + JSON.stringify(data));
 			}
 		});
 	});

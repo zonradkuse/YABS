@@ -31,7 +31,7 @@ var newPoll = function (description, answers, options, cb, tcb) {
 
 	var _tId = Timer.addTimeout(function () {
 		tcb(); // timeout
-	}, options.timeout* 1000 + 1000);
+	}, (options.timeout* 1000 || 300*1000) + 1000);
 
 	var _tempAnswers = []; // having something like a transaction to prevent saving invalid data
 	var i;
@@ -87,3 +87,5 @@ var newPoll = function (description, answers, options, cb, tcb) {
 		}
 	});
 };
+
+module.exports.newPoll = newPoll;
