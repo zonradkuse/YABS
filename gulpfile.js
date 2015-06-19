@@ -140,6 +140,6 @@ gulp.task('docOld', function() {
 });
 
 gulp.task('doc', shell.task(
-    ['./node_modules/.bin/jsdoc models/* app/* -c .jsdoc -d doc/server',
-    './node_modules/.bin/jsdoc client/js/* -c .jsdoc -d doc/client']
+    ['./node_modules/.bin/jsdoc models/* app/* -r -c .jsdoc -d doc/server',
+    './node_modules/.bin/jsdoc client/js/* -r -c .jsdoc -d doc/client']
 ));

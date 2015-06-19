@@ -1,3 +1,4 @@
+/** @module Poll*/
 var pollCtrl = require('../Services/ARS/PollCtrl.js');
 var logger = require('../Logger.js');
 
@@ -8,7 +9,7 @@ module.exports = function (wsCtrl) {
      * poll to the client.
      */
     wsCtrl.on('poll:create', function (req) {
-        pollCtrl.newPoll(req.params.description, req.params.answers, req.params.timeout, function(err, question) {
+        pollCtrl.newPoll(req.params.description, req.params.answers, req.params.timeout, function (err, question) {
             if (err) {
                 wsCtrl.build(req.ws, new Error("Could not create new poll"), null, req.refId);
                 return logger.warn("Could not create new poll. Error occured: " + err);
@@ -22,8 +23,8 @@ module.exports = function (wsCtrl) {
                     "roomId" : req.params.roomId
                 },
                 req.params.roomId
-            )
-        }, function() {
+            );
+        }, function () {
             // signal poll timeout
             pollCtrl.reset(question);
             req.wss.roomBroadcast(
@@ -34,7 +35,7 @@ module.exports = function (wsCtrl) {
                     'poll' : question
                 },
                 req.params.roomId
-            )
+            );
         });
     });
 };

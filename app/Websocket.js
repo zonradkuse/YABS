@@ -214,7 +214,7 @@ var WebsocketHandler = function () {
 										* self.emit(message.uri, wss, ws, session, message.parameters,
 										*	interf.data[ i ], message.refId, ws.upgradeReq.signedCookies[ "connect.sid" ], authed);
 										*/
-										accessManager.checkAccessBySId(req.uri, req.sId, req.params.roomId, function(err, access) {
+										accessManager.checkAccessBySId(req.uri, req.sId, req.params.roomId, function (err, access) {
 											if (access) {
 												self.emit(message.uri, req);
 												logger.info('emitted ' + message.uri + ' WSAPI event.');

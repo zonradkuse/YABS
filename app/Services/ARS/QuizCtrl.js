@@ -1,4 +1,4 @@
-/**
+/*
  * TODO
  * ----
  * Here goes logic for:
@@ -6,4 +6,4 @@
  * - Evaluating Answers
  * - doing statistical work --> should be async 
  */
-
+/** @module QuizCtrl*/

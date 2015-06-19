@@ -1,5 +1,6 @@
-/**
- * TODO
+/** @module PollCtrl*/
+
+/* TODO
  * ----
  * Here goes logic for:
  * - creating a quiz, including timing
@@ -7,7 +8,6 @@
  *
  * - Callee -> API -> PollCtrl -> create Poll, do callback, create timer -> API -> broadcast new poll
  */
-
 var Scheduler = require('../Timing/Scheduler.js');
 var Timer = new Scheduler({ autoFin : false, registerLoopElements : 10 });
 var QuestionModel = require('../../../models/ARSQuestion.js').ARSQuestion;
@@ -15,14 +15,13 @@ var QuestionModel = require('../../../models/ARSAnswer.js').ARSAnswer;
 var PollModel = require('../../../models/ARSPoll.js').ARSPoll;
 var StatisticModel = require('../../../models/ARSStatistic.js').ARSStatistic;
 
-/**
- * Create a new Poll including timeout
- * 
- * @param {String} description Text that describes the Poll, including Question
- * @param {[Object]} answers Answers as sent by the client
- * @param {Object} options Options to this method. Will be expanded, 'til now only options.timeout in seconds is needed
- * @param {Function} cb Callback for errors and full question on success
- * @param {Function} tcb Callback for timer timeout.
+/** Create a new Poll including timeout.
+ * @param {String} description - text that describes the Poll, including Question
+ * @param {Object[]} answers - answers as sent by the client
+ * @param {Object} options - options to this method. Will be expanded.
+ * @param {Number} options.timeout - timeout in seconds is needed
+ * @param {Function} cb - Callback for errors and full question on success
+ * @param {Function} tcb - Callback for timer timeout.
  */
 var newPoll = function (description, answers, options, cb, tcb) {
 	var _question = new QuestionModel();
@@ -31,7 +30,7 @@ var newPoll = function (description, answers, options, cb, tcb) {
 
 	var _tId = Timer.addTimeout(function () {
 		tcb(); // timeout
-	}, (options.timeout* 1000 || 300*1000) + 1000);
+	}, (options.timeout* 1000 || 300* 1000) + 1000);
 
 	var _tempAnswers = []; // having something like a transaction to prevent saving invalid data
 	var i;
