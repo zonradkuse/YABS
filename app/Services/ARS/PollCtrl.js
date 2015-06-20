@@ -10,10 +10,11 @@
  */
 var Scheduler = require('../Timing/Scheduler.js');
 var Timer = new Scheduler({ autoFin : false, registerLoopElements : 10 });
-var QuestionModel = require('../../../models/ARSQuestion.js').ARSQuestion;
-var QuestionModel = require('../../../models/ARSAnswer.js').ARSAnswer;
-var PollModel = require('../../../models/ARSPoll.js').ARSPoll;
-var StatisticModel = require('../../../models/ARSStatistic.js').ARSStatistic;
+var Rooms = require('../../../models/Room.js');
+var QuestionModel = require('../../../models/ARSModels/ARSQuestion.js').ARSQuestion;
+var ARSAnswer = require('../../../models/ARSModels/ARSAnswer.js').ARSAnswer;
+var PollModel = require('../../../models/ARSModels/ARSPoll.js').ARSPoll;
+var StatisticModel = require('../../../models/ARSModels/ARSStatistic.js').ARSStatistic;
 
 /** Create a new Poll including timeout.
  * @param {String} description - text that describes the Poll, including Question
@@ -23,9 +24,31 @@ var StatisticModel = require('../../../models/ARSStatistic.js').ARSStatistic;
  * @param {Function} cb - Callback for errors and full question on success
  * @param {Function} tcb - Callback for timer timeout.
  */
-var newPoll = function (description, answers, options, cb, tcb) {
-	var _question = new QuestionModel();
-	_question.description = description;
+var newPoll = function (params, options, cb, tcb) {
+	var dueDate;
+    if (typeof params.dueDate === 'object') {
+
+    } else {
+        try {
+            if (typeof params.dueDate === 'number' || typeof params.dueDate === 'string') {
+                dueDate = new Date(params.dueDate)
+            } else {
+                dueDate = Date.parse(params.dueDate);
+            }
+            if (typeof dueDate !== 'object') {
+                logger.debug("invalid dueDate input");
+                return cb(new Error("dueDate is invalid"));
+            }
+        } catch (e) {
+            logger.debug("dueDate parsing went wrong.");
+            return cb(new Error("dueDate is invalid"));
+        }
+    }
+
+
+    var _question = new QuestionModel();
+	_question.description = params.description;
+    _question.dueDate = dueDate;
 	var _poll = new QuestionModel();
 
 	var _tId = Timer.addTimeout(function () {
@@ -34,18 +57,18 @@ var newPoll = function (description, answers, options, cb, tcb) {
 
 	var _tempAnswers = []; // having something like a transaction to prevent saving invalid data
 	var i;
-	for (i = answers.length - 1; i >= 0; i--) {
+	for (i = params.answers.length - 1; i >= 0; i--) {
 		var _answer = new ARSAnswer();
-		_answer.description = answers[ i ].description;
-		if (answers[ i ].radiobox && (answers[ i ].checkbox || answers[ i ].text) || // Prevent multiple fieldsettings
-			answers[ i ].text && (answers[ i ].checkbox || answers[ i ].radiobox) ||
-			answers[ i ].checkbox && (answers[ i ].text || answers[ i ].radiobox)) {
+		_answer.description = params.answers[ i ].description;
+		if (params.answers[ i ].radiobox && (params.answers[ i ].checkbox || params.answers[ i ].text) || // Prevent multiple fieldsettings
+            params.answers[ i ].text && (params.answers[ i ].checkbox || params.answers[ i ].radiobox) ||
+            params.answers[ i ].checkbox && (params.answers[ i ].text || params.answers[ i ].radiobox)) {
 			Timer.clearTimer(_tId);
 			return cb(new Error("Bad field settings."));
 		}
-		_answer.radiobox = answers[ i ].radiobox;
-		_answer.checkbox = answers[ i ].checkbox;
-		_answer.text = answers[ i ].text;
+		_answer.radiobox = params.answers[ i ].radiobox;
+		_answer.checkbox = params.answers[ i ].checkbox;
+		_answer.text = params.answers[ i ].text;
 		_poll.answers.push(_answer._id); //reference the new answer
 		_tempAnswers.push(_answer);
 	}
@@ -82,7 +105,17 @@ var newPoll = function (description, answers, options, cb, tcb) {
 			Timer.clearTimer(_tId);
 			cb(err);
 		} else {
-			cb(err, question); // pass back the just created question with fully populated data.
+            Rooms.getByID(_params.roomId, {population : ''}, function(err, room) {
+                room.hasPoll = true;
+                room.poll.push(_question);
+                room.save(function(err) {
+                    if (err) {
+                        logger.debug("An error occurred on room update when creating a new quiz: " + err);
+                        return cb(err);
+                    }
+                    cb(null, question); // pass back the just created question with fully populated data.
+                });
+            });
 		}
 	});
 };

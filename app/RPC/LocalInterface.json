@@ -190,7 +190,8 @@
         "parameters": {
             "roomId" : "",
             "answers" : "",
-            "timeout" : ""
+            "dueDate" : "",
+            "description" : ""
         },
         "accessLevel": 2
     },

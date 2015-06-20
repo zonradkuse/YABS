@@ -15,7 +15,11 @@ var RoomSchema = mongoose.Schema({
 	description: String,
 	url: String,
 	status: String,
-	semester: String
+	semester: String,
+	hasPoll : Boolean,
+	hasQuiz : Boolean,
+	poll : [{ type: ObjectId, ref: 'ARSPoll' }], // efficient way to determine if a objectId belongs to the room
+	quiz : [{ type: ObjectId, ref: 'ARSQuiz' }]
 });
 
 RoomSchema.plugin(deepPopulate);

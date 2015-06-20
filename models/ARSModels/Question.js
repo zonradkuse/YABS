@@ -10,7 +10,8 @@ var ARSQuestionSchema = mongoose.Schema({
     poll: { type : ObjectId, ref: 'ARSPoll' }, // reference to a poll - having both defined is unexpected behaviour
     visible: { type: Boolean, default: true },
     next : { type: ObjectId, ref: 'ARSQuestion'}, // nice to have for the client
-    previous : { type: ObjectId, ref: 'ARSQuestion'} // because we can
+    previous : { type: ObjectId, ref: 'ARSQuestion'}, // because we can
+    dueDate : Date
 });
 
 ARSQuestionSchema.plugin(deepPopulate);
