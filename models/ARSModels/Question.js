@@ -11,7 +11,8 @@ var ARSQuestionSchema = mongoose.Schema({
     visible: { type: Boolean, default: true },
     next : { type: ObjectId, ref: 'ARSQuestion'}, // nice to have for the client
     previous : { type: ObjectId, ref: 'ARSQuestion'}, // because we can
-    dueDate : Date
+    dueDate : Date,
+    active: { type: Boolean, default: true }
 });
 
 ARSQuestionSchema.plugin(deepPopulate);

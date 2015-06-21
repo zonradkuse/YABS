@@ -16,28 +16,35 @@ module.exports = function (wsCtrl) {
                     return logger.warn("Could not create new poll. Error occured: " + err);
                 }
                 // the question was successfully created
+                wsCtrl.build(req.ws, null, { status: true, description: "new Poll successfully created."}, req.refId);
                 req.wss.roomBroadcast(
                     req.ws,
                     'poll:do',
                     {
-                        "pollObj": question,
+                        "arsObj": question,
                         "roomId": req.params.roomId
                     },
                     req.params.roomId
                 );
-                logger.debug("successfully created new poll");
-            }, function () {
-                // signal poll timeout - as there is a dueDate, this is not necessary anymore.
-                // pollCtrl.reset(question);
+                logger.info("successfully created new poll in " + req.params.roomId);
+                logger.debug("new ars object: " + question);
+            }, function (q) {
+                // signal poll timeout
+                logger.debug("reset outdated arsobj " + q);
             });
         } else {
             wsCtrl.build(req.ws, new Error("Invalid Parameters."), null, req.refId);
         }
     });
     wsCtrl.on('poll:answer', function(req) {
-        if (req.params.pollId && req.params.answers && req.params.answers !== []) {
-            pollCtrl.answer(req.params.pollId,req.params.answers, function (err) {
+        req.params.userId = req.session.user._id;
+        if (req.params.arsId && req.params.answerId && req.params.answerId !== []) {
+            pollCtrl.answer(req.params, function (err) {
                 // braodcast statistic to every admin and the answering user
+                if (err) {
+                    logger.info("An error occurred on answering poll: " + err);
+                    wsCtrl.build(req.ws, err, null, req.refId);
+                }
             });
         } else {
             wsCtrl.build(req.ws, new Error("Invalid Parameters."), null, req.refId);

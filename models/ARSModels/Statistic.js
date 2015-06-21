@@ -6,7 +6,7 @@ var ObjectId = mongoose.Schema.ObjectId;
 // this is only needed for having invisible answers without doing any nasty preparation stuff.
 var ARSStatisticSchema = mongoose.Schema({
 	// set of statistical Objects. This is referenced by a quiz or a poll
-	statisticAnswer: [{ type: ObjectId, ref: 'ARSStatisticObj' }]
+	statisticAnswer: [{ type: ObjectId, ref: 'StatisticObj' }]
 });
 
 ARSStatisticSchema.plugin(deepPopulate);

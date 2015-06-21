@@ -199,8 +199,8 @@
         "uri": "poll:answer",
         "parameters": {
             "roomId" : "",
-            "pollId" :"",
-            "answerIds" : []
+            "arsId" :"",
+            "answerId" : []
         },
         "accessLevel": 1
     },
@@ -208,8 +208,8 @@
         "uri": "quiz:answer",
         "parameters": {
             "roomId" : "",
-            "quizId" :"",
-            "answerIds" : []
+            "arsId" :"",
+            "answerId" : []
         },
         "accessLevel": 1
     }]

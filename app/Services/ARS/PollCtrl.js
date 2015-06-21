@@ -15,6 +15,7 @@ var QuestionModel = require('../../../models/ARSModels/Question.js').ARSQuestion
 var ARSAnswer = require('../../../models/ARSModels/Answer.js').ARSAnswer;
 var PollModel = require('../../../models/ARSModels/Poll.js').ARSPoll;
 var StatisticModel = require('../../../models/ARSModels/Statistic.js').ARSStatistic;
+var StatisticObjModel = require('../../../models/ARSModels/StatisticObj.js').StatisticObj;
 var logger = require('../../Logger.js');
 
 /** Create a new Poll including timeout.
@@ -39,9 +40,19 @@ var newPoll = function (params, cb, tcb) {
 	_question.description = params.description;
     _question.dueDate = dueDate*1000 + Date.now();
 	var _poll = new PollModel();
+    var _statistic = new StatisticModel();
+    _statistic.save();
+    _poll.statistics = _statistic._id;
 
 	var _tId = Timer.addTimeout(function () {
-		// get question from db, reset room and unset it.
+		QuestionModel.findOne({_id : _question._id}).exec(function(err, q) {
+            if (err) {
+                return tcb(err);
+            }
+            q.active = false;
+            q.save();
+            tcb(q);
+        });
 	}, dueDate*1000 + 1000);
 	
 	var _tempAnswers = []; // having something like a transaction to prevent saving invalid data
@@ -111,4 +122,57 @@ var newPoll = function (params, cb, tcb) {
     });
 };
 
+var answer = function (params, cb) { // refactor this. it is perhaps much too complicated
+    // params.userId, params.answerId, params.arsId, params.roomId
+    QuestionModel.findOne({ _id : params.arsId }).deepPopulate('poll poll poll.statistics poll.statistics.statisticAnswer').exec(function (err, q) {
+        if (err) {
+            logger.debug(err);
+            return cb(err);
+        }
+        if(q.active) {
+            // we can answer this one
+            var _statObj, existing = false, answered = false;
+            for (var j = 0; j < params.answerId.length; ++j) {
+                for(var k = 0; k < q.poll.answers.length; ++k) {
+                    logger.debug(" " + q.poll.answers[k]);
+                    if (params.answerId[j] === q.poll.answers[k].toString()) {
+                        for (var i = 0; i < q.poll.statistics.statisticAnswer; ++i) {
+                            if (params.answerId[j] === q.poll.statistics.statisticAnswer[i].answer) {
+                                // there is already an object for this answer
+                                answered = true;
+                                StatisticObjModel.findOne(q.poll.statistics.statisticAnswer[i]._id).exec(function (err, obj) {
+                                    if (!err && obj) {
+                                        obj.count++;
+                                        obj.save();
+                                    }
+                                });
+                                break;
+                            }
+                        }
+                        if (!answered) {
+                            _statObj = new StatisticObjModel();
+                            _statObj.count = 1;
+                            _statObj.save();
+                            q.poll.statistics.statisticAnswer.push(_statObj._id);
+                            q.poll.statistics.save();
+                        } else {
+                            answered = false;
+                        }
+                        existing = true;
+                    }
+                }
+            }
+            if (!existing) {
+                return cb(new Error("This answer does not exist."));
+            } else {
+                q.poll.save();
+                cb(null);
+            }
+        } else {
+            cb(new Error("Time is up."))
+        }
+    });
+
+}
+module.exports.answer = answer;
 module.exports.newPoll = newPoll;
