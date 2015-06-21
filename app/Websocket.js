@@ -214,6 +214,7 @@ var WebsocketHandler = function () {
 										* self.emit(message.uri, wss, ws, session, message.parameters,
 										*	interf.data[ i ], message.refId, ws.upgradeReq.signedCookies[ "connect.sid" ], authed);
 										*/
+										/*jshint -W083 */
 										accessManager.checkAccessBySId(req.uri, req.sId, req.params.roomId, function (err, access) {
 											if (access) {
 												self.emit(message.uri, req);

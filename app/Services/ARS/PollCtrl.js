@@ -38,14 +38,14 @@ var newPoll = function (params, cb, tcb) {
 
     var _question = new QuestionModel();
 	_question.description = params.description;
-    _question.dueDate = dueDate*1000 + Date.now();
+    _question.dueDate = dueDate* 1000 + Date.now();
 	var _poll = new PollModel();
     var _statistic = new StatisticModel();
     _statistic.save();
     _poll.statistics = _statistic._id;
 
 	var _tId = Timer.addTimeout(function () {
-		QuestionModel.findOne({_id : _question._id}).exec(function(err, q) {
+		QuestionModel.findOne({_id : _question._id}).exec(function (err, q) {
             if (err) {
                 return tcb(err);
             }
@@ -53,7 +53,7 @@ var newPoll = function (params, cb, tcb) {
             q.save();
             tcb(q);
         });
-	}, dueDate*1000 + 1000);
+	}, dueDate* 1000 + 1000);
 	
 	var _tempAnswers = []; // having something like a transaction to prevent saving invalid data
 	var i;
@@ -105,10 +105,10 @@ var newPoll = function (params, cb, tcb) {
                     Timer.clearTimer(_tId);
                     cb(err);
                 } else {
-                    Rooms.getByID(params.roomId, {population : ''}, function(err, room) {
+                    Rooms.getByID(params.roomId, {population : ''}, function (err, room) {
                         room.hasPoll = true;
                         room.poll.push(question._id);
-                        room.save(function(err) {
+                        room.save(function (err) {
                             if (err) {
                                 logger.warn("An error occurred on room update when creating a new quiz: " + err);
                                 return cb(err);
@@ -129,26 +129,28 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
             logger.debug(err);
             return cb(err);
         }
-        for (var i = 0; i < q.answered.length; ++i) {
-            if (params.userId === q.answered[i].toString()) {
+        for (var l = 0; l < q.answered.length; ++l) {
+            if (params.userId === q.answered[ l ].toString()) {
                 return cb(new Error("You already answered this one."));
             }
         }
         q.answered.push(params.userId);
         q.save();
-        if(q.active && q.dueDate - q.timestamp + 1000 > 0) {
+        if (q.active && q.dueDate - q.timestamp + 1000 > 0) {
             // we can answer this one
-            var _statObj, existing = false, answered = false;
+            var _statObj,
+                existing = false,
+                answered = false;
             for (var j = 0; j < params.answerId.length; ++j) {
-                for(var k = 0; k < q.poll.answers.length; ++k) {
-                    logger.debug(" " + q.poll.answers[k]);
-                    if (params.answerId[j] === q.poll.answers[k].toString()) {
+                for (var k = 0; k < q.poll.answers.length; ++k) {
+                    logger.debug(" " + q.poll.answers[ k ]);
+                    if (params.answerId[ j ] === q.poll.answers[ k ].toString()) {
                         for (var i = 0; i < q.poll.statistics.statisticAnswer.length; ++i) {
-                            logger.debug(q.poll.statistics.statisticAnswer[i].answer.toString());
-                            if (params.answerId[j] === q.poll.statistics.statisticAnswer[i].answer.toString()) {
+                            logger.debug(q.poll.statistics.statisticAnswer[ i ].answer.toString());
+                            if (params.answerId[ j ] === q.poll.statistics.statisticAnswer[ i ].answer.toString()) {
                                 // there is already an object for this answer
                                 answered = true;
-                                StatisticObjModel.findOne(q.poll.statistics.statisticAnswer[i]._id).exec(function (err, obj) {
+                                StatisticObjModel.findOne(q.poll.statistics.statisticAnswer[ i ]._id).exec(function (err, obj) {
                                     if (!err && obj) {
                                         obj.count++;
                                         obj.save();
@@ -160,7 +162,7 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
                         if (!answered) {
                             _statObj = new StatisticObjModel();
                             _statObj.count = 1;
-                            _statObj.answer = params.answerId[j];
+                            _statObj.answer = params.answerId[ j ];
                             _statObj.save();
                             q.poll.statistics.statisticAnswer.push(_statObj._id);
                             q.poll.statistics.save();
@@ -179,12 +181,12 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
                 cb(null);
             }
         } else {
-            cb(new Error("Time is up."))
+            cb(new Error("Time is up."));
             q.active = false;
             q.save();
         }
     });
-}
+};
 
 
 module.exports.answer = answer;

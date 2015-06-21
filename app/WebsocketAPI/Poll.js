@@ -36,7 +36,7 @@ module.exports = function (wsCtrl) {
             wsCtrl.build(req.ws, new Error("Invalid Parameters."), null, req.refId);
         }
     });
-    wsCtrl.on('poll:answer', function(req) {
+    wsCtrl.on('poll:answer', function (req) {
         req.params.userId = req.session.user._id;
         if (req.params.arsId && req.params.answerId && req.params.answerId !== []) {
             pollCtrl.answer(req.params, function (err) {
