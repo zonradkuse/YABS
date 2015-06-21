@@ -75,7 +75,7 @@ gulp.task('jscs-models', function(){
     gulp.src(['models/**/*.js',])
         .pipe(jscs({
             configPath: '.jscsrc',
-            fix: true
+            fix: false
         }))
         .pipe(gulp.dest('models'));
 });
