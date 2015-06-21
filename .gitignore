@@ -1,6 +1,6 @@
 #config files for security reasons
 config.json
-
+stats
 # Logs
 logs
 *.log

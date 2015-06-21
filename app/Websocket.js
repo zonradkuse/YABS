@@ -72,7 +72,7 @@ wss.getActiveUsersByRoom = function (roomId, next) {
  * @param {Object} data - data which should have sent to the user
  * @param {ObjectId} roomId - ObjectId of target room
  */
-wss.roomBroadcast = function (ws, uri, data, roomId) {
+wss.roomBroadcast = function (ws, uri, data, roomId, constraintFct) {
 	var oldQ;
 	if (data.question) {
 		oldQ = JSON.parse(JSON.stringify(data.question));
@@ -82,7 +82,7 @@ wss.roomBroadcast = function (ws, uri, data, roomId) {
 		var sId = client.upgradeReq.signedCookies[ "connect.sid" ];
 		sessionStore.get(sId, function (err, sess) {
 			if (err) {
-				logger.err("An error occured on getting the user session: " + err);
+				return logger.err("An error occurred on getting the user session: " + err);
 			}
 			if (sess) {
 				if (sess.room) {
@@ -91,7 +91,13 @@ wss.roomBroadcast = function (ws, uri, data, roomId) {
 							data.question = JSON.parse(JSON.stringify(oldQ));
 							data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
 						}
-						build(client, null, null, null, uri, data);
+						if (constraintFct && typeof constraintFct === 'function') {
+							constraintFct(sess.user._id, function (){
+								build(client, null, null, null, uri, data);
+							});
+						} else {
+							build(client, null, null, null, uri, data);
+						}
 					}
 				} else {
 					build(ws, new Error("Your current room is not set."));
@@ -215,7 +221,8 @@ var WebsocketHandler = function () {
 										*	interf.data[ i ], message.refId, ws.upgradeReq.signedCookies[ "connect.sid" ], authed);
 										*/
 										/*jshint -W083 */
-										accessManager.checkAccessBySId(req.uri, req.sId, req.params.roomId, function (err, access) {
+										accessManager.checkAccessBySId(req.uri, req.sId, req.params.roomId, function (err, access, accessLevel) {
+											req.accessLevel = accessLevel;
 											if (access) {
 												self.emit(message.uri, req);
 												logger.info('emitted ' + message.uri + ' WSAPI event.');

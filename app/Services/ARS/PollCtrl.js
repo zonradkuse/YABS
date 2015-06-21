@@ -178,7 +178,7 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
                 return cb(new Error("This answer does not exist."));
             } else {
                 q.poll.save();
-                cb(null);
+                cb(null, q);
             }
         } else {
             cb(new Error("Time is up."));
