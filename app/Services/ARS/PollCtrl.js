@@ -180,9 +180,12 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
             }
         } else {
             cb(new Error("Time is up."))
+            q.active = false;
+            q.save();
         }
     });
-
 }
+
+
 module.exports.answer = answer;
 module.exports.newPoll = newPoll;
