@@ -30,19 +30,19 @@ var newPoll = function (params, cb, tcb) {
     } else {
         return cb(new Error("dueDate is invalid"));
     }
-    logger.debug(Date.now());
-    if (dueDate + Date.now() - Date.now() < 0) {
+
+    if (dueDate < 0) {
     	return cb(new Error("dueDate is in the past"));
     }
 
     var _question = new QuestionModel();
 	_question.description = params.description;
-    _question.dueDate = dueDate;
-	var _poll = new QuestionModel();
+    _question.dueDate = dueDate*1000 + Date.now();
+	var _poll = new PollModel();
 
 	var _tId = Timer.addTimeout(function () {
-		tcb(); // timeout
-	}, (dueDate - Date.now()) + 1000);
+		// get question from db, reset room and unset it.
+	}, dueDate*1000 + 1000);
 	
 	var _tempAnswers = []; // having something like a transaction to prevent saving invalid data
 	var i;
@@ -63,7 +63,7 @@ var newPoll = function (params, cb, tcb) {
 	}
 
 	var saveAns = function (ans) {
-		ans[ i ].save(function (err) {
+		ans.save(function (err) {
 			if (err) {
 				Timer.clearTimer(_tId);
 				cb(err);
@@ -80,34 +80,35 @@ var newPoll = function (params, cb, tcb) {
 			Timer.clearTimer(_tId);
 			cb(err);
 		}
-	});
-	_question.poll = _poll._id;
-	_question.save(function (err) {
-		if (err) {
-			Timer.clearTimer(_tId);
-			cb(err);
-		}
-	});
 
-	QuestionModel.findById(_question._id).deepPopulate('poll poll.answers', function (err, question) {
-		if (err) {
-			logger.warn("An error occured when populating new Quiz " + err);
-			Timer.clearTimer(_tId);
-			cb(err);
-		} else {
-            Rooms.getByID(_params.roomId, {population : ''}, function(err, room) {
-                room.hasPoll = true;
-                room.poll.push(_question);
-                room.save(function(err) {
-                    if (err) {
-                        logger.warn("An error occurred on room update when creating a new quiz: " + err);
-                        return cb(err);
-                    }
-                    cb(null, question); // pass back the just created question with fully populated data.
-                });
+        _question.poll = _poll._id;
+        _question.save(function (err) {
+            if (err) {
+                Timer.clearTimer(_tId);
+                return cb(err);
+            }
+
+            QuestionModel.findOne({ _id : _question._id}).deepPopulate('poll poll.answers').exec(function (err, question) {
+                if (err) {
+                    logger.warn("An error occured when populating new Quiz " + err);
+                    Timer.clearTimer(_tId);
+                    cb(err);
+                } else {
+                    Rooms.getByID(params.roomId, {population : ''}, function(err, room) {
+                        room.hasPoll = true;
+                        room.poll.push(question._id);
+                        room.save(function(err) {
+                            if (err) {
+                                logger.warn("An error occurred on room update when creating a new quiz: " + err);
+                                return cb(err);
+                            }
+                            cb(null, question); // pass back the just created question with fully populated data.
+                        });
+                    });
+                }
             });
-		}
-	});
+        });
+    });
 };
 
 module.exports.newPoll = newPoll;

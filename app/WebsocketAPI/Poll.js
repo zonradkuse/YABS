@@ -20,7 +20,7 @@ module.exports = function (wsCtrl) {
                     req.ws,
                     'poll:do',
                     {
-                        "poll": question,
+                        "pollObj": question,
                         "roomId": req.params.roomId
                     },
                     req.params.roomId
