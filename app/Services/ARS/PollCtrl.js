@@ -129,15 +129,23 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
             logger.debug(err);
             return cb(err);
         }
-        if(q.active) {
+        for (var i = 0; i < q.answered.length; ++i) {
+            if (params.userId === q.answered[i].toString()) {
+                return cb(new Error("You already answered this one."));
+            }
+        }
+        q.answered.push(params.userId);
+        q.save();
+        if(q.active && q.dueDate - q.timestamp + 1000 > 0) {
             // we can answer this one
             var _statObj, existing = false, answered = false;
             for (var j = 0; j < params.answerId.length; ++j) {
                 for(var k = 0; k < q.poll.answers.length; ++k) {
                     logger.debug(" " + q.poll.answers[k]);
                     if (params.answerId[j] === q.poll.answers[k].toString()) {
-                        for (var i = 0; i < q.poll.statistics.statisticAnswer; ++i) {
-                            if (params.answerId[j] === q.poll.statistics.statisticAnswer[i].answer) {
+                        for (var i = 0; i < q.poll.statistics.statisticAnswer.length; ++i) {
+                            logger.debug(q.poll.statistics.statisticAnswer[i].answer.toString());
+                            if (params.answerId[j] === q.poll.statistics.statisticAnswer[i].answer.toString()) {
                                 // there is already an object for this answer
                                 answered = true;
                                 StatisticObjModel.findOne(q.poll.statistics.statisticAnswer[i]._id).exec(function (err, obj) {
@@ -152,6 +160,7 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
                         if (!answered) {
                             _statObj = new StatisticObjModel();
                             _statObj.count = 1;
+                            _statObj.answer = params.answerId[j];
                             _statObj.save();
                             q.poll.statistics.statisticAnswer.push(_statObj._id);
                             q.poll.statistics.save();
@@ -159,6 +168,7 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
                             answered = false;
                         }
                         existing = true;
+                        break;
                     }
                 }
             }
