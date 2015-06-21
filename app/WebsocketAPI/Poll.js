@@ -2,6 +2,7 @@
 var pollCtrl = require('../Services/ARS/PollCtrl.js');
 var logger = require('../Logger.js');
 var userRoles = require('../../config/UserRoles.json');
+var StatisticsModel = require('../../models/ARSModels/Statistic.js').ARSStatistic;
 
 module.exports = function (wsCtrl) {
 
@@ -48,16 +49,18 @@ module.exports = function (wsCtrl) {
                     wsCtrl.build(req.ws, err, null, req.refId);
                 } else {
                     var statistics = q.poll.statistics;
-                    req.wss.roomBroadcast(req.ws, "poll:statistic", {
-                        roomId: req.params.roomId,
-                        statistics: statistics.statisticAnswer
-                    }, req.params.roomId, function (userId, cb) {
-                        // check if user already answered
-                        for (var i = 0; i < q.answered.length; ++i) {
-                            if (q.answered[i].toString() === userId || req.accessLevel >= userRoles.defaultMod) {
-                                cb();
+                    StatisticsModel.find({ _id : statistics }).deepPopulate('statisticAnswer statisticAnswer.answer').exec(function (err, s) {
+                        req.wss.roomBroadcast(req.ws, "poll:statistic", {
+                            roomId: req.params.roomId,
+                            statistics: s
+                        }, req.params.roomId, function (userId, cb) {
+                            // check if user already answered
+                            for (var i = 0; i < q.answered.length; ++i) {
+                                if (q.answered[i].toString() === userId || req.accessLevel >= userRoles.defaultMod) {
+                                    cb();
+                                }
                             }
-                        }
+                        });
                     });
                 }
             });
