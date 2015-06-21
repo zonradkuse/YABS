@@ -9,7 +9,7 @@
       "local": false,
       "l2p": {
          "clientID": "rwth client oauth",
-         "scope": "l2p2013.rwth userinfo.rwth"
+         "scope": "l2p2013.rwth"
       },
       "other": {
         "enabled" : true
