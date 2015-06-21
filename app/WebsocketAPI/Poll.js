@@ -10,7 +10,7 @@ module.exports = function (wsCtrl) {
      */
     wsCtrl.on('poll:create', function (req) {
         if (req.params.dueDate && req.params.description && req.params.answers && req.params.answers !== [] ) {
-            pollCtrl.newPoll(req.params.description, req.params.answers, req.params.timeout, function (err, question) {
+            pollCtrl.newPoll(req.params, function (err, question) {
                 if (err) {
                     wsCtrl.build(req.ws, new Error("Could not create new poll"), null, req.refId);
                     return logger.warn("Could not create new poll. Error occured: " + err);
@@ -25,6 +25,7 @@ module.exports = function (wsCtrl) {
                     },
                     req.params.roomId
                 );
+                logger.debug("successfully created new poll");
             }, function () {
                 // signal poll timeout - as there is a dueDate, this is not necessary anymore.
                 // pollCtrl.reset(question);

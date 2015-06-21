@@ -11,40 +11,29 @@
 var Scheduler = require('../Timing/Scheduler.js');
 var Timer = new Scheduler({ autoFin : false, registerLoopElements : 10 });
 var Rooms = require('../../../models/Room.js');
-var QuestionModel = require('../../../models/ARSModels/ARSQuestion.js').ARSQuestion;
-var ARSAnswer = require('../../../models/ARSModels/ARSAnswer.js').ARSAnswer;
-var PollModel = require('../../../models/ARSModels/ARSPoll.js').ARSPoll;
-var StatisticModel = require('../../../models/ARSModels/ARSStatistic.js').ARSStatistic;
+var QuestionModel = require('../../../models/ARSModels/Question.js').ARSQuestion;
+var ARSAnswer = require('../../../models/ARSModels/Answer.js').ARSAnswer;
+var PollModel = require('../../../models/ARSModels/Poll.js').ARSPoll;
+var StatisticModel = require('../../../models/ARSModels/Statistic.js').ARSStatistic;
+var logger = require('../../Logger.js');
 
 /** Create a new Poll including timeout.
- * @param {String} description - text that describes the Poll, including Question
- * @param {Object[]} answers - answers as sent by the client
+ * @param {Object} params - answers, dueDate, 
  * @param {Object} options - options to this method. Will be expanded.
- * @param {Number} options.timeout - timeout in seconds is needed
  * @param {Function} cb - Callback for errors and full question on success
  * @param {Function} tcb - Callback for timer timeout.
  */
-var newPoll = function (params, options, cb, tcb) {
+var newPoll = function (params, cb, tcb) {
 	var dueDate;
-    if (typeof params.dueDate === 'object') {
-
+    if (typeof params.dueDate === 'number') {
+    	dueDate = params.dueDate;
     } else {
-        try {
-            if (typeof params.dueDate === 'number' || typeof params.dueDate === 'string') {
-                dueDate = new Date(params.dueDate)
-            } else {
-                dueDate = Date.parse(params.dueDate);
-            }
-            if (typeof dueDate !== 'object') {
-                logger.debug("invalid dueDate input");
-                return cb(new Error("dueDate is invalid"));
-            }
-        } catch (e) {
-            logger.debug("dueDate parsing went wrong.");
-            return cb(new Error("dueDate is invalid"));
-        }
+        return cb(new Error("dueDate is invalid"));
     }
-
+    logger.debug(Date.now());
+    if (dueDate + Date.now() - Date.now() < 0) {
+    	return cb(new Error("dueDate is in the past"));
+    }
 
     var _question = new QuestionModel();
 	_question.description = params.description;
@@ -53,8 +42,8 @@ var newPoll = function (params, options, cb, tcb) {
 
 	var _tId = Timer.addTimeout(function () {
 		tcb(); // timeout
-	}, (options.timeout* 1000 || 300* 1000) + 1000);
-
+	}, (dueDate - Date.now()) + 1000);
+	
 	var _tempAnswers = []; // having something like a transaction to prevent saving invalid data
 	var i;
 	for (i = params.answers.length - 1; i >= 0; i--) {
@@ -102,6 +91,7 @@ var newPoll = function (params, options, cb, tcb) {
 
 	QuestionModel.findById(_question._id).deepPopulate('poll poll.answers', function (err, question) {
 		if (err) {
+			logger.warn("An error occured when populating new Quiz " + err);
 			Timer.clearTimer(_tId);
 			cb(err);
 		} else {
@@ -110,7 +100,7 @@ var newPoll = function (params, options, cb, tcb) {
                 room.poll.push(_question);
                 room.save(function(err) {
                     if (err) {
-                        logger.debug("An error occurred on room update when creating a new quiz: " + err);
+                        logger.warn("An error occurred on room update when creating a new quiz: " + err);
                         return cb(err);
                     }
                     cb(null, question); // pass back the just created question with fully populated data.

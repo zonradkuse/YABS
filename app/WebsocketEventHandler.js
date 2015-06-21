@@ -7,5 +7,6 @@ require('./WebsocketAPI/Room.js')(wsFrame);
 require('./WebsocketAPI/User.js')(wsFrame);
 require('./WebsocketAPI/Question.js')(wsFrame);
 require('./WebsocketAPI/Mod.js')(wsFrame);
+require('./WebsocketAPI/Poll.js')(wsFrame);
 
 wsFrame.start();
