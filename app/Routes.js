@@ -85,7 +85,7 @@
 				}
 			});
 		} else {
-			console.log(req.session);
+			logger.debug("unauthorized media access: " + req.session);
 			res.status(404);
 			res.end();
 		}

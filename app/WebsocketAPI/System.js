@@ -102,7 +102,6 @@ module.exports = function (wsControl) {
 								try {
 									response = JSON.parse(response);
 								} catch (e) {
-									logger.error();
 									wsControl.build(req.ws, new Error("An error occured when communicating with Campus. lol."), null, req.refId);
 									logger.warn('An error occured when communicating with Campus OAuth. Response was: ' + response);
 								}

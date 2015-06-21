@@ -19,7 +19,7 @@ var gen = require('avatar-generator')({});
  */
 module.exports.generate = function (user, gender, resolution, callback) {
 	var hash = crypto.createHash('sha256').update(user._id.toString()).digest('hex');
-	console.log(hash);
+	logger.debug("profile image hash: " + hash);
 	fs.mkdir(path, function (err) {
 		var writestream = fs.createWriteStream(path + '/' + hash + '.png');
 		var imgstream = gen(user._id | (new Date()).valueOf().toString(), gender, resolution).stream();

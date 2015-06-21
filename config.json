@@ -33,7 +33,7 @@
          "dev": true
       },
      "loglevelFile" : "info",
-     "loglevelConsole" : "warn"
+     "loglevelConsole" : "debug"
    },
    "clamav" : {
        "enabled" : true,
