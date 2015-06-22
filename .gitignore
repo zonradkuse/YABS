@@ -50,3 +50,7 @@ ssl
 *rdb
 .settings
 typings
+
+# docco default folder
+docs
+
