@@ -56,7 +56,7 @@ module.exports = function (wsCtrl) {
                         }, req.params.roomId, function (userId, cb) {
                             // check if user already answered
                             for (var i = 0; i < q.answered.length; ++i) {
-                                if (q.answered[i].toString() === userId || req.accessLevel >= userRoles.defaultMod) {
+                                if (q.answered[ i ].toString() === userId || req.accessLevel >= userRoles.defaultMod) {
                                     cb();
                                 }
                             }

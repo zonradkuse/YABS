@@ -92,7 +92,7 @@ wss.roomBroadcast = function (ws, uri, data, roomId, constraintFct) {
 							data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
 						}
 						if (constraintFct && typeof constraintFct === 'function') {
-							constraintFct(sess.user._id, function (){
+							constraintFct(sess.user._id, function () {
 								build(client, null, null, null, uri, data);
 							});
 						} else {
