@@ -277,6 +277,7 @@ function build(ws, err, data, refId, uri, param) {
 		throw new Error("Websocket not set.");
 	}
 	var json = {};
+	json.status = err ? false : true; // if error occured set status false, else true
 	if (refId || !uri) { // response
 		json = {
 			"error": (err ? err.message : null),
@@ -293,6 +294,9 @@ function build(ws, err, data, refId, uri, param) {
 
 	if (ws.readyState === 1) {
 		ws.send(JSON.stringify(json)); // TODO here we should do some queueing
+	} else {
+		// here should go logic for queuing messages for users.
+		logger.info("A client disconnected but should receive a message.");
 	}
 }
 
