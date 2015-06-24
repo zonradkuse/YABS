@@ -246,6 +246,10 @@ module.exports = function (wsControl) {
 			wsControl.build(req.ws, null, { status: false, message: "You are not logged in." }, req.refId);
 		}
 	});
+
+	wsControl.on("system:time", function (req) {
+		wsControl.build(req.ws, null, { time: Date.now() }, req.refId);
+	});
 };
 
 // @function

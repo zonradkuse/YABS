@@ -12,6 +12,10 @@
         "parameters": {},
         "accessLevel": 0
     },{
+        "uri": "system:time",
+        "parameters": {},
+        "accessLevel": 0
+    },{
         "uri": "system:logout",
         "parameters": {},
         "accessLevel": 0
@@ -201,6 +205,21 @@
             "roomId" : "",
             "arsId" :"",
             "answerId" : []
+        },
+        "accessLevel": 1
+    },
+    {
+        "uri": "poll:getAll",
+        "parameters": {
+            "roomId" : ""
+        },
+        "accessLevel": 1
+    },
+    {
+        "uri": "poll:get",
+        "parameters": {
+            "roomId" : "",
+            "arsId" :""
         },
         "accessLevel": 1
     },
