@@ -142,6 +142,22 @@
             },
         "accessLevel": 2
     },{
+        "uri": "mod:question:markAsGood",
+        "parameters": {
+            "roomId": "",
+            "questionId": "",
+            "answerId": ""
+            },
+        "accessLevel": 2
+    },{
+        "uri": "mod:question:unmarkAsGood",
+        "parameters": {
+            "roomId": "",
+            "questionId": "",
+            "answerId": ""
+            },
+        "accessLevel": 2
+    },{
         "uri": "mod:deleteQuestion",
         "parameters": {
             "roomId": "",

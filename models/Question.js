@@ -92,7 +92,7 @@ module.exports.getByID = function (questionID, options, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
 	}
-	if (options.population === undefined) {
+	if (!options || options.population === undefined) {
 		options.population = "";
 	}
 	Question.findById(questionID).deepPopulate(options.population).exec(function (err, question) {

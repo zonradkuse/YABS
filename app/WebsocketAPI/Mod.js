@@ -108,6 +108,28 @@ module.exports = function (wsControl) {
 			});
 		});
 	});
+
+	wsControl.on("mod:question:markAsGood", function (req) {
+		questionDAO.Question.findOne({ _id : req.questionId }).exec(function (err, q) {
+			if (err) {
+				logger.warn(err);
+				return wsControl.build(req.ws, new Error("cannot update question"), null, req.refId);
+			}
+			q.markedAsGood = true;
+			q.save();
+		});
+	});
+
+	wsControl.on("mod:question:unmarkAsGood", function (req) {
+		questionDAO.Question.findOne({ _id : req.questionId }).exec(function (err, q) {
+			if (err) {
+				logger.warn(err);
+				return wsControl.build(req.ws, new Error("cannot update question"), null, req.refId);
+			}
+			q.markedAsGood = false;
+			q.save();
+		});
+	});
 };
 
 /**
