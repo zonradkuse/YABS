@@ -11,7 +11,8 @@ var ARSAnswerSchema = mongoose.Schema({
     checkbox: { type : Boolean }, 
     radiobox: { type : Boolean },
     text: { type : Boolean },
-    checked : Boolean // for real answers, made by users
+    checked : Boolean, // for real answers, made by users
+    userText: String // this will be ugly. we should have used some sql
 });
 
 ARSAnswerSchema.plugin(deepPopulate);

@@ -33,7 +33,7 @@ function getAllCourses(token, next) {
 
 function getAllDiscussions(token, cid, next) {
 	var options = makeCopy();
-	options.path = 'viewAllDiscussionItems?accessToken=' + token + '&cid=' + cid;
+	options.path = '/_vti_bin/l2pservices/api.svc/v1/viewAllDiscussionItems?accessToken=' + token + '&cid=' + cid;
 	request(options, next);
 }
 
