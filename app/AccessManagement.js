@@ -59,7 +59,7 @@ function checkAccessBySId(uri, sId, roomId, next) {
 		if (session.user && session.user.rights) {
 			for (var key in session.user.rights) {
 				if (session.user.rights[ key ].roomId == roomId) {
-					return next(null, checkAccess(uri, session.user.rights[ key ].accessLevel), session.user.rights[ key ].roomId);
+					return next(null, checkAccess(uri, session.user.rights[ key ].accessLevel), session.user.rights[ key ].accessLevel);
 				}
 			}
 		}

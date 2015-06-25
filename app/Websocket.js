@@ -216,6 +216,8 @@ var WebsocketHandler = function () {
 										req.refId = message.refId;
 										req.sId = ws.upgradeReq.signedCookies[ "connect.sid" ];
 										req.authed = authed;
+										req.userId = req.session.user._id;
+
 										/*
 										* self.emit(message.uri, wss, ws, session, message.parameters,
 										*	interf.data[ i ], message.refId, ws.upgradeReq.signedCookies[ "connect.sid" ], authed);
@@ -223,6 +225,7 @@ var WebsocketHandler = function () {
 										/*jshint -W083 */
 										accessManager.checkAccessBySId(req.uri, req.sId, req.params.roomId, function (err, access, accessLevel) {
 											req.accessLevel = accessLevel;
+											logger.debug("accesslevel: " + accessLevel +  " access: " + access);
 											if (access) {
 												self.emit(message.uri, req);
 												logger.info('emitted ' + message.uri + ' WSAPI event.');

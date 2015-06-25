@@ -27,15 +27,33 @@ var logger = require('../../Logger.js');
  * @params{Function} cb Function with error and data parameter.
  * @params{String} dpOptions More options to deepPopulation. By default the rooms polls and the polls answers are populated
  */
-var getAllPollsInRoom = function(roomId, dpOptions, cb) {
-    Rooms.findOne({ _id : roomId}).deepPopulate('poll.answers ' + dpOptions).exec(function(err, rooms){
+var getAllPollsInRoom = function (roomId, cb, dpOptions) {
+    Rooms.Room.findOne({ _id : roomId}).deepPopulate('poll.answers ' + dpOptions).exec(function (err, rooms) {
         if (err) {
             logger.warn(err);
             return cb(err);
         }
-        cb(null, rooms)
+        cb(null, rooms.poll);
     }); 
-}
+};
+
+/**
+ * The Function title is misleading. It gets a poll by id but decides if a user already answered the question.
+ * @param  {String} userId the users userId.
+ * @param {String} arsId the requested arsId
+ * @param  {Function}
+ * @param  {String} optional population
+ */
+var getPoll = function (userId, arsId, cb, dpOptions) {
+    // @TODO decide if user answered this one 
+    Question.findOne({ _id : roomId}).deepPopulate('poll.answers ' + dpOptions).exec(function (err, rooms) {
+        if (err) {
+            logger.warn(err);
+            return cb(err);
+        }
+        cb(null, rooms.poll);
+    }); 
+};
 
 /** Create a new Poll including timeout.
  * @param {Object} params - answers, dueDate, 
@@ -74,7 +92,7 @@ var newPoll = function (params, cb, tcb) {
                     logger.warn(err);
                     return tcb(err);
                 }
-                delete room.poll[q._id];
+                delete room.poll[ q._id ];
                 if (room.hasPoll && room.poll.length === 0) {
                     room.hasPoll = false;
                 }
@@ -216,18 +234,18 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
         } else {
             if (q.active) { // the server died during the poll, we need a cleanup
                 q.active = false;
-                Rooms.findByID({ _id: params.roomId}, function (err, room){
+                Rooms.findByID({ _id: params.roomId}, function (err, room) {
                     if (err) {
                         logger.warn(err);
                         return cb(err);
                     }
-                    delete room.poll[q._id];
+                    delete room.poll[ q._id ];
                     if (room.hasPoll && room.poll.length === 0) {
                         room.hasPoll = false;
                     }
                     q.active = false;
                     q.save();
-                    room.save()
+                    room.save();
                     logger.info("cleaned up question activity flag and reset room.");
                 });
             }

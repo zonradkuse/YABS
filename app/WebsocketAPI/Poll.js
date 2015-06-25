@@ -6,6 +6,24 @@ var StatisticsModel = require('../../models/ARSModels/Statistic.js').ARSStatisti
 
 module.exports = function (wsCtrl) {
 
+    wsCtrl.on("poll:getAll", function (req) {
+        pollCtrl.getAllPollsInRoom(params.roomId, function (err, polls) {
+            if (err) {
+                return wsCtrl.build(req.ws, new Error("could not get polls"), null, req.refId);
+            }
+            wsCtrl.build(req.ws, null, { polls : polls }, req.refId);
+        });
+    });
+
+    wsCtrl.on("poll:get", function (req) {
+        req.params.userId = req.userId;
+        pollCtrl.getAllPollsInRoom(req.userId, req.params.arsId, function (err, poll) {
+            if (err) {
+                return wsCtrl.build(req.ws, new Error("could not get poll"), null, req.refId);
+            }
+            wsCtrl.build(req.ws, null, { poll : poll }, req.refId);
+        });
+    });
     /**
      * This Call implements the full workflow for creating a new poll. This especially takes care of pushing the new
      * poll to the client.
@@ -38,6 +56,7 @@ module.exports = function (wsCtrl) {
             wsCtrl.build(req.ws, new Error("Invalid Parameters."), null, req.refId);
         }
     });
+
     wsCtrl.on('poll:answer', function (req) {
         req.params.userId = req.session.user._id;
         if (req.params.arsId && req.params.answerId && req.params.answerId !== []) {
