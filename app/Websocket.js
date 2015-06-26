@@ -216,7 +216,7 @@ var WebsocketHandler = function () {
 										req.refId = message.refId;
 										req.sId = ws.upgradeReq.signedCookies[ "connect.sid" ];
 										req.authed = authed;
-										req.userId = req.session.user._id;
+										req.userId = req.session && req.session.user ? req.session.user._id : null;
 
 										/*
 										* self.emit(message.uri, wss, ws, session, message.parameters,
@@ -293,7 +293,7 @@ function build(ws, err, data, refId, uri, param) {
 			"parameters": param
 		};
 	}
-	json.status = (err ? false : true); // if error occured set status false, else true
+	json.status = (err || !data ? false : true); // if error occured set status false, else true
 	
 	if (ws.readyState === 1) {
 		ws.send(JSON.stringify(json)); // TODO here we should do some queueing

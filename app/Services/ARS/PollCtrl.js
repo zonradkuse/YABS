@@ -46,8 +46,9 @@ var getAllPollsInRoom = function (roomId, cb, dpOptions) {
  */
 var getPoll = function (userId, arsId, cb, dpOptions) {
     // @TODO decide if user answered this one and populate statistics if necessary.
-    Question.findOne({ _id : arsId }).exec(function (err, question) {
-        if (err) {
+    logger.debug(arsId);
+    QuestionModel.findOne({ _id : arsId }).exec(function (err, question) {
+        if (err || !question) {
             logger.warn(err);
             return cb(err);
         }
@@ -57,16 +58,17 @@ var getPoll = function (userId, arsId, cb, dpOptions) {
                 logger.warn(err);
                 return cb(err);
             }
-            cb(null, question);
+            logger.debug("" + q);
+            cb(null, q);
         };
-
-        for (var i = 0; i < question.answered; i++) {
+        logger.debug("" + question);
+        for (var i = 0; i < question.answered.length; i++) {
             if (question.answered[ i ].toString() === userId || !question.active) {
-                return Question.findOne({_id : arsId }).deepPopulate('poll.answers poll.statistics.statisticAnswer.answer')
+                return QuestionModel.findOne({_id : arsId }).deepPopulate('poll poll.answers poll.statistics.statisticAnswer.answer')
                     .exec(call); //do it this way as deepPopulation is easier than populating the document itself.      
             }
         }
-        return Question.findOne({_id : arsId }).deepPopulate('poll.answers')
+        return QuestionModel.findOne({_id : arsId }).deepPopulate('poll poll.answers')
             .exec(call);
     }); 
 };
@@ -249,7 +251,7 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
             } else {
                 q.poll.save();
                 process.nextTick(function () {
-                    cb(null, q);
+                    cb(null, q); // TODO make sure that statistics field is populated
                 });
             }
         } else {
@@ -278,3 +280,5 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
 
 module.exports.answer = answer;
 module.exports.newPoll = newPoll;
+module.exports.getPoll = getPoll;
+module.exports.getAllPollsInRoom = getAllPollsInRoom;

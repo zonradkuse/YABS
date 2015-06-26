@@ -13,7 +13,7 @@ var ARSQuestionSchema = mongoose.Schema({
     previous : { type: ObjectId, ref: 'ARSQuestion'}, // because we can @TODO
     dueDate : Date,
     active: { type: Boolean, default: true },
-    answered : [{ type: ObjectId, ref: 'User'}]
+    answered : [{ type: ObjectId, ref: 'User', default: []}]
 });
 
 ARSQuestionSchema.plugin(deepPopulate);

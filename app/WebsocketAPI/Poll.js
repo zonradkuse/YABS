@@ -16,8 +16,7 @@ module.exports = function (wsCtrl) {
     });
 
     wsCtrl.on("poll:get", function (req) {
-        req.params.userId = req.userId;
-        pollCtrl.getAllPollsInRoom(req.userId, req.params.arsId, function (err, poll) {
+        pollCtrl.getPoll(req.userId, req.params.arsId, function (err, poll) {
             if (err) {
                 return wsCtrl.build(req.ws, new Error("could not get poll"), null, req.refId);
             }
