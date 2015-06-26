@@ -41,17 +41,33 @@ var getAllPollsInRoom = function (roomId, cb, dpOptions) {
  * The Function title is misleading. It gets a poll by id but decides if a user already answered the question.
  * @param  {String} userId the users userId.
  * @param {String} arsId the requested arsId
- * @param  {Function}
+ * @param  {Function} callback. errors and data ca be set
  * @param  {String} optional population
  */
 var getPoll = function (userId, arsId, cb, dpOptions) {
-    // @TODO decide if user answered this one 
-    Question.findOne({ _id : roomId}).deepPopulate('poll.answers ' + dpOptions).exec(function (err, rooms) {
+    // @TODO decide if user answered this one and populate statistics if necessary.
+    Question.findOne({ _id : arsId }).exec(function (err, question) {
         if (err) {
             logger.warn(err);
             return cb(err);
         }
-        cb(null, rooms.poll);
+        
+        var call = function (err, q) {
+            if (err) {
+                logger.warn(err);
+                return cb(err);
+            }
+            cb(null, question);
+        };
+
+        for (var i = 0; i < question.answered; i++) {
+            if (question.answered[ i ].toString() === userId || !question.active) {
+                return Question.findOne({_id : arsId }).deepPopulate('poll.answers poll.statistics.statisticAnswer.answer')
+                    .exec(call); //do it this way as deepPopulation is easier than populating the document itself.      
+            }
+        }
+        return Question.findOne({_id : arsId }).deepPopulate('poll.answers')
+            .exec(call);
     }); 
 };
 
@@ -170,7 +186,12 @@ var newPoll = function (params, cb, tcb) {
         });
     });
 };
-
+/**
+ * This function processes a new answer, made by a user and aggregates the statistics.
+ * 
+ * @param  {Object} params.userId, params.answerId, params.arsId, params.roomId need to be set. This is checked before by the framework
+ * @param  {Function} callback function. error and data can be set
+ */
 var answer = function (params, cb) { // refactor this. it is perhaps much too complicated
     // params.userId, params.answerId, params.arsId, params.roomId
     QuestionModel.findOne({ _id : params.arsId }).deepPopulate('poll poll poll.statistics poll.statistics.statisticAnswer').exec(function (err, q) {
@@ -232,7 +253,7 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
                 });
             }
         } else {
-            if (q.active) { // the server died during the poll, we need a cleanup
+            if (q.active) { // the server died during the poll, we need a cleanup TODO: check time overaprrox of the previous reset.
                 q.active = false;
                 Rooms.findByID({ _id: params.roomId}, function (err, room) {
                     if (err) {

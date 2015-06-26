@@ -9,8 +9,8 @@ var ARSQuestionSchema = mongoose.Schema({
     quiz: { type : ObjectId, ref: 'ARSQuiz' }, // reference to a quiz
     poll: { type : ObjectId, ref: 'ARSPoll' }, // reference to a poll - having both defined is unexpected behaviour
     visible: { type: Boolean, default: true },
-    next : { type: ObjectId, ref: 'ARSQuestion'}, // nice to have for the client
-    previous : { type: ObjectId, ref: 'ARSQuestion'}, // because we can
+    next : { type: ObjectId, ref: 'ARSQuestion'}, // nice to have for the client @TODO
+    previous : { type: ObjectId, ref: 'ARSQuestion'}, // because we can @TODO
     dueDate : Date,
     active: { type: Boolean, default: true },
     answered : [{ type: ObjectId, ref: 'User'}]
