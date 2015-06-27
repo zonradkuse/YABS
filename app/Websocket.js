@@ -90,12 +90,16 @@ wss.roomBroadcast = function (ws, uri, data, roomId, constraintFct) {
 						if (data.question) {
 							data.question = JSON.parse(JSON.stringify(oldQ));
 							data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
+							logger.debug(data.question);
 						}
+
 						if (constraintFct && typeof constraintFct === 'function') {
 							constraintFct(sess.user._id, function () {
+								logger.debug("broadcast message to " + sess.user._id);
 								build(client, null, null, null, uri, data);
 							});
 						} else {
+							logger.debug("broadcast message to " + sess.user._id);
 							build(client, null, null, null, uri, data);
 						}
 					}

@@ -38,7 +38,8 @@ module.exports = function (wsControl) {
 								question.answers[ i ].author.avatar = question.answers[ i ].author.avatar.path;
 							}
 							question.answers = roomWSControl.removeAuthorTokens(question.answers);
-
+							logger.debug("broadcast question:add in room " + req.params.roomId);
+							logger.debug(question);
 							req.wss.roomBroadcast(req.ws, 'question:add', {
 								'roomId': req.params.roomId,
 								'question': question

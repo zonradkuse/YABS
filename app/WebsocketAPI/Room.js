@@ -202,7 +202,7 @@ function removeAuthorTokens(input) {
 function createVotesFields(user, question) {
 	var hasVote = false;
 	for (var i= 0; i<question.votes.length; i++) {
-		if (question.votes[ i ] == user._id) {
+		if (question.votes[ i ].toString() == user._id) {
 			hasVote = true;
 			break;
 		}

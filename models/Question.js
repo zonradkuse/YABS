@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
 var ObjectId = mongoose.Schema.ObjectId;
 var Room = require('../models/Room.js').Room;
+var logger = require('../app/Logger.js');
 
 var QuestionSchema = mongoose.Schema({
 	author: { type : ObjectId, ref: 'User' },
@@ -110,7 +111,12 @@ module.exports.vote = function (question, user, callback) {
 		throw new Error("callback not defined");
 	}
 	Question.findByIdAndUpdate(question._id, {$push: {'votes': user._id}}, function (err, question) {
-		return callback(err, question);
+		logger.debug(user);
+		logger.debug(question);
+		Question.findOne({ _id : question._id }, function (err,q) {
+			logger.debug(q);
+			return callback(err, q);
+		});
 	});
 };
 
