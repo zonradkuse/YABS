@@ -113,7 +113,7 @@ module.exports.vote = function (question, user, callback) {
 	Question.findByIdAndUpdate(question._id, {$push: {'votes': user._id}}, function (err, question) {
 		logger.debug(user);
 		logger.debug(question);
-		Question.findOne({ _id : question._id }, function (err,q) {
+		Question.findOne({ _id : question._id }, function (err, q) {
 			logger.debug(q);
 			return callback(err, q);
 		});
