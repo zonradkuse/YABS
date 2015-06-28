@@ -25,6 +25,7 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
 					scope.type = "";
 					scope.items = [];
                     scope.qsRuntime = "";
+                    scope.sending = false;
 				};
 
 				scope.addCheckbox = function() {
@@ -107,6 +108,11 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
 					backdrop: 'static',
 					show : false
 				});
+                $('#quizMasterModal').off().on("show.bs.modal", function () {
+                    scope.$apply(function () {
+                        scope.reset();
+                    });
+                });
 			}
 		}
 	};

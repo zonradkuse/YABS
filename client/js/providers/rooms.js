@@ -194,10 +194,10 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 			self.upsertAnswer(data.roomId, data.questionId, data.answer);
 		});
         rpc.attachFunction("poll:do", function(data) {
-            self.upsertPoll(data.roomId, data.arsObj);
+            $("#pollStudentModal").modal('show');
         });
         rpc.attachFunction("poll:statistic", function(data) {
-            console.log(data);
+           // coming soon
         });
     };
 

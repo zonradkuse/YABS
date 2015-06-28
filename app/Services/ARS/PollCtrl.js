@@ -76,33 +76,42 @@ var getPoll = function (userId, arsId, cb, dpOptions) {
  *
  * @param roomId
  * @param userId
- * @param cb err set on error or if there is a poll, poll is set. if not null.
+ * @param cb err set on error or if there is a poll, poll is set. if not, null.
  */
 var getNext = function (roomId, userId, cb) {
-    Rooms.Room.findOne({ _id: roomId}).populate('poll').exec(function (err, room) {
-        if (err) {
-            logger.warn(err);
-            return cb(err);
-        }
-        var noAnswer = true;
-        for (var i = 0; i < room.poll.length; i++) {
-            noAnswer = true;
-            for (var j = 0; j < room.poll[ i ].answered.length; j++) {
-                var uid = room.poll[ i ].answered[ j ].toString();
-                if (uid === userId) {
-                    noAnswer = false;
+    Rooms.Room.findOne({ _id: roomId}).lean().populate({path : 'poll'}).exec(function (err, room) {
+        var options = {
+            path: 'poll.poll',
+            model: 'ARSPoll'
+        };
+        Rooms.Room.populate(room, options, function(err, r){
+            options.path = 'poll.poll.answers';
+            options.model = 'ARSAnswer';
+            Rooms.Room.populate(r, options, function(err,rr){
+                logger.debug("populated room: " + JSON.stringify(rr));
+
+                if (err) {
+                    logger.warn(err);
+                    return cb(err);
                 }
-            }
-            if (noAnswer) {
-                logger.debug(room.poll[ i ]);
-                QuestionModel.findOne({ _id : room.poll[i]._id }).deepPopulate('poll poll.answers').exec(function(err, ars) {
-                    if (ars && ars.active) {
-                        cb(err, ars);
+                var noAnswer = true;
+                for (var i = 0; i < rr.poll.length; i++) {
+                    noAnswer = true;
+                    for (var j = 0; j < rr.poll[ i ].answered.length; j++) {
+                        var uid = rr.poll[ i ].answered[ j].toString();
+                        if (uid === userId) {
+                            noAnswer = false;
+                        }
                     }
-                });
-            }
-        }
-        return cb(null, null);
+                    if (noAnswer) {
+                        if (rr.poll[i] && rr.poll[i].active) {
+                            return cb(err, rr.poll[i]);
+                        }
+                    }
+                }
+                return cb(null, null);
+            });
+        });
     });
 };
 
@@ -220,7 +229,7 @@ var newPoll = function (params, cb, tcb) {
  */
 var answer = function (params, cb) { // refactor this. it is perhaps much too complicated
     // params.userId, params.answerId, params.arsId, params.roomId
-    QuestionModel.findOne({ _id : params.arsId }).deepPopulate('poll poll poll.statistics poll.statistics.statisticAnswer').exec(function (err, q) {
+    QuestionModel.findOne({ _id : params.arsId }).deepPopulate('poll poll poll.statistics poll.statistics.statisticAnswer.answer').exec(function (err, q) {
         if (err) {
             logger.debug(err);
             return cb(err);
