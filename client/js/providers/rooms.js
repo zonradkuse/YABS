@@ -141,7 +141,7 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
             return;
         }
         $rootScope.$apply(function () {
-            polls.push(question);
+            polls.push(poll);
         });
     };
 
@@ -205,7 +205,7 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
     	rpc.call("room:getQuestions", {roomId: room._id}, function(data) {});
     };
 
-    this.answerPoll = function(room, poll, answers) {
+    this.answerPoll = function(room, poll, answers, cb) {
         var ids = [];
         for (var i = 0; i < answers.length; i++) {
             ids.push(answers[i]._id);
@@ -215,9 +215,17 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
             arsId : poll._id,
             answerId : ids
         }, function (data) {
-            console.log(data);
+            cb(data);
         });
     };
+
+    this.getNextPoll = function(room, cb) {
+        rpc.call("poll:getNext", {
+            roomId : room._id
+        }, function (data) {
+            cb(data);
+        });
+    }
 
     this.createPoll = function(room, poll, cb) {
         rpc.call("poll:create", {

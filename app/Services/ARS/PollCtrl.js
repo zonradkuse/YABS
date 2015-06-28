@@ -88,12 +88,13 @@ var getNext = function (roomId, userId, cb) {
         for (var i = 0; i < room.poll.length; i++) {
             noAnswer = true;
             for (var j = 0; i < room.poll[ i ].answered.length; j++) {
-                if (room.poll[ i ].answered[ j ].toString() === userId) {
+                if (room.poll[ i ].answered[ j ].toString() === userId || !room.poll[i].active) {
                     noAnswer = false;
                     break;
                 }
             }
             if (noAnswer) {
+                logger.debug(room.poll[i]);
                 return cb(null, room.poll[ i ]);
             }
         }

@@ -5,9 +5,9 @@
                 <h4 class="modal-title" id="pollStudentModalLabel"> Umfrage </h4>
             </div>
             <div class="modal-body">
-                <h2>{{question.description}}</h2>
+                <h2>Frage: {{question.description}}</h2>
                 <form>
-    				<div ng-repeat="option in question.options">
+    				<div ng-repeat="option in question.poll.answers">
                         <div class="checkbox" ng-if="option.checkbox">
                             <label for="{{option._id}}"> <input ng-model="option.checked" id="{{option._id}}" type="checkbox"> {{option.description}} </label>
                         </div>

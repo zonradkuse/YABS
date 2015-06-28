@@ -89,6 +89,7 @@ module.exports = function (wsCtrl) {
 
     wsCtrl.on('poll:getNext', function (req) {
         pollCtrl.getNext(req.params.roomId, req.session.user._id, function (err, poll) {
+            logger.debug("some next poll : " + poll);
             if (err) {
                 return wsCtrl.build(req.ws, err, null, req.refId);
             }
