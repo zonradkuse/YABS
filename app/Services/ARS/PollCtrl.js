@@ -162,6 +162,7 @@ var newPoll = function (params, cb, tcb) {
         _question.poll = _poll._id;
         _question.save(function (err) {
             if (err) {
+                logger.warn(err);
                 Timer.clearTimer(_tId);
                 return cb(err);
             }

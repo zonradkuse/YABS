@@ -122,6 +122,29 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		});
 	};
 
+    /**
+     * This adds a new poll to the rooms polls or alters it.
+     * @param roomId
+     * @param poll
+     */
+    this.upsertPoll = function (roomId, poll) {
+        var room = this.getById(roomId);
+        var polls = room.poll;
+
+        for (var i = 0; i < polls.length; i++) {
+            /* jshint loopfunc: true */
+            if (polls[i]._id === poll._id) {
+                $rootScope.$apply(function() {
+                    polls[i] = poll;
+                });
+            }
+            return;
+        }
+        $rootScope.$apply(function () {
+            polls.push(question);
+        });
+    };
+
 	/** Get a question by id.
 	* @param {Room} room - room object of question
 	* @param {ObjectId} questionId - object id of target question
@@ -169,7 +192,10 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		});
 		rpc.attachFunction("answer:add", function(data) {
 			self.upsertAnswer(data.roomId, data.questionId, data.answer);
-		});	
+		});
+        rpc.attachFunction("poll:do", function(data) {
+            self.upsertPoll(data.roomId, data.arsObj);
+        });
     };
 
     /** Get all questions of a room.
@@ -177,6 +203,31 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 	*/
     this.getQuestions = function(room) {
     	rpc.call("room:getQuestions", {roomId: room._id}, function(data) {});
+    };
+
+    this.answerPoll = function(room, poll, answers) {
+        var ids = [];
+        for (var i = 0; i < answers.length; i++) {
+            ids.push(answers[i]._id);
+        }
+        rpc.call("poll:answer", {
+            roomId : room._id,
+            arsId : poll._id,
+            answerId : ids
+        }, function (data) {
+            console.log(data);
+        });
+    };
+
+    this.createPoll = function(room, poll, cb) {
+        rpc.call("poll:create", {
+            roomId : room._id,
+            answers : poll.answers,
+            dueDate : poll.duration,
+            description : poll.description
+        }, function(data){
+            cb(data);
+        });
     };
 
     /** Vote for a question.

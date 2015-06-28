@@ -153,6 +153,13 @@ client.service("rpc", [function(){
                 answer: {}
             },
             "func": ""
+        },{
+            "uri": "poll:do",
+            "parameters": {
+                roomId: "",
+                arsObj: ""
+            },
+            "func": ""
         }]
     };
 
@@ -243,7 +250,7 @@ client.service("rpc", [function(){
             if(_params){
                 var c = 0;
                 for (var key in _params) {
-                    if(key !== Object.getOwnPropertyNames(params)[c]) {
+                    if(!(key in params)) {
                         next(new Error("parameter objects not matching (tested key names)"), false);
                         return;
                     }
