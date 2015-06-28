@@ -84,10 +84,10 @@ var getNext = function (roomId, userId, cb) {
             path: 'poll.poll',
             model: 'ARSPoll'
         };
-        Rooms.Room.populate(room, options, function(err, r){
+        Rooms.Room.populate(room, options, function (err, r) {
             options.path = 'poll.poll.answers';
             options.model = 'ARSAnswer';
-            Rooms.Room.populate(r, options, function(err,rr){
+            Rooms.Room.populate(r, options, function (err, rr) {
                 logger.debug("populated room: " + JSON.stringify(rr));
 
                 if (err) {
@@ -98,14 +98,14 @@ var getNext = function (roomId, userId, cb) {
                 for (var i = 0; i < rr.poll.length; i++) {
                     noAnswer = true;
                     for (var j = 0; j < rr.poll[ i ].answered.length; j++) {
-                        var uid = rr.poll[ i ].answered[ j].toString();
+                        var uid = rr.poll[ i ].answered[ j ].toString();
                         if (uid === userId) {
                             noAnswer = false;
                         }
                     }
                     if (noAnswer) {
-                        if (rr.poll[i] && rr.poll[i].active) {
-                            return cb(err, rr.poll[i]);
+                        if (rr.poll[ i ] && rr.poll[ i ].active) {
+                            return cb(err, rr.poll[ i ]);
                         }
                     }
                 }
@@ -251,8 +251,8 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
                     logger.debug(q.poll.answers[ k ].toString());
                     if (params.answerId[ j ] === q.poll.answers[ k ].toString()) {
                         for (var i = 0; i < q.poll.statistics.statisticAnswer.length; ++i) {
-                            logger.debug(q.poll.statistics.statisticAnswer[ i ].answer.toString());
-                            if (params.answerId[ j ] === q.poll.statistics.statisticAnswer[ i ].answer.toString()) {
+                            if (q.poll.statistics.statisticAnswer[ i ].answer && params.answerId[ j ] === q.poll.statistics.statisticAnswer[ i ].answer.toString()) {
+                                logger.debug(q.poll.statistics.statisticAnswer[ i ].answer.toString());
                                 // there is already an object for this answer
                                 answered = true;
                                 StatisticObjModel.findOne(q.poll.statistics.statisticAnswer[ i ]._id).exec(function (err, obj) {

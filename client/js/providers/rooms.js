@@ -223,11 +223,13 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
     };
 
     this.getNextPoll = function(room, cb) {
-        rpc.call("poll:getNext", {
-            roomId : room._id
-        }, function (data) {
-            cb(data);
-        });
+        if (room) {
+            rpc.call("poll:getNext", {
+                roomId : room._id
+            }, function (data) {
+                cb(data);
+            });
+        }
     };
 
     this.createPoll = function(room, poll, cb) {
