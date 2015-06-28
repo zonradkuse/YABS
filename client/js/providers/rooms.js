@@ -196,6 +196,9 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
         rpc.attachFunction("poll:do", function(data) {
             self.upsertPoll(data.roomId, data.arsObj);
         });
+        rpc.attachFunction("poll:statistic", function(data) {
+            console.log(data);
+        });
     };
 
     /** Get all questions of a room.
@@ -225,7 +228,7 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
         }, function (data) {
             cb(data);
         });
-    }
+    };
 
     this.createPoll = function(room, poll, cb) {
         rpc.call("poll:create", {

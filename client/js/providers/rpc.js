@@ -160,6 +160,13 @@ client.service("rpc", [function(){
                 arsObj: ""
             },
             "func": ""
+        },{
+            "uri": "poll:statistic",
+            "parameters": {
+                roomId: "",
+                statistics: ""
+            },
+            "func": ""
         }]
     };
 

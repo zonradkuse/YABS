@@ -79,7 +79,7 @@ var getPoll = function (userId, arsId, cb, dpOptions) {
  * @param cb err set on error or if there is a poll, poll is set. if not null.
  */
 var getNext = function (roomId, userId, cb) {
-    Rooms.Room.findOne({ _id: roomId}).deepPopulate('poll.poll.answers').exec(function (err, room) {
+    Rooms.Room.findOne({ _id: roomId}).populate('poll').exec(function (err, room) {
         if (err) {
             logger.warn(err);
             return cb(err);
@@ -87,15 +87,19 @@ var getNext = function (roomId, userId, cb) {
         var noAnswer = true;
         for (var i = 0; i < room.poll.length; i++) {
             noAnswer = true;
-            for (var j = 0; i < room.poll[ i ].answered.length; j++) {
-                if (room.poll[ i ].answered[ j ].toString() === userId || !room.poll[i].active) {
+            for (var j = 0; j < room.poll[ i ].answered.length; j++) {
+                var uid = room.poll[ i ].answered[ j ].toString();
+                if (uid === userId) {
                     noAnswer = false;
-                    break;
                 }
             }
             if (noAnswer) {
-                logger.debug(room.poll[i]);
-                return cb(null, room.poll[ i ]);
+                logger.debug(room.poll[ i ]);
+                QuestionModel.findOne({ _id : room.poll[i]._id }).deepPopulate('poll poll.answers').exec(function(err, ars) {
+                    if (ars && ars.active) {
+                        cb(err, ars);
+                    }
+                });
             }
         }
         return cb(null, null);
@@ -123,6 +127,7 @@ var newPoll = function (params, cb, tcb) {
     var _question = new QuestionModel();
 	_question.description = params.description;
     _question.dueDate = dueDate* 1000 + Date.now();
+    _question.active = true;
 	var _poll = new PollModel();
     var _statistic = new StatisticModel();
     _statistic.save();
@@ -291,7 +296,7 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
                     logger.info("cleaned up question activity flag and reset room.");
                 });
             }
-            cb(new Error("Time is up."));
+            return cb(new Error("Time is up."));
         }
     });
 };

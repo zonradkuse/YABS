@@ -60,7 +60,7 @@ module.exports = function (wsCtrl) {
         req.params.userId = req.session.user._id;
         if (req.params.arsId && req.params.answerId && req.params.answerId !== []) {
             pollCtrl.answer(req.params, function (err, q) {
-                // braodcast statistic to every admin and the answering user
+                // broadcast statistic to every admin and the answering user
 
                 if (err) {
                     logger.info("An error occurred on answering poll: " + err);
@@ -68,6 +68,7 @@ module.exports = function (wsCtrl) {
                 } else {
                     var statistics = q.poll.statistics;
                     StatisticsModel.find({ _id : statistics }).deepPopulate('statisticAnswer statisticAnswer.answer').exec(function (err, s) {
+                        wsCtrl.build(req.ws, null, {status: true}, req.refId);
                         req.wss.roomBroadcast(req.ws, "poll:statistic", {
                             roomId: req.params.roomId,
                             statistics: s
@@ -94,7 +95,7 @@ module.exports = function (wsCtrl) {
                 return wsCtrl.build(req.ws, err, null, req.refId);
             }
             if (!poll) {
-                return wsCtrl.build(req.ws, null, {arsObj : {}}, req.refId);
+                return wsCtrl.build(req.ws, null, {status : false}, req.refId);
             }
             wsCtrl.build(req.ws, null, {
                 roomId : req.params.roomId,

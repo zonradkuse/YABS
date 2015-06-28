@@ -9,50 +9,50 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                 backdrop: 'static',
                 show: false
             });
-            /*$scope.question = {
-                _id : "dasfasdw41352",
-                description: "is it a radiobox?",
-                poll: { answers:
-                    [{
-                        _id : 1,
-                        description: 'This is a radiobox',
-                        radiobox: true,
-                        checked: false
-                    },
-                        {
-                            _id : 3,
-                            description: 'This is a radiobox 2',
-                            checkbox: true,
-                            checked: false
-                        },
-                        {
-                            _id : 4,
-                            description: 'This is a radiobox 2',
-                            text: true
-                        }]
-                }
-            };*/
-            rooms.getNextPoll($scope.room, function(data) {
-                $scope.question = data;
-            });
 
+            $scope.getNext = function (cb) {
+                rooms.getNextPoll($scope.room, function(data) {
+                    if (data && data.arsObj && data.arsObj.poll) {
+                        for (var i = 0; i < data.arsObj.poll.answers.length; i++) {
+                            data.arsObj.poll.answers[i].checked = false;
+                        }
+                        $scope.question = data.arsObj;
+                        if (cb) cb(true);
+                    } else {
+                        $scope.question = {};
+                        if (cb) cb(false);
+                    }
+                });
+            };
+            $scope.getNext();
             $scope.checkAnswer = function() {
                 var selected = false;
             };
+            $scope.reset = function () {
+                $scope.sending = false;
+                $scope.question = {};
+            };
+
             $scope.send = function () {
                 // TODO real sending and error handling
                 $scope.sending = !$scope.sending;
                 var chk = [];
                 for (var i = 0; i < $scope.question.poll.answers.length; i++) {
-                    if ($scope.question.poll.answers[i].checked) {
-                        chk.push($scope.question.poll.answers[i]._id);
+                    if ($scope.question.poll.answers[i].checked !== false) {
+                        chk.push($scope.question.poll.answers[i]);
                     }
                 }
                 rooms.answerPoll($scope.room, $scope.question, chk, function (resp) {
-                    console.log(resp);
+                    $scope.getNext(function (bool) {
+                        if (!bool) {
+                            $('#pollStudentModal').modal('hide');
+                            $scope.$apply(function () {
+                                $scope.reset();
+                            });
+                        }
+                    });
                 });
             };
-
         }
 	};
 }]);
