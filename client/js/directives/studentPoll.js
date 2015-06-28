@@ -16,6 +16,7 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                             $scope.$apply(function () {
                                 $scope.question = data.arsObj;
                                 $scope.sending = false;
+                                $('#pollStudentModal').modal('show');
                             });
                             if (cb) cb(true);
                         } else {
