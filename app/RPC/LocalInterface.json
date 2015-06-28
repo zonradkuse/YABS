@@ -211,7 +211,7 @@
             "dueDate" : "",
             "description" : ""
         },
-        "accessLevel": 0
+        "accessLevel": 2
     },
     {
         "uri": "poll:answer",
@@ -234,6 +234,13 @@
         "parameters": {
             "roomId" : "",
             "arsId" :""
+        },
+        "accessLevel": 1
+    },
+    {
+        "uri": "poll:getNext",
+        "parameters": {
+          "roomId" : ""
         },
         "accessLevel": 1
     },

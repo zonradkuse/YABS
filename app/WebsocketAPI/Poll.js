@@ -86,4 +86,19 @@ module.exports = function (wsCtrl) {
             wsCtrl.build(req.ws, new Error("Invalid Parameters."), null, req.refId);
         }
     });
+
+    wsCtrl.on('poll:getNext', function (req) {
+        pollCtrl.getNext(req.params.roomId, req.session.user._id, function (err, poll) {
+            if (err) {
+                return wsCtrl.build(req.ws, err, null, req.refId);
+            }
+            if (!poll) {
+                return wsCtrl.build(req.ws, null, {arsObj : {}}, req.refId);
+            }
+            wsCtrl.build(req.ws, null, {
+                roomId : req.params.roomId,
+                arsObj : poll
+            }, req.refId);
+        });
+    });
 };

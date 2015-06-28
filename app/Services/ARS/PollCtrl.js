@@ -45,7 +45,6 @@ var getAllPollsInRoom = function (roomId, cb, dpOptions) {
  * @param  {String} optional population
  */
 var getPoll = function (userId, arsId, cb, dpOptions) {
-    // @TODO decide if user answered this one and populate statistics if necessary.
     logger.debug(arsId);
     QuestionModel.findOne({ _id : arsId }).exec(function (err, question) {
         if (err || !question) {
@@ -71,6 +70,35 @@ var getPoll = function (userId, arsId, cb, dpOptions) {
         return QuestionModel.findOne({_id : arsId }).deepPopulate('poll poll.answers')
             .exec(call);
     }); 
+};
+
+/**
+ *
+ * @param roomId
+ * @param userId
+ * @param cb err set on error or if there is a poll, poll is set. if not null.
+ */
+var getNext = function (roomId, userId, cb) {
+    Rooms.Room.findOne({ _id: roomId}).deepPopulate('poll.poll.answers').exec(function (err, room) {
+        if (err) {
+            logger.warn(err);
+            return cb(err);
+        }
+        var noAnswer = true;
+        for (var i = 0; i < room.poll.length; i++) {
+            noAnswer = true;
+            for (var j = 0; i < room.poll[ i ].answered.length; j++) {
+                if (room.poll[ i ].answered[ j ].toString() === userId) {
+                    noAnswer = false;
+                    break;
+                }
+            }
+            if (noAnswer) {
+                return cb(null, room.poll[ i ]);
+            }
+        }
+        return cb(null, null);
+    });
 };
 
 /** Create a new Poll including timeout.
@@ -105,20 +133,9 @@ var newPoll = function (params, cb, tcb) {
                 logger.warn(err);
                 return tcb(err);
             }
-            Rooms.getByID(params.roomId, {population : ''}, function (err, room) {
-                if (err) {
-                    logger.warn(err);
-                    return tcb(err);
-                }
-                delete room.poll[ q._id ];
-                if (room.hasPoll && room.poll.length === 0) {
-                    room.hasPoll = false;
-                }
-                q.active = false;
-                room.save();
-                q.save();
-                tcb(q);
-            });
+            q.active = false;
+            q.save();
+            tcb(q);
         });
 	}, dueDate* 1000 + 1000);
 	
@@ -282,4 +299,5 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
 module.exports.answer = answer;
 module.exports.newPoll = newPoll;
 module.exports.getPoll = getPoll;
+module.exports.getNext = getNext;
 module.exports.getAllPollsInRoom = getAllPollsInRoom;
