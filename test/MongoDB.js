@@ -7,10 +7,10 @@ var User = require('../models/User.js');
 var Answer = require('../models/Answer.js');
 var Image = require('../models/Image.js');
 
-var Quiz = require('../models/Quiz.js');
-var QuizQuestion = require('../models/QuizQuestion.js');
-var QuizAnswer = require('../models/QuizAnswer.js');
-var QuizWorker = require('../app/Quiz.js');
+var Quiz = require('../models/ARSModels/Quiz.js');
+var QuizQuestion = require('../models/ARSModels/QuizQuestion.js');
+var QuizAnswer = require('../models/ARSModels/Answer.js');
+var QuizCtrl = require('../app/Services/ARS/QuizCtrl.js');
 
 
 var mongoose = require('mongoose');
@@ -21,7 +21,7 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open',function(callback){
 
-	//mongoose.connection.db.dropDatabase(function(error) {
+	mongoose.connection.db.dropDatabase(function(error) {
 	    //console.log('db dropped');
 	    /*var u = new User.User({name: "Jens"});
 		var r = new Room.Room({l2pID: "L2P", name: "DSAL"});
@@ -89,8 +89,40 @@ db.once('open',function(callback){
 
 		});*/
 	
-	//});
 
+		var u = new User.User({name: "Jens"});
+		var r = new Room.Room({l2pID: "L2P6", name: "DSAL"});
+		User.create(u, function(userErr, user){
+			r.save(function(roomErr){
+				if(roomErr)
+					throw roomErr;
+
+				var params = {
+					roomId: r._id,
+					dueDate: 1,
+					questions: [{
+						description: "Test",
+						answers: [{
+							description: "A",
+							radiobox: true
+						}]
+					}]
+				};
+
+				QuizCtrl.newQuiz(params, function(err,quiz){
+					if(err)
+						throw err;
+					console.log("\n\n\n\nQUIZ:");
+					console.log(JSON.stringify(quiz,null,2));				
+				});
+			});
+		});
+
+
+		
+	
+	});
+	
 });
 
 /** This function change the name of a user object.

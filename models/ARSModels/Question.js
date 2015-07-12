@@ -6,7 +6,7 @@ var ARSQuestionSchema = mongoose.Schema({
 	creator: { type : ObjectId, ref: 'User' },
     timestamp: { type: Date, default: Date.now },
     description: String,
-    quiz: { type : ObjectId, ref: 'ARSQuiz' }, // reference to a quiz
+    quizQuestion: { type : ObjectId, ref: 'ARSQuizQuestion' }, // reference to a quiz question
     poll: { type : ObjectId, ref: 'ARSPoll' }, // reference to a poll - having both defined is unexpected behaviour
     visible: { type: Boolean, default: true },
     next : { type: ObjectId, ref: 'ARSQuestion'}, // nice to have for the client @TODO

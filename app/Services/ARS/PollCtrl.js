@@ -221,6 +221,7 @@ var newPoll = function (params, cb, tcb) {
         });
     });
 };
+
 /**
  * This function processes a new answer, made by a user and aggregates the statistics.
  * 
