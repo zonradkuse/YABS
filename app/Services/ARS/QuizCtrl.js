@@ -23,7 +23,7 @@ var logger = require('../../Logger.js');
 
 
 var getAllQuizInRoom = function (roomId, options, callback) {
-	if(!options.deepPopulate){
+	if (!options.deepPopulate) {
 		options.deepPopulate = '';
 	}
     Rooms.Room.findOne({ _id : roomId}).deepPopulate('quiz.questions.quizQuestion.answers ' + options.deepPopulate).exec(function (err, room) {
@@ -36,10 +36,10 @@ var getAllQuizInRoom = function (roomId, options, callback) {
 };
 
 var getQuiz = function (userId, quizId, options, callback) {
-    if(!options.deepPopulate){
+    if (!options.deepPopulate) {
 		options.deepPopulate = '';
 	}
-    QuizModel.findOne({ _id : quizId }).deepPopulate('questions.quizQuestion.answers questions.quizQuestion.evaluation questions.quizQuestion.givenAnswers'+options.deepPopulate).exec(function (err, quiz) {
+    QuizModel.findOne({ _id : quizId }).deepPopulate('questions.quizQuestion.answers questions.quizQuestion.evaluation questions.quizQuestion.givenAnswers'+ options.deepPopulate).exec(function (err, quiz) {
         if (err || !quiz) {
             return callback(err);
         }
@@ -47,19 +47,21 @@ var getQuiz = function (userId, quizId, options, callback) {
             evaluationUserAnswers.userFalse = [];
             evaluationUserAnswers.userRight = [];
 
-        for(var i=0; i<quiz.questions.length; i++){
-        	var q = quiz.questions[i].toObject();
+        var q;
 
-        	for(var k=0; k < q.quizQuestion.givenAnswers.length; k++){
-        		if(q.quizQuestion.givenAnswers[k].user.toString() === userId.toString()){
-					for(var j=0; j < q.quizQuestion.givenAnswers[k].answers.length; j++){
+        for (var i= 0; i<quiz.questions.length; i++) {
+        	q = quiz.questions[ i ].toObject();
 
-						for(var l = 0; l < q.quizQuestion.evaluation.answers.length; l++){
-			            	if(q.quizQuestion.givenAnswers[k].answers[j].toString() === q.quizQuestion.evaluation.answers[l].toString()) {
-			            		evaluationUserAnswers.userRight.push(q.quizQuestion.givenAnswers[k].answers[j]);
+        	for (var k= 0; k < q.quizQuestion.givenAnswers.length; k++) {
+        		if (q.quizQuestion.givenAnswers[ k ].user.toString() === userId.toString()) {
+					for (var j= 0; j < q.quizQuestion.givenAnswers[ k ].answers.length; j++) {
+
+						for (var l = 0; l < q.quizQuestion.evaluation.answers.length; l++) {
+			            	if (q.quizQuestion.givenAnswers[ k ].answers[ j ].toString() === q.quizQuestion.evaluation.answers[ l ].toString()) {
+			            		evaluationUserAnswers.userRight.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]);
 			            		break;
 			            	} else {
-			            		evaluationUserAnswers.userFalse.push(q.quizQuestion.givenAnswers[k].answers[j]);
+			            		evaluationUserAnswers.userFalse.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]);
 			            	}
 			            }
 
@@ -72,9 +74,9 @@ var getQuiz = function (userId, quizId, options, callback) {
             delete q.answered;
             delete q.quizQuestion.evaluation;
             q.evaluationUserAnswers = evaluationUserAnswers;
-            quiz.questions[i] = q;
+            quiz.questions[ i ] = q;
         }
-        return callback(null,q);
+        return callback(null, q);
     });
 };
 
@@ -124,8 +126,9 @@ var newQuiz = function (params, callback) {
 				_answer.checkbox = answerParam.checkbox;
 				_answer.text = answerParam.text;
 				_quizQuestion.answers.push(_answer._id); //reference the new answer
-				if(answerParam.rightAnswer)
+				if (answerParam.rightAnswer) {
 					_evaluation.answers.push(_answer._id);
+                }
 				_tempAnswers.push(_answer);
 			}
 
@@ -141,7 +144,7 @@ var newQuiz = function (params, callback) {
 				}
 				_quizQuestion.evaluation = _evaluation._id;
 
-		    	_evaluation.save(function (evaluationErr){
+		    	_evaluation.save(function (evaluationErr) {
 					_quizQuestion.save(function (quizQuestionErr) {
 						_question.save(function (saveErr) {
 							return questionCallback(saveErr);
@@ -252,15 +255,15 @@ var answer = function (params, callback) {
 
                         existing = true;
 
-                        for(var l = 0; l < question.quizQuestion.evaluation.answers.length; l++){
-                        	if(params.answerIds[j].toString() === question.quizQuestion.evaluation.answers[l].toString()) {
+                        for (var m = 0; m < question.quizQuestion.evaluation.answers.length; m++) {
+                        	if (params.answerIds[ j ].toString() === question.quizQuestion.evaluation.answers[ m ].toString()) {
                         		allAnswersRight = allAnswersRight && true;
-                        		evaluationUserAnswers.userRight.push(params.answerIds[j]);
+                        		evaluationUserAnswers.userRight.push(params.answerIds[ j ]);
                         		break;
                         	} else {
                         		//code for wrong answer goes here...
                         		allAnswersRight = false;
-                        		evaluationUserAnswers.userFalse.push(params.answerIds[j]);
+                        		evaluationUserAnswers.userFalse.push(params.answerIds[ j ]);
                         	}
                         }
 
@@ -272,9 +275,9 @@ var answer = function (params, callback) {
             if (!existing) {
                 return callback(new Error("This answer does not exist."));
             } else {
-                question.quizQuestion.save(function(){
+                question.quizQuestion.save(function () {
                 	QuestionModel.findOne({ _id : params.arsId }).deepPopulate('quizQuestion.answers quizQuestion.statistics.statisticAnswer.answer quizQuestion.evaluation.answers').exec(function (err, question) {
-                    	if(err){
+                    	if (err) {
                     		return callback(err);
                     	}
                     	var q = question.toObject();
