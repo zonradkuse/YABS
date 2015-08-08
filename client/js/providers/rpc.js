@@ -167,6 +167,13 @@ client.service("rpc", [function(){
                 statistics: ""
             },
             "func": ""
+        },{
+            "uri": "quiz:do",
+            "parameters": {
+                roomId: "",
+                quiz: ""
+            },
+            "func": ""
         }]
     };
 

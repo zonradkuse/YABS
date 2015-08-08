@@ -199,9 +199,10 @@
         "uri": "quiz:create",
         "parameters": {
             "roomId" : "",
-            "answers" : ""
+            "questions" : "",
+            "dueDate" : ""
         },
-        "accessLevel": 2
+        "accessLevel": 1
     },
     {
         "uri": "poll:create",
@@ -249,7 +250,7 @@
         "parameters": {
             "roomId" : "",
             "arsId" :"",
-            "answerId" : []
+            "answerIds" : []
         },
         "accessLevel": 1
     }]

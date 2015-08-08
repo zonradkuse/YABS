@@ -199,6 +199,9 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
         rpc.attachFunction("poll:statistic", function(data) {
            // coming soon
         });
+        rpc.attachFunction("quiz:do", function(data){
+        	//TODO
+        });
     };
 
     /** Get all questions of a room.

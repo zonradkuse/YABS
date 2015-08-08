@@ -8,5 +8,6 @@ require('./WebsocketAPI/User.js')(wsFrame);
 require('./WebsocketAPI/Question.js')(wsFrame);
 require('./WebsocketAPI/Mod.js')(wsFrame);
 require('./WebsocketAPI/Poll.js')(wsFrame);
+require('./WebsocketAPI/Quiz.js')(wsFrame);
 
 wsFrame.start();
