@@ -133,12 +133,13 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
 				};
 
                 scope.sendPoll = function () {
+                    var q = scope.questions[0];
                     var obj = {};
-                    obj.description = scope.qsInputText;
+                    obj.description = q.question;
                     obj.answers = [];
-                    for (var i = 0; i < scope.items.length; i++) {
+                    for (var i = 0; i < q.answers.length; i++) {
                         var ans = {};
-                        switch (scope.items[i].type) { // this is needed as the first html-angular layout differs slightly from the server implementation
+                        switch (q.answers[i].type) { // this is needed as the first html-angular layout differs slightly from the server implementation
                             case "checkbox":
                                 ans.checkbox = true;
                                 break;
@@ -152,7 +153,7 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
                                 ans.checkbox = true;
                                 break;
                         }
-                        ans.description = scope.items[i].answer;
+                        ans.description = q.answers[i].answer;
                         obj.answers.push(ans);
                     }
                     obj.duration = parseInt(scope.qsRuntime);
@@ -170,6 +171,50 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
                     });
                 };
 
+                scope.sendQuiz = function () {
+                    var obj = {};
+                    obj.questions = [];
+                    for(var j = 0; j < scope.questions.length; j++){
+	                    var question = {};
+	                    var q = scope.questions[j];
+	                    question.description = q.question;
+                    	question.answers = [];
+	                    for (var i = 0; i < q.answers.length; i++) {
+	                        var ans = {};
+	                        switch (q.answers[i].type) { // this is needed as the first html-angular layout differs slightly from the server implementation
+	                            case "checkbox":
+	                                ans.checkbox = true;
+	                                break;
+	                            case "radiobox":
+	                                ans.radiobox = true;
+	                                break;
+	                            case "text":
+	                                ans.text = true;
+	                                break;
+	                            default:
+	                                ans.checkbox = true;
+	                                break;
+	                        }
+	                        ans.description = q.answers[i].answer;
+	                        ans.rightAnswer = q.answers[i].rightAnswer;
+	                        question.answers.push(ans);
+	                    }
+	                    obj.questions.push(question);
+                	}
+                    obj.duration = parseInt(scope.qsRuntime);
+                    scope.sending = true;
+                    rooms.createQuiz(scope.room, obj, function(resp) {
+                        if(resp && resp.status) {
+                            scope.$apply(function () {
+                                scope.sending = false;
+                                scope.reset();
+                            });
+                            $('#quizMasterModal').modal('hide');
+                        } else {
+                            scope.sending = false;
+                        }
+                    });
+                };
 			},
 			post: function(scope, elem, attr){
 				$('#quizMasterModal').modal({

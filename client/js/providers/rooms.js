@@ -199,9 +199,6 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
         rpc.attachFunction("poll:statistic", function(data) {
            // coming soon
         });
-        rpc.attachFunction("quiz:do", function(data){
-        	//TODO
-        });
     };
 
     /** Get all questions of a room.
@@ -244,6 +241,26 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
         }, function(data){
             cb(data);
         });
+    };
+
+    this.createQuiz = function(room, quiz, cb) {
+        rpc.call("quiz:create", {
+            roomId : room._id,
+            questions : quiz.questions,
+            dueDate : quiz.duration
+        }, function(data){
+            cb(data);
+        });
+    };
+
+    this.getAllQuizzes = function(room, cb) {
+        if(room){
+	        rpc.call("quiz:getAll", {
+	            roomId : room._id
+	        }, function(data){
+	            cb(data);
+	        });
+    	}
     };
 
     /** Vote for a question.

@@ -1,0 +1,36 @@
+<div class="modal fade out" id="quizStudentModal" tabindex="-1" role="dialog" aria-labelledby="quizStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="quizStudentModalLabel">Quiz</h4>
+            </div>
+            <div class="modal-body">
+                <h2>Frage: {{quiz.questions[0].description}}</h2>
+                {{ quiz }}
+                <form>
+    				<div ng-repeat="answer in quiz.questions[0].quizQuestion.answers">
+                        <div class="checkbox" ng-if="answer.checkbox">
+                            <label for="{{answer._id}}"> <input ng-model="answer.checked" id="{{answer._id}}" type="checkbox"> {{answer.description}} </label>
+                        </div>
+                        <div ng-if="answer.radiobox">
+                            <input name="poll" ng-model="answer.checked" id="{{answer._id}}" type="radio">
+                            <label for="{{answer._id}}"> {{answer.description}} </label>
+                        </div>
+                        <div ng-if="answer.text">
+                            <label for="{{answer._id}}"> {{answer.description}} </label>
+                            <input ng-model="answer.checked" id="{{answer._id}}" type="text">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div ng-if="!sending">
+                    <button type="button" ng-click="send()" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span>Absenden</button>
+                </div>
+                <div ng-if="sending">
+                    <img src="loading.gif" style="height: 20px; width: 20px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

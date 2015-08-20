@@ -175,7 +175,9 @@
             <div class="modal-footer">
                 <button type="button" class="btn pull-left btn-default" ng-click="reset()" data-dismiss="modal"> {{(questions[0] && questions[0].question !== "") ? 'Abbrechen' : 'Schließen'}} </button>
                 <div ng-if="!sending">
-                    <button type="button" ng-click="sendPoll()" ng-disabled="!qsRuntime || !qsInputText || (!items && !qsInput)" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden </button>
+                    <!-- <button type="button" ng-click="sendPoll()" ng-disabled="!qsRuntime || !qsInputText || (!items && !qsInput)" class="btn btn-primary pull-right"> -->
+                    <button type="button" ng-click="(optionQuiz == 'Quizfrage') ? sendQuiz() : sendPoll()" ng-disabled="!qsRuntime || questions[0].question === '' || questions[0].answers.length == 0 || questions[0].answers[0].answer === ''" class="btn btn-primary pull-right">
+                    <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden </button>
                 </div>
                 <div ng-if="sending">
                     <img src="loading.gif" style="height: 20px; width: 20px;" />

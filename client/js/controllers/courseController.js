@@ -3,8 +3,11 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                                                     "authentication", "rpc", "$timeout", "$http",
     function($scope, $routeParams, rooms, $location, authentication, rpc, $timeout, $http) {
         authentication.enforceLoggedIn();
-            $scope.Math = window.Math;
-            $scope.orderProp = '-votes';
+        $scope.Math = window.Math;
+        $scope.orderProp = '-votes';
+
+        $scope.modules = ["Fragen Übersicht", "Umfragen und Quizfragen Verwaltung"];
+        $scope.activeModule = 0;
 
         $scope.$watch(function() { return rooms.getById($routeParams.courseid); }, function(room) {
             $scope.room = room;
@@ -13,6 +16,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
             $scope.panics = 0;
             $scope.activeUsers = 0;
             $scope.importantQuestions = 0;
+
             // RPC shouldnt be handled here but is neccessary due to bad server api design (missing room ids in broadcasts)
             rpc.attachFunction("room:livePanic", function(data) {
                 $scope.$apply(function() {
@@ -141,6 +145,10 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
 
         $scope.deleteAnswer = function(question, answer) {
             rooms.deleteAnswer($scope.room, question, answer);
-        };        
+        };
+
+        $scope.changeDropdownModule = function(position){
+            $scope.activeModule = position;
+        };
     }
 ]);

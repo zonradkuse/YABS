@@ -7,7 +7,7 @@ var StatisticsModel = require('../../models/ARSModels/Statistic.js').ARSStatisti
 module.exports = function (wsCtrl) {
 
     wsCtrl.on("quiz:getAll", function (req) {
-        quizCtrl.getAllQuizInRoom(params.roomId, function (err, quizzes) {
+        quizCtrl.getAllQuizzes(req.params.roomId, {}, function (err, quizzes) {
             if (err) {
                 return wsCtrl.build(req.ws, new Error("could not get quizzes"), null, req.refId);
             }
@@ -16,7 +16,7 @@ module.exports = function (wsCtrl) {
     });
 
     wsCtrl.on("quiz:get", function (req) {
-        quizCtrl.getQuiz(req.userId, req.params.arsId, function (err, quiz) {
+        quizCtrl.getQuiz(req.userId, req.params.arsId, {}, function (err, quiz) {
             if (err) {
                 return wsCtrl.build(req.ws, new Error("could not get quiz"), null, req.refId);
             }
@@ -25,8 +25,8 @@ module.exports = function (wsCtrl) {
     });
 
     /**
-     * This Call implements the full workflow for creating a new poll. This especially takes care of pushing the new
-     * poll to the client.
+     * This Call implements the full workflow for creating a new quiz. This especially takes care of pushing the new
+     * quiz to the client.
      */
     wsCtrl.on('quiz:create', function (req) {
         if (req.params.dueDate && req.params.questions && req.params.question !== []) {

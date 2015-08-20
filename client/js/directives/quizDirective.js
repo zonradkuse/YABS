@@ -1,4 +1,4 @@
-courseControllers.directive('quiz', function(){
+/*courseControllers.directive('quiz', function(){
 	return {
 		scope: {},
 		restrict: 'E',
@@ -12,4 +12,4 @@ courseControllers.directive('quiz', function(){
 			} 
 		}
 	};
-});
+});*/

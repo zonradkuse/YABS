@@ -253,5 +253,12 @@
             "answerIds" : []
         },
         "accessLevel": 1
+    },
+    {
+        "uri": "quiz:getAll",
+        "parameters": {
+            "roomId" : ""
+        },
+        "accessLevel": 1
     }]
 }

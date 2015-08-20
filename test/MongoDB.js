@@ -114,7 +114,8 @@ db.once('open',function(callback){
 					params.arsId = quiz.questions[0]._id;
 
 					QuizCtrl.answer(params, function(err, q){
-						QuizCtrl.getQuiz(u._id, quiz._id, {}, function(err, quiz){
+						//u._id, quiz._id
+						QuizCtrl.getAllQuizzes(r._id, {}, function(err, quiz){
 							if(err)
 								throw err;
 							console.log("\nquiz:");

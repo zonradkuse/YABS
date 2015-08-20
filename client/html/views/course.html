@@ -1,150 +1,166 @@
 <div class="container-course container-fluid">
     <div class="background-course">
-    <span style="color: #DDD; font-size:9px; position:absolute; opacity:0.7; right: 0;">Bild &copy; Peter Winandy</span>
+        <span style="color: #DDD; font-size:9px; position:absolute; opacity:0.7; right: 0;">Bild &copy; Peter Winandy</span>
         <div class="container">
             <h1 data-fittext="1.2" data-fittext-min="8" data-fittext-max="36">{{room.name}}</h1>
             <div ng-switch on="showAdmin">
                 <div ng-switch-when="false"><div ng-include="'course_panic.html'"></div></div><!--either panic-->
                 <div ng-switch-when="true"><div ng-include="'course_admin.html'"></div></div><!--or admin view-->
-            </div>            
-            
-            <div ng-include="'course_student.html'"></div>
-            <div class="container row shadowed">
-                <h2>Optionen</h2>
-                Im folgenden findest Du einige Optionen, die Dir helfen, schneller auf Fragen zuzugreifen. Sortiere alle Fragen oder wende einen Volltextfilter auf jegliche Inhalte an. Die Filter werden automatisch auf neue Inhalte angewandt.
-                <br><br>
-                <div class="col-xs-12">
-                    <div class="form-group">
-                        <label for="qSort" class="control-label">Sortierung</label> 
-                        <select id="qSort" class="form-control" ng-model="orderProp">
-                            <option value="-votes">Fragen mit den meisten Unterstützern</option>
-                            <option value="elapsedSince">Neueste Fragen</option>
-                            <option value="-elapsedSince">Älteste Fragen</option>
-                            <option value="">unsortiert</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-xs-12">
-                    <div class="form-group">
-                        <label for="qSearch" class="control-label">Volltextfilter</label> 
-                        <input id="qSearch" class="form-control" type="search" ng-model="query" placeholder="Suche...">
-                    </div>
-                </div>
             </div>
-            <div ng-repeat="question in room.questions | filter:query | orderBy:orderProp">
-                <div ng-if="question.visible">
-                <h2>Frage</h2>
-                <div class="row question" ng-class="question.goodQuestion ? 'question-good' : ''">
-                    <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
-                        <div class="row text-center shadowed userinfo">
-                            <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{question.author.avatar}}" /></div><!--
-                         --><div class="col-sm-12 vcenter" ng-class="!showAdmin ? 'col-xs-5' : 'col-xs-3'"><span class="username">{{question.author.name}}</span><span class="time">vor {{question.elapsedSince < 60 ? question.elapsedSince + ' Minuten' : (Math.floor(question.elapsedSince/60) < 24 ? Math.floor(question.elapsedSince/60) + ' Stunden' : Math.floor(question.elapsedSince/60/24) + ' Tagen')}}</span></div><!--
-                         --><div class="col-sm-12 votebutton vcenter" ng-class="!showAdmin ? 'col-xs-6' : 'col-xs-4'">
-                                <button type="button" ng-if="!showAdmin" ng-click="voteQuestion(question)" class="btn btn-default" ng-disabled="question.hasVote" >
-                                    <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Frage unterstützen
-                                </button>
-                                <span>{{question.votes}} Studierende haben die selbe Frage</span>
+
+            <div ng-switch on="activeModule">
+                <div ng-switch-when="0">
+                    <div ng-include="'course_student.html'"></div>
+                    <div class="container row shadowed">
+                        <h2>Optionen</h2>
+                        Im folgenden findest Du einige Optionen, die Dir helfen, schneller auf Fragen zuzugreifen. Sortiere alle Fragen oder wende einen Volltextfilter auf jegliche Inhalte an. Die Filter werden automatisch auf neue Inhalte angewandt.
+                        <br><br>
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <label for="qSort" class="control-label">Sortierung</label> 
+                                <select id="qSort" class="form-control" ng-model="orderProp">
+                                    <option value="-votes">Fragen mit den meisten Unterstützern</option>
+                                    <option value="elapsedSince">Neueste Fragen</option>
+                                    <option value="-elapsedSince">Älteste Fragen</option>
+                                    <option value="">unsortiert</option>
+                                </select>
                             </div>
-                            <div ng-if="showAdmin" class="col-xs-4 col-sm-12 vcenter votebutton">
-                                <div class="dropdown" aria-expanded="false">
-                                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="optionsDropdown1" data-toggle="dropdown" aria-expanded="false"> 
-                                        Optionen 
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="optionsDropdown1">
-                                        <li role="presentation">
-                                            <a role="menuitem" tabindex="-1" href="#" ng-click="deleteQuestion(question)"> 
-                                                Frage löschen    
-                                                <span class="label label-danger"> ! </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <label for="qSearch" class="control-label">Volltextfilter</label> 
+                                <input id="qSearch" class="form-control" type="search" ng-model="query" placeholder="Suche...">
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
-                        {{question.content}}
-                    </div>
-                    <div ng-repeat="image in question.images" class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
-                        <a href="{{image.path}}" target="_blank"><img src="{{image.path}}" class="col-sm-3 img-thumbnail" /></a>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <a class="collapsed" data-toggle="collapse" data-target="#{{question._id}}">
-                        <div class="panel-heading">
-                            <h4>Antworten</h4>
-                        </div>
-                    </a>
-                    <div class="out collapse" id="{{question._id}}">
-                        
-                        <div class="row question answer" ng-if="!answer.deleted" ng-class="answer.isAnswer ? 'answer-correct' : ''" ng-repeat="answer in question.answers">
-                            
-                            <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
-                                <div class="row text-center shadowed userinfo">
-                                    <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{answer.author.avatar}}" /></div><!--
-                                 --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{answer.author.name}}</span><span class="time">vor {{answer.elapsedSince <= 60 ? answer.elapsedSince + ' Minuten' : (Math.floor(answer.elapsedSince/60) < 24 ? Math.floor(answer.elapsedSince/60) + ' Stunden' : Math.floor(answer.elapsedSince/60/24) + ' Tagen')}} </span></div><!--
-                                 --><div ng-if="showAdmin || answer.isAnswer" class="col-xs-7 col-sm-12 votebutton vcenter">
-                                        <!-- refactor -->
-                                        <div class="dropdown" ng-if="showAdmin" aria-expanded="false">
-                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="optionsDropdown2" data-toggle="dropdown" aria-expanded="false"> 
-                                                Optionen 
-                                                <span class="caret"></span>
+                    <div ng-repeat="question in room.questions | filter:query | orderBy:orderProp">
+                        <div ng-if="question.visible">
+                            <h2>Frage</h2>
+                            <div class="row question" ng-class="question.goodQuestion ? 'question-good' : ''">
+                                <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
+                                    <div class="row text-center shadowed userinfo">
+                                        <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{question.author.avatar}}" /></div><!--
+                                     --><div class="col-sm-12 vcenter" ng-class="!showAdmin ? 'col-xs-5' : 'col-xs-3'"><span class="username">{{question.author.name}}</span><span class="time">vor {{question.elapsedSince < 60 ? question.elapsedSince + ' Minuten' : (Math.floor(question.elapsedSince/60) < 24 ? Math.floor(question.elapsedSince/60) + ' Stunden' : Math.floor(question.elapsedSince/60/24) + ' Tagen')}}</span></div><!--
+                                     --><div class="col-sm-12 votebutton vcenter" ng-class="!showAdmin ? 'col-xs-6' : 'col-xs-4'">
+                                            <button type="button" ng-if="!showAdmin" ng-click="voteQuestion(question)" class="btn btn-default" ng-disabled="question.hasVote" >
+                                                <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Frage unterstützen
                                             </button>
-                                            <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="optionsDropdown2">
-                                                <li role="presentation" ng-class="answer.deleted ? 'disabled' : ''"  ng-if="showAdmin">
-                                                    <a role="menuitem" tabindex="-1" href="#" ng-disabled="answer.deleted" ng-click="answer.deleted || deleteAnswer(question, answer)"> 
-                                                        Antwort löschen    
-                                                        <span class="label label-danger"> ! </span>
-                                                    </a>
-                                                </li>
-                                                <li role="presentation" ng-class="(answer.isAnswer || answer.deleted) ? 'disabled' : ''" ng-if="showAdmin">
-                                                    <a role="menuitem" ng-click="answer.isAnswer || answer.deleted || markAsAnswer(question, answer)" tabindex="-1"> 
-                                                        {{answer.isAnswer ? 'Richtige Antwort' : 'Als Antwort markieren'}}   
-                                                    </a>
-                                                </li>
-                                            </ul>
+                                            <span>{{question.votes}} Studierende haben die selbe Frage</span>
                                         </div>
-                                    </div>                                   
+                                        <div ng-if="showAdmin" class="col-xs-4 col-sm-12 vcenter votebutton">
+                                            <div class="dropdown" aria-expanded="false">
+                                                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="optionsDropdown1" data-toggle="dropdown" aria-expanded="false"> 
+                                                    Optionen 
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="optionsDropdown1">
+                                                    <li role="presentation">
+                                                        <a role="menuitem" tabindex="-1" href="#" ng-click="deleteQuestion(question)"> 
+                                                            Frage löschen    
+                                                            <span class="label label-danger"> ! </span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
+                                    {{question.content}}
+                                </div>
+                                <div ng-repeat="image in question.images" class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
+                                    <a href="{{image.path}}" target="_blank"><img src="{{image.path}}" class="col-sm-3 img-thumbnail" /></a>
                                 </div>
                             </div>
-                            <div class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
-                                {{answer.content}}
-                            </div>
-                            <div ng-repeat="image in answer.images" class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
-                                <a href="{{image.path}}" target="_blank"><img src="{{image.path}}" class="col-sm-3 img-thumbnail" /></a>
-                            </div>
-                            
-                        </div>
+                            <div class="panel panel-default">
+                                <a class="collapsed" data-toggle="collapse" data-target="#{{question._id}}">
+                                    <div class="panel-heading">
+                                        <h4>Antworten</h4>
+                                    </div>
+                                </a>
+                                <div class="out collapse" id="{{question._id}}">
+                                    
+                                    <div class="row question answer" ng-if="!answer.deleted" ng-class="answer.isAnswer ? 'answer-correct' : ''" ng-repeat="answer in question.answers">
+                                        
+                                        <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
+                                            <div class="row text-center shadowed userinfo">
+                                                <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{answer.author.avatar}}" /></div><!--
+                                             --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{answer.author.name}}</span><span class="time">vor {{answer.elapsedSince <= 60 ? answer.elapsedSince + ' Minuten' : (Math.floor(answer.elapsedSince/60) < 24 ? Math.floor(answer.elapsedSince/60) + ' Stunden' : Math.floor(answer.elapsedSince/60/24) + ' Tagen')}} </span></div><!--
+                                             --><div ng-if="showAdmin || answer.isAnswer" class="col-xs-7 col-sm-12 votebutton vcenter">
+                                                    <!-- refactor -->
+                                                    <div class="dropdown" ng-if="showAdmin" aria-expanded="false">
+                                                        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="optionsDropdown2" data-toggle="dropdown" aria-expanded="false"> 
+                                                            Optionen 
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="optionsDropdown2">
+                                                            <li role="presentation" ng-class="answer.deleted ? 'disabled' : ''"  ng-if="showAdmin">
+                                                                <a role="menuitem" tabindex="-1" href="#" ng-disabled="answer.deleted" ng-click="answer.deleted || deleteAnswer(question, answer)"> 
+                                                                    Antwort löschen    
+                                                                    <span class="label label-danger"> ! </span>
+                                                                </a>
+                                                            </li>
+                                                            <li role="presentation" ng-class="(answer.isAnswer || answer.deleted) ? 'disabled' : ''" ng-if="showAdmin">
+                                                                <a role="menuitem" ng-click="answer.isAnswer || answer.deleted || markAsAnswer(question, answer)" tabindex="-1"> 
+                                                                    {{answer.isAnswer ? 'Richtige Antwort' : 'Als Antwort markieren'}}   
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>                                   
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
+                                            {{answer.content}}
+                                        </div>
+                                        <div ng-repeat="image in answer.images" class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
+                                            <a href="{{image.path}}" target="_blank"><img src="{{image.path}}" class="col-sm-3 img-thumbnail" /></a>
+                                        </div>
+                                        
+                                    </div>
 
-                        <div class="row question answer shadowed">
-                            <div class="col-md-12">
-                                <h3>Deine Antwort</h3>
-                            </div>
-                            <div class="col-md-12 textpadding">
-                                <form role="form" class="ng-pristine ng-valid">
-                                    <div class="form-group">
-                                        <div class="btn-group" role="group" aria-label="...">
-                                          <button ng-click="uploadImage($event, question._id)" type="button" class="btn btn-default"><input type="file" accept="image/*" style="display:none"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></button>
-                                          <!--<button type="button" class="btn btn-default">LaTeX</button>-->
+                                    <div class="row question answer shadowed">
+                                        <div class="col-md-12">
+                                            <h3>Deine Antwort</h3>
+                                        </div>
+                                        <div class="col-md-12 textpadding">
+                                            <form role="form" class="ng-pristine ng-valid">
+                                                <div class="form-group">
+                                                    <div class="btn-group" role="group" aria-label="...">
+                                                      <button ng-click="uploadImage($event, question._id)" type="button" class="btn btn-default"><input type="file" accept="image/*" style="display:none"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></button>
+                                                      <!--<button type="button" class="btn btn-default">LaTeX</button>-->
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <textarea class="form-control" ng-model="answerText[question._id]" style="max-width:100%" rows="5" placeholder="Deine Antwort auf {{question.author.name}}s Frage..."></textarea>
+                                                </div>
+                                                <span ng-if="imageUploads[question._id]">Angehängte Bilder: {{imageUploads[question._id].length}}</span>
+                                                <span ng-if="uploading[question._id]">Bild wird hochgeladen <img src="loading.gif" style="height: 18px; width: 18px;" /></span>
+                                                <button ng-disabled="uploading[question._id]" type="submit" class="btn btn-primary pull-right" ng-click="addAnswer(question)"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden</button>
+                                            </form>
+                                            <div class="clearfix"></div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <textarea class="form-control" ng-model="answerText[question._id]" style="max-width:100%" rows="5" placeholder="Deine Antwort auf {{question.author.name}}s Frage..."></textarea>
+                                    <div>
+                                        <hr>
                                     </div>
-                                    <span ng-if="imageUploads[question._id]">Angehängte Bilder: {{imageUploads[question._id].length}}</span>
-                                    <span ng-if="uploading[question._id]">Bild wird hochgeladen <img src="loading.gif" style="height: 18px; width: 18px;" /></span>
-                                    <button ng-disabled="uploading[question._id]" type="submit" class="btn btn-primary pull-right" ng-click="addAnswer(question)"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden</button>
-                                </form>
-                                <div class="clearfix"></div>
+                                </div>
                             </div>
                         </div>
-                    <div>
-                    <hr>
+                    </div>
+                </div>
+
+                <div ng-switch-when="1">
+                    <div class="container row shadowed">
+                        <h2>Quiz</h2>
+                        Hier können Sie alle Quiz verwalten und bei bedarf auch aktivieren bzw. deaktivieren.
+                        <br><br>
+                        YEAH!
+                    </div>
                 </div>
 
             </div>
-        </div>
-        </div>
+
+        </div>    
     </div>
 </div>

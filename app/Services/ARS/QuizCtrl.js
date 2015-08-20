@@ -21,16 +21,18 @@ var EvaluationModel = require('../../../models/ARSModels/Evaluation.js').Evaluat
 var QuizUserAnswerModel = require('../../../models/ARSModels/QuizUserAnswer.js').ARSQuizUserAnswer;
 var logger = require('../../Logger.js');
 
-
-var getAllQuizInRoom = function (roomId, options, callback) {
+//TODO deepPopulate not working...
+var getAllQuizzes = function (roomId, options, callback) {
 	if (!options.deepPopulate) {
 		options.deepPopulate = '';
 	}
-    Rooms.Room.findOne({ _id : roomId}).deepPopulate('quiz.questions.quizQuestion.answers ' + options.deepPopulate).exec(function (err, room) {
+    //quiz.questions.quizQuestion.answers
+    Rooms.Room.findOne({ _id : roomId}).deepPopulate('quiz.questions.quizQuestion' + options.deepPopulate).exec(function (err, room) {
         if (err) {
             logger.warn(err);
             return callback(err);
         }
+        //console.log(JSON.stringify(room,null,2));
         callback(null, room.quiz);
     });
 };
@@ -39,7 +41,7 @@ var getQuiz = function (userId, quizId, options, callback) {
     if (!options.deepPopulate) {
 		options.deepPopulate = '';
 	}
-    QuizModel.findOne({ _id : quizId }).deepPopulate('questions.quizQuestion.answers questions.quizQuestion.evaluation questions.quizQuestion.givenAnswers'+ options.deepPopulate).exec(function (err, quiz) {
+    QuizModel.findOne({ _id : quizId }).deepPopulate('questions.quizQuestion.answers questions.quizQuestion.evaluation questions.quizQuestion.givenAnswers '+ options.deepPopulate).exec(function (err, quiz) {
         if (err || !quiz) {
             return callback(err);
         }
@@ -120,7 +122,7 @@ var newQuiz = function (params, callback) {
 				if (answerParam.radiobox && (answerParam.checkbox || answerParam.text) || // Prevent multiple fieldsettings
 		            answerParam.text && (answerParam.checkbox || answerParam.radiobox) ||
 		            answerParam.checkbox && (answerParam.text || answerParam.radiobox)) {
-					return callback(new Error("Bad field settings."));
+					return questionCallback(new Error("Bad field settings."));
 				}
 				_answer.radiobox = answerParam.radiobox;
 				_answer.checkbox = answerParam.checkbox;
@@ -140,14 +142,15 @@ var newQuiz = function (params, callback) {
 				});
 			}, function (err) {
 				if (err) {
-					return callback(err);
+					return questionCallback(err);
 				}
 				_quizQuestion.evaluation = _evaluation._id;
 
 		    	_evaluation.save(function (evaluationErr) {
 					_quizQuestion.save(function (quizQuestionErr) {
 						_question.save(function (saveErr) {
-							return questionCallback(saveErr);
+                            var error = (evaluationErr) ? evaluationErr : ((quizQuestionErr) ? quizQuestionErr : saveErr);
+							return questionCallback(error);
 						});
 					});
 				});
@@ -163,7 +166,6 @@ var newQuiz = function (params, callback) {
 			if (err) {
 				return callback(err);
 			}
-
             QuizModel.findOne({ _id : _quiz._id}).deepPopulate('questions.quizQuestion.answers').exec(function (err, quiz) {
                 if (err) {
                     logger.warn("An error occured when populating new Quiz " + err);
@@ -177,6 +179,7 @@ var newQuiz = function (params, callback) {
                                 logger.warn("An error occurred on room update when creating a new quiz: " + err);
                                 return callback(err);
                             }
+                            //console.log(JSON.stringify(quiz,null,2));
                             return callback(null, quiz);
                         });
                     });
@@ -296,6 +299,6 @@ var answer = function (params, callback) {
 
 
 module.exports.getQuiz = getQuiz;
-module.exports.getAllQuizInRoom = getAllQuizInRoom;
+module.exports.getAllQuizzes = getAllQuizzes;
 module.exports.newQuiz = newQuiz;
 module.exports.answer = answer;
