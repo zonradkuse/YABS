@@ -53,11 +53,12 @@
             </form>
     </div>-->
     <div class="col-md-12">
-        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#statModal">
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#statModal" style="float:left; margin:0 5px;">
             <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Verständnisstatistik anzeigen
         </button>
+        <div class="dropdown" style="float:left; margin:0 5px;">
             <button class="btn btn-default dropdown-toggle" type="button" id="ModuleDropdown" data-toggle="dropdown" aria-expanded="false"> 
-                {{ modules[activeModule] }}
+                {{ modules[$parent.activeModule] }}
                 <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="ModuleDropdown">
@@ -67,6 +68,7 @@
                     </a>
                 </li>
             </ul>
+        </div>
         <!--
         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#quizMasterModal">
             <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Umfragen und Quizfragen verwalten
@@ -75,10 +77,10 @@
             <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Umfrage beantworten (Testing only)
         </button>
         -->
-        <button type="button" ng-click="enableRoom()" ng-if="!room.isRoomRegistered" class="btn btn-primary">
+        <button type="button" ng-click="enableRoom()" ng-if="!room.isRoomRegistered" class="btn btn-primary" style="float:left; margin:0 5px;">
             <span class="glyphicon glyphicon-play" aria-hidden="true"></span> Vorlesung starten
         </button>
-        <button type="button" ng-click="disableRoom()" ng-if="room.isRoomRegistered" class="btn btn-primary">
+        <button type="button" ng-click="disableRoom()" ng-if="room.isRoomRegistered" class="btn btn-primary" style="float:left; margin:0 5px;">
             <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Vorlesung beenden
         </button> 
     </div>                      

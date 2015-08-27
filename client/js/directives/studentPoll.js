@@ -5,7 +5,7 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
 		controller: 'studentPollController',
 		link: {
             pre: function ($scope, elemt, attrs) {
-                $scope.sending = true;
+                $scope.pollSending = true;
 
                 $scope.getNext = function (cb) {
                     rooms.getNextPoll($scope.room, function(data) {
@@ -15,25 +15,25 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                             }
                             $scope.$apply(function () {
                                 $scope.question = data.arsObj;
-                                $scope.sending = false;
+                                $scope.pollSending = false;
                             });
                             if (cb) cb(true);
                         } else {
                             $scope.$apply(function () {
-                                //$scope.reset();
+                                $scope.reset();
                             });
                             if (cb) cb(false);
                         }
                     });
                 };
 
-                $scope.reset = function () {
-                    $scope.sending = false;
+                $scope.resetPoll = function () {
+                    $scope.pollSending = false;
                     $scope.question = {};
                 };
 
-                $scope.send = function () {
-                    $scope.sending = !$scope.sending;
+                $scope.sendPoll = function () {
+                    $scope.pollSending = !$scope.pollSending;
                     var chk = [];
                     for (var i = 0; i < $scope.question.poll.answers.length; i++) {
                         if ($scope.question.poll.answers[i].checked !== false) {
@@ -61,12 +61,12 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
 
                 $("#pollStudentModal").off().on("shown.bs.modal", function() {
                     $scope.$apply(function() {
-                        $scope.sending = true;
+                        $scope.pollSending = true;
                         $scope.getNext(function (bool) {
                             if (!bool) {
                                 $("#pollStudentModal").modal('hide');
                             } else {
-                                $scope.sending = false;
+                                $scope.pollSending = false;
                             }
                         });
                     });

@@ -5,7 +5,7 @@ clientControllers.directive('studentQuiz', ['rooms', function (rooms) {
 		controller: 'studentQuizController',
 		link: {
             pre: function ($scope, elemt, attrs) {
-                $scope.sending = false;
+                $scope.quizSending = false;
                 //$scope.quiz = {};
 
                 /*$scope.getAll = function(cb){
@@ -42,12 +42,12 @@ clientControllers.directive('studentQuiz', ['rooms', function (rooms) {
                 };*/
 
                 $scope.reset = function () {
-                    $scope.sending = false;
+                    $scope.quizSending = false;
                     //$scope.questions = [];
                 };
 
-                $scope.send = function () {
-                    $scope.sending = !$scope.sending;
+                $scope.sendQuiz = function () {
+                    $scope.quizSending = !$scope.quizSending;
                     var chk = [];
                     /*for (var i = 0; i < $scope.question.quiz.answers.length; i++) {
                         if ($scope.question.quiz.answers[i].checked !== false) {

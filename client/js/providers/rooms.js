@@ -258,10 +258,54 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 	        rpc.call("quiz:getAll", {
 	            roomId : room._id
 	        }, function(data){
-	            cb(data);
+	        	self.upsertQuizzes(room._id, data.quizzes);
+	        	if(cb){
+	        		cb(data);
+	        	}
 	        });
     	}
     };
+
+    this.deleteQuiz = function(room, quiz, cb) {
+        if(room){
+	        rpc.call("quiz:delete", {
+	            roomId : room._id,
+	            quizId : quiz._id
+	        }, function(data){
+	        	if(cb){
+	        		cb(data.status);
+	        	}
+	        });
+    	}
+    };
+
+    this.upsertQuizzes = function(roomId, quizzes) {
+		var room = this.getById(roomId);
+		/*jshint loopfunc: true */
+		for(var j=0; j< quizzes.length; j++){
+			var upsert = false;
+			for(var i = 0; i < room.quiz.length; i++) {
+				if (typeof room.quiz[i] === 'object'){
+					if (room.quiz[i]._id === quizzes[j]._id) {
+						$rootScope.$apply(function() {
+							room.quiz[i] = quizzes[j];
+						});
+						upsert = true;
+						break;
+					}
+				} else {
+					$rootScope.$apply(function() {
+						room.quiz.splice(i, 1);
+					});
+				}
+			}
+			if(!upsert){
+				$rootScope.$apply(function() {
+					room.quiz.push(quizzes[j]);
+				});
+			}
+		}
+	};
 
     /** Vote for a question.
 	* @param {Room} room - room object of questions

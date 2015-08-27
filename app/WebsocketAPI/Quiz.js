@@ -89,6 +89,22 @@ module.exports = function (wsCtrl) {
         }
     });
 
+    wsCtrl.on('quiz:delete', function (req) {
+        req.params.userId = req.session.user._id;
+        if (req.params.quizId && req.params.roomId) {
+            quizCtrl.deleteQuiz(req.params.roomId, req.params.quizId, function (err, bool) {
+                if (err) {
+                    logger.info("An error occurred on deleting quiz: " + err);
+                    wsCtrl.build(req.ws, err, null, req.refId);
+                } else {
+                    wsCtrl.build(req.ws, null, { status: bool }, req.refId);
+                }
+            });
+        } else {
+            wsCtrl.build(req.ws, new Error("Invalid Parameters."), null, req.refId);
+        }
+    });
+
     /*wsCtrl.on('quiz:getNext', function (req) {
         pollCtrl.getNext(req.params.roomId, req.session.user._id, function (err, poll) {
             logger.debug("some next poll : " + poll);

@@ -8,6 +8,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
 
         $scope.modules = ["Fragen Übersicht", "Umfragen und Quizfragen Verwaltung"];
         $scope.activeModule = 0;
+        $scope.arsNavSelection = 0;
 
         $scope.$watch(function() { return rooms.getById($routeParams.courseid); }, function(room) {
             $scope.room = room;
@@ -45,6 +46,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 rooms.getAccessLevel($scope.room).then(function(level) {
                     if(level > 1) {
                         $scope.showAdmin = true;
+                        rooms.getAllQuizzes($scope.room);
                     } else {
                         $scope.showAdmin = false;
                     }    
@@ -149,6 +151,16 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
 
         $scope.changeDropdownModule = function(position){
             $scope.activeModule = position;
+        };
+
+        $scope.deleteQuiz = function(quiz){
+            rooms.deleteQuiz($scope.room, quiz, function(bool){
+                if(bool){
+                    $scope.$apply(function(){
+                        $scope.room.quiz.splice($scope.room.quiz.indexOf(quiz),1);
+                    });
+                }
+            });
         };
     }
 ]);

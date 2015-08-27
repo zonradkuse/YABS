@@ -297,8 +297,60 @@ var answer = function (params, callback) {
     });
 };
 
+var deleteQuiz = function (roomId, quizId, callback) {
+    var asyncTasks = [];
+
+    QuizModel.findOne({ _id : quizId}).deepPopulate('questions.quizQuestion').exec(function (err, quiz) {
+        if (!quiz) {
+            callback(null, true);
+        }
+        quiz.questions.forEach(function (question) {
+            asyncTasks.push(function (questionCallback) {
+                var answerAsyncTasks = [];
+                question.quizQuestion.answers.forEach(function (answer) {
+                    answerAsyncTasks.push(function (answerCallback) {
+                        ARSAnswer.find({ _id: answer}).remove( answerCallback );
+                    });
+                });
+                question.quizQuestion.givenAnswers.forEach(function (answer) {
+                    answerAsyncTasks.push(function (answerCallback) {
+                        QuizUserAnswerModel.find({ _id: answer}).remove( answerCallback );
+                    });
+                });
+                //answerAsyncTasks.push(function(statCallback){
+                    //delete statistic!
+                //});
+                answerAsyncTasks.push(function (evalCallback) {
+                    EvaluationModel.find({ _id: question.quizQuestion.evaluation }).remove( evalCallback );
+                });
+
+                async.parallel(answerAsyncTasks, function (answerAsyncErr) {
+                    questionCallback(answerAsyncErr);
+                });
+            });
+        });
+
+        async.parallel(asyncTasks, function (asyncErr) {
+            quiz.remove(function () {
+                Rooms.Room.update({ _id: roomId }, { $pull: { 'quiz': quizId } }).exec(function (err, room) {
+                    if (err) {
+                        logger.warn(err);
+                        return callback(err);
+                    }
+                    var error = (asyncErr) ? asyncErr : err;
+                    callback(error, (error) ? false : true);
+                });
+            });
+        });
+        
+    });
+};
+
+
+
 
 module.exports.getQuiz = getQuiz;
 module.exports.getAllQuizzes = getAllQuizzes;
 module.exports.newQuiz = newQuiz;
 module.exports.answer = answer;
+module.exports.deleteQuiz = deleteQuiz;

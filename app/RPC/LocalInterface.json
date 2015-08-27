@@ -202,7 +202,7 @@
             "questions" : "",
             "dueDate" : ""
         },
-        "accessLevel": 1
+        "accessLevel": 2
     },
     {
         "uri": "poll:create",
@@ -260,5 +260,13 @@
             "roomId" : ""
         },
         "accessLevel": 1
+    },
+    {
+        "uri": "quiz:delete",
+        "parameters": {
+            "roomId" : "",
+            "quizId" : ""
+        },
+        "accessLevel": 2
     }]
 }

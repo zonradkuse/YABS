@@ -97,6 +97,7 @@ db.once('open',function(callback){
 				var params = {
 					roomId: r._id,
 					dueDate: 1,
+					description: "",
 					questions: [{
 						description: "Test",
 						answers: [{
@@ -107,7 +108,7 @@ db.once('open',function(callback){
 					}]
 				};
 
-				QuizCtrl.newQuiz(params, function(err,quiz){
+				QuizCtrl.newQuiz(params, function(err, quiz){
 					var params = {};
 					params.userId = user._id;
 					params.answerIds = [quiz.questions[0].quizQuestion.answers[0]._id];
@@ -115,11 +116,15 @@ db.once('open',function(callback){
 
 					QuizCtrl.answer(params, function(err, q){
 						//u._id, quiz._id
-						QuizCtrl.getAllQuizzes(r._id, {}, function(err, quiz){
+						QuizCtrl.deleteQuiz(r._id, quiz._id, function(err){
 							if(err)
 								throw err;
-							console.log("\nquiz:");
-							console.log(JSON.stringify(quiz,null,2));
+							console.log("\nquiz "+quiz._id+" deleted!");
+
+							QuizCtrl.getAllQuizzes(r._id, {}, function(err, quizzes){
+								console.log("\nquizzes:");
+								console.log(JSON.stringify(quizzes,null,2));
+							});
 						});
 					});				
 				});
