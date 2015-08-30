@@ -57,8 +57,11 @@
                         <div class="row" style="margin-bottom:0">
                             <div class="col-xs-12 col-sm-12">
                                 <div class="form-group" style="width:100%;">
-                                    <label for"qsTextInput"> Laufzeit </label>
-                                    <input style="width:100%;height: 100%;" id="qsTextInput" ng-model="qsRuntime" placeholder="Eine Laufzeit in Sekunden.">
+                                    <label for"qsTextInput"> {{ (optionQuiz == 'Quizfrage') ? 'Titel' : 'Laufzeit' }} </label>
+                                    <input ng-if="optionQuiz == 'Umfragebeschreibung'" style="width:100%; height: 100%;" id="qsTextInput" 
+                                        ng-model="arsOpts.arsRuntime" placeholder="Eine Laufzeit in Sekunden.">
+                                    <input ng-if="optionQuiz == 'Quizfrage'" style="width:100%; height: 100%;" id="qsTextInput" 
+                                        ng-model="arsOpts.quizTitle" placeholder="Titel des Quiz">
                                 </div>
                             </div>
                         </div>
@@ -94,42 +97,6 @@
                         </div>
                     </div>
                 </div>
-                <!--<div class="row" style="margin-bottom:0">
-                    <div class="col-xs-12 col-sm-6">
-                        <div class="form-group" style="width:100%;">
-                            <label for"qsTextInput"> Ihre Frage... </label>
-                            <textarea style="width:100%;height: 100%;" id="qsTextInput" ng-model="qsInputText" placeholder="Ihre {{ optionQuiz }}..."></textarea>
-                        </div>
-                    </div>                    
-                    <div class="col-xs-12 col-sm-6">
-                        <div class="dropdown" aria-expanded="false">
-                            <div class="form-group" style="width:100%;">
-                                <label for=""> Fügen Sie ein Antwortelement hinzu... </label>
-                                <button class="btn btn-default dropdown-toggle" id="addFieldDropdown" style="width:100%" type="button" id="addFieldDropdown" data-toggle="dropdown" aria-expanded="false"> 
-                                    Hinzufügen 
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-right" style="width:100%;" role="menu" aria-labelledby="addFieldDropdown">
-                                    <li role="presentation">
-                                        <a role="menuitem" tabindex="-1" href="#" ng-click="addCheckbox()"> 
-                                            Checkbox
-                                        </a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a role="menuitem" tabindex="-1" href="#" ng-click="addRadiobox()"> 
-                                            Radiobox
-                                        </a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a role="menuitem" tabindex="-1" href="#" ng-click="addTextfield()"> 
-                                            Textfeld
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>-->
                 
                 <div class="row" style="margin-bottom:0;">
                      <div class="col-xs-12 hidden-lg hidden-md hidden-sm">
@@ -146,8 +113,8 @@
                             <button type="button" style="width:30%" ng-click="delete(editAnswerItem)" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-delete"></span> Löschen </button>
                             <select style="width:68%" class="form-control" ng-model="editAnswerItem.type">
                                 <option value="checkbox">Checkbox</option>
-                                <option value="text">Textfeld</option>
                                 <option value="radiobox">Radiobox</option>
+                                <option value="text">Textfeld</option>
                             </select>
                             <div class="checkbox" ng-if="editAnswerItem.type == 'radiobox' && optionQuiz == 'Quizfrage'">
                                  <label class="checkbox"> <input type="checkbox" ng-model="editAnswerItem.rightAnswer"> Ist richtige Antwort </label>
@@ -173,10 +140,11 @@
                 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn pull-left btn-default" ng-click="reset()" data-dismiss="modal"> {{(questions[0] && questions[0].question !== "") ? 'Abbrechen' : 'Schließen'}} </button>
+                <button type="button" class="btn pull-left btn-default" ng-click="resetARS()" data-dismiss="modal"> {{(questions[0] && questions[0].question !== "") ? 'Abbrechen' : 'Schließen'}} </button>
                 <div ng-if="!sending">
                     <!-- <button type="button" ng-click="sendPoll()" ng-disabled="!qsRuntime || !qsInputText || (!items && !qsInput)" class="btn btn-primary pull-right"> -->
-                    <button type="button" ng-click="(optionQuiz == 'Quizfrage') ? sendQuiz() : sendPoll()" ng-disabled="!qsRuntime || questions[0].question === '' || questions[0].answers.length == 0 || questions[0].answers[0].answer === ''" class="btn btn-primary pull-right">
+                    <button type="button" ng-click="(optionQuiz == 'Quizfrage') ? sendQuiz() : sendPoll()" ng-disabled="(optionQuiz == 'Umfragebeschreibung' && !arsOpts.arsRuntime) || 
+                    (optionQuiz == 'Quizfrage' && arsOpts.quizTitle === '') || questions[0].question === '' || questions[0].answers.length == 0 || questions[0].answers[0].answer === ''" class="btn btn-primary pull-right">
                     <span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden </button>
                 </div>
                 <div ng-if="sending">

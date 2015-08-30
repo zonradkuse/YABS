@@ -20,7 +20,7 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                             if (cb) cb(true);
                         } else {
                             $scope.$apply(function () {
-                                $scope.reset();
+                                $scope.resetPoll();
                             });
                             if (cb) cb(false);
                         }
@@ -45,7 +45,7 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                             if (!bool) {
                                 $('#pollStudentModal').modal('hide');
                                 $scope.$apply(function () {
-                                    $scope.reset();
+                                    $scope.resetPoll();
                                 });
                             }
                         });

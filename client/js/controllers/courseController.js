@@ -32,7 +32,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                     $scope.room.isRoomRegistered = data.isEnabled;
                     $scope.room.hasUserPanic = data.hasUserPanic;
                 });  
-            }); 
+            });
 
             if($scope.room !== undefined) { // Room might be undefined while loading
                 rooms.hasUserAccess($scope.room).then(function(allowed) {
@@ -42,11 +42,12 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 });
                 rooms.enter($scope.room);
                 rooms.getQuestions($scope.room);    
-                $scope.docentLogin = "/roles/admin/" + $scope.room._id;
+                $scope.docentLogin = "/roles/admin/" + $scope.room._id;           
                 rooms.getAccessLevel($scope.room).then(function(level) {
                     if(level > 1) {
                         $scope.showAdmin = true;
                         rooms.getAllQuizzes($scope.room);
+                        rooms.getAllPolls($scope.room);
                     } else {
                         $scope.showAdmin = false;
                     }    
@@ -160,6 +161,24 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                         $scope.room.quiz.splice($scope.room.quiz.indexOf(quiz),1);
                     });
                 }
+            });
+        };
+
+        $scope.deletePoll = function(poll){
+            rooms.deletePoll($scope.room, poll, function(bool){
+                if(bool){
+                    $scope.$apply(function(){
+                        $scope.room.poll.splice($scope.room.poll.indexOf(poll),1);
+                    });
+                }
+            });
+        };
+
+        $scope.toggleQuizActivation = function(quiz){
+            rooms.toggleQuizActivation($scope.room, quiz, !quiz.active, function(){
+                $scope.$apply(function(){
+                    quiz.active = !quiz.active;
+                });
             });
         };
     }

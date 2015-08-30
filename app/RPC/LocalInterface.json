@@ -200,7 +200,8 @@
         "parameters": {
             "roomId" : "",
             "questions" : "",
-            "dueDate" : ""
+            "dueDate" : "",
+            "description" : ""
         },
         "accessLevel": 2
     },
@@ -246,10 +247,18 @@
         "accessLevel": 1
     },
     {
+        "uri": "poll:delete",
+        "parameters": {
+            "roomId" : "",
+            "pollId" : ""
+        },
+        "accessLevel": 2
+    },
+    {
         "uri": "quiz:answer",
         "parameters": {
             "roomId" : "",
-            "arsId" :"",
+            "quizId" : "",
             "answerIds" : []
         },
         "accessLevel": 1
@@ -266,6 +275,15 @@
         "parameters": {
             "roomId" : "",
             "quizId" : ""
+        },
+        "accessLevel": 2
+    },
+    {
+        "uri": "quiz:toggleActivation",
+        "parameters": {
+            "roomId" : "",
+            "quizId" : "",
+            "active" : ""
         },
         "accessLevel": 2
     }]

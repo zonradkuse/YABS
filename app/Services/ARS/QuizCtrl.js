@@ -97,6 +97,7 @@ var newQuiz = function (params, callback) {
     var asyncTasks = [];
 
 	var _quiz = new QuizModel();
+    _quiz.description = params.description;
 	
 	params.questions.forEach(function (item) {
 	    asyncTasks.push(function (questionCallback) {
@@ -190,24 +191,24 @@ var newQuiz = function (params, callback) {
 };
 
 
-var answer = function (params, callback) {
+var answer = function (userId, roomId, questionId, answerIds, callback) {
     // params.userId, params.answerIds, params.arsId, params.roomId
-    QuestionModel.findOne({ _id : params.arsId }).deepPopulate('quizQuestion.statistics.statisticAnswer.answer quizQuestion.evaluation').exec(function (err, question) {
+    QuestionModel.findOne({ _id : questionId }).deepPopulate('quizQuestion.statistics.statisticAnswer.answer quizQuestion.evaluation').exec(function (err, question) {
         if (err) {
             logger.debug(err);
             return callback(err);
         }
         for (var l = 0; l < question.answered.length; ++l) {
-            if (params.userId === question.answered[ l ].toString()) {
+            if (userId.toString() === question.answered[ l ].toString()) {
                 return callback(new Error("You already answered this one."));
             }
         }
         var quizUserAnswer = new QuizUserAnswerModel();
-        quizUserAnswer.user = params.userId;
-        quizUserAnswer.answers = params.answerIds;
+        quizUserAnswer.user = userId;
+        quizUserAnswer.answers = answerIds;
         question.quizQuestion.givenAnswers.push(quizUserAnswer);
 
-        question.answered.push(params.userId);
+        question.answered.push(userId);
         quizUserAnswer.save();
         question.save();
         if (question.active && question.dueDate - question.timestamp + 1000 > 0) {
@@ -220,17 +221,17 @@ var answer = function (params, callback) {
             evaluationUserAnswers.userFalse = [];
             evaluationUserAnswers.userRight = [];
             
-            for (var j = 0; j < params.answerIds.length; ++j) {
+            for (var j = 0; j < answerIds.length; ++j) {
             	
             	for (var k = 0; k < question.quizQuestion.answers.length; ++k) {
                 	
                 	logger.debug(question.quizQuestion.answers[ k ].toString());
 
-                    if (params.answerIds[ j ].toString() === question.quizQuestion.answers[ k ].toString()) {
+                    if (answerIds[ j ].toString() === question.quizQuestion.answers[ k ].toString()) {
                     	    
                         for (var i = 0; i < question.quizQuestion.statistics.statisticAnswer.length; ++i) {
                         	
-                        	if (question.quizQuestion.statistics.statisticAnswer[ i ].answer && params.answerIds[ j ].toString() === question.quizQuestion.statistics.statisticAnswer[ i ].answer.toString()) {
+                        	if (question.quizQuestion.statistics.statisticAnswer[ i ].answer && answerIds[ j ].toString() === question.quizQuestion.statistics.statisticAnswer[ i ].answer.toString()) {
                                 logger.debug(question.quizQuestion.statistics.statisticAnswer[ i ].answer.toString());
                                 
                                 answered = true;
@@ -248,7 +249,7 @@ var answer = function (params, callback) {
                         if (!answered) {
                             _statObj = new StatisticObjModel();
                             _statObj.count = 1;
-                            _statObj.answer = params.answerIds[ j ];
+                            _statObj.answer = answerIds[ j ];
                             _statObj.save();
                             question.quizQuestion.statistics.statisticAnswer.push(_statObj._id);
                             question.quizQuestion.statistics.save();
@@ -259,14 +260,14 @@ var answer = function (params, callback) {
                         existing = true;
 
                         for (var m = 0; m < question.quizQuestion.evaluation.answers.length; m++) {
-                        	if (params.answerIds[ j ].toString() === question.quizQuestion.evaluation.answers[ m ].toString()) {
+                        	if (answerIds[ j ].toString() === question.quizQuestion.evaluation.answers[ m ].toString()) {
                         		allAnswersRight = allAnswersRight && true;
-                        		evaluationUserAnswers.userRight.push(params.answerIds[ j ]);
+                        		evaluationUserAnswers.userRight.push(answerIds[ j ]);
                         		break;
                         	} else {
                         		//code for wrong answer goes here...
                         		allAnswersRight = false;
-                        		evaluationUserAnswers.userFalse.push(params.answerIds[ j ]);
+                        		evaluationUserAnswers.userFalse.push(answerIds[ j ]);
                         	}
                         }
 
@@ -279,7 +280,7 @@ var answer = function (params, callback) {
                 return callback(new Error("This answer does not exist."));
             } else {
                 question.quizQuestion.save(function () {
-                	QuestionModel.findOne({ _id : params.arsId }).deepPopulate('quizQuestion.answers quizQuestion.statistics.statisticAnswer.answer quizQuestion.evaluation.answers').exec(function (err, question) {
+                	QuestionModel.findOne({ _id : questionId }).deepPopulate('quizQuestion.answers quizQuestion.statistics.statisticAnswer.answer quizQuestion.evaluation.answers').exec(function (err, question) {
                     	if (err) {
                     		return callback(err);
                     	}
@@ -300,9 +301,9 @@ var answer = function (params, callback) {
 var deleteQuiz = function (roomId, quizId, callback) {
     var asyncTasks = [];
 
-    QuizModel.findOne({ _id : quizId}).deepPopulate('questions.quizQuestion').exec(function (err, quiz) {
+    QuizModel.findOne({ _id : quizId}).deepPopulate('questions.quizQuestion.statistics').exec(function (err, quiz) {
         if (!quiz) {
-            callback(null, true);
+            return callback(null, true);
         }
         quiz.questions.forEach(function (question) {
             asyncTasks.push(function (questionCallback) {
@@ -317,9 +318,14 @@ var deleteQuiz = function (roomId, quizId, callback) {
                         QuizUserAnswerModel.find({ _id: answer}).remove( answerCallback );
                     });
                 });
-                //answerAsyncTasks.push(function(statCallback){
-                    //delete statistic!
-                //});
+                question.quizQuestion.statistics.statisticAnswer.forEach(function (statObj){
+                    answerAsyncTasks.push(function (statCallback){
+                        StatisticObjModel.find({ _id: statObj}).remove( statCallback );
+                    });
+                });
+                answerAsyncTasks.push(function (statCallback) {
+                    StatisticModel.find({ _id: question.quizQuestion.statistics._id }).remove( statCallback );
+                });
                 answerAsyncTasks.push(function (evalCallback) {
                     EvaluationModel.find({ _id: question.quizQuestion.evaluation }).remove( evalCallback );
                 });
@@ -346,7 +352,13 @@ var deleteQuiz = function (roomId, quizId, callback) {
     });
 };
 
-
+var toggleQuizActivation = function (roomId, quizId, bool, callback) {
+    QuizModel.update({ _id : quizId},{active: bool}).exec(function (err) {
+        QuizModel.findOne({ _id: quizId }).deepPopulate("questions.quizQuestion.answers").exec(function (quizErr, quiz){
+            callback(err, quiz);
+        });       
+    });
+};
 
 
 module.exports.getQuiz = getQuiz;
@@ -354,3 +366,4 @@ module.exports.getAllQuizzes = getAllQuizzes;
 module.exports.newQuiz = newQuiz;
 module.exports.answer = answer;
 module.exports.deleteQuiz = deleteQuiz;
+module.exports.toggleQuizActivation = toggleQuizActivation;

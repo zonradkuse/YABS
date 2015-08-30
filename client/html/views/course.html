@@ -153,7 +153,7 @@
                 <div ng-switch-when="1">
                     <div class="container row shadowed">
                         <h2>Umfrage und Quizverwaltung</h2>
-                        Hier können Sie alle Quiz verwalten und bei bedarf auch aktivieren bzw. deaktivieren.
+                        Hier können Sie alle Quiz verwalten und bei Bedarf auch aktivieren bzw. deaktivieren.
                         <br><br>
                         <button class="btn btn-success" type="button" data-toggle="modal" data-target="#quizMasterModal">Neue Umfrage oder Quiz erstellen</button>
                         <br><br>
@@ -164,34 +164,34 @@
                         <br>
                         <div ng-switch="arsNavSelection">
                             <div ng-switch-when="0">
-                                <div ng-repeat="arsPoll in room.poll" class="row" 
-                                    style="background:transparent; margin:0; border-top:1px solid #DDD; border-bottom:1px solid #DDD;">
+                                <div ng-repeat="arsPoll in room.poll | orderBy:'-timestamp'" class="row" 
+                                    style="background:transparent; margin:0; border-bottom:1px solid #DDD;">
                                     <div class="col-xs-12">
                                         <h3>{{arsPoll.description}}</h3>
                                         <div style="color:#AAA;">
-                                            Erstellt am 21.8.2015 um 18:50 Uhr
+                                            Erstellt am {{arsPoll.timestamp | date:'dd.MM.yyyy'}} um {{arsPoll.timestamp | date:'HH:mm'}} Uhr
                                         </div>
                                         <br>
                                         <button class="btn btn-default" type="button">Statistik anzeigen</button>
-                                        <button class="btn btn-success" type="button">Aktivieren</button>
-                                        <button class="btn btn-danger" type="button">Löschen</button>
+                                        <button class="btn" ng-class="(!arsPoll.active) ? 'btn-success' : 'btn-default'" type="button">
+                                            {{(arsPoll.active)?"Deaktivieren":"Aktivieren"}}
+                                        </button>
+                                        <button class="btn btn-danger" type="button" ng-click="deletePoll(arsPoll)">Löschen</button>
                                     </div>
                                 </div>
                             </div>
                             <div ng-switch-when="1">
-                                <div ng-repeat="arsQuiz in room.quiz" class="row" 
-                                    style="background:transparent; margin:0; border-top:1px solid #DDD; border-bottom:1px solid #DDD;">
+                                <div ng-repeat="arsQuiz in room.quiz | orderBy:'-questions[0].timestamp'" class="row" 
+                                    style="background:transparent; margin:0; border-bottom:1px solid #DDD;">
                                     <div class="col-xs-12">
-                                        <h3>Quiz</h3>
+                                        <h3>{{ (arsQuiz.description && arsQuiz.description != '') ? arsQuiz.description : 'Quiz' }}</h3>
                                         <div style="color:#AAA;">
-                                            Erstellt am 21.8.2015 um 18:50 Uhr
-                                        </div>
-                                        <div>
-                                            {{arsQuiz.questions[0].description}}
+                                            Erstellt am {{arsQuiz.questions[0].timestamp | date:'dd.MM.yyyy'}} um {{arsQuiz.questions[0].timestamp | date:'HH:mm'}} Uhr
                                         </div>
                                         <br>
                                         <button class="btn btn-default" type="button">Statistik anzeigen</button>
-                                        <button class="btn btn-success" type="button">Aktivieren</button>
+                                        <button class="btn" ng-class="(!arsQuiz.active) ? 'btn-success' : 'btn-default'" type="button" 
+                                            ng-click="toggleQuizActivation(arsQuiz)">{{(arsQuiz.active)?"Deaktivieren":"Aktivieren"}}</button>
                                         <button class="btn btn-danger" type="button" ng-click="deleteQuiz(arsQuiz)">Löschen</button>
                                     </div>
                                 </div>

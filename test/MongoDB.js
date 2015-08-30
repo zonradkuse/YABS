@@ -11,6 +11,7 @@ var Quiz = require('../models/ARSModels/Quiz.js');
 var QuizQuestion = require('../models/ARSModels/QuizQuestion.js');
 var QuizAnswer = require('../models/ARSModels/Answer.js');
 var QuizCtrl = require('../app/Services/ARS/QuizCtrl.js');
+var PollCtrl = require('../app/Services/ARS/PollCtrl.js');
 
 
 var mongoose = require('mongoose');

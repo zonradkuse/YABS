@@ -6,7 +6,7 @@ clientControllers.directive('studentQuiz', ['rooms', function (rooms) {
 		link: {
             pre: function ($scope, elemt, attrs) {
                 $scope.quizSending = false;
-                //$scope.quiz = {};
+                $scope.quizQuestionSelection = 0;
 
                 /*$scope.getAll = function(cb){
                     rooms.getAllQuizzes($scope.room, function(data){
@@ -41,29 +41,52 @@ clientControllers.directive('studentQuiz', ['rooms', function (rooms) {
                     });
                 };*/
 
-                $scope.reset = function () {
+                $scope.resetQuiz = function () {
                     $scope.quizSending = false;
                     //$scope.questions = [];
                 };
 
                 $scope.sendQuiz = function () {
-                    $scope.quizSending = !$scope.quizSending;
-                    var chk = [];
-                    /*for (var i = 0; i < $scope.question.quiz.answers.length; i++) {
-                        if ($scope.question.quiz.answers[i].checked !== false) {
-                            chk.push($scope.question.quiz.answers[i]);
-                        }
-                    }*/
-                    /*rooms.answerPoll($scope.room, $scope.question, chk, function (resp) {
-                        $scope.getNext(function (bool) {
-                            if (!bool) {
-                                $('#pollStudentModal').modal('hide');
-                                $scope.$apply(function () {
-                                    $scope.reset();
-                                });
+                    $scope.quizSending = true;
+                    var chkQuestions = [];
+
+                    for (var i = 0; i < $scope.quiz.questions.length; i++) {
+                        var question = $scope.quiz.questions[i];
+                        var chkAnswers = [];
+                        for (var j = 0; j < question.quizQuestion.answers.length; j++) {
+                            var answer = question.quizQuestion.answers[j];
+                            if (answer.radiobox) {
+                                if (question.quizQuestion.radioChecked && chkAnswers.indexOf(question.quizQuestion.radioChecked) < 0) {
+                                    chkAnswers.push(question.quizQuestion.radioChecked);
+                                }
+                            } else {
+                                if (answer.checked && answer.checked !== false) {
+                                    chkAnswers.push(answer._id);
+                                }
                             }
-                        });
-                    });*/
+                        }
+                        chkQuestions.push({question: question._id, answers: chkAnswers});
+
+                    }
+                    //console.log(JSON.stringify(chkQuestions,null,2));
+                    rooms.answerQuiz($scope.room, $scope.quiz, chkQuestions, function (data) {
+                        //$scope.getNext(function (bool) {
+                            //if (!bool) {
+                                $('#quizStudentModal').modal('hide');
+                                $scope.$apply(function () {
+                                    $scope.resetQuiz();
+                                });
+                            //}
+                        //});
+                    });
+                    /*setTimeout(function(){
+                        setTimeout(function(){
+                            $('#quizStudentModal').modal('hide');
+                            $scope.$apply(function(){
+                                $scope.resetQuiz();
+                            });
+                        },100);
+                    },1500);*/
                 };
             },
             post : function ($scope, element, attrs) {
