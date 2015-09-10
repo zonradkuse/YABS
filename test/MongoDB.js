@@ -11,7 +11,10 @@ var Quiz = require('../models/ARSModels/Quiz.js');
 var QuizQuestion = require('../models/ARSModels/QuizQuestion.js');
 var QuizAnswer = require('../models/ARSModels/Answer.js');
 var QuizCtrl = require('../app/Services/ARS/QuizCtrl.js');
+<<<<<<< HEAD
 var PollCtrl = require('../app/Services/ARS/PollCtrl.js');
+=======
+>>>>>>> 1d64e0a85b77aa763f2e92f7a1a0a6e6785dbb99
 
 
 var mongoose = require('mongoose');
@@ -95,20 +98,34 @@ db.once('open',function(callback){
 		var r = new Room.Room({l2pID: "L2P6", name: "DSAL"});
 		User.create(u, function(userErr, user){
 			r.save(function(roomErr){
+<<<<<<< HEAD
 				var params = {
 					roomId: r._id,
 					dueDate: 1,
 					description: "",
+=======
+				if(roomErr)
+					throw roomErr;
+
+				var params = {
+					roomId: r._id,
+					dueDate: 1,
+>>>>>>> 1d64e0a85b77aa763f2e92f7a1a0a6e6785dbb99
 					questions: [{
 						description: "Test",
 						answers: [{
 							description: "A",
+<<<<<<< HEAD
 							radiobox: true,
 							rightAnswer: true
+=======
+							radiobox: true
+>>>>>>> 1d64e0a85b77aa763f2e92f7a1a0a6e6785dbb99
 						}]
 					}]
 				};
 
+<<<<<<< HEAD
 				QuizCtrl.newQuiz(params, function(err, quiz){
 					var params = {};
 					params.userId = user._id;
@@ -128,12 +145,23 @@ db.once('open',function(callback){
 							});
 						});
 					});				
+=======
+				QuizCtrl.newQuiz(params, function(err,quiz){
+					if(err)
+						throw err;
+					console.log("\n\n\n\nQUIZ:");
+					console.log(JSON.stringify(quiz,null,2));				
+>>>>>>> 1d64e0a85b77aa763f2e92f7a1a0a6e6785dbb99
 				});
 			});
 		});
 
 
+<<<<<<< HEAD
 
+=======
+		
+>>>>>>> 1d64e0a85b77aa763f2e92f7a1a0a6e6785dbb99
 	
 	});
 	
