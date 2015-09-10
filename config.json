@@ -18,7 +18,7 @@
    "general": {
       "domain": "",
       "https": {
-         "state": true,
+         "state": false,
          "key": "ssl/server.key",
          "crt": "ssl/server.crt",
          "port": 9000
