@@ -10,3 +10,6 @@ window.onload = function() {
             document.body.scrollHeight, document.body.offsetHeight),"*");
 };
 
+$(function () {
+    window.onload();
+});
