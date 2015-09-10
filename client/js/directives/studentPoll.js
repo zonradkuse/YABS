@@ -15,12 +15,12 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                             }
                             $scope.$apply(function () {
                                 $scope.question = data.arsObj;
-//<<<<<<< HEAD
-//                                $scope.sending = false;
-//                                $('#pollStudentModal').modal('show');
-//=======
+<<<<<<< HEAD
                                 $scope.pollSending = false;
-//>>>>>>> 3474a2ee84e0d3ec7ff6079ba184fa168b61070d
+=======
+                                $scope.sending = false;
+                                $('#pollStudentModal').modal('show');
+>>>>>>> 1d64e0a85b77aa763f2e92f7a1a0a6e6785dbb99
                             });
                             if (cb) cb(true);
                         } else {
