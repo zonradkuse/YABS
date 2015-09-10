@@ -23,10 +23,10 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <div ng-if="!sending">
-                    <button type="button" ng-click="send()" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden </button>
+                <div ng-if="!sendingPoll">
+                    <button type="button" ng-click="sendPoll()" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden </button>
                 </div>
-                <div ng-if="sending">
+                <div ng-if="sendingPoll">
                     <img src="loading.gif" style="height: 20px; width: 20px;" />
                 </div>
             </div>

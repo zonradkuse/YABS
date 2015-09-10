@@ -199,7 +199,9 @@
         "uri": "quiz:create",
         "parameters": {
             "roomId" : "",
-            "answers" : ""
+            "questions" : "",
+            "dueDate" : "",
+            "description" : ""
         },
         "accessLevel": 2
     },
@@ -245,12 +247,44 @@
         "accessLevel": 1
     },
     {
+        "uri": "poll:delete",
+        "parameters": {
+            "roomId" : "",
+            "pollId" : ""
+        },
+        "accessLevel": 2
+    },
+    {
         "uri": "quiz:answer",
         "parameters": {
             "roomId" : "",
-            "arsId" :"",
-            "answerId" : []
+            "quizId" : "",
+            "answerIds" : []
         },
         "accessLevel": 1
+    },
+    {
+        "uri": "quiz:getAll",
+        "parameters": {
+            "roomId" : ""
+        },
+        "accessLevel": 1
+    },
+    {
+        "uri": "quiz:delete",
+        "parameters": {
+            "roomId" : "",
+            "quizId" : ""
+        },
+        "accessLevel": 2
+    },
+    {
+        "uri": "quiz:toggleActivation",
+        "parameters": {
+            "roomId" : "",
+            "quizId" : "",
+            "active" : ""
+        },
+        "accessLevel": 2
     }]
 }

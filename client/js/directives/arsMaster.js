@@ -4,72 +4,144 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
 		templateUrl: 'ars_creator.html',
 		controller: 'arsMaster',
 		link: {
-			pre: function(scope, elem, attr){
-				//define default data for initialization and define options
-				scope.optionQuiz = "Umfragebeschreibung";
-                scope.sending = false;
-				scope.id = 0;
-				scope.items = [{
+			pre: function($scope, elem, attr){
+				$scope.optionQuiz = "Umfragebeschreibung";
+                $scope.sendingARS = false;
+				$scope.id = 0;
+				/*scope.items = [{
 					_id: scope.id,
 					type: "checkbox",
 					answer: "wundertoll...",
 					active: false
+				}];*/
+				/*scope.questions = [{
+					_id: scope.id,
+					question: "",
+					type: "quiz",
+					answers: [{
+						_id: ++scope.id,
+						type: "checkbox",
+						answer: "wundertoll...",
+						active: false
+					}]
+				}];*/
+				$scope.questions = [{
+					_id: $scope.id,
+					question: "",
+					answers: []
 				}];
-				scope.editItem = scope.items[0];
-				scope.type = "";
 
-				scope.reset = function () {
-					scope.optionQuiz = "Umfragebeschreibung";
-					scope.qsInputText = "";
-					scope.editItem = "";
-					scope.type = "";
-					scope.items = [];
-                    scope.qsRuntime = "";
-                    scope.sending = false;
+				$scope.arsOpts = { quizTitle: "", arsRuntime: "" };
+				$scope.editQuestionItem = $scope.questions[0];
+				$scope.editAnswerItem = $scope.questions[0].answers[0];
+				$scope.answerType = "";
+				$scope.type = "poll";
+				$scope.dropdownSelection = "Frage 1"; 
+
+				$scope.setSelection = function(selection) {
+			  		$scope.dropdownSelection = selection;
 				};
 
-				scope.addCheckbox = function() {
-					scope.type = "checkbox";
-					scope.addItem();
+				$scope.resetARS = function () {
+					$scope.optionQuiz = "Umfragebeschreibung";
+					$scope.qsInputText = "";
+					//scope.editQuestionItem = "";
+					//scope.editAnswerItem = "";
+					$scope.answerType = "";
+					$scope.type = "poll";
+					$scope.questions = [{
+						_id: $scope.id,
+						question: "",
+						answers: []
+					}];
+					$scope.editQuestionItem = $scope.questions[0];
+					$scope.editAnswerItem = $scope.questions[0].answers[0];
+					$scope.dropdownSelection = "Frage 1";
+                    $scope.arsOpts.arsRuntime = "";
+                    $scope.arsOpts.quizTitle = "";
+                    $scope.sendingARS = false;
 				};
 
-				scope.addRadiobox = function() {
-					scope.type = "radiobox";
-					scope.addItem();
+				$scope.addCheckbox = function() {
+					$scope.answerType = "checkbox";
+					$scope.addAnswer();
 				};
 
-				scope.addTextfield = function() {
-					scope.type = "text";
-					scope.addItem();
+				$scope.addRadiobox = function() {
+					$scope.answerType = "radiobox";
+					$scope.addAnswer();
 				};
 
-				scope.addItem = function() {
-					var item = {
+				$scope.addTextfield = function() {
+					$scope.answerType = "text";
+					$scope.addAnswer();
+				};
+
+				$scope.addAnswer = function() {
+					/*var item = {
 						_id: scope.id++,
 						active: false,
 						answer: "",
-						type: scope.type
+						type: scope.answerType
 					};
 					scope.items.push(item);
-					scope.editAnswer(item);
+					scope.editAnswer(item);*/
+					var a = {
+						_id: ++$scope.id,
+						active: false,
+						answer: "",
+						type: $scope.answerType
+					};
+					$scope.editQuestionItem.answers.push(a);
+					$scope.editAnswer(a);
 				};
 
-				scope.editAnswer = function(item) {
+				/*scope.editAnswer = function(item) {
 					scope.editItem = item;
 				};
 
 				scope.delete = function(item){
 					scope.items.splice(scope.items.indexOf(item), 1 );
 					scope.editItem = undefined;
+				};*/
+
+				$scope.editAnswer = function(arsAnswer) {
+					$scope.editAnswerItem = arsAnswer;
 				};
 
-                scope.sendPoll = function () {
+				$scope.deleteAnswer = function(arsQuestion, arsAnswer){
+					//$scope.items.splice($scope.items.indexOf(answer), 1 );
+					arsQuestion.splice(arsQuestion.answers.indexOf(arsAnswer), 1);
+					$scope.editAnswerItem = undefined;
+				};
+
+				$scope.addQuestion = function(){
+					var q = {
+						question: "",
+						answers: []
+					};
+					$scope.questions.push(q);
+					$scope.editQuestion(q);
+					$scope.dropdownSelection = "Frage "+($scope.questions.indexOf(q)+1);
+				};
+
+				$scope.editQuestion = function(arsQuestion){
+					$scope.editQuestionItem = arsQuestion;
+					if(arsQuestion.answers.length > 0){
+						$scope.editAnswer(arsQuestion.answers[0]);
+					} else {
+						$scope.editAnswerItem = undefined;
+					}
+				};
+
+                $scope.sendPoll = function () {
+                    var q = $scope.questions[0];
                     var obj = {};
-                    obj.description = scope.qsInputText;
+                    obj.description = q.question;
                     obj.answers = [];
-                    for (var i = 0; i < scope.items.length; i++) {
+                    for (var i = 0; i < q.answers.length; i++) {
                         var ans = {};
-                        switch (scope.items[i].type) { // this is needed as the first html-angular layout differs slightly from the server implementation
+                        switch (q.answers[i].type) { // this is needed as the first html-angular layout differs slightly from the server implementation
                             case "checkbox":
                                 ans.checkbox = true;
                                 break;
@@ -83,34 +155,77 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
                                 ans.checkbox = true;
                                 break;
                         }
-                        ans.description = scope.items[i].answer;
+                        ans.description = q.answers[i].answer;
                         obj.answers.push(ans);
                     }
-                    obj.duration = parseInt(scope.qsRuntime);
-                    scope.sending = true;
-                    rooms.createPoll(scope.room, obj, function(resp) {
+                    obj.duration = parseInt($scope.arsOpts.arsRuntime);
+                    $scope.sendingARS = true;
+                    rooms.createPoll($scope.room, obj, function(resp) {
                         if(resp && resp.status) {
-                            scope.$apply(function () {
-                                scope.sending = false;
-                                scope.reset();
+                            $scope.$apply(function () {
+                                $scope.resetARS();
                             });
                             $('#quizMasterModal').modal('hide');
                         } else {
-                            scope.sending = false;
+                            $scope.sendingARS = false;
                         }
                     });
                 };
 
+                $scope.sendQuiz = function () {
+                    var obj = {};
+                    obj.questions = [];
+                    for(var j = 0; j < $scope.questions.length; j++){
+	                    var question = {};
+	                    var q = $scope.questions[j];
+	                    question.description = q.question;
+                    	question.answers = [];
+	                    for (var i = 0; i < q.answers.length; i++) {
+	                        var ans = {};
+	                        switch (q.answers[i].type) { // this is needed as the first html-angular layout differs slightly from the server implementation
+	                            case "checkbox":
+	                                ans.checkbox = true;
+	                                break;
+	                            case "radiobox":
+	                                ans.radiobox = true;
+	                                break;
+	                            case "text":
+	                                ans.text = true;
+	                                break;
+	                            default:
+	                                ans.checkbox = true;
+	                                break;
+	                        }
+	                        ans.description = q.answers[i].answer;
+	                        ans.rightAnswer = q.answers[i].rightAnswer;
+	                        question.answers.push(ans);
+	                    }
+	                    obj.questions.push(question);
+                	}
+                    obj.duration = parseInt($scope.arsOpts.arsRuntime);
+                    obj.description = $scope.arsOpts.quizTitle;
+                    $scope.sendingARS = true;
+                    rooms.createQuiz($scope.room, obj, function(resp) {
+                        if(resp && resp.status) {
+                            $scope.$apply(function () {
+                                $scope.resetARS();
+                            });
+                            $('#quizMasterModal').modal('hide');
+                        } else {
+                            $scope.sendingARS = false;
+                        }
+                    });
+                };
 			},
-			post: function(scope, elem, attr){
+			post: function($scope, elem, attr){
 				$('#quizMasterModal').modal({
 					keyboard: false,
 					backdrop: 'static',
 					show : false
 				});
                 $('#quizMasterModal').off().on("show.bs.modal", function () {
-                    scope.$apply(function () {
-                        scope.reset();
+                    $scope.$apply(function () {
+                        $scope.resetARS();
                     });
                 });
 			}

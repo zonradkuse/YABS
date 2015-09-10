@@ -1,0 +1,40 @@
+<div class="modal fade out" id="quizStudentModal" tabindex="-1" role="dialog" aria-labelledby="quizStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="quizStudentModalLabel">Quiz</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="pagination">
+                    <li ng-repeat="question in quiz.questions" ng-click="$parent.quizQuestionSelection = $index" ng-class="($parent.quizQuestionSelection==$index)?'active':''">
+                        <a href="#">{{$index+1}}</a>
+                    </li>
+                </ul>
+                <h2 style="margin-top:0;">Frage: {{quiz.questions[quizQuestionSelection].description}}</h2>
+                <form>
+    				<div ng-repeat="answer in quiz.questions[quizQuestionSelection].quizQuestion.answers">
+                        <div class="checkbox" ng-if="answer.checkbox">
+                            <label for="{{answer._id}}"> <input ng-model="answer.checked" id="{{answer._id}}" type="checkbox"> {{answer.description}} </label>
+                        </div>
+                        <div ng-if="answer.radiobox">
+                            <input name="quiz" ng-model="quiz.questions[quizQuestionSelection].quizQuestion.radioChecked" id="{{answer._id}}" type="radio" ng-value="answer._id">
+                            <label for="{{answer._id}}"> {{answer.description}} </label>
+                        </div>
+                        <div ng-if="answer.text">
+                            <label for="{{answer._id}}"> {{answer.description}} </label>
+                            <input ng-model="answer.checked" id="{{answer._id}}" type="text">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div ng-if="!quizSending">
+                    <button type="button" ng-click="sendQuiz()" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden </button>
+                </div>
+                <div ng-if="quizSending">
+                    <img src="loading.gif" style="height: 20px; width: 20px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -5,7 +5,7 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
 		controller: 'studentPollController',
 		link: {
             pre: function ($scope, elemt, attrs) {
-                $scope.sending = true;
+                $scope.pollSending = true;
 
                 $scope.getNext = function (cb) {
                     rooms.getNextPoll($scope.room, function(data) {
@@ -15,26 +15,30 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                             }
                             $scope.$apply(function () {
                                 $scope.question = data.arsObj;
-                                $scope.sending = false;
-                                $('#pollStudentModal').modal('show');
+//<<<<<<< HEAD
+//                                $scope.sending = false;
+//                                $('#pollStudentModal').modal('show');
+//=======
+                                $scope.pollSending = false;
+//>>>>>>> 3474a2ee84e0d3ec7ff6079ba184fa168b61070d
                             });
                             if (cb) cb(true);
                         } else {
                             $scope.$apply(function () {
-                                //$scope.reset();
+                                $scope.resetPoll();
                             });
                             if (cb) cb(false);
                         }
                     });
                 };
 
-                $scope.reset = function () {
-                    $scope.sending = false;
+                $scope.resetPoll = function () {
+                    $scope.pollSending = false;
                     $scope.question = {};
                 };
 
-                $scope.send = function () {
-                    $scope.sending = !$scope.sending;
+                $scope.sendPoll = function () {
+                    $scope.pollSending = !$scope.pollSending;
                     var chk = [];
                     for (var i = 0; i < $scope.question.poll.answers.length; i++) {
                         if ($scope.question.poll.answers[i].checked !== false) {
@@ -46,7 +50,7 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                             if (!bool) {
                                 $('#pollStudentModal').modal('hide');
                                 $scope.$apply(function () {
-                                    $scope.reset();
+                                    $scope.resetPoll();
                                 });
                             }
                         });
@@ -62,12 +66,12 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
 
                 $("#pollStudentModal").off().on("shown.bs.modal", function() {
                     $scope.$apply(function() {
-                        $scope.sending = true;
+                        $scope.pollSending = true;
                         $scope.getNext(function (bool) {
                             if (!bool) {
                                 $("#pollStudentModal").modal('hide');
                             } else {
-                                $scope.sending = false;
+                                $scope.pollSending = false;
                             }
                         });
                     });

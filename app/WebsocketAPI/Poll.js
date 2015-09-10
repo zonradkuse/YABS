@@ -7,7 +7,7 @@ var StatisticsModel = require('../../models/ARSModels/Statistic.js').ARSStatisti
 module.exports = function (wsCtrl) {
 
     wsCtrl.on("poll:getAll", function (req) {
-        pollCtrl.getAllPollsInRoom(params.roomId, function (err, polls) {
+        pollCtrl.getAllPollsInRoom(req.params.roomId, "", function (err, polls) {
             if (err) {
                 return wsCtrl.build(req.ws, new Error("could not get polls"), null, req.refId);
             }
@@ -102,5 +102,21 @@ module.exports = function (wsCtrl) {
                 arsObj : poll
             }, req.refId);
         });
+    });
+
+    wsCtrl.on('poll:delete', function (req) {
+        req.params.userId = req.session.user._id;
+        if (req.params.pollId && req.params.roomId) {
+            pollCtrl.deletePoll(req.params.roomId, req.params.pollId, function (err, bool) {
+                if (err) {
+                    logger.info("An error occurred on deleting poll: " + err);
+                    wsCtrl.build(req.ws, err, null, req.refId);
+                } else {
+                    wsCtrl.build(req.ws, null, { status: bool }, req.refId);
+                }
+            });
+        } else {
+            wsCtrl.build(req.ws, new Error("Invalid Parameters."), null, req.refId);
+        }
     });
 };

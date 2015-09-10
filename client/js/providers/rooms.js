@@ -131,18 +131,22 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
         var room = this.getById(roomId);
         var polls = room.poll;
 
-        for (var i = 0; i < polls.length; i++) {
-            /* jshint loopfunc: true */
-            if (polls[i]._id === poll._id) {
-                $rootScope.$apply(function() {
-                    polls[i] = poll;
-                });
-            }
-            return;
-        }
-        $rootScope.$apply(function () {
-            polls.push(poll);
-        });
+        $rootScope.$apply(function() {
+	        var upsert = false;
+	        for (var i = 0; i < polls.length; i++) {
+	            if (typeof polls[i] === 'object'){
+					if (polls[i]._id === poll._id) {
+						polls[i] = poll;
+						upsert = true;
+					}
+				} else {
+					polls.splice(i, 1);
+				}
+	        }
+	        if(!upsert){
+		        polls.push(poll);
+	    	}
+    	});
     };
 
 	/** Get a question by id.
@@ -199,6 +203,14 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
         rpc.attachFunction("poll:statistic", function(data) {
            // coming soon
         });
+        rpc.attachFunction("quiz:do", function(data) {
+        	//var room = this.getById(data.roomId);
+        	self.upsertQuizzes(data.roomId,[data.quiz]);
+            $("#quizStudentModal").modal('show');
+            $rootScope.$apply(function(){
+            	$rootScope.quiz = data.quiz;
+        	});
+        });
     };
 
     /** Get all questions of a room.
@@ -232,6 +244,21 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
         }
     };
 
+    this.getAllPolls = function(room, cb) {
+        if (room) {
+            rpc.call("poll:getAll", {
+                roomId : room._id
+            }, function (data) {
+            	data.polls.forEach(function(poll){
+            		self.upsertPoll(room._id, poll);
+            	});
+            	if(cb){
+                	cb(data);
+            	}
+            });
+        }
+    };
+
     this.createPoll = function(room, poll, cb) {
         rpc.call("poll:create", {
             roomId : room._id,
@@ -242,6 +269,115 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
             cb(data);
         });
     };
+
+    this.deletePoll = function(room, poll, cb) {
+        if(room){
+	        rpc.call("poll:delete", {
+	            roomId : room._id,
+	            pollId : poll._id
+	        }, function(data){
+	        	if(cb){
+	        		cb(data.status);
+	        	}
+	        });
+    	}
+    };
+
+    this.createQuiz = function(room, quiz, cb) {
+        rpc.call("quiz:create", {
+            roomId : room._id,
+            questions : quiz.questions,
+            dueDate : quiz.duration,
+            description : quiz.description
+        }, function(data){
+        	if(data && data.quiz){
+    			self.upsertQuizzes(room._id, [data.quiz]);
+    		}
+        	if(cb){
+            	cb(data);
+        	}
+        });
+    };
+
+    this.answerQuiz = function(room, quiz, answers, cb) {
+        rpc.call("quiz:answer", {
+            roomId : room._id,
+            quizId : quiz._id,
+            answerIds : answers
+        }, function (data) {
+        	if(cb){
+            	cb(data);
+        	}
+        });
+    };
+
+    this.getAllQuizzes = function(room, cb) {
+        if(room){
+	        rpc.call("quiz:getAll", {
+	            roomId : room._id
+	        }, function(data){
+	        	self.upsertQuizzes(room._id, data.quizzes);
+	        	if(cb){
+	        		cb(data);
+	        	}
+	        });
+    	}
+    };
+
+    this.deleteQuiz = function(room, quiz, cb) {
+        if(room){
+	        rpc.call("quiz:delete", {
+	            roomId : room._id,
+	            quizId : quiz._id
+	        }, function(data){
+	        	if(cb){
+	        		cb(data.status);
+	        	}
+	        });
+    	}
+    };
+
+    this.toggleQuizActivation = function(room, quiz, active, cb) {
+        if(room){
+	        rpc.call("quiz:toggleActivation", {
+	            roomId : room._id,
+	            quizId : quiz._id,
+	            active : active
+	        }, function(data){
+	        	if(cb){
+	        		cb(data.status);
+	        	}
+	        });
+    	}
+    };
+
+    this.upsertQuizzes = function(roomId, quizzes) {
+		var room = this.getById(roomId);
+		/*jshint loopfunc: true */
+		for(var j=0; j< quizzes.length; j++){
+			var upsert = false;
+			for(var i = 0; i < room.quiz.length; i++) {
+				if (typeof room.quiz[i] === 'object'){
+					if (room.quiz[i]._id === quizzes[j]._id) {
+						$rootScope.$apply(function() {
+							room.quiz[i] = quizzes[j];
+						});
+						upsert = true;
+						break;
+					}
+				} else {
+					$rootScope.$apply(function() {
+						room.quiz.splice(i, 1);
+					});
+				}
+			}
+			if(!upsert){
+				$rootScope.$apply(function() {
+					room.quiz.push(quizzes[j]);
+				});
+			}
+		}
+	};
 
     /** Vote for a question.
 	* @param {Room} room - room object of questions

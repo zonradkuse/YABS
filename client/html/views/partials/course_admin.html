@@ -1,7 +1,6 @@
 <statistics-modal></statistics-modal>
 <ars-creator></ars-creator>
 <div class="row row-panicbtn admin-quicklook">
-    <!-- tell jens to fix that -->
     <div class="col-xs-4"><span class="h2">{{activeUsers ? activeUsers - 1 : 0}}<span class="small center-block">aktive Studierende</span></span></div>
     <div class="col-xs-4"><span class="h2">{{panics}}<span class="small center-block">geht es zu schnell</span></span></div>
     <div class="col-xs-4"><span class="h2">{{importantQuestions}}<span class="small center-block">wichtige Fragen</span></span></div>
@@ -54,19 +53,34 @@
             </form>
     </div>-->
     <div class="col-md-12">
-        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#statModal">
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#statModal" style="float:left; margin:0 5px;">
             <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Verständnisstatistik anzeigen
         </button>
+        <div class="dropdown" style="float:left; margin:0 5px;">
+            <button class="btn btn-default dropdown-toggle" type="button" id="ModuleDropdown" data-toggle="dropdown" aria-expanded="false"> 
+                {{ modules[$parent.activeModule] }}
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="ModuleDropdown">
+                <li role="presentation" ng-repeat="module in modules">
+                    <a href="#" role="menuitem" tabindex="-1" ng-click="$parent.$parent.changeDropdownModule($index)"> 
+                        {{ module }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!--
         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#quizMasterModal">
             <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Umfragen und Quizfragen verwalten
         </button>
         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#pollStudentModal">
             <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Umfrage beantworten (Testing only)
         </button>
-        <button type="button" ng-click="enableRoom()" ng-if="!room.isRoomRegistered" class="btn btn-primary">
+        -->
+        <button type="button" ng-click="enableRoom()" ng-if="!room.isRoomRegistered" class="btn btn-primary" style="float:left; margin:0 5px;">
             <span class="glyphicon glyphicon-play" aria-hidden="true"></span> Vorlesung starten
         </button>
-        <button type="button" ng-click="disableRoom()" ng-if="room.isRoomRegistered" class="btn btn-primary">
+        <button type="button" ng-click="disableRoom()" ng-if="room.isRoomRegistered" class="btn btn-primary" style="float:left; margin:0 5px;">
             <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Vorlesung beenden
         </button> 
     </div>                      

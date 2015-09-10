@@ -8,6 +8,7 @@
  *
  * - Callee -> API -> PollCtrl -> create Poll, do callback, create timer -> API -> broadcast new poll
  */
+var async = require('async');
 var Scheduler = require('../Timing/Scheduler.js');
 var Timer = new Scheduler({ autoFin : false, registerLoopElements : 10 });
 var Rooms = require('../../../models/Room.js');
@@ -27,13 +28,13 @@ var logger = require('../../Logger.js');
  * @params{Function} cb Function with error and data parameter.
  * @params{String} dpOptions More options to deepPopulation. By default the rooms polls and the polls answers are populated
  */
-var getAllPollsInRoom = function (roomId, cb, dpOptions) {
-    Rooms.Room.findOne({ _id : roomId}).deepPopulate('poll.answers ' + dpOptions).exec(function (err, rooms) {
+var getAllPollsInRoom = function (roomId, dpOptions, cb) {
+    Rooms.Room.findOne({ _id : roomId}).lean().populate({path : 'poll'}).exec(function (err, room) {
         if (err) {
             logger.warn(err);
             return cb(err);
         }
-        cb(null, rooms.poll);
+        cb(null, room.poll);
     }); 
 };
 
@@ -199,7 +200,7 @@ var newPoll = function (params, cb, tcb) {
                 return cb(err);
             }
 
-            QuestionModel.findOne({ _id : _question._id}).deepPopulate('poll poll.answers').exec(function (err, question) {
+            QuestionModel.findOne({ _id : _question._id}).deepPopulate('poll.answers').exec(function (err, question) {
                 if (err) {
                     logger.warn("An error occured when populating new Quiz " + err);
                     Timer.clearTimer(_tId);
@@ -311,9 +312,54 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
     });
 };
 
+var deletePoll = function (roomId, pollId, callback) {
+    var asyncTasks = [];
+
+    QuestionModel.findOne({ _id : pollId}).deepPopulate('poll.statistics').exec(function (err, question) {
+        if (!question) {
+            return callback(null, true);
+        }
+        asyncTasks.push(function (pollCallback) {
+            var answerAsyncTasks = [];
+            question.poll.answers.forEach(function (answer) {
+                answerAsyncTasks.push(function (answerCallback) {
+                    ARSAnswer.find({ _id: answer}).remove( answerCallback );
+                });
+            });
+            question.poll.statistics.statisticAnswer.forEach(function (statObj){
+                answerAsyncTasks.push(function (statCallback){
+                    StatisticObjModel.find({ _id: statObj}).remove( statCallback );
+                });
+            });
+            answerAsyncTasks.push(function (statCallback) {
+                StatisticModel.find({ _id: question.poll.statistics._id }).remove( statCallback );
+            });
+
+            async.parallel(answerAsyncTasks, function (answerAsyncErr) {
+                pollCallback(answerAsyncErr);
+            });
+        });
+
+        async.parallel(asyncTasks, function (asyncErr) {
+            question.remove(function () {
+                Rooms.Room.update({ _id: roomId }, { $pull: { 'poll': pollId } }).exec(function (err, room) {
+                    if (err) {
+                        logger.warn(err);
+                        return callback(err);
+                    }
+                    var error = (asyncErr) ? asyncErr : err;
+                    callback(error, (error) ? false : true);
+                });
+            });
+        });
+        
+    });
+};
+
 
 module.exports.answer = answer;
 module.exports.newPoll = newPoll;
 module.exports.getPoll = getPoll;
 module.exports.getNext = getNext;
 module.exports.getAllPollsInRoom = getAllPollsInRoom;
+module.exports.deletePoll = deletePoll;
