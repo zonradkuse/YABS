@@ -15,12 +15,7 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                             }
                             $scope.$apply(function () {
                                 $scope.question = data.arsObj;
-<<<<<<< HEAD
                                 $scope.pollSending = false;
-=======
-                                $scope.sending = false;
-                                $('#pollStudentModal').modal('show');
->>>>>>> 1d64e0a85b77aa763f2e92f7a1a0a6e6785dbb99
                             });
                             if (cb) cb(true);
                         } else {
