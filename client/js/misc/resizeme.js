@@ -11,5 +11,7 @@ window.onload = function() {
 };
 
 $(function () {
-    window.onload();
+    setTimeout(function () {
+        window.onload();
+    }, 1500);
 });
