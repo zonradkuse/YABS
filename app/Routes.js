@@ -2,11 +2,9 @@
          
          */
   var passport = require('passport');
-  var querystring = require('querystring');
   var config = require('../config.json');
   var logger = require('./Logger.js');
   var roomDAO = require('../models/Room.js');
-  var adminkey = "wurstbrot";
   var roles = require('../config/UserRoles.json');
   var upgrade = require('./AccountUpgrade.js');
   var fileup = require('./FileUpload.js');
@@ -44,7 +42,7 @@
 	// Facebook OAuth
 	if (config.login.other.enabled) {
 		app.get('/login/facebook', passport.authenticate('facebook', {
-			scope: 'email',
+			scope: 'email'
 		}));
 		app.get('/auth/facebook/callback', passport.authenticate('facebook', {
 			successRedirect: '/dashboard',
@@ -91,10 +89,3 @@
 		}
 	});
   };
-
-  function isAuthenticated(req, res, next) {
-	if (req.isAuthenticated()) {
-		return next();
-	}
-	res.redirect('/login');
-  }
