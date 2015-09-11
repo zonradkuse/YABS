@@ -90,7 +90,7 @@ module.exports.routes = function () {
         }
     });
 
-    app.get('/login', function (req, res) {
+    app.get('/', function (req, res) { // this was formerly /login - as the iframe connects to /, the parameters are passed to /
         var course = req.query.courseId;
         var token = req.query.accessToken;
         logger.debug("Course: " + course + " with Token: " + token);
