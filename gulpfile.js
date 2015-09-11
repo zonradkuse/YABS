@@ -55,9 +55,46 @@ gulp.task('fast-build', function() {
         .pipe(flatten())
         .pipe(gulp.dest('public/'));
     
-    gulp.src(['client/img/**/*.{jpg,gif}'])
+    gulp.src(['client/img/**/*.{jpg,gif,png}'])
         .pipe(flatten())
-        .pipe(gulp.dest('public/'));  
+        .pipe(gulp.dest('public/'));
+});
+
+gulp.task('js', function() {
+    gulp.src(['client/js/**/*.js'])
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
+
+    gulp.src(['client/js/**/*.js'])
+        .pipe(flatten())
+        .pipe(gulp.dest('public/'));
+    console.log("js files updates");
+});
+gulp.task('html', function() {
+    gulp.src(['client/html/**/*.html'])
+        .pipe(flatten())
+        .pipe(gulp.dest('public/'));
+    console.log("html files updates");
+});
+gulp.task('img', function() {
+    gulp.src(['client/img/**/*.{jpg,gif,png}'])
+        .pipe(flatten())
+        .pipe(gulp.dest('public/'));
+    console.log("img files updates");
+});
+
+gulp.task('css', function() {
+    gulp.src(['client/img/**/*.css'])
+        .pipe(flatten())
+        .pipe(gulp.dest('public/'));
+    console.log("css files updates");
+});
+
+gulp.task('default', ['fast-build'], function() {
+    gulp.watch('client/js/**/*.js', ['js']);
+    gulp.watch('client/img/**/*.{jpg,gif,png}', ['img']);
+    gulp.watch('client/html/**/*.html', ['html']);
+    gulp.watch('client/css/**/*.css', ['css']);
 });
 
 gulp.task('build', ['install', 'fast-build']);

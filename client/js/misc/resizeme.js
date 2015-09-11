@@ -10,8 +10,9 @@ window.onload = function() {
             document.body.scrollHeight, document.body.offsetHeight),"*");
 };
 
-$(function () {
+$(function () { // hackyhackhack bullshit
     setTimeout(function () {
         window.onload();
     }, 1500);
 });
+
