@@ -47,7 +47,6 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
@@ -56,11 +55,15 @@ app.use(bodyParser.urlencoded({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 var routes = require('./app/Routes.js');
 routes(app);
 routes.routes();
 logger.info('initialized routes!');
+
+app.use(express.static(__dirname + '/public'));
+
+
+
 app.use(function (req, res) {
     // Use res.sendfile, as it streams instead of reading the file into memory.
     res.sendFile(__dirname + '/public/index.html');

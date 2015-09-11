@@ -18,6 +18,13 @@ module.exports = function (pExpressApp) {
 
 
 module.exports.routes = function () {
+    app.get('/', function (req, res, next) { // this was formerly /login - as the iframe connects to /, the parameters are passed to /
+        var course = req.query.courseId;
+        var token = req.query.accessToken;
+        logger.debug("Course: " + course + " with Token: " + token);
+        next();
+    });
+
     // route uploads
     fileup(app);
     // route account upgrades - deprecated
@@ -88,12 +95,6 @@ module.exports.routes = function () {
             res.status(404);
             res.end();
         }
-    });
-
-    app.get('/', function (req, res) { // this was formerly /login - as the iframe connects to /, the parameters are passed to /
-        var course = req.query.courseId;
-        var token = req.query.accessToken;
-        logger.debug("Course: " + course + " with Token: " + token);
     });
 
 };
