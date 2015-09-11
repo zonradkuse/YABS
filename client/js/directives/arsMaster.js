@@ -3,6 +3,9 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
 		restrict: 'E',
 		templateUrl: 'ars_creator.html',
 		controller: 'arsMaster',
+        scope: {
+            room : "="
+        },
 		link: {
 			pre: function($scope, elem, attr){
 				$scope.optionQuiz = "Umfragebeschreibung";
@@ -78,38 +81,27 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
 				};
 
 				$scope.addAnswer = function() {
-					/*var item = {
-						_id: scope.id++,
-						active: false,
-						answer: "",
-						type: scope.answerType
-					};
-					scope.items.push(item);
-					scope.editAnswer(item);*/
-					var a = {
-						_id: ++$scope.id,
+					var answerItem = {
+						_id: $scope.id++,
 						active: false,
 						answer: "",
 						type: $scope.answerType
 					};
-					$scope.editQuestionItem.answers.push(a);
-					$scope.editAnswer(a);
+
+					$scope.editQuestionItem.answers.push(answerItem);
+					$scope.editAnswer(answerItem);
 				};
 
-				/*scope.editAnswer = function(item) {
-					scope.editItem = item;
+				$scope.delete = function(item){
+					$scope.editQuestionItem.answers.splice($scope.editQuestionItem.answers.indexOf(item), 1);
+					$scope.editAnswerItem = undefined;
 				};
-
-				scope.delete = function(item){
-					scope.items.splice(scope.items.indexOf(item), 1 );
-					scope.editItem = undefined;
-				};*/
 
 				$scope.editAnswer = function(arsAnswer) {
 					$scope.editAnswerItem = arsAnswer;
 				};
 
-				$scope.deleteAnswer = function(arsQuestion, arsAnswer){
+				$scope.deleteAnswer = function(arsQuestion, arsAnswer){ // TODO what the heck is this for?
 					//$scope.items.splice($scope.items.indexOf(answer), 1 );
 					arsQuestion.splice(arsQuestion.answers.indexOf(arsAnswer), 1);
 					$scope.editAnswerItem = undefined;
@@ -122,7 +114,7 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
 					};
 					$scope.questions.push(q);
 					$scope.editQuestion(q);
-					$scope.dropdownSelection = "Frage "+($scope.questions.indexOf(q)+1);
+					$scope.dropdownSelection = "Frage " + ($scope.questions.indexOf(q) + 1);
 				};
 
 				$scope.editQuestion = function(arsQuestion){
@@ -141,7 +133,7 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
                     obj.answers = [];
                     for (var i = 0; i < q.answers.length; i++) {
                         var ans = {};
-                        switch (q.answers[i].type) { // this is needed as the first html-angular layout differs slightly from the server implementation
+                        switch (q.answers[i].type) {
                             case "checkbox":
                                 ans.checkbox = true;
                                 break;
@@ -158,7 +150,7 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
                         ans.description = q.answers[i].answer;
                         obj.answers.push(ans);
                     }
-                    obj.duration = parseInt($scope.arsOpts.arsRuntime);
+                    obj.duration = parseInt($scope.arsOpts.arsRuntime * 60 || 120 * 60); // default two hours poll runtime
                     $scope.sendingARS = true;
                     rooms.createPoll($scope.room, obj, function(resp) {
                         if(resp && resp.status) {
@@ -182,7 +174,7 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
                     	question.answers = [];
 	                    for (var i = 0; i < q.answers.length; i++) {
 	                        var ans = {};
-	                        switch (q.answers[i].type) { // this is needed as the first html-angular layout differs slightly from the server implementation
+	                        switch (q.answers[i].type) {
 	                            case "checkbox":
 	                                ans.checkbox = true;
 	                                break;
@@ -202,7 +194,7 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
 	                    }
 	                    obj.questions.push(question);
                 	}
-                    obj.duration = parseInt($scope.arsOpts.arsRuntime);
+                    obj.duration = parseInt($scope.arsOpts.arsRuntime * 60 || 60 * 24 * 5 * 60);
                     obj.description = $scope.arsOpts.quizTitle;
                     $scope.sendingARS = true;
                     rooms.createQuiz($scope.room, obj, function(resp) {

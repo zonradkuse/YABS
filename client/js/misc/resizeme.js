@@ -1,3 +1,5 @@
+/* L2P iframe resizing */
+
 window.onresize = function(){
     window.parent.postMessage(
         Math.max(document.documentElement.scrollHeight, document.documentElement.offsetHeight,
@@ -15,4 +17,3 @@ $(function () { // hackyhackhack bullshit
         window.onload();
     }, 1500);
 });
-
