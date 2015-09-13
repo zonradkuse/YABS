@@ -57,7 +57,7 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 					} else if (err) {
                         self.wsControl.build(self.ws, new Error("Something bad happened"), null, refId);
                         logger.warn('unexpected error: ' + err);
-                        return
+                        return;
                     }
 					if (courses.Status) {
 						var _addRoom = function (err, user, room) {
