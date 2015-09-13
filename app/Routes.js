@@ -31,6 +31,7 @@ module.exports.routes = function () {
                     req.session.user = user.toObject();
                     res.redirect("/course/" + authReq.roomId);
                 }
+                req.session.room = authReq.roomId;
             });
 
             authReq.process();

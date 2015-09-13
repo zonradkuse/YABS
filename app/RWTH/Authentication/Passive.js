@@ -7,6 +7,10 @@
 
 /**
  * Idea: create new Authenticationrequest Object that handles the request internally
+ *
+ * Create new request and call process:
+ * var req  = new AuthenticationRequest(token, l2proomidentifier, function (err, user){});
+ * req.process();
  */
 var logger = require('../../Logger.js');
 var roomDAO = require('../../../models/Room.js');
@@ -44,19 +48,12 @@ AuthenticationRequest.prototype.processUserContext = function () {
     var self = this;
     var req = new l2p.l2pRequest(self.token);
     logger.debug(req);
-    req.getUserContext(function (err, data) {
+    req.getUserContext(function (err, parsedData) {
         if (err) {
             logger.warn(err);
-        } else if (!data) {
+        } else if (!parsedData) {
             logger.warn(new Error("empty data"));
         } else {
-            var parsedData;
-            try {
-                parsedData = JSON.parse(data);
-            } catch (e) {
-                logger.warn(err);
-            }
-            logger.debug(data);
             if (parsedData.Success) {
                 // grab user from database to check if existing
                 userDAO.User.findOne({ 'rwth.userId' : parsedData.UserId }).exec(function (err, user) {
@@ -80,7 +77,7 @@ AuthenticationRequest.prototype.processUserContext = function () {
                             });
                             newUser.avatar = avatar;
                             // TODO generate userRoles
-                            newUser.save(function(err, savedUser) {
+                            newUser.save(function (err, savedUser) {
                                 if (err) {
                                     logger.warn(err);
                                 } else {
@@ -114,16 +111,11 @@ AuthenticationRequest.prototype.processRoom = function () {
             var newRoom = new roomDAO.Room();
             newRoom.l2pID = self.room;
             var req = new l2p.l2pRequest(self.token);
-            req.getCourseInfo(self.room, function (err, data) {
+            req.getCourseInfo(self.room, function (err, parsedData) {
                 if (err) {
                     logger.warn(err);
                 }
-                var parsedData;
-                try {
-                    parsedData = JSON.parse(data);
-                } catch (e) {
-                    logger.warn(e);
-                }
+                logger.debug(parsedData);
                 if (parsedData) {
                     if (parsedData.Status) {
                         var roomInfo = parsedData.dataSet[ 0 ];
@@ -138,6 +130,7 @@ AuthenticationRequest.prototype.processRoom = function () {
                             } else {
                                 self.roomId = room._id;
                                 self.__roomObj = room;
+                                logger.debug("created new room: " + room);
                             }
                         });
                     } else {
@@ -145,7 +138,7 @@ AuthenticationRequest.prototype.processRoom = function () {
                         self.error = new Error("L2P said no.");
                     }
                 } else {
-                    logger.warn(new Error("wat?"));
+                    logger.warn("wat?");
                 }
             });
         }

@@ -1,9 +1,6 @@
 /**
  * L2PRequests.js - Collection of L2P API calls.
  *
- * TODO refactor this such that every request has a prototype and makeCopy is not needed.
- * 		Do not touch this before not having refactored the request error todo below.
- *
  * Consult L2P API - Sometimes they rename things like status to Status.
  * https://www3.elearning.rwth-aachen.de/_vti_bin/l2pservices/api.svc/v1/documentation
  */
@@ -50,6 +47,16 @@ function getCourseInfo(cid, cb) {
     this.options.path = '/_vti_bin/l2pservices/api.svc/v1/viewCourseInfo?accessToken=' + this.token + '&cid=' + cid;
     request(this.options, cb);
 }
+function parseData(data) {
+    var parsedData;
+    try {
+        parsedData = JSON.parse(data);
+    } catch (e) {
+        logger.warn("L2P Data malformed.");
+        return false;
+    }
+    return parsedData;
+}
 
 function request(options, next) {
     checkMethod(options.method);
@@ -60,7 +67,8 @@ function request(options, next) {
 			response += chunk;
 		});
 		res.on('end', function () {
-			next(null, response);
+			var data = parseData(response);
+            next(!data ? (new Error("Parse error")) : false, data);
 		});
 	});
 	req.end();

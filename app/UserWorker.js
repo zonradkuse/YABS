@@ -50,14 +50,15 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
                 var request = new l2p.l2pRequest(self.user.rwth.token);
                 request.getAllCourses(function (err, courses) {
                     // TODO insert proper error handling here
-					try {
-						courses = JSON.parse(courses);
-						logger.debug(courses);
-					} catch (e) {
+					if (err.message === 'Parse error') {
 						self.wsControl.build(self.ws, new Error("L2P answer was invalid. Probably HTML code."), null, refId);
 						logger.warn("L2P courselist was not valid json: " + courses.toString());
 						return;
-					}
+					} else if (err) {
+                        self.wsControl.build(self.ws, new Error("Something bad happened"), null, refId);
+                        logger.warn('unexpected error: ' + err);
+                        return
+                    }
 					if (courses.Status) {
 						var _addRoom = function (err, user, room) {
 							if (err) {
