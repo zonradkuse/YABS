@@ -326,8 +326,8 @@ var deletePoll = function (roomId, pollId, callback) {
                     ARSAnswer.find({ _id: answer}).remove( answerCallback );
                 });
             });
-            question.poll.statistics.statisticAnswer.forEach(function (statObj){
-                answerAsyncTasks.push(function (statCallback){
+            question.poll.statistics.statisticAnswer.forEach(function (statObj) {
+                answerAsyncTasks.push(function (statCallback) {
                     StatisticObjModel.find({ _id: statObj}).remove( statCallback );
                 });
             });
