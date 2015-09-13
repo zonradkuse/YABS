@@ -42,7 +42,7 @@ function getAllDiscussions(cid, cb) {
 }
 
 function getUserContext (cb) {
-    this.options.path = '/_vti_bin/l2pservices/api.svc/v1/Context?token=' + this.token;
+    this.options.path = '/_vti_bin/l2pservices/ExternalAPI.svc/Context?token=' + this.token;
     request(this.options, cb);
 }
 

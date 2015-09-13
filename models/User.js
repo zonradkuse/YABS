@@ -24,7 +24,8 @@ var UserSchema = mongoose.Schema({
 	rwth: {
 		token: String,
 		refresh_token: String,
-		expires_in: Number
+		expires_in: Number,
+        userId : String
 	},
 	creationTime: {
 		type: Date,

@@ -23,8 +23,14 @@ module.exports.routes = function () {
         var token = req.query.accessToken;
         logger.debug("Course: " + course + " with Token: " + token);
         if (course && token) {
-            var authReq = new passiveL2PAuth(token, room, function () {
-
+            var authReq = new passiveL2PAuth(token, course, function (err, user) {
+                if (err) {
+                    logger.warn(err);
+                    next();
+                } else {
+                    req.session.user = user.toObject();
+                    res.redirect("/course/" + authReq.roomId);
+                }
             });
 
             authReq.process();
