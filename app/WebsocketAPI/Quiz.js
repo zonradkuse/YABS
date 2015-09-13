@@ -61,8 +61,8 @@ module.exports = function (wsCtrl) {
         if (req.params.quizId && req.params.answerIds && req.params.answerIds !== []) {
             var asyncTasks = [];
 
-            req.params.answerIds.forEach(function (item){
-                asyncTasks.push(function (callback){
+            req.params.answerIds.forEach(function (item) {
+                asyncTasks.push(function (callback) {
                     quizCtrl.answer(req.params.userId, req.params.roomId, item.question, item.answers, function (err, q) {
                         if (err) {
                             logger.info("An error occurred on answering quiz: " + err);
@@ -76,8 +76,8 @@ module.exports = function (wsCtrl) {
                 });
             });
 
-            async.parallel(asyncTasks, function (err){
-                if(err){
+            async.parallel(asyncTasks, function (err) {
+                if (err) {
                     wsCtrl.build(req.ws, err, null, req.refId);
                 } else {
                     wsCtrl.build(req.ws, null, { status: true }, req.refId);
@@ -140,7 +140,7 @@ module.exports = function (wsCtrl) {
                     wsCtrl.build(req.ws, err, null, req.refId);
                 } else {
                     wsCtrl.build(req.ws, null, { active: req.params.active }, req.refId);
-                    if(req.params.active){
+                    if (req.params.active) {
 
                         req.wss.roomBroadcast(
                             req.ws,

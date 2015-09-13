@@ -318,8 +318,8 @@ var deleteQuiz = function (roomId, quizId, callback) {
                         QuizUserAnswerModel.find({ _id: answer}).remove( answerCallback );
                     });
                 });
-                question.quizQuestion.statistics.statisticAnswer.forEach(function (statObj){
-                    answerAsyncTasks.push(function (statCallback){
+                question.quizQuestion.statistics.statisticAnswer.forEach(function (statObj) {
+                    answerAsyncTasks.push(function (statCallback) {
                         StatisticObjModel.find({ _id: statObj}).remove( statCallback );
                     });
                 });
@@ -353,8 +353,8 @@ var deleteQuiz = function (roomId, quizId, callback) {
 };
 
 var toggleQuizActivation = function (roomId, quizId, bool, callback) {
-    QuizModel.update({ _id : quizId},{active: bool}).exec(function (err) {
-        QuizModel.findOne({ _id: quizId }).deepPopulate("questions.quizQuestion.answers").exec(function (quizErr, quiz){
+    QuizModel.update({ _id : quizId}, {active: bool}).exec(function (err) {
+        QuizModel.findOne({ _id: quizId }).deepPopulate("questions.quizQuestion.answers").exec(function (quizErr, quiz) {
             callback(err, quiz);
         });
     });

@@ -28,6 +28,8 @@ var l2pRequest = function (token) {
 l2pRequest.prototype.getUserContext = getUserContext;
 l2pRequest.prototype.getAllCourses = getAllCourses;
 l2pRequest.prototype.getAllDiscussions = getAllDiscussions;
+l2pRequest.prototype.getCourseInfo = getCourseInfo;
+
 
 function getAllCourses(cb) {
 	this.options.path = '/_vti_bin/l2pservices/api.svc/v1/viewAllCourseInfo?accessToken=' + this.token;
@@ -41,6 +43,11 @@ function getAllDiscussions(cid, cb) {
 
 function getUserContext (cb) {
     this.options.path = '/_vti_bin/l2pservices/api.svc/v1/Context?token=' + this.token;
+    request(this.options, cb);
+}
+
+function getCourseInfo(cid, cb) {
+    this.options.path = '/_vti_bin/l2pservices/api.svc/v1/viewCourseInfo?accessToken=' + this.token + '&cid=' + cid;
     request(this.options, cb);
 }
 
@@ -65,7 +72,7 @@ function request(options, next) {
 }
 
 function checkMethod(method) {
-    if(!(method === 'GET' || method === 'POST' || method === 'PUT' || method === 'DELETE')) {
+    if (!(method === 'GET' || method === 'POST' || method === 'PUT' || method === 'DELETE')) {
         throw new Error('Invalid HTTP Method ' + method);
     }
 }
