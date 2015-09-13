@@ -18,7 +18,7 @@ var RoomSchema = mongoose.Schema({
 	semester: String,
 	hasPoll : Boolean,
 	hasQuiz : Boolean,
-	poll : [{ type: ObjectId, ref: 'ARSQuestion' }], // efficient way to determine if a objectId belongs to the room
+	poll : [{ type: ObjectId, ref: 'ARSQuestion' }],
 	quiz : [{ type: ObjectId, ref: 'ARSQuiz' }]
 });
 

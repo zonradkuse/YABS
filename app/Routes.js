@@ -4,7 +4,7 @@
 var passport = require('passport');
 var config = require('../config.json');
 var logger = require('./Logger.js');
-var roomDAO = require('../models/Room.js');
+var userDAO = require('../models/User.js')
 var roles = require('../config/UserRoles.json');
 var upgrade = require('./AccountUpgrade.js');
 var fileup = require('./FileUpload.js');
@@ -22,7 +22,27 @@ module.exports.routes = function () {
         var course = req.query.courseId;
         var token = req.query.accessToken;
         logger.debug("Course: " + course + " with Token: " + token);
-        next();
+        if (course && token) {
+            userDAO.User.findOne({'rwth.token' : token}, function (err, user) {
+                if (err) {
+                    logger.warn(err);
+                    res.redirect('/');
+                } else if (user) {
+                    // there is an existing user
+                    //TODO check if user information is already set. (like room access level) if not, grep from campus
+                    req.session.user = user.toObject();
+                    res.redirect('/' + course);
+                } else {
+                    // there is no user
+
+
+                    res.redirect('/' + course);
+                }
+            });
+        } else {
+            next();
+        }
+        //if parameters are set, log in (set cookies, generate everything) -> redirect to room
     });
 
     // route uploads

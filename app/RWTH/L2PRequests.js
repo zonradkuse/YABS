@@ -11,33 +11,41 @@
 var https = require('https');
 var logger = require('../Logger.js');
 
-var options = {
-	host: 'www3.elearning.rwth-aachen.de',
-	port: '443',
-	path: '',
-	method: 'GET',
-	headers: {
-		'Content-Type': 'application/x-www-form-urlencoded',
-	}
+var l2pRequest = function (token) {
+    this.options = {
+        host: 'www3.elearning.rwth-aachen.de',
+        port: '443',
+        path: '',
+        method: 'GET', // default is get. Should be set individually in preparation method
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    };
+
+    this.token = token;
 };
 
-function makeCopy() {
-	return JSON.parse(JSON.stringify(options));
+l2pRequest.prototype.getUserContext = getUserContext;
+l2pRequest.prototype.getAllCourses = getAllCourses;
+l2pRequest.prototype.getAllDiscussions = getAllDiscussions;
+
+function getAllCourses(cb) {
+	this.options.path = '/_vti_bin/l2pservices/api.svc/v1/viewAllCourseInfo?accessToken=' + this.token;
+	request(this.options, cb);
 }
 
-function getAllCourses(token, next) {
-	var options = makeCopy();
-	options.path = '/_vti_bin/l2pservices/api.svc/v1/viewAllCourseInfo?accessToken=' + token;
-	request(options, next); 
+function getAllDiscussions(cid, cb) {
+	this.options.path = '/_vti_bin/l2pservices/api.svc/v1/viewAllDiscussionItems?accessToken=' + this.token + '&cid=' + cid;
+	request(this.options, cb);
 }
 
-function getAllDiscussions(token, cid, next) {
-	var options = makeCopy();
-	options.path = '/_vti_bin/l2pservices/api.svc/v1/viewAllDiscussionItems?accessToken=' + token + '&cid=' + cid;
-	request(options, next);
+function getUserContext (cb) {
+    this.options.path = '/_vti_bin/l2pservices/api.svc/v1/Context?token=' + this.token;
+    request(this.options, cb);
 }
 
 function request(options, next) {
+    checkMethod(options.method);
 	var req = https.request(options, function (res) {
 		var response = '';
 		res.setEncoding('utf8');
@@ -45,16 +53,21 @@ function request(options, next) {
 			response += chunk;
 		});
 		res.on('end', function () {
-			next(response);
+			next(null, response);
 		});
 	});
 	req.end();
     
 	req.on('error', function (err) {
 		logger.warn(err);
-		next(null, err); // TODO refactor this. swap err and null. Could have huge impact on request.
+		next(err);
 	});
 }
 
-module.exports.getAllDiscussions = getAllDiscussions;
-module.exports.getAllCourses = getAllCourses;
+function checkMethod(method) {
+    if(!(method === 'GET' || method === 'POST' || method === 'PUT' || method === 'DELETE')) {
+        throw new Error('Invalid HTTP Method ' + method);
+    }
+}
+
+module.exports.l2pRequest = l2pRequest;

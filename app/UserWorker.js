@@ -47,7 +47,9 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 					logger.warn("could not refresh access token: " + err);
 					return self.wsControl.build(self.ws, new Error("Could not refresh your token."), null, refId);
 				}
-				l2p.getAllCourses(self.user.rwth.token, function (courses) {
+                var request = new l2p.l2pRequest(self.user.rwth.token)
+                request.getAllCourses(function (err, courses) {
+                    // TODO insert proper error handling here
 					try {
 						courses = JSON.parse(courses);
 						logger.debug(courses);

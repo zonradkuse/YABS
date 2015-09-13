@@ -30,8 +30,13 @@ var UserSchema = mongoose.Schema({
 		type: Date,
 		default: Date.now
 	},
-	rights: [{ roomID: { type: ObjectId, ref: 'Room' }, 
-	rights: Number }],
+	rights: [{
+        roomID: {
+            type: ObjectId,
+            ref: 'Room'
+        },
+	    rights: Number
+    }],
 	access: [{
 		type: ObjectId,
 		ref: 'Room'
