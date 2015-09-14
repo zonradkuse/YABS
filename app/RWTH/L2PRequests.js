@@ -15,7 +15,7 @@ var l2pRequest = function (token) {
         path: '',
         method: 'GET', // default is get. Should be set individually in preparation method
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
     };
 

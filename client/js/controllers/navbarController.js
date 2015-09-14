@@ -6,6 +6,8 @@ clientControllers.controller('navbarController', ['$scope', "$rootScope", 'authe
         	$scope.username = name;
         });
 
+        $scope.embedded = authentication.checkIfEmbeddedIntoL2P();
+
         $rootScope.$on("redrawNavbar", function(event, data) {
             $scope.username = data.username;
         });

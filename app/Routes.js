@@ -23,6 +23,8 @@ module.exports.routes = function () {
         var token = req.query.accessToken;
         logger.debug("Course: " + course + " with Token: " + token);
         if (course && token) {
+            // set a cookie to indicate source location to client
+            res.cookie('sourceLocation', 'embedded');
             var authReq = new passiveL2PAuth(token, course, function (err, user) {
                 if (err) {
                     logger.warn(err);
@@ -36,6 +38,8 @@ module.exports.routes = function () {
 
             authReq.process();
         } else {
+            // set a cookie to indicate non existing source location
+            res.cookie('sourceLocation', false);
             next();
         }
         //if parameters are set, log in (set cookies, generate everything) -> redirect to room

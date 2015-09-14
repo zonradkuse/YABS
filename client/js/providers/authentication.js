@@ -12,6 +12,15 @@ client.service("authentication", ["$window", "$q", "rpc", function($window, $q, 
 		});
 	};
 
+    this.checkIfEmbeddedIntoL2P = function () {
+        if (document.cookie.indexOf('sourceLocation=embedded') > -1) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+
 	this.isUserLoggedIn = function() {
 		var deferred = $q.defer();
 		rpc.call("system:whoami", {}, function(data) {
@@ -22,7 +31,7 @@ client.service("authentication", ["$window", "$q", "rpc", function($window, $q, 
 
 	this.logout = function() {
 		var deferred = $q.defer();
-		rpc.call("system:logout", {}, function(data) {
+		rpc.call("system:logout", {}, function() {
 			deferred.resolve();
 		});
 		return deferred.promise;
