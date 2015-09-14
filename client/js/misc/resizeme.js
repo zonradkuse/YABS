@@ -10,7 +10,7 @@ window.onload = function() {
     window.onresize();
 };
 
-$(document).onclick(function () {
+$(document).on('click', function () {
     window.onresize();
 });
 
