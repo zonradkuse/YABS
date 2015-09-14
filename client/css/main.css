@@ -13,6 +13,7 @@ body {
     height: 400px;
     background-image: url('/hkw-background.jpg');
     background-position: center;
+    overflow: visible;
 }
 
 div.row {

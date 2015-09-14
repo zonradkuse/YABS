@@ -7,13 +7,15 @@ window.onresize = function(){
 };
 
 window.onload = function() {
-    window.parent.postMessage(
-        Math.max(document.documentElement.scrollHeight, document.documentElement.offsetHeight,
-            document.body.scrollHeight, document.body.offsetHeight),"*");
+    window.onresize();
 };
+
+$(document).onclick(function () {
+    window.onresize();
+});
 
 $(function () { // hackyhackhack bullshit
     setTimeout(function () {
         window.onload();
-    }, 1500);
+    }, 1000);
 });

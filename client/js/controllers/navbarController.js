@@ -10,7 +10,7 @@ clientControllers.controller('navbarController', ['$scope', "$rootScope", 'authe
         $rootScope.embedded = $scope.embedded;
         // whiten background for l2p
         if($scope.embedded) {
-            $('body').css('background-color', '#fff');
+            $('body, .panel').css('background-color', '#eee');
             $('body').css('margin-top', '0');
             $('.container.rooms').css('margin-top', '0');
         }
