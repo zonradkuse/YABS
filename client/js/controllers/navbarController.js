@@ -10,7 +10,7 @@ clientControllers.controller('navbarController', ['$scope', "$rootScope", 'authe
         // whiten background for l2p
         if($scope.embedded) {
             $('body').css('background-color', '#fff');
-            $('body').css('margin-top', '0');
+            $('body, .container.rooms').css('margin-top', '0');
         }
 
         $rootScope.$on("redrawNavbar", function(event, data) {
