@@ -67,7 +67,7 @@ gulp.task('img', function() {
 });
 
 gulp.task('css', function() {
-    gulp.src(['client/img/**/*.css'])
+    gulp.src(['client/css/**/*.css'])
         .pipe(flatten())
         .pipe(gulp.dest('public/'));
     console.log("css files updates");
@@ -83,7 +83,7 @@ gulp.task('default', ['fast-build'], function() {
 gulp.task('build', ['install', 'fast-build']);
 
 gulp.task('jscs-app', ['jscs-models'], function(){
-    gulp.src(['app/**/*.js',])
+    gulp.src(['app/**/*.js'])
         .pipe(jscs({
             configPath: '.jscsrc',
             fix: true
@@ -92,7 +92,7 @@ gulp.task('jscs-app', ['jscs-models'], function(){
 });
 
 gulp.task('jscs-models', function(){
-    gulp.src(['models/**/*.js',])
+    gulp.src(['models/**/*.js'])
         .pipe(jscs({
             configPath: '.jscsrc',
             fix: false
