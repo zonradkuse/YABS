@@ -13,7 +13,7 @@ window.onload = function() {
 $(document).on('click', function () {
     setTimeout(function () {
         window.onresize();
-    }, 300);
+    }, 500);
 });
 
 $(function () { // hackyhackhack bullshit
