@@ -11,7 +11,9 @@ window.onload = function() {
 };
 
 $(document).on('click', function () {
-    window.onresize();
+    setTimeout(function () {
+        window.onresize();
+    }, 300);
 });
 
 $(function () { // hackyhackhack bullshit
