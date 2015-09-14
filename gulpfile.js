@@ -14,8 +14,11 @@ var gulp = require('gulp'),
     shell = require('gulp-shell');
 
 //build the client and only the client
-gulp.task('fast-build', function() {
+gulp.task('clean', function (cb) {
     del.sync('public/*');
+    cb(null);
+});
+gulp.task('fast-build', ['clean', 'js', 'css', 'img', 'html'], function() {
 
     gulp.src(["client/bower_components/chartist/dist/chartist.min.css"])
     .pipe(rename("chartist.css"))
@@ -38,26 +41,6 @@ gulp.task('fast-build', function() {
     gulp.src(['client/bower_components/font-awesome/fonts/*.*'])
         .pipe(flatten())
         .pipe(gulp.dest('public/fonts/'));
-        
-    gulp.src(['client/html/**/*.html'])
-        .pipe(flatten())
-        .pipe(gulp.dest('public/'));
-
-    gulp.src(['client/js/**/*.js'])
-        .pipe(jshint())
-        .pipe(jshint.reporter('default'));
-        
-    gulp.src(['client/js/**/*.js'])    
-        .pipe(flatten())
-        .pipe(gulp.dest('public/'));
-
-    gulp.src(['client/css/**/*.css'])
-        .pipe(flatten())
-        .pipe(gulp.dest('public/'));
-    
-    gulp.src(['client/img/**/*.{jpg,gif,png}'])
-        .pipe(flatten())
-        .pipe(gulp.dest('public/'));
 });
 
 gulp.task('js', function() {
@@ -117,7 +100,7 @@ gulp.task('jscs-models', function(){
         .pipe(gulp.dest('models'));
 });
 
-gulp.task('check', ['jscs-app'], function(cb) {
+gulp.task('check', ['jscs-app'], function() {
     return gulp.src(['app/**/*.{js, json}',
               'models/**/*.{js,json}',
               'config/**/*.{json, js}',
@@ -145,7 +128,9 @@ gulp.task('release-build', function () {
 gulp.task('install', ['check'], function(cb){
     // npm install
     exec('npm install', function(err, stdout, stderr) {
-        if(err) return cb(err);
+        if(err) {
+            return cb(err);
+        }
         if(stdout) {
             process.stdout.write("NPM STDOUT: \n" + stdout + "\n\0");
         }
@@ -160,7 +145,9 @@ gulp.task('install', ['check'], function(cb){
             if(stderr) {
                 process.stdout.write("BOWER STDERR: \n" + stderr + "\n\0");
             }
-            if(err) return cb(err);
+            if(err) {
+                return cb(err);
+            }
             cb();
         });
     });
