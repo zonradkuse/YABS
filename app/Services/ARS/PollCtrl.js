@@ -1,13 +1,4 @@
 /** @module PollCtrl*/
-
-/* TODO
- * ----
- * Here goes logic for:
- * - creating a quiz, including timing
- * - doing statistical work --> should be async 
- *
- * - Callee -> API -> PollCtrl -> create Poll, do callback, create timer -> API -> broadcast new poll
- */
 var async = require('async');
 var Scheduler = require('../Timing/Scheduler.js');
 var Timer = new Scheduler({ autoFin : false, registerLoopElements : 10 });

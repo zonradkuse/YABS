@@ -1,15 +1,6 @@
-/*
- * TODO
- * ----
- * Here goes logic for:
- * - creating a quiz, including timing
- * - Evaluating Answers
- * - doing statistical work --> should be async 
- */
 /** @module QuizCtrl*/
 var async = require('async');
 var Scheduler = require('../Timing/Scheduler.js');
-var Timer = new Scheduler({ autoFin : false, registerLoopElements : 10 });
 var Rooms = require('../../../models/Room.js');
 var QuestionModel = require('../../../models/ARSModels/Question.js').ARSQuestion;
 var ARSAnswer = require('../../../models/ARSModels/Answer.js').ARSAnswer;

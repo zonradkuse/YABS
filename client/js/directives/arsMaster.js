@@ -7,27 +7,11 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
             room : "="
         },
 		link: {
-			pre: function($scope, elem, attr){
+			pre: function($scope){
 				$scope.optionQuiz = "Umfragebeschreibung";
                 $scope.sendingARS = false;
 				$scope.id = 0;
-				/*scope.items = [{
-					_id: scope.id,
-					type: "checkbox",
-					answer: "wundertoll...",
-					active: false
-				}];*/
-				/*scope.questions = [{
-					_id: scope.id,
-					question: "",
-					type: "quiz",
-					answers: [{
-						_id: ++scope.id,
-						type: "checkbox",
-						answer: "wundertoll...",
-						active: false
-					}]
-				}];*/
+
 				$scope.questions = [{
 					_id: $scope.id,
 					question: "",
@@ -209,7 +193,7 @@ clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeou
                     });
                 };
 			},
-			post: function($scope, elem, attr){
+			post: function($scope){
 				$('#quizMasterModal').modal({
 					keyboard: false,
 					backdrop: 'static',

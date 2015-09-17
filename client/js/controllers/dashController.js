@@ -3,7 +3,7 @@
 clientControllers.controller("dashController", ["$scope", "$rootScope", "users", "authentication",
     function($scope, $rootScope, users, auth){
         auth.fetchUserName();
-        $scope.$watch(auth.getUserName, function(name) {
+        $scope.$watch(auth.getUserName, function() {
             $scope.username = auth.getUserName();
         });
         $scope.$watch(auth.getUser, function(user) {

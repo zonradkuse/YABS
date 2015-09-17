@@ -266,7 +266,13 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
             dueDate : poll.duration,
             description : poll.description
         }, function(data){
-            cb(data);
+            if (cb) {
+                cb(data);
+            }
+
+            if (room && data.poll) {
+                self.upsertPoll(room._id, data.poll);
+            }
         });
     };
 

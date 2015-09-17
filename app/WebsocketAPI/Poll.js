@@ -29,24 +29,24 @@ module.exports = function (wsCtrl) {
      */
     wsCtrl.on('poll:create', function (req) {
         if (req.params.dueDate && req.params.description && req.params.answers && req.params.answers !== []) {
-            pollCtrl.newPoll(req.params, function (err, question) {
+            pollCtrl.newPoll(req.params, function (err, poll) {
                 if (err) {
                     wsCtrl.build(req.ws, new Error("Could not create new poll"), null, req.refId);
                     return logger.warn("Could not create new poll. Error occured: " + err);
                 }
                 // the question was successfully created
-                wsCtrl.build(req.ws, null, {status: true, description: "new Poll successfully created."}, req.refId);
+                wsCtrl.build(req.ws, null, {status: true, description: "new Poll successfully created.", poll: poll}, req.refId);
                 req.wss.roomBroadcast(
                     req.ws,
                     'poll:do',
                     {
-                        "arsObj": question,
+                        "arsObj": poll,
                         "roomId": req.params.roomId
                     },
                     req.params.roomId
                 );
                 logger.info("successfully created new poll in " + req.params.roomId);
-                logger.debug("new ars object: " + question);
+                logger.debug("new ars object: " + poll);
             }, function (q) {
                 // signal poll timeout
                 logger.debug("reset outdated arsobj " + q);

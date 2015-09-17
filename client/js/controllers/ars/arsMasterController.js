@@ -2,12 +2,6 @@ clientControllers.controller('arsMaster', ['$scope', function($scope) {
 	//define default data for initialization and define options
 	$scope.optionQuiz = "Umfragebeschreibung";
 	$scope.id = 0;
-	/*$scope.items = [{
-		_id: $scope.id,
-		type: "checkbox",
-		answer: "wundertoll...",
-		active: false
-	}];*/
 
 	$scope.questions = [{
 		_id: $scope.id,
@@ -61,7 +55,7 @@ clientControllers.controller('arsMaster', ['$scope', function($scope) {
 			_id: ++$scope.id,
 			active: false,
 			answer: "",
-			type: $scope.answerType,
+			type: $scope.answerType
 		};
 		$scope.editQuestionItem.answers.push(a);
 		$scope.editAnswer(a);

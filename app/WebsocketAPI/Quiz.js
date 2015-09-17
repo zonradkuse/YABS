@@ -37,17 +37,7 @@ module.exports = function (wsCtrl) {
                     wsCtrl.build(req.ws, new Error("Could not create new quiz"), null, req.refId);
                     return logger.warn("Could not create new quiz. Error occured: " + err);
                 }
-                
                 wsCtrl.build(req.ws, null, {status: true, description: "new quiz successfully created.", quiz: quiz}, req.refId);
-                /*req.wss.roomBroadcast(
-                    req.ws,
-                    'quiz:do',
-                    {
-                        "quiz": quiz,
-                        "roomId": req.params.roomId
-                    },
-                    req.params.roomId
-                );*/
                 logger.info("successfully created new quiz in " + req.params.roomId);
                 logger.debug("new ars object: " + quiz);
             });
