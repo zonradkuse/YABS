@@ -74,21 +74,6 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 										r.questions = [];
 										self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': r });
 										logger.info("added new room: " + r.l2pID);
-                                        request.getUserRole(r.l2pID, function (err, userRole) {
-                                            // data is well formatted if error not set.
-                                            if (err) {
-                                                logger.warn("Error getting userRole: " + err); // do not warn user: he is probably a student
-                                            } else {
-                                                if (userRole.indexOf('manager') > -1) {
-                                                    // as soon as this is really works in l2p (not working since february 2015), this should work here, too.
-                                                    self.addRoomToSessionRights(req.params.roomId, roles.defaultAdmin, function (err) {
-                                                        if (err) {
-                                                            logger.warn("Could not add to user rights: " + err);
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        });
 									});
 								});
 							}
@@ -148,6 +133,11 @@ UserWorker.prototype.addRoomToSessionRights = function (roomId, accessLevel, nex
         } else if (!user) {
             next(null, false);
         } else {
+            for (var right in user.rights) {
+                if (user.rights[right].roomId === roomId) {
+                    return next(new Error("Entry already existing."));
+                }
+            }
             user.rights.push({roomId : roomId, accessLevel: accessLevel});
             sessionStore.set(self.sId, user, next);
         }
@@ -249,8 +239,26 @@ UserWorker.prototype.checkToken = function (next) {
 UserWorker.prototype.getRooms = function () {
 	var self = this;
 	if (self.user && self.user._id) {
-		userDAO.getRoomAccess(self.user, { population: '' }, function (err, rooms) {
+        var request = new l2p.l2pRequest(self.user.rwth.token);
+        userDAO.getRoomAccess(self.user, { population: '' }, function (err, rooms) {
 			var _roomSend = function (room) {
+                request.getUserRole(room.l2pID, function (err, userRole) {
+                    // data is well formatted if error not set.
+                    if (err) {
+                        logger.warn("Error getting userRole: " + err); // do not warn user: he is probably a student
+                    } else {
+                        console.log(userRole);
+                        logger.debug("userRole: " + userRole.toString());
+                        if (userRole && userRole.indexOf('manager') > -1) {
+                            // as soon as this is really works in l2p (not working since february 2015), this should work here, too.
+                            self.addRoomToSessionRights(req.params.roomId, roles.defaultAdmin, function (err) {
+                                if (err) {
+                                    logger.warn("Could not add to user rights: " + err);
+                                }
+                            });
+                        }
+                    }
+                });
 				panicDAO.hasUserPanic(self.user, room, function (err, panicEvent) {
 					panicDAO.isRoomRegistered(room, function (isRegistered) {
 						room.hasUserPanic = (!err && panicEvent) ? true : false;

@@ -53,11 +53,10 @@ function getUserRole(cid, cb) {
     this.options.path = '/_vti_bin/l2pservices/api.svc/v1/viewUserRole?accessToken=' + this.token + '&cid=' + cid;
     request(this.options, function (err, data) {
         if (data && data.Status && data.role) {
-            cb(null, data);
+            cb(null, data.role);
         } else {
             cb(new Error("L2P said no."));
         }
-        cb(err, data);
     });
 }
 
