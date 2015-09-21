@@ -1,10 +1,10 @@
-clientControllers.directive('statisticsModal', ['$timeout', 'rooms', function($timeout, rooms){
+clientControllers.directive('statisticsModal', ['$timeout', 'rooms', "errorService", function($timeout, rooms, errorService){
 	return {
 		restrict: 'E',
 		templateUrl: 'course_statistics.html',
 		controller:  "courseController",
 		link: {
-			pre: function(scope, elem, attr){
+			pre: function(scope){
 				//define default data for initialization and define options
 				scope.chartist = {};
 	            scope.chartist.options = {
@@ -39,7 +39,7 @@ clientControllers.directive('statisticsModal', ['$timeout', 'rooms', function($t
         		}
 	            scope.chartist.lineData = { labels: [], series: []};
 			},
-			post: function(scope, elem, attr){ 
+			post: function(scope){
 				// as this function is post-load binded by angular default we can now do all the initialization
 	            $("#statModal").off().on("shown.bs.modal", function() {
 	                scope.drawChart();
@@ -64,7 +64,9 @@ clientControllers.directive('statisticsModal', ['$timeout', 'rooms', function($t
 		                        name: "Panics",
 		                        data: values }
 		                ]};
-
+                        if (data.graph.length <= 0) {
+                            errorService.drawError("Es liegen bisher keine Daten vor. Starten Sie eine Vorlesung um Daten zu sammeln.", true);
+                        }
 		                // modified chartist example
 		                var $chart = $('.ct-chart');
 

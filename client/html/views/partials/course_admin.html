@@ -21,7 +21,13 @@
                         <input type="checkbox" value="" checked>
                         Panicbutton
                     </label>
-                </div>    
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" value="" checked>
+                        Quizmodul
+                    </label>
+                </div>
             </form>    
     </div>
     <div class="col-md-6">
@@ -36,7 +42,13 @@
                 <div class="checkbox">
                     <label>
                         <input type="checkbox" value="" checked>
-                        Der Fragensteller darf Antworten als richtig markieren
+                        Der Fragenautor darf Antworten als richtig markieren
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" value="" checked>
+                        Panicbutton mit "zu langsam"- <u>und</u> "zu schnell"-Option ausstatten
                     </label>
                 </div>
             </form>
@@ -44,14 +56,14 @@
                 <div class="form-group">
                     <label>
                         Eine Frage ist wichtig, wenn mehr als
-                        <input type="input" value="5" checked>
+                        <input type="input" value="5">
                         Prozent der Studenten diese Frage haben.
                     </label>
                 </div>    
             </form>
     </div>
     <div class="clearfix col-md-12"> <h3> Aktionen </h3>
-        <div class="col-sm-4">
+        <div class="col-sm-5">
             <form class="form-horizontal">
                 <div class="form-group">
                     <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#statModal">
@@ -61,7 +73,7 @@
                 <div class="form-group">
                     <div class="dropdown">
                         <button class="btn btn-default btn-block dropdown-toggle" type="button" id="ModuleDropdown" data-toggle="dropdown" aria-expanded="false">
-                            {{ modules[$parent.activeModule] }}
+                            Ansicht: {{ modules[$parent.activeModule] }}
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="ModuleDropdown">
@@ -75,7 +87,7 @@
                 </div>
             </form>
         </div>
-        <div class="col-sm-offset-2 col-sm-6">
+        <div class="col-sm-offset-1 col-sm-6">
             <form class="form-horizontal">
                 <div class="form-group">
                     <button type="button" ng-click="enableRoom()" ng-if="!room.isRoomRegistered" class="btn btn-block btn-primary">
