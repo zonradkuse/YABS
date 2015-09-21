@@ -1,4 +1,4 @@
-client.service("rpc", [function(){
+client.service("rpc", ["$rootScope", function($rootScope){
     /*
      * Code related to sending requests
      */
@@ -100,9 +100,16 @@ client.service("rpc", [function(){
 	ws.onmessage = receiveMessage;
 	
 	function receiveMessage(event) {
-		var data = JSON.parse(event.data);
-		if ("error" in data && data.error !== null)
-			console.log("WS Error received: " + data.error);
+        var data = JSON.parse(event.data);
+        if ("error" in data && data.error !== null) {
+            $rootScope.error = "WS Error received: " + data.error;
+            setTimeout(function () {
+                $rootScope.$apply(function() {
+                    $rootScope.error = undefined;
+                });
+            }, 2000);
+            console.log("WS Error received: " + data.error);
+        }
 		if ("data" in data) {
 			// Response
 			if (callbackTable[data.refId] !== undefined) {

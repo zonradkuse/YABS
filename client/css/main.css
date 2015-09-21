@@ -239,3 +239,18 @@ chartist .panel {
 .checkbox > label {
     font-weight: bold;
 }
+
+.availability {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 0;
+    z-index: 100;
+    max-height: 100px;
+}
+
+.availability > .alert {
+    margin-bottom:0;
+}
+

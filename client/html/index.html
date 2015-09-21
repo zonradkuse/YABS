@@ -88,5 +88,13 @@
         </div>
         <script src="resizeme.js"></script>
         <div ng-view autoscroll="true"></div>
+        {{error}}
+        <div class="availability">
+            <div ng-hide="!error" class="alert alert-info" role="alert">
+                <strong>Es ist ein Fehler aufgetreten!</strong> {{error}}
+            </div>
+        </div>
+
+
     </body>
 </html>
