@@ -331,6 +331,11 @@ var deletePoll = function (roomId, pollId, callback) {
             });
         });
 
+        /*
+         TODO sorry, but this is simply not necessary. Mongoose already uses async IO. Doing This async results in
+         putting this in the process.nextTick queue. Mongoose does this again. But I think, this won't break things.
+         Maybe when there is some bad luck: asyncTasks array is empty as MongoDB is really busy.
+         */
         async.parallel(asyncTasks, function (asyncErr) {
             question.remove(function () {
                 Rooms.Room.update({ _id: roomId }, { $pull: { 'poll': pollId } }).exec(function (err, room) {

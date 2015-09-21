@@ -1,3 +1,5 @@
+<statistics-modal></statistics-modal>
+<ars-creator room="room"></ars-creator>
 <div class="container-course container-fluid">
     <div class="background-course">
         <span style="color: #DDD; font-size:9px; position:absolute; opacity:0.7; right: 0;">Bild &copy; Peter Winandy</span>
@@ -172,7 +174,7 @@
                                             Erstellt am {{arsPoll.timestamp | date:'dd.MM.yyyy'}} um {{arsPoll.timestamp | date:'HH:mm'}} Uhr
                                         </div>
                                         <br>
-                                        <button class="btn btn-default" type="button">Statistik anzeigen</button>
+                                        <button class="btn btn-default" ng-click="" type="button">Statistik anzeigen</button>
                                         <button class="btn" ng-class="(!arsPoll.active) ? 'btn-success' : 'btn-default'" type="button">
                                             {{(arsPoll.active)?"Deaktivieren":"Aktivieren"}}
                                         </button>
