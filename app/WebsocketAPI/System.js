@@ -228,7 +228,7 @@ module.exports = function (wsControl) {
 			});
 		} else {
 			wsControl.build(req.ws, null, {
-				status: false,
+				status: false
 			}, req.refId);
 		}
 	});

@@ -133,13 +133,10 @@ UserWorker.prototype.addRoomToSessionRights = function (roomId, accessLevel, nex
         } else if (!user) {
             next(null, false);
         } else {
-            for (var right in user.rights) {
-                if (user.rights[right].roomId === roomId) {
-                    return next(new Error("Entry already existing."));
-                }
+            if (self.hasRightsEntry(roomId)) {
+                user.rights.push({roomId : roomId, accessLevel: accessLevel});
+                sessionStore.set(self.sId, user, next);
             }
-            user.rights.push({roomId : roomId, accessLevel: accessLevel});
-            sessionStore.set(self.sId, user, next);
         }
     });
 };
@@ -242,23 +239,33 @@ UserWorker.prototype.getRooms = function () {
         var request = new l2p.l2pRequest(self.user.rwth.token);
         userDAO.getRoomAccess(self.user, { population: '' }, function (err, rooms) {
 			var _roomSend = function (room) {
-                request.getUserRole(room.l2pID, function (err, userRole) {
-                    // data is well formatted if error not set.
-                    if (err) {
-                        logger.warn("Error getting userRole: " + err); // do not warn user: he is probably a student
-                    } else {
-                        console.log(userRole);
-                        logger.debug("userRole: " + userRole.toString());
-                        if (userRole && userRole.indexOf('manager') > -1) {
-                            // as soon as this is really works in l2p (not working since february 2015), this should work here, too.
-                            self.addRoomToSessionRights(req.params.roomId, roles.defaultAdmin, function (err) {
-                                if (err) {
-                                    logger.warn("Could not add to user rights: " + err);
-                                }
-                            });
+                if (!self.hasRightsEntry(room._id) && !config.hackfix.userRoleWorkaround) {
+                    request.getUserRole(room.l2pID, function (err, userRole) {
+                        // data is well formatted if error not set.
+                        if (err) {
+                            logger.warn("Error getting userRole: " + err); // do not warn user: he is probably a student
+                        } else {
+                            logger.debug("userRole: " + userRole.toString());
+                            if (userRole && userRole.indexOf('manager') > -1) {
+                                // as soon as this is really works in l2p (not working since february 2015), this should work here, too.
+                                self.addRoomToSessionRights(req.params.roomId, roles.defaultAdmin, function (err) {
+                                    if (err) {
+                                        logger.warn("Could not add to user rights: " + err);
+                                    }
+                                });
+                            } else if (userRole.indexOf('student') > -1) {
+                                self.addRoomToSessionRights(req.params.roomId, roles.defaultLoggedIn, function (err) {
+                                    if (err) {
+                                        logger.warn("Could not add to user rights: " + err);
+                                    }
+                                });
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    logger.debug("no need to fetch userRole");
+                }
+
 				panicDAO.hasUserPanic(self.user, room, function (err, panicEvent) {
 					panicDAO.isRoomRegistered(room, function (isRegistered) {
 						room.hasUserPanic = (!err && panicEvent) ? true : false;
@@ -278,6 +285,20 @@ UserWorker.prototype.getRooms = function () {
 	} else {
 		wsControl.build(ws, new Error("Your session is invalid."), null, refId);
 	}
+};
+
+/**
+ * Checks if there is an entry to the given room id in session rights array
+ * @param roomId
+ */
+UserWorker.prototype.hasRightsEntry = function (roomId) {
+    var self = this;
+    for (var right in self.user.rights) {
+        if (self.user.rights[right].roomId === roomId) {
+            return true;
+        }
+    }
+    return false;
 };
 
 //------ Helper section.

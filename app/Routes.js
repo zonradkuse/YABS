@@ -47,13 +47,15 @@ module.exports.routes = function () {
 
     // route uploads
     fileup(app);
-    // route account upgrades - deprecated
-    upgrade(app);
+    // route account upgrades - not yet deprecated
+    if (config.hackfix.userRoleWorkaround) {
+        upgrade(app);
+    }
 
     /**
      * A short sessiontest
      */
-    app.get('/sessiontest', function (req, res, next) {
+    app.get('/sessiontest', function (req, res) {
         var sess = req.session;
         if (!sess || !config.general.env.dev) {
             res.redirect('/404');

@@ -59,17 +59,20 @@
             },
             "preference": "clamdscan"
         }
-    },
-    "whitelistMime": [
-        "image/gif",
-        "image/jpeg",
-        "image/png"
-    ],
-    "multer" : {
-        "options" : {
-            "fields" : 0,
-            "fileSize" : 4194304,
-            "files" : 1
-        }
-    }
+  },
+  "whitelistMime": [
+      "image/gif",
+      "image/jpeg",
+      "image/png"
+  ],
+  "multer" : {
+      "options" : {
+          "fields" : 0,
+          "fileSize" : 4194304,
+          "files" : 1
+      }
+  },
+  "hackfix" : {
+      "userRoleWorkaround" : true
+  }
 }
