@@ -240,7 +240,7 @@ chartist .panel {
     font-weight: bold;
 }
 
-.availability {
+.errorbox {
     display: block;
     position: fixed;
     bottom: 0;
@@ -248,9 +248,10 @@ chartist .panel {
     margin: 0;
     z-index: 100;
     max-height: 100px;
+    border-radius: 0;
 }
 
-.availability > .alert {
+.errorbox > .alert {
     margin-bottom:0;
 }
 

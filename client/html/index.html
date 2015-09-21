@@ -33,6 +33,7 @@
         <script src="studentPoll.js"></script>
         <script src="arsStudentQuizController.js"></script>
         <script src="studentQuiz.js"></script>
+        <script src="errorService.js"></script>
         <!-- endbuild -->
         <!-- build:css css/minified.css -->
         <link rel="stylesheet" href="/bootstrap.css">
@@ -88,9 +89,9 @@
         </div>
         <script src="resizeme.js"></script>
         <div ng-view autoscroll="true"></div>
-        {{error}}
-        <div class="availability">
-            <div ng-hide="!error" class="alert alert-info" role="alert">
+
+        <div class="errorbox">
+            <div ng-hide="!error" class="alert alert-danger" role="alert">
                 <strong>Es ist ein Fehler aufgetreten!</strong> {{error}}
             </div>
         </div>
