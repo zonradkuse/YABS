@@ -197,7 +197,7 @@ module.exports.addRoomToUser = function (user, room, callback) {
 	}
 	Room.Room.findOrCreate({'l2pID': room.l2pID}, room.toObject(), function (err, room, created) {
 		if (err) {
-			throw new Error("room not found or cannot created");
+			throw new Error("room not found and cannot be created");
 		}
 		module.exports.addRoomAccess(user, room._id, function (err, user) {
 			if (err) {

@@ -26,6 +26,7 @@ l2pRequest.prototype.getUserContext = getUserContext;
 l2pRequest.prototype.getAllCourses = getAllCourses;
 l2pRequest.prototype.getAllDiscussions = getAllDiscussions;
 l2pRequest.prototype.getCourseInfo = getCourseInfo;
+l2pRequest.prototype.getUserRole = getUserRole;
 
 
 function getAllCourses(cb) {
@@ -47,6 +48,19 @@ function getCourseInfo(cid, cb) {
     this.options.path = '/_vti_bin/l2pservices/api.svc/v1/viewCourseInfo?accessToken=' + this.token + '&cid=' + cid;
     request(this.options, cb);
 }
+
+function getUserRole(cid, cb) {
+    this.options.path = '/_vti_bin/l2pservices/api.svc/v1/viewUserRole?accessToken=' + this.token + '&cid=' + cid;
+    request(this.options, function (err, data) {
+        if (data && data.Status && data.role) {
+            cb(null, data);
+        } else {
+            cb(new Error("L2P said no."));
+        }
+        cb(err, data);
+    });
+}
+
 function parseData(data) {
     var parsedData;
     try {
@@ -58,6 +72,11 @@ function parseData(data) {
     return parsedData;
 }
 
+/**
+ * This function does the real request and parses the data before passing it to the callback
+ * @param options
+ * @param next
+ */
 function request(options, next) {
     checkMethod(options.method);
 	var req = https.request(options, function (res) {

@@ -74,6 +74,21 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 										r.questions = [];
 										self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': r });
 										logger.info("added new room: " + r.l2pID);
+                                        request.getUserRole(r.l2pID, function (err, userRole) {
+                                            // data is well formatted if error not set.
+                                            if (err) {
+                                                logger.warn("Error getting userRole: " + err); // do not warn user: he is probably a student
+                                            } else {
+                                                if (userRole.indexOf('manager') > -1) {
+                                                    // as soon as this is really works in l2p (not working since february 2015), this should work here, too.
+                                                    self.addRoomToSessionRights(req.params.roomId, roles.defaultAdmin, function (err) {
+                                                        if (err) {
+                                                            logger.warn("Could not add to user rights: " + err);
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        });
 									});
 								});
 							}
@@ -87,6 +102,7 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 							_room.status = courses.dataSet[ el ].status;
 							_room.semester = courses.dataSet[ el ].semester;
 
+                            // results in findOrCreate, the room will be saved here
 							User.addRoomToUser(self.user, _room, _addRoom);
 						}
 					} else {
@@ -120,6 +136,22 @@ UserWorker.prototype.checkSession = function (next) {
 			next(null, true);
 		}
 	});
+};
+
+UserWorker.prototype.addRoomToSessionRights = function (roomId, accessLevel, next) {
+    var self = this;
+    sessionStore.get(self.sId, function (err, user) {
+        if (err) {
+            self.wsControl.build(self.ws, err);
+            logger.warn("error on session retrieving: " + err);
+            next(err);
+        } else if (!user) {
+            next(null, false);
+        } else {
+            user.rights.push({roomId : roomId, accessLevel: accessLevel});
+            sessionStore.set(self.sId, user, next);
+        }
+    });
 };
 
 /** Renews the Campus access_token if called and the user is still logged in/has a valid session.
@@ -210,12 +242,6 @@ UserWorker.prototype.checkToken = function (next) {
 			}
 		}
 	});
-
-};
-/** Merges this.user with the given userId and sets (err, mergedUser) as parameters in next.
- * @todo implement
- */
-UserWorker.prototype.mergeWithUser = function (userId, next) {
 
 };
 
