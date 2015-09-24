@@ -139,7 +139,7 @@ module.exports = function (wsControl) {
 														}
 														wsControl.build(req.ws, null, { status: true }, req.refId);
 														// start a worker that fetches rooms.
-														var worker = new userWorker(req.sId, req.ws, _user, wsControl, false);
+														var worker = new userWorker(req.sId, req.session.user, req.ws, _user, wsControl, false);
 														if (!workerMap[ req.sId ]) {
 															workerMap[ req.sId ] = worker;
 														} else {
@@ -204,8 +204,8 @@ module.exports = function (wsControl) {
 
 	wsControl.on("system:enterRoom", function (req) {
 		if (req.authed && req.params.roomId !== undefined) {
-			req.session.room = req.params.roomId;
-			sessionStore.set(req.sId, req.session, function (err) {
+            workerMap[req.sId].session.room = req.params.roomId;
+			sessionStore.set(req.sId, workerMap[req.sId].session, function (err) {
 				if (err) {
 					wsControl.build(req.ws, err, null, req.refId);
 				} else {

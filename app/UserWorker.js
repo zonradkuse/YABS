@@ -23,12 +23,16 @@ var roles = require('../config/UserRoles.json');
  * @param {Boolean} initialBool
  */
 var UserWorker = function (sId, sessionUser, ws, user, wsFrame, initialBool) {
-	this.sId = sId;
+	var self = this;
+    this.sId = sId;
 	this.ws = ws;
 	this.user = user;
 	this.wsControl = wsFrame;
 	this.initialized = initialBool;
     this.sessionUser = sessionUser;
+    sessionStore.get(this.sId, function (err, session) {
+        self.session = session;
+    });
 };
 
 /** Checks if there are new rooms that need to be added to the database and adds them.
@@ -75,6 +79,7 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 										r.questions = [];
 										self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': r });
 										logger.info("added new room: " + r.l2pID);
+                                        self.processRoleByRoom(room);
 									});
 								});
 							}
@@ -111,14 +116,16 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
  */
 UserWorker.prototype.checkSession = function (next) {
 	var self = this;
-	sessionStore.get(self.sId, function (err, user) {
+	sessionStore.get(self.sId, function (err, session) {
 		if (err) {
 			self.wsControl.build(self.ws, err);
 			logger.warn("error on session retrieving: " + err);
 			return next(err);
-		} else if (!user) {
+		} else if (!session) {
 			return next(null, false);
 		} else {
+            self.sessionUser = session.user;
+            self.session = session;
 			return next(null, true);
 		}
 	});
@@ -135,8 +142,9 @@ UserWorker.prototype.addRoomToSessionRights = function (roomId, accessLevel, nex
             return next(null, false);
         } else {
             if (!self.hasRightsEntry(roomId)) {
-                session.user.rights.push({roomId: roomId, accessLevel: accessLevel});
+                session.user.rights.push({roomId: roomId.toString(), accessLevel: accessLevel});
                 self.sessionUser = session.user;
+                self.session = session;
                 sessionStore.set(self.sId, session, next);
             }
         }
@@ -258,39 +266,13 @@ UserWorker.prototype.checkToken = function (next) {
 
 };
 
-/** Get all rooms. */
+/** Get all rooms. And send them out to the client via ws. */
 UserWorker.prototype.getRooms = function () {
 	var self = this;
 	if (self.user && self.user._id) {
-        var request = new l2p.l2pRequest(self.user.rwth.token);
         User.getRoomAccess(self.user, { population: '' }, function (err, rooms) {
 			var _roomSend = function (room) {
-                if (!self.hasRightsEntry(room._id) && !config.hackfix.userRoleWorkaround) {
-                    request.getUserRole(room.l2pID, function (err, userRole) {
-                        // data is well formatted if error not set.
-                        if (err) {
-                            logger.warn("Error getting userRole: " + err); // do not warn user: he is probably a student
-                        } else {
-                            logger.debug("userRole: " + userRole.toString());
-                            if (userRole && (userRole.indexOf('manager') > -1 || userRole.indexOf('tutors') > -1)) {
-                                // as soon as this is really works in l2p (not working since february 2015), this should work here, too.
-                                self.addRoomToSessionRights(room._id, roles.defaultAdmin, function (err) {
-                                    if (err) {
-                                        logger.warn("Could not add to user rights: " + err);
-                                    }
-                                });
-                            } else if (userRole.indexOf('students') > -1) {
-                                self.addRoomToSessionRights(room._id, roles.defaultLoggedIn, function (err) {
-                                    if (err) {
-                                        logger.warn("Could not add to user rights: " + err);
-                                    }
-                                });
-                            }
-                        }
-                    });
-                } else {
-                    logger.debug("no need to fetch userRole");
-                }
+                self.processRoleByRoom(room);
 
 				panicDAO.hasUserPanic(self.user, room, function (err, panicEvent) {
 					panicDAO.isRoomRegistered(room, function (isRegistered) {
@@ -311,6 +293,42 @@ UserWorker.prototype.getRooms = function () {
 	} else {
 		wsControl.build(ws, new Error("Your session is invalid."), null, refId);
 	}
+};
+
+/**
+ * Does the processing of the userRole in the specified room.
+ *
+ * @param {Room} room - a room object that needs to be checked
+ */
+UserWorker.prototype.processRoleByRoom = function (room) {
+    var self = this;
+    var request = new l2p.l2pRequest(self.user.rwth.token);
+    if (!self.hasRightsEntry(room._id) && !config.hackfix.userRoleWorkaround) {
+        request.getUserRole(room.l2pID, function (err, userRole) {
+            // data is well formatted if error not set.
+            if (err) {
+                logger.warn("Error getting userRole: " + err); // do not warn user: he is probably a student
+            } else {
+                logger.debug("userRole: " + userRole.toString());
+                if (userRole && (userRole.indexOf('manager') > -1 || userRole.indexOf('tutors') > -1)) {
+                    // as soon as this is really works in l2p (not working since february 2015), this should work here, too.
+                    self.addRoomToSessionRights(room._id, roles.defaultAdmin, function (err) {
+                        if (err) {
+                            logger.warn("Could not add to user rights: " + err);
+                        }
+                    });
+                } else if (userRole.indexOf('students') > -1) {
+                    self.addRoomToSessionRights(room._id, roles.defaultLoggedIn, function (err) {
+                        if (err) {
+                            logger.warn("Could not add to user rights: " + err);
+                        }
+                    });
+                }
+            }
+        });
+    } else {
+        logger.debug("no need to fetch userRole");
+    }
 };
 
 /**
