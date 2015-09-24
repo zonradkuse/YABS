@@ -43,7 +43,7 @@ module.exports = function (wsControl) {
 			setTimeout(function () {
 				if (req.session && req.session.user && req.session.user._id) {
 					UserModel.get(req.session.user._id, function (err, _user) {
-						var worker = new userWorker(req.sId, req.ws, _user, wsControl, true);
+						var worker = new userWorker(req.sId, req.session.user, req.ws, _user, wsControl, true);
 						workerMap[ req.sId ] = worker;
 						worker.fetchRooms(null, function () { //get new rooms
 							worker.getRooms(); //send all rooms
@@ -144,7 +144,7 @@ module.exports = function (wsControl) {
 															workerMap[ req.sId ] = worker;
 														} else {
 															worker = workerMap[ req.sId ];
-															worker.req.ws = req.ws; // this is necessary!
+															worker.ws = req.ws; // this is necessary!
 															worker.user = _user;
 														}
 														process.nextTick(function () {

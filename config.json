@@ -73,6 +73,6 @@
       }
   },
   "hackfix" : {
-      "userRoleWorkaround" : true
+      "userRoleWorkaround" : false
   }
 }

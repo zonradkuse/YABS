@@ -8,11 +8,11 @@ sessionStore = new sessionStore();
 var l2p = require('./RWTH/L2PRequests.js');
 var Room = require('../models/Room.js');
 var User = require('../models/User.js');
-var userDAO = require('../models/User.js');
 var campusReq = require('./RWTH/CampusRequests.js');
 var config = require('../config.json');
 var querystring = require('querystring');
 var panicDAO = require('./Panic.js');
+var roles = require('../config/UserRoles.json');
 
 /** sets needed object attributes.
  * @constructor
@@ -22,12 +22,13 @@ var panicDAO = require('./Panic.js');
  * @param {Object} wsFrame
  * @param {Boolean} initialBool
  */
-var UserWorker = function (sId, ws, user, wsFrame, initialBool) {
+var UserWorker = function (sId, sessionUser, ws, user, wsFrame, initialBool) {
 	this.sId = sId;
 	this.ws = ws;
 	this.user = user;
 	this.wsControl = wsFrame;
 	this.initialized = initialBool;
+    this.sessionUser = sessionUser;
 };
 
 /** Checks if there are new rooms that need to be added to the database and adds them.
@@ -114,28 +115,29 @@ UserWorker.prototype.checkSession = function (next) {
 		if (err) {
 			self.wsControl.build(self.ws, err);
 			logger.warn("error on session retrieving: " + err);
-			next(err);
+			return next(err);
 		} else if (!user) {
-			next(null, false);
+			return next(null, false);
 		} else {
-			next(null, true);
+			return next(null, true);
 		}
 	});
 };
 
 UserWorker.prototype.addRoomToSessionRights = function (roomId, accessLevel, next) {
     var self = this;
-    sessionStore.get(self.sId, function (err, user) {
+    sessionStore.get(self.sId, function (err, session) {
         if (err) {
             self.wsControl.build(self.ws, err);
             logger.warn("error on session retrieving: " + err);
-            next(err);
-        } else if (!user) {
-            next(null, false);
+            return next(err);
+        } else if (!session) {
+            return next(null, false);
         } else {
-            if (self.hasRightsEntry(roomId)) {
-                user.rights.push({roomId : roomId, accessLevel: accessLevel});
-                sessionStore.set(self.sId, user, next);
+            if (!self.hasRightsEntry(roomId)) {
+                session.user.rights.push({roomId: roomId, accessLevel: accessLevel});
+                self.sessionUser = session.user;
+                sessionStore.set(self.sId, session, next);
             }
         }
     });
@@ -158,7 +160,7 @@ UserWorker.prototype.refreshAccessToken = function (next) {
 				"grant_type": "refresh_token"
 			}), function (err, res) {
 				if (err) {
-					next(err);
+					return next(err);
 				} else {
 					var answer;
 					try {
@@ -167,38 +169,62 @@ UserWorker.prototype.refreshAccessToken = function (next) {
 						return next(e);
 					}
 					if (answer.status === "ok") {
-						userDAO.get(self.user._id, function (err, _user) {
+						User.get(self.user._id, function (err, _user) {
 							if (err) {
 								return next(err);
 							}
 							if (_user) {
 								_user.rwth.token = answer.access_token;
 								self.user = _user;
-								self.user.save(function (e) {
+								self.user.save(function (e, savedUser) {
 									if (e) {
 										return logger.warn("could not save a user: " + e);
 									}
-									next(null);
+                                    self.setSessionUser(savedUser, function (err) {
+                                        if (err) {
+                                            return next(err);
+                                        } else {
+                                            return next(null);
+                                        }
+                                    });
 								});
 							} else {
 								logger.warn("user should have existed: " + self.user);
-								next(new Error("You do not exist."));
+								return next(new Error("You do not exist."));
 							}
 
 						});
 
 					} else if (answer.error === "authorization invalid.") {
-						next(new Error("Your refresh_token is invalid."));
+						return next(new Error("Your refresh_token is invalid."));
 					} else if (answer.status === "error: refresh token invalid.") {
-						next(new Error("Your refresh_token is invalid."));
+						return next(new Error("Your refresh_token is invalid."));
 					}
 				}
 			});
 		} else {
-			next(null);
+			return next(null);
 		}
 
 	});
+};
+
+UserWorker.prototype.setSessionUser = function (sessionUser, next) {
+    var self = this;
+    if (!sessionUser) {
+        throw new Error('Session not set');
+    }
+    sessionStore.get(self.sId, function (err, sessionObj) {
+        if (err) {
+            return next(err);
+        } else {
+            sessionObj.user = sessionUser;
+            sessionStore.set(self.sId, sessionObj, function (err) {
+                next(err);
+            });
+        }
+
+    });
 
 };
 
@@ -237,7 +263,7 @@ UserWorker.prototype.getRooms = function () {
 	var self = this;
 	if (self.user && self.user._id) {
         var request = new l2p.l2pRequest(self.user.rwth.token);
-        userDAO.getRoomAccess(self.user, { population: '' }, function (err, rooms) {
+        User.getRoomAccess(self.user, { population: '' }, function (err, rooms) {
 			var _roomSend = function (room) {
                 if (!self.hasRightsEntry(room._id) && !config.hackfix.userRoleWorkaround) {
                     request.getUserRole(room.l2pID, function (err, userRole) {
@@ -246,15 +272,15 @@ UserWorker.prototype.getRooms = function () {
                             logger.warn("Error getting userRole: " + err); // do not warn user: he is probably a student
                         } else {
                             logger.debug("userRole: " + userRole.toString());
-                            if (userRole && userRole.indexOf('manager') > -1) {
+                            if (userRole && (userRole.indexOf('manager') > -1 || userRole.indexOf('tutors') > -1)) {
                                 // as soon as this is really works in l2p (not working since february 2015), this should work here, too.
-                                self.addRoomToSessionRights(req.params.roomId, roles.defaultAdmin, function (err) {
+                                self.addRoomToSessionRights(room._id, roles.defaultAdmin, function (err) {
                                     if (err) {
                                         logger.warn("Could not add to user rights: " + err);
                                     }
                                 });
-                            } else if (userRole.indexOf('student') > -1) {
-                                self.addRoomToSessionRights(req.params.roomId, roles.defaultLoggedIn, function (err) {
+                            } else if (userRole.indexOf('students') > -1) {
+                                self.addRoomToSessionRights(room._id, roles.defaultLoggedIn, function (err) {
                                     if (err) {
                                         logger.warn("Could not add to user rights: " + err);
                                     }
@@ -293,8 +319,9 @@ UserWorker.prototype.getRooms = function () {
  */
 UserWorker.prototype.hasRightsEntry = function (roomId) {
     var self = this;
-    for (var right in self.user.rights) {
-        if (self.user.rights[right].roomId === roomId) {
+    for (right in self.sessionUser.rights) {
+        logger.debug(roomId.toString());
+        if (self.sessionUser.rights[ right ].roomId === roomId.toString()) {
             return true;
         }
     }

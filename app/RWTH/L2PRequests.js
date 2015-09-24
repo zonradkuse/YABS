@@ -50,6 +50,7 @@ function getCourseInfo(cid, cb) {
 }
 
 function getUserRole(cid, cb) {
+    logger.debug('called getUserRole.');
     this.options.path = '/_vti_bin/l2pservices/api.svc/v1/viewUserRole?accessToken=' + this.token + '&cid=' + cid;
     request(this.options, function (err, data) {
         if (data && data.Status && data.role) {
