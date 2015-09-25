@@ -20,6 +20,7 @@ var moniker = require('moniker');
 var avatarGenerator = require('../../ProfilePicture.js');
 var imageDAO = require('../../../models/Image.js');
 var fancyNames = moniker.generator([ moniker.adjective, moniker.noun ], { glue: ' ' });
+var roles = require('../../../config/UserRoles.json');
 
 var AuthenticationRequest = function (token, l2pRoom, next) {
     if (!token || !l2pRoom) {
@@ -80,7 +81,12 @@ AuthenticationRequest.prototype.processUserContext = function (room) {
                             newUser.avatar = avatar;
                             newUser.access = [];
                             newUser.access.push(room._id);
-                            // TODO generate userRoles
+                            if (parsedData && parsedData.userRoles && (parsedData.userRoles.indexOf('manager') > -1 ||
+                                                parsedData.userRoles.indexOf('tutor') > -1)) {
+                                newUser.rights.push({roomId: room._id.toString(), accessLevel: roles.defaultAdmin});
+                            } else {
+                                newUser.rights.push({roomId: room._id.toString(), accessLevel: roles.defaultLoggedIn});
+                            }
                             newUser.save(function (err, savedUser) {
                                 if (err) {
                                     logger.warn(err);
@@ -91,6 +97,22 @@ AuthenticationRequest.prototype.processUserContext = function (room) {
                         });
                     } else {
                         user.rwth.token = self.token;
+                        var entryExists = false;
+                        for (var key in user.rights) {
+                            if (user.rights[ key ].roomId === room._id.toString()) {
+                                entryExists = true;
+                                break;
+                            }
+                        }
+                        if (!entryExists) {
+                            if (parsedData && parsedData.userRoles && (parsedData.userRoles.indexOf('manager') > -1 ||
+                                parsedData.userRoles.indexOf('tutor') > -1)) {
+                                user.rights.push({roomId: room._id.toString(), accessLevel: roles.defaultAdmin});
+                            } else {
+                                user.rights.push({roomId: room._id.toString(), accessLevel: roles.defaultLoggedIn});
+                            }
+                        }
+                        
                         user.save();
                         self.cb(null, user);
                     }

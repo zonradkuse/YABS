@@ -56,7 +56,7 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
                 request.getAllCourses(function (err, courses) {
                     // TODO insert proper error handling here
 					if (err.message === 'Parse error') {
-						self.wsControl.build(self.ws, new Error("L2P answer was invalid. Probably HTML code."), null, refId);
+						self.wsControl.build(self.ws, new Error("L2P answer was invalid."), null, refId);
 						logger.warn("L2P courselist was not valid json: " + courses.toString());
 						return;
 					} else if (err) {

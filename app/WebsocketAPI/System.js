@@ -242,17 +242,13 @@ module.exports = function (wsControl) {
 	});
 
 	wsControl.on("system:logout", function (req) {
-		if (req.authed) {
-			sessionStore.destroy(req.sId, function (err) {
-				if (err) {
-					wsControl.build(req.ws, new Error("Could not delete your req.session."), { status: false, message: "An error occured." }, req.refId);
-					return logger.warn("could not delete req.session: " + err);
-				}
-				wsControl.build(req.ws, null, { status: true, message: "Goodbye." }, req.refId);
-			});
-		} else {
-			wsControl.build(req.ws, null, { status: false, message: "You are not logged in." }, req.refId);
-		}
+        sessionStore.destroy(req.sId, function (err) {
+            if (err) {
+                wsControl.build(req.ws, new Error("Could not delete your req.session."), { status: false, message: "An error occured." }, req.refId);
+                return logger.warn("could not delete req.session: " + err);
+            }
+            wsControl.build(req.ws, null, { status: true, message: "Goodbye." }, req.refId);
+        });
 	});
 
 	wsControl.on("system:time", function (req) {

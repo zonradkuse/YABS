@@ -66,7 +66,7 @@ function parseData(data) {
     try {
         parsedData = JSON.parse(data);
     } catch (e) {
-        logger.warn("L2P Data malformed.");
+        logger.warn("L2P Data malformed. Answer was: " + data);
         return false;
     }
     return parsedData;
