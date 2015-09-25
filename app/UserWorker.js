@@ -161,7 +161,7 @@ UserWorker.prototype.refreshAccessToken = function (next) {
 			return next(err);
 		}
 
-		if (!expires || expires < 300) {
+		if (expires && expires < 300) {
 			campusReq.postReqCampus('token', querystring.stringify({
 				"client_id": config.login.l2p.clientID,
 				"refresh_token": self.user.rwth.refresh_token,
@@ -337,7 +337,7 @@ UserWorker.prototype.processRoleByRoom = function (room) {
  */
 UserWorker.prototype.hasRightsEntry = function (roomId) {
     var self = this;
-    for (right in self.sessionUser.rights) {
+    for (var right in self.sessionUser.rights) {
         logger.debug(roomId.toString());
         if (self.sessionUser.rights[ right ].roomId === roomId.toString()) {
             return true;

@@ -40,11 +40,13 @@ var AuthenticationRequest = function (token, l2pRoom, next) {
 AuthenticationRequest.prototype.process = function () {
     var self = this;
     // check preliminaries
-    self.processRoom();
-    self.processUserContext(self.cb);
+    self.processRoom(function (room) {
+        self.processUserContext(room);
+    });
+
 };
 
-AuthenticationRequest.prototype.processUserContext = function () {
+AuthenticationRequest.prototype.processUserContext = function (room) {
     var self = this;
     var req = new l2p.l2pRequest(self.token);
     logger.debug(req);
@@ -76,6 +78,8 @@ AuthenticationRequest.prototype.processUserContext = function () {
                                 return m.toUpperCase();
                             });
                             newUser.avatar = avatar;
+                            newUser.access = [];
+                            newUser.access.push(room._id);
                             // TODO generate userRoles
                             newUser.save(function (err, savedUser) {
                                 if (err) {
@@ -86,6 +90,8 @@ AuthenticationRequest.prototype.processUserContext = function () {
                             });
                         });
                     } else {
+                        user.rwth.token = self.token;
+                        user.save();
                         self.cb(null, user);
                     }
                 });
@@ -97,7 +103,7 @@ AuthenticationRequest.prototype.processUserContext = function () {
     });
 };
 
-AuthenticationRequest.prototype.processRoom = function () {
+AuthenticationRequest.prototype.processRoom = function (next) {
     var self = this;
     getRoomId(this.room).exec(function (err, room) {
         if (err) {
@@ -106,6 +112,7 @@ AuthenticationRequest.prototype.processRoom = function () {
         } else if (room) {
             self.roomId = room._id;
             self.__roomObj = room; // for... things.
+            next(room);
         } else {
             // room is currently not existing
             var newRoom = new roomDAO.Room();
@@ -118,12 +125,14 @@ AuthenticationRequest.prototype.processRoom = function () {
                 logger.debug(parsedData);
                 if (parsedData) {
                     if (parsedData.Status) {
-                        var roomInfo = parsedData.dataSet[ 0 ];
-                        newRoom.name = roomInfo.courseTitle;
-                        newRoom.description = roomInfo.description;
-                        newRoom.url = roomInfo.url;
-                        newRoom.status = roomInfo.status;
-                        newRoom.semester = roomInfo.semester;
+                        if (parsedData.dataSet[ 0 ] !== undefined) {
+                            var roomInfo = parsedData.dataSet[ 0 ];
+                            newRoom.name = roomInfo.courseTitle;
+                            newRoom.description = roomInfo.description;
+                            newRoom.url = roomInfo.url;
+                            newRoom.status = roomInfo.status;
+                            newRoom.semester = roomInfo.semester;
+                        }
                         newRoom.save(function (err, room) {
                             if (err) {
                                 logger.warn(err);
@@ -131,6 +140,7 @@ AuthenticationRequest.prototype.processRoom = function () {
                                 self.roomId = room._id;
                                 self.__roomObj = room;
                                 logger.debug("created new room: " + room);
+                                next(room);
                             }
                         });
                     } else {
@@ -149,7 +159,7 @@ AuthenticationRequest.prototype.getRoomId = function () {
     return this.roomId;
 };
 
-/*!
+/**
  * @param {String} l2pId - The l2pId e.g. ss15-12345
  * @return {Promise}
  */

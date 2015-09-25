@@ -204,8 +204,16 @@ module.exports = function (wsControl) {
 
 	wsControl.on("system:enterRoom", function (req) {
 		if (req.authed && req.params.roomId !== undefined) {
-            workerMap[req.sId].session.room = req.params.roomId;
-			sessionStore.set(req.sId, workerMap[req.sId].session, function (err) {
+            if (!workerMap[ req.sId ]) {
+                var worker = new userWorker(req.sId, req.session.user, req.ws, req.session.user, wsControl, true);
+                worker.session = req.session;
+                workerMap[ req.sId ] = worker;
+                worker.fetchRooms(function () {
+                    worker.getRooms();
+                });
+            }
+            workerMap[ req.sId ].session.room = req.params.roomId;
+			sessionStore.set(req.sId, workerMap[ req.sId ].session, function (err) {
 				if (err) {
 					wsControl.build(req.ws, err, null, req.refId);
 				} else {

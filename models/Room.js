@@ -7,7 +7,7 @@ var ObjectId = mongoose.Schema.ObjectId;
 
 var RoomSchema = mongoose.Schema({
 	l2pID: { type: String, unique: true },
-	name: String,
+	name: {type: String, default: 'Unbekannter Lernraum'},
 	creationTime: { type: Date, default: Date.now },
 	updateTime: { type: Date, default: Date.now },
 	questions: [{ type: ObjectId, ref: 'Question' }],

@@ -22,6 +22,10 @@ module.exports.routes = function () {
         var course = req.query.courseId;
         var token = req.query.accessToken;
         logger.debug("Course: " + course + " with Token: " + token);
+        if (req.session && req.session.user && req.session.user.rwth) {
+            req.session.user.rwth.token = token;
+            req.session.user.rwth.refresh_token = token;
+        }
         if (course && token) {
             // set a cookie to indicate source location to client
             res.cookie('sourceLocation', 'embedded');
