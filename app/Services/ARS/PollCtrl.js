@@ -36,7 +36,7 @@ var getAllPollsInRoom = function (roomId, dpOptions, cb) {
  * @param  {Function} callback. errors and data ca be set
  * @param  {String} optional population
  */
-var getPoll = function (userId, arsId, cb, dpOptions) {
+var getPoll = function (userId, arsId, cb) {
     logger.debug(arsId);
     QuestionModel.findOne({ _id : arsId }).exec(function (err, question) {
         if (err || !question) {
@@ -90,15 +90,15 @@ var getNext = function (roomId, userId, cb) {
                 if (rr.poll) {
                     for (var i = 0; i < rr.poll.length; i++) {
                         noAnswer = true;
-                        for (var j = 0; j < rr.poll[i].answered.length; j++) {
-                            var uid = rr.poll[i].answered[j].toString();
+                        for (var j = 0; j < rr.poll[ i ].answered.length; j++) {
+                            var uid = rr.poll[ i ].answered[ j ].toString();
                             if (uid === userId) {
                                 noAnswer = false;
                             }
                         }
                         if (noAnswer) {
-                            if (rr.poll[i] && rr.poll[i].active) {
-                                return cb(err, rr.poll[i]);
+                            if (rr.poll[ i ] && rr.poll[ i ].active) {
+                                return cb(err, rr.poll[ i ]);
                             }
                         }
                     }
@@ -340,7 +340,7 @@ var deletePoll = function (roomId, pollId, callback) {
          */
         async.parallel(asyncTasks, function (asyncErr) {
             question.remove(function () {
-                Rooms.Room.update({ _id: roomId }, { $pull: { 'poll': pollId } }).exec(function (err, room) {
+                Rooms.Room.update({ _id: roomId }, { $pull: { 'poll': pollId } }).exec(function (err) {
                     if (err) {
                         logger.warn(err);
                         return callback(err);

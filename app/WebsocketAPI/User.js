@@ -120,7 +120,7 @@ module.exports = function (wsControl) {
 							sendAndSaveQuestion(wsControl, req.wss, req.ws, req.params.roomId, q, aCopy, req.refId);
 						};
 						for (var i = access.length - 1; i >= 0; i--) {
-							if (access[ i ]._id == req.params.roomId) {
+							if (access[ i ]._id.toString() === req.params.roomId) {
 								var q = new questionDAO.Question();
 								q.author = req.session.user._id;
 								q.content = req.params.question;
@@ -219,7 +219,7 @@ module.exports = function (wsControl) {
 	wsControl.on('user:panic', function (req) {
 		if (req.authed) {
 			if (req.params && req.params.roomId) {
-				userDAO.hasAccessToRoom(req.session.user, {_id: req.params.roomId}, {population: ''}, function (err, user, room) {
+				userDAO.hasAccessToRoom(req.session.user, {_id: req.params.roomId}, {population: ''}, function (err) {
 					if (err) {
 						wsControl.build(req.ws, new Error("Access denied."), null, req.refId);
 						return logger.warn("could not check room access: " + err);
@@ -242,7 +242,7 @@ module.exports = function (wsControl) {
 	wsControl.on('user:unpanic', function (req) {
 		if (req.authed) {
 			if (req.params && req.params.roomId) {
-				userDAO.hasAccessToRoom(req.session.user, {_id: req.params.roomId}, {population: ''}, function (err, user, room) {
+				userDAO.hasAccessToRoom(req.session.user, {_id: req.params.roomId}, {population: ''}, function (err) {
 					if (err) {
 						wsControl.build(req.ws, new Error("Access denied."), null, req.refId);
 						return logger.warn("could not check room access: " + err);

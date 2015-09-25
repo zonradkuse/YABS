@@ -17,13 +17,12 @@ var getAllQuizzes = function (roomId, options, callback) {
     if (!options.deepPopulate) {
         options.deepPopulate = '';
     }
-    //quiz.questions.quizQuestion.answers
+
     Rooms.Room.findOne({ _id : roomId}).deepPopulate('quiz.questions.quizQuestion' + options.deepPopulate).exec(function (err, room) {
         if (err) {
             logger.warn(err);
             return callback(err);
         }
-        //console.log(JSON.stringify(room,null,2));
         callback(null, room.quiz);
     });
 };
@@ -171,7 +170,6 @@ var newQuiz = function (params, callback) {
                                 logger.warn("An error occurred on room update when creating a new quiz: " + err);
                                 return callback(err);
                             }
-                            //console.log(JSON.stringify(quiz,null,2));
                             return callback(null, quiz);
                         });
                     });

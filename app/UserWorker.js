@@ -1,6 +1,5 @@
 /** @module UserWorker */
 
-var websocket = require('ws').WebSocket;
 var session = require('express-session');
 var sessionStore = require('connect-redis')(session);
 var logger = require('./Logger.js');
@@ -291,7 +290,7 @@ UserWorker.prototype.getRooms = function () {
 			}
 		});
 	} else {
-		wsControl.build(ws, new Error("Your session is invalid."), null, refId);
+		self.wsControl.build(self.ws, new Error("Your session is invalid."), null);
 	}
 };
 
@@ -338,7 +337,6 @@ UserWorker.prototype.processRoleByRoom = function (room) {
 UserWorker.prototype.hasRightsEntry = function (roomId) {
     var self = this;
     for (var right in self.sessionUser.rights) {
-        logger.debug(roomId.toString());
         if (self.sessionUser.rights[ right ].roomId === roomId.toString()) {
             return true;
         }
