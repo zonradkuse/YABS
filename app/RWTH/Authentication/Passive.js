@@ -91,7 +91,7 @@ AuthenticationRequest.prototype.processUserContext = function (room) {
                                 if (err) {
                                     logger.warn(err);
                                 } else {
-                                    self.cb(savedUser);
+                                    self.cb(null, savedUser);
                                 }
                             });
                         });

@@ -87,17 +87,19 @@ var getNext = function (roomId, userId, cb) {
                     return cb(err);
                 }
                 var noAnswer = true;
-                for (var i = 0; i < rr.poll.length; i++) {
-                    noAnswer = true;
-                    for (var j = 0; j < rr.poll[ i ].answered.length; j++) {
-                        var uid = rr.poll[ i ].answered[ j ].toString();
-                        if (uid === userId) {
-                            noAnswer = false;
+                if (rr.poll.length) {
+                    for (var i = 0; i < rr.poll.length; i++) {
+                        noAnswer = true;
+                        for (var j = 0; j < rr.poll[i].answered.length; j++) {
+                            var uid = rr.poll[i].answered[j].toString();
+                            if (uid === userId) {
+                                noAnswer = false;
+                            }
                         }
-                    }
-                    if (noAnswer) {
-                        if (rr.poll[ i ] && rr.poll[ i ].active) {
-                            return cb(err, rr.poll[ i ]);
+                        if (noAnswer) {
+                            if (rr.poll[i] && rr.poll[i].active) {
+                                return cb(err, rr.poll[i]);
+                            }
                         }
                     }
                 }
