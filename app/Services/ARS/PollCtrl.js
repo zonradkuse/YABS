@@ -87,7 +87,7 @@ var getNext = function (roomId, userId, cb) {
                     return cb(err);
                 }
                 var noAnswer = true;
-                if (rr.poll.length) {
+                if (rr.poll) {
                     for (var i = 0; i < rr.poll.length; i++) {
                         noAnswer = true;
                         for (var j = 0; j < rr.poll[i].answered.length; j++) {
