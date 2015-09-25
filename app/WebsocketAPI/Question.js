@@ -1,7 +1,5 @@
-var roomDAO = require('../../models/Room.js');
 var userDAO = require('../../models/User.js');
 var questionDAO = require('../../models/Question.js');
-var logger = require('../Logger.js');
 
 module.exports = function (wsControl) {
 	wsControl.on("question:getVotes", function (req) {
@@ -23,7 +21,7 @@ module.exports = function (wsControl) {
 				if (err) {
 					return wsControl.build(req.ws, new Error("Cannot get question."), null, req.refId);
 				}
-				if (question.author != user._id) {
+				if (question.author !== user._id.toString()) {
 					return wsControl.build(req.ws, new Error("Your not author of the question."), null, req.refId);
 				}
 				questionDAO.setContent(question, req.params.content, function (err, question) {
@@ -45,7 +43,7 @@ module.exports = function (wsControl) {
 					return wsControl.build(req.ws, new Error("Cannot get question."), null, req.refId);
 				}
 				//TODO check admin
-				if (question.author != user._id) {
+				if (question.author !== user._id.toString()) {
 					return wsControl.build(req.ws, new Error("Your not author of the question."), null, req.refId);
 				}
 				questionDAO.setVisibility(question, req.params.isVisible, function (err, question) {
@@ -60,16 +58,3 @@ module.exports = function (wsControl) {
 		}
 	});
 };
-
-function removeAuthorTokens(input) {
-	for (var i = input.length - 1; i >= 0; i--) {
-		console.log(i);
-		if (input[ i ].author) {
-			if (input[ i ].author.rwth) {
-				input[ i ].author = {local: {name: input[ i ].author.local.name}};
-				console.log(input[ i ]);
-			}
-		}
-	}
-	return input;
-}
