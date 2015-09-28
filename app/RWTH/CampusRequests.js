@@ -1,5 +1,16 @@
+/**
+ * This module makes calls to {@link https://oauth.campus.rwth-aachen.de/doc/ Campus API} possible.
+ * @module CampusRequests
+ */
+
 var https = require('https');
 
+/**
+ * This function calls the Campus API and gives the response to next.
+ * @param {String} query - the extension to /oauth2waitress/oauth2.svc/
+ * @param {String} data - data for campus
+ * @param {Function} next - will be called with (err, response)
+ */
 function postReqCampus(query, data, next) {
 	var post = {
 		host: 'oauth.campus.rwth-aachen.de',

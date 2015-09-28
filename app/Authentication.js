@@ -1,4 +1,4 @@
-/** @module Authentication */
+/** @module Authentication/Local */
 
 var User = require('../models/User.js');
 var logger = require('./Logger.js');

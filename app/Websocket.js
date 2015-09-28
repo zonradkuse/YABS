@@ -1,4 +1,5 @@
-/** Websocket.js manages the websocket events emittet by einaros/ws. It also checks
+/**
+ * Websocket.js manages the websocket events emittet by einaros/ws. It also checks
  * if the called uri is okay and emits those events for easy handling.
  * @module Websocket
  */
@@ -17,9 +18,6 @@ var roomWSControl = require('./WebsocketAPI/Room.js');
 var accessManager = require('./AccessManagement.js');
 
 // ------------- begin Websocket Server init with helper functions
-/** WebSocketServer
- * @namespace
- */
 var wss = new WebSocketServer({
 	server: app
 });

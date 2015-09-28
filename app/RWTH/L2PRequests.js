@@ -1,13 +1,23 @@
 /**
- * L2PRequests.js - Collection of L2P API calls.
- *
- * Consult L2P API - Sometimes they rename things like status to Status.
- * https://www3.elearning.rwth-aachen.de/_vti_bin/l2pservices/api.svc/v1/documentation
+ * Collection of L2P API calls. For further RWTH API-Documentation consult
+ * {@link https://www3.elearning.rwth-aachen.de/_vti_bin/l2pservices/api.svc/v1/documentation L2P API Docs}
+ * @module L2PRequests
  */
 
 var https = require('https');
 var logger = require('../Logger.js');
 
+/**
+ * @class
+ * @alias module:L2PRequests.l2pRequest
+ * @example
+ * var req = new l2pRequest(user.rwth.token);
+ * req.getAllCourses(function (err, data) {
+ *      console.log(data);
+ * });
+ *
+ * @param {String} token - The user token stored in rwth.token
+ */
 var l2pRequest = function (token) {
     this.options = {
         host: 'www3.elearning.rwth-aachen.de',
@@ -28,27 +38,53 @@ l2pRequest.prototype.getAllDiscussions = getAllDiscussions;
 l2pRequest.prototype.getCourseInfo = getCourseInfo;
 l2pRequest.prototype.getUserRole = getUserRole;
 
-
+/**
+ * @memberof module:L2PRequests.l2pRequest.prototype
+ *
+ * @param {Function} cb - callback. Takes (err, parsedData)
+ */
 function getAllCourses(cb) {
 	this.options.path = '/_vti_bin/l2pservices/api.svc/v1/viewAllCourseInfo?accessToken=' + this.token;
 	request(this.options, cb);
 }
 
+/**
+ * @memberof module:L2PRequests.l2pRequest.prototype
+ *
+ * @param {String} cid - l2p courseId for API-Call
+ * @param {Function} cb - callback. Takes (err, parsedData)
+ */
 function getAllDiscussions(cid, cb) {
 	this.options.path = '/_vti_bin/l2pservices/api.svc/v1/viewAllDiscussionItems?accessToken=' + this.token + '&cid=' + cid;
 	request(this.options, cb);
 }
-
+/**
+ * @memberof module:L2PRequests.l2pRequest.prototype
+ *
+ * @param {Function} cb - callback. Takes (err, parsedData)
+ */
 function getUserContext (cb) {
     this.options.path = '/_vti_bin/l2pservices/ExternalAPI.svc/Context?token=' + this.token;
     request(this.options, cb);
 }
 
+/**
+ * @memberof module:L2PRequests.l2pRequest.prototype
+ *
+ * @param {String} cid - l2p courseId for API-Call
+ * @param {Function} cb - callback. Takes (err, parsedData)
+ */
 function getCourseInfo(cid, cb) {
     this.options.path = '/_vti_bin/l2pservices/api.svc/v1/viewCourseInfo?accessToken=' + this.token + '&cid=' + cid;
     request(this.options, cb);
 }
 
+/**
+ * @memberof module:L2PRequests.l2pRequest.prototype
+ *
+ * @param {String} cid - l2p courseId for API-Call
+ * @param {Function} cb - callback. Takes (err, parsedData)
+ */
 function getUserRole(cid, cb) {
     logger.debug('called getUserRole.');
     this.options.path = '/_vti_bin/l2pservices/api.svc/v1/viewUserRole?accessToken=' + this.token + '&cid=' + cid;
@@ -61,6 +97,11 @@ function getUserRole(cid, cb) {
     });
 }
 
+/**
+ * Parses String to JSON and returns it.
+ * @param data
+ * @returns {Object|Boolean} - Parsed Object or false when an error occured.
+ */
 function parseData(data) {
     var parsedData;
     try {
@@ -74,7 +115,7 @@ function parseData(data) {
 
 /**
  * This function does the real request and parses the data before passing it to the callback
- * @param options
+ * @param {Object} options - take a look at the constructor implementation
  * @param next
  */
 function request(options, next) {
@@ -98,6 +139,10 @@ function request(options, next) {
 	});
 }
 
+/**
+ * Checks if provided method is valid HTTP Method
+ * @param {String} method
+ */
 function checkMethod(method) {
     if (!(method === 'GET' || method === 'POST' || method === 'PUT' || method === 'DELETE')) {
         throw new Error('Invalid HTTP Method ' + method);
