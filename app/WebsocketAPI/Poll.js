@@ -1,4 +1,5 @@
-/** @module Poll*/
+/** @module WSAPI/Poll*/
+    
 var pollCtrl = require('../Services/ARS/PollCtrl.js');
 var logger = require('../Logger.js');
 var userRoles = require('../../config/UserRoles.json');

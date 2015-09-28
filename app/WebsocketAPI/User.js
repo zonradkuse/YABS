@@ -1,3 +1,5 @@
+/** @module WSAPI/User */
+
 var system = require('./System.js');
 var questionDAO = require('../../models/Question.js');
 var userDAO = require('../../models/User.js');

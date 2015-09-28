@@ -1,3 +1,5 @@
+/** @module WSAPI/Moderator */
+
 var answerDAO = require('../../models/Answer.js');
 var questionDAO = require('../../models/Question.js');
 var accessManager = require('../AccessManagement.js');

@@ -1,3 +1,5 @@
+/** @module WSAPI/Question */
+
 var userDAO = require('../../models/User.js');
 var questionDAO = require('../../models/Question.js');
 

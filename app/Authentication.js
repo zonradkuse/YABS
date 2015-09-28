@@ -10,9 +10,6 @@ var Facebook = require('./PassportFacebook.js');
 var Google = require('./PassportGoogle.js');
 var Github = require('./PassportGithub.js');
 
-/** Passport functionality.
- * @param {Object} passport
- */
 module.exports = function (passport) {
 	passport.serializeUser(function (user, done) {
 		done(null, user);

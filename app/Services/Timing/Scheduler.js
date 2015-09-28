@@ -1,9 +1,15 @@
+/** @module Misc/Scheduler */
+
 var util = require('util');
 var events = require('events');
 var TimeableObj = require('./Timeable.js');
 
 /**
- * Timing Service Event Emitter
+ * Timing Service Event Emitter - Inherits from default node EventEmitter
+ * @class
+ * @alias module:Misc/Scheduler.scheduler
+ * @param {Object} config - You can set autoFin (boolean - reschedule automatically) and registerLoopElements
+ *                          (number - maximum iterations when calling scheduled objects)
  */
 var scheduler = function (config) {
 	events.EventEmitter.call(this);
@@ -37,7 +43,18 @@ var scheduler = function (config) {
 // inheritance here. not below as is overwrties prototypes
 util.inherits(scheduler, events.EventEmitter);
 
-scheduler.prototype.schedule = function () {
+scheduler.prototype.schedule = schedule;
+scheduler.prototype.addInterval = addInterval;
+scheduler.prototype.addTimeout = addTimeout;
+scheduler.prototype.clearTimer = clearTimer;
+
+/**
+ * Internal function taking care of the timeable events. Compareable to anuglar digest cycle.
+ * Every time a timeable is run, an event will be emitted on the created scheduler object. The event to listen on
+ * is called like the timeable id that has been returned to you on interval/timeout creation.
+ * @memberof module:Misc/Scheduler.scheduler.prototype
+ */
+function schedule() {
 	var self = this;
 	var element = self.stack.pop();
 	var int;
@@ -63,9 +80,15 @@ scheduler.prototype.schedule = function () {
 		element.timer = int;
 		self.timeables[ element._id ] = element;
 	}
-};
+}
 
-scheduler.prototype.addInterval = function (executable, interval) {
+/**
+ * @memberof module:Misc/Scheduler.scheduler.prototype
+ * @param {function} executable - function to be called when interval occurs
+ * @param {number} interval - time in ms
+ * @returns {number} - the id of the timeable object
+ */
+function addInterval(executable, interval) {
 	var self = this;
 	var _timeable = {};
 	TimeableObj.bind(_timeable);
@@ -74,9 +97,15 @@ scheduler.prototype.addInterval = function (executable, interval) {
 	_timeable._id = this.timerCount++;
 	self.stack.push(_timeable);
 	return _timeable._id;
-};
+}
 
-scheduler.prototype.addTimeout = function (executable, timeout) {
+/**
+ * @memberof module:Misc/Scheduler.scheduler.prototype
+ * @param {function} executable - function to be called when timeout occurs
+ * @param {number} timeout - time in ms
+ * @returns {number} - the id of the timeable object
+ */
+function addTimeout(executable, timeout) {
 	var self = this;
 	var _timeable = {};
 	TimeableObj.bind(_timeable);
@@ -85,9 +114,14 @@ scheduler.prototype.addTimeout = function (executable, timeout) {
 	_timeable._id = this.timerCount++;
 	self.stack.push(_timeable);
 	return _timeable._id;
-};
+}
 
-scheduler.prototype.clearTimer = function (id) {
+/**
+ * @memberof module:Misc/Scheduler.scheduler.prototype
+ * @param {number} id - id of the timeable object. It has been returned on adding an interval or timeout
+ * @returns {boolean}
+ */
+function clearTimer(id) {
 	var self = this;
 	
 	if (self.timeables[ id ]) {
@@ -100,7 +134,6 @@ scheduler.prototype.clearTimer = function (id) {
 	} else {
 		return false;
 	}
-};
-
+}
 
 module.exports = scheduler;

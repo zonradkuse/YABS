@@ -1,6 +1,5 @@
-/** @module FileUpload */
+/** @module Routes/FileUpload */
 
-/* global __dirname */
 var config = require('../config.json');
 var logger = require('./Logger.js');
 var lwip = require('lwip');
@@ -17,9 +16,6 @@ if (config.clamav.enabled) {
 var multer = require('multer');
 var fs = require('fs');
 
-/** Init file upload.
- * @param {Object} app - global app object
- */
 module.exports = function (app) {
 	// use and configure multer for uploads
 	app.use(multer({

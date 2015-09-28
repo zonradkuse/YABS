@@ -1,8 +1,11 @@
-
 /**
- * A Timeable Object.
+ * @class
+ * @alias module:Misc/Scheduler.Timeable
+ * @param executable
+ * @param interval
+ * @param timer
+ * @constructor
  */
-
 var Timeable = function (executable, interval, timer) {
 	this._id = -1;
 	this.exec = executable || noop;
@@ -14,7 +17,15 @@ var Timeable = function (executable, interval, timer) {
 	this.immutableType = false;
 };
 
-Timeable.prototype.clear = function () {
+Timeable.prototype.clear = clear;
+Timeable.prototype.fin = fin;
+Timeable.prototype.setType = setType;
+
+/**
+ * @memberof module:Misc/Scheduler.Timeable.prototype
+ * @returns {boolean} - iff successful.
+ */
+function clear() {
 	var self = this;
 	if (self.isInterval) {
 		clearInterval(self.timer);
@@ -25,13 +36,22 @@ Timeable.prototype.clear = function () {
 		return false;
 	}
 	return true;
-};
+}
 
-Timeable.prototype.fin = function () {
+/**
+ * @memberof module:Misc/Scheduler.Timeable.prototype
+ */
+function fin() {
 	this.scheduled = true;
-};
+}
 
-Timeable.prototype.setType = function (isTimeout) {
+/**
+ * @memberof module:Misc/Scheduler.Timeable.prototype
+ * @param isTimeout
+ *
+ * Sets the type of this Timable Element. Might be set only once.
+ */
+function setType(isTimeout) {
 	if (!this.immutableType) {
 		if (isTimeout) {
 			this.isTimeout = true;
@@ -41,7 +61,7 @@ Timeable.prototype.setType = function (isTimeout) {
 		this.isInterval = !this.isTimeout;
 	}
 	this.immutableType = true;
-};
+}
 
 var noop = function () {};
 

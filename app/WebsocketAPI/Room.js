@@ -1,3 +1,5 @@
+/** @module WSAPI/Room */
+
 var roomDAO = require('../../models/Room.js');
 var userDAO = require('../../models/User.js');
 var questionDAO = require('../../models/Question.js');

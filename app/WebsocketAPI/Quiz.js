@@ -1,4 +1,5 @@
-/** @module Quiz*/
+/** @module WSAPI/Quiz*/
+
 var async = require('async');
 var quizCtrl = require('../Services/ARS/QuizCtrl.js');
 var logger = require('../Logger.js');

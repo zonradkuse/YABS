@@ -1,4 +1,5 @@
-/// <reference path="../../typings/node/node.d.ts"/>
+/** @module WSAPI/System */
+
 var logger = require('../Logger.js');
 var config = require('../../config.json');
 var querystring = require('querystring');
