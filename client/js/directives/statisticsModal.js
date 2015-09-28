@@ -1,3 +1,5 @@
+/** @model Angular-Directive-statisticsModal */
+
 clientControllers.directive('statisticsModal', ['$timeout', 'rooms', "errorService", function($timeout, rooms, errorService){
 	return {
 		restrict: 'E',

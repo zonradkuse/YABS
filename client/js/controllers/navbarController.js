@@ -1,4 +1,5 @@
-/** @module Angular-Controller navbarController*/
+/** @module Angular-Controller-navbarController */
+
 clientControllers.controller('navbarController', ['$scope', "$rootScope", 'authentication',
     function($scope, $rootScope, authentication) {
 		authentication.fetchUserName();

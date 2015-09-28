@@ -1,4 +1,5 @@
-/** @module Angular-Controller loginController*/
+/** @module Angular-Controller-loginController */
+
 clientControllers.controller("loginController", ["$scope", "$routeParams", "authentication", "$window", "$q", "$location",
     function($scope, $routeParams, authentication, $window, $q, $location) {
     	$scope.loginurl = "";

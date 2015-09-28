@@ -1,4 +1,4 @@
-/** @module Image Model */
+/** @module Image-Model */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');

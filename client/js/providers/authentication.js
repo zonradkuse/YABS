@@ -55,6 +55,7 @@ client.service("authentication", ["$window", "$q", "rpc", function($window, $q, 
 	this.getUserName = function() {
 		return username;
 	};
+
     /**
      * Get User Object
      * @returns {Object} - user

@@ -1,3 +1,5 @@
+/** @module Routes */
+
 var addresses = require('../config/passwords.json').data;
 var config = require('../config.json');
 var logger = require('./Logger.js');

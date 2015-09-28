@@ -1,3 +1,5 @@
+/** @model Angular-Directive-ARSStudentPoll */
+
 clientControllers.directive('studentPoll', ['rooms', function (rooms) {
 	return {
 		restrict: 'E',

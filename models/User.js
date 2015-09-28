@@ -1,6 +1,4 @@
-/** @module User Model */
- /* @param {String[]} pAccess This holds the access rights.
- */
+/** @module User-Model */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');

@@ -1,4 +1,4 @@
-/** @module PanicGraph Model */
+/** @module PanicGraph-Model */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
@@ -19,7 +19,8 @@ PanicGraphSchema.plugin(deepPopulate);
  * @property {Date} data.time=Date.now - time
  * @property {Number} data.panics - amount of events at time
  * @example
- * new PanicGraph({room: ObjectId{Room}});
+ * var graph = new PanicGraph({room: ObjectId{Room}});
+ * graph.save();
  */
 var PanicGraph = mongoose.model('PanicGraph', PanicGraphSchema);
 module.exports.PanicGraph = PanicGraph;

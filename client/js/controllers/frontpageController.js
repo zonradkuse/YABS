@@ -1,4 +1,5 @@
-/** @module Angular-Controller frontpageController*/
+/** @module Angular-Controller-frontpageController */
+
 clientControllers.controller("frontpageController", ["$scope", "$routeParams", "authentication", "$location",
     function($scope, $routeParams, authentication, $location) {
     	authentication.isUserLoggedIn().then(function(result) {

@@ -1,10 +1,10 @@
+/** @module Routes */
 /*! Module to handle all incoming htpp requests. WebSocketRequests are handled in app/WebsocketAPI */
 
 var passiveL2PAuth = require('./RWTH/Authentication/Passive.js');
 var passport = require('passport');
 var config = require('../config.json');
 var logger = require('./Logger.js');
-var userDAO = require('../models/User.js');
 var roles = require('../config/UserRoles.json');
 var upgrade = require('./AccountUpgrade.js');
 var fileup = require('./FileUpload.js');
@@ -42,7 +42,7 @@ module.exports.routes = function () {
 
             authReq.process();
         } else {
-            // set a cookie to indicate non existing source location
+            // set a cookie to indicate non existing source location - DEPRECATED
             res.cookie('sourceLocation', false);
             next();
         }
@@ -123,4 +123,16 @@ module.exports.routes = function () {
         }
     });
 
+    if (config.general.env.dev) {
+        app.get('/doc/*/*', function (req, res) {
+            fs.exists(path.resolve(__dirname + '/../' + req.originalUrl), function (exists) {
+                if (exists) {
+                    res.sendFile(path.resolve(__dirname + '/../' + req.originalUrl));
+                } else {
+                    res.status(404);
+                    res.end();
+                }
+            });
+        });
+    }
 };

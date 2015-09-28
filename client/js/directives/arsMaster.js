@@ -1,3 +1,5 @@
+/** @model Angular-Directive-ARSMaster */
+
 clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeout, rooms){
 	return {
 		restrict: 'E',

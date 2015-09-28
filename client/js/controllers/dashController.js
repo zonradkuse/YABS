@@ -1,4 +1,4 @@
-/** @module Angular-Controller dashController*/
+/** @module Angular-Controller-dashController */
 
 clientControllers.controller("dashController", ["$scope", "$rootScope", "users", "authentication",
     function($scope, $rootScope, users, auth){

@@ -1,3 +1,5 @@
+/** @model Angular-Directive-studentQuiz */
+
 clientControllers.directive('studentQuiz', ['rooms', function (rooms) {
 	return {
 		restrict: 'E',

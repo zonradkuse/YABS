@@ -1,4 +1,4 @@
-/** @module Question Model */
+/** @module Question-Model */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
@@ -31,7 +31,8 @@ QuestionSchema.plugin(deepPopulate);
  * @property {ObjectId[]} answers - answer refId
  * @property {Boolean} visible=true - visibility
  * @example
- * new Question({author: ObjectId{User}, content: "Who are you?"});
+ * var question = new Question({author: ObjectId{User}, content: "Who are you?"});
+ * question.save();
  */
 var Question = mongoose.model('Question', QuestionSchema);
 module.exports.Question = Question;

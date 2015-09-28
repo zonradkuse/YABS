@@ -1,4 +1,4 @@
-/** @module QuizAnswer Model */
+/** @module QuizAnswer-Model */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');

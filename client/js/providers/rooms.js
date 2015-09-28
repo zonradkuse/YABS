@@ -13,7 +13,7 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 
 	/** Check if user has access to room.
 	* @param {Room} room - room object to check
- 	* @returns {Boolean} - true if user has access, false otherwise
+ 	* @returns {Promise} - .then() gets boolean representig room existence
  	*/
 	this.hasUserAccess = function(room) {
 		var deferred = $q.defer();
@@ -42,7 +42,7 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 	};
 
 	/** Get room by id.
-	* @param {ObjectId} id - object id of target room object
+	* @param {String} id - object id of target room object
  	* @returns {Room} - room object to check
 	*/
 	this.getById = function(id) {
@@ -124,8 +124,8 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 
     /**
      * This adds a new poll to the rooms polls or alters it.
-     * @param roomId
-     * @param poll
+     * @param {String} roomId
+     * @param {Poll} poll
      */
     this.upsertPoll = function (roomId, poll) {
         var room = this.getById(roomId);
@@ -151,7 +151,8 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 
 	/** Get a question by id.
 	* @param {Room} room - room object of question
-	* @param {ObjectId} questionId - object id of target question
+	* @param {String} questionId - object id of target question
+    * @return {Question}
 	*/
 	this.getQuestionById = function(room, questionId) {
 		for(var i = 0; i < room.questions.length; i++) {
@@ -163,8 +164,8 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 	};
 
 	/** Upsert an answer.
-	* @param {ObjectId} roomId - object id of room of question
-	* @param {ObjectId} questionId - question of target answer
+	* @param {String} roomId - object id of room of question
+	* @param {String} questionId - question of target answer
 	* @param {Answer} answer - answer object to upsert
 	*/
 	this.upsertAnswer = function(roomId, questionId, answer) {
@@ -197,7 +198,7 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		rpc.attachFunction("answer:add", function(data) {
 			self.upsertAnswer(data.roomId, data.questionId, data.answer);
 		});
-        rpc.attachFunction("poll:do", function(data) {
+        rpc.attachFunction("poll:do", function() {
             $("#pollStudentModal").modal('show');
         });
         rpc.attachFunction("poll:statistic", function(data) {

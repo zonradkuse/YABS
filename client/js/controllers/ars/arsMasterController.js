@@ -1,3 +1,5 @@
+/** @model Angular-Controller-ARSMasterController */
+
 clientControllers.controller('arsMaster', ['$scope', function($scope) {
 	//define default data for initialization and define options
 	$scope.optionQuiz = "Umfragebeschreibung";

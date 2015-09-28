@@ -1,4 +1,5 @@
-/** @model Angular-Controller courseController*/
+/** @model Angular-Controller-courseController */
+
 clientControllers.controller("courseController", ["$scope", "$routeParams", "rooms", "$location",
                                                     "authentication", "rpc", "$timeout", "$http",
     function($scope, $routeParams, rooms, $location, authentication, rpc, $timeout, $http) {

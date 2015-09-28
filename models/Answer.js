@@ -1,4 +1,4 @@
-/** @module Answer Model */
+/** @module Answer-Model */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
@@ -41,13 +41,14 @@ AnswerSchema.plugin(deepPopulate);
  * @property {ObjectId} author - user refId
  * @property {Date} creationTime=Date.now - creation time
  * @property {Date} updateTime=Date.now - the time when the last change has been performed
- * @property {Boolean} isAnswer=false - ???
- * @property {Boolean} deleted=false - ???
+ * @property {Boolean} isAnswer=false - flaf for "This is THE Answer" - or better goodAnswer.
+ * @property {Boolean} deleted=false - deleted flag, deprecated
  * @property {String} content - the question text
  * @property {ObjectId[]} images - image refId, images in answer
  * @property {Boolean} visible=true - visibility
  * @example
- * new Answer({author: ObjectId{User}, content: "Sunny weather!"});
+ * var answer = new Answer({author: author._id, content: "Sunny weather!"});
+ * answer.save();
  */
 var Answer = mongoose.model('Answer', AnswerSchema);
 module.exports.Answer = Answer;
@@ -67,12 +68,12 @@ module.exports.setContent = function (answer, content, callback) {
 	});
 };
 
-/** WTF???.
+/** Sets the value isAnswer, meaning if the question is a good one.
  * @param {Answer} answer - answer object
- * @param {Boolean} bool - ???
+ * @param {Boolean} bool - Boolean that is set to isAnswer field.
  * @param {answerCallback} callback - callback function
  */
-module.exports.setContent = function (answer, bool, callback) {
+module.exports.setIsGoodAnswer= function (answer, bool, callback) {
 	if (callback === undefined) {
 		throw new Error("callback not defined");
 	}
