@@ -36,7 +36,7 @@
                 controller: 'frontpageController'
             }).
             when('/news', {
-                templateUrl: 'news.html',
+                templateUrl: 'news.html'
                 //controller: 'frontpageController' // no controller needed yet. TODO build some news controller with API
             }).
             otherwise({
