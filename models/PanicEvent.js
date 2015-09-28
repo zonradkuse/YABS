@@ -1,4 +1,4 @@
-/** @module PanicEvent-Model */
+/** @module Models/PanicEvent */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');

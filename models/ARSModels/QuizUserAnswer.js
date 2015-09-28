@@ -1,4 +1,4 @@
-/** @module ARSQuizUserAnswer-Model */
+/** @module Models/ARSQuizUserAnswer */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');

@@ -1,4 +1,7 @@
-/** @module SurveyAnswer-Model */
+/**
+ * THIS ONE IS DEPRECATED
+ * @module Models/SurveyAnswer
+ */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
@@ -16,6 +19,11 @@ var SurveyAnswerSchema = mongoose.Schema({
 });
 
 SurveyAnswerSchema.plugin(deepPopulate);
+
+/**
+ * @class
+ * @alias module:Models.SurveyAnswer
+ */
 var SurveyAnswer = mongoose.model('SurveyAnswer', SurveyAnswerSchema);
 module.exports.SurveyAnswer = SurveyAnswer;
 

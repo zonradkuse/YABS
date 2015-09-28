@@ -1,4 +1,4 @@
-/** @module PanicGraph-Model */
+/** @module Models/PanicGraph */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');

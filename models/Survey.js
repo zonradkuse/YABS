@@ -1,4 +1,7 @@
-/** @module Survey-Model */
+/**
+ * THIS ONE IS DEPRECATED
+ * @module Models/Survey
+ */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');

@@ -1,4 +1,4 @@
-/** @module Room-Model */
+/** @module Models/Room */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');

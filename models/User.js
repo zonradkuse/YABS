@@ -1,4 +1,4 @@
-/** @module User-Model */
+/** @module Models/User */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
@@ -66,6 +66,7 @@ var UserSchema = mongoose.Schema({
 UserSchema.plugin(deepPopulate);
 /**
  * @class
+ * @alias module:Models.User
  * @classdesc This is a moongose schema for an user.
  * @property {Boolean} active=false - needed for local registration in future to check if email has been verified.
  * @property {ObjectId} avatar - image refId

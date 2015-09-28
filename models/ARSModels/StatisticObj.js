@@ -1,4 +1,4 @@
-/** @module StatisticObj-Model*/
+/** @module Models/StatisticObj*/
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');

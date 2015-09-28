@@ -1,4 +1,7 @@
-/** @module QuizAnswer-Model */
+/**
+ * THIS ONE IS DEPRECATED
+ * @module Models/QuizAnswer
+ */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');

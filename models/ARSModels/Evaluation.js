@@ -1,4 +1,4 @@
-/** @module ARSEvaluation-Model*/
+/** @module Models/ARSEvaluation */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');
