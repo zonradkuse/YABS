@@ -1,4 +1,4 @@
-/** @module UserWorker */
+/** @module Misc/UserWorker */
 
 var session = require('express-session');
 var sessionStore = require('connect-redis')(session);

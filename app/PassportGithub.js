@@ -1,3 +1,5 @@
+/** @module Authentication/GitHub */
+
 var GithubStrategy = require('passport-github').Strategy;
 var authConf = require('../config/auth.json');
 var User = require('../models/User.js').User;

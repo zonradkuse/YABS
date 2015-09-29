@@ -1,5 +1,7 @@
-/** @module Routes */
-/*! Module to handle all incoming htpp requests. WebSocketRequests are handled in app/WebsocketAPI */
+/**
+ * Standard HTTP(s) Routes are handled here.
+ * @module Routes
+ */
 
 var passiveL2PAuth = require('./RWTH/Authentication/Passive.js');
 var passport = require('passport');

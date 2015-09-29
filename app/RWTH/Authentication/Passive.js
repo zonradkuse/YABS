@@ -4,7 +4,7 @@
  * First the Client OAuth. We actively ask for a token that the users needs to confirm. (look at Active.js)
  * Second the "standard" OAuth way. L2P gives us a token when a user wants to enter a room.
  *
- * @module Authentication/Passive
+ * @module RWTH/Authentication/Passive
  */
 
 var logger = require('../../Logger.js');
@@ -18,7 +18,7 @@ var roles = require('../../../config/UserRoles.json');
 
 /**
  * @class
- * @alias module:Authentication/Passive.AuthenticationRequest
+ * @alias module:RWTH/Authentication/Passive.AuthenticationRequest
  * @example
  * var req  = new AuthenticationRequest(token, l2proomidentifier, function (err, user){
  *      console.log(user);
@@ -56,7 +56,7 @@ AuthenticationRequest.prototype.processRoom = processRoom;
 
 /**
  * Entry Point for calling this authentication type. Coordinates processUserContext and processRoom
- * @memberof module:Authentication/Passive.AuthenticationRequest.prototype
+ * @memberof module:module:RWTH/Authentication/Passive.AuthenticationRequest.prototype
  */
 function process() {
     var self = this;
@@ -68,7 +68,7 @@ function process() {
 
 /**
  * Fetches UserContext from L2P call
- * @memberof module:Authentication/Passive.AuthenticationRequest.prototype
+ * @memberof module:module:RWTH/Authentication/Passive.AuthenticationRequest.prototype
  * @param {Room} room
  */
 function processUserContext(room) {
@@ -151,7 +151,7 @@ function processUserContext(room) {
 
 /**
  * Adds room to user if necessary.
- * @memberof module:Authentication/Passive.AuthenticationRequest.prototype
+ * @memberof module:module:RWTH/Authentication/Passive.AuthenticationRequest.prototype
  * @param {Function} next
  */
 function processRoom(next) {

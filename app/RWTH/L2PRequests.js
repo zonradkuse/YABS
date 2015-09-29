@@ -1,7 +1,7 @@
 /**
  * Collection of L2P API calls. For further RWTH API-Documentation consult
  * {@link https://www3.elearning.rwth-aachen.de/_vti_bin/l2pservices/api.svc/v1/documentation L2P API Docs}
- * @module L2PRequests
+ * @module RWTH/L2PRequests
  */
 
 var https = require('https');
@@ -9,7 +9,7 @@ var logger = require('../Logger.js');
 
 /**
  * @class
- * @alias module:L2PRequests.l2pRequest
+ * @alias module:RWTH/L2PRequests.l2pRequest
  * @example
  * var req = new l2pRequest(user.rwth.token);
  * req.getAllCourses(function (err, data) {
@@ -39,7 +39,7 @@ l2pRequest.prototype.getCourseInfo = getCourseInfo;
 l2pRequest.prototype.getUserRole = getUserRole;
 
 /**
- * @memberof module:L2PRequests.l2pRequest.prototype
+ * @memberof module:RWTH/L2PRequests.l2pRequest.prototype
  *
  * @param {Function} cb - callback. Takes (err, parsedData)
  */
@@ -49,7 +49,7 @@ function getAllCourses(cb) {
 }
 
 /**
- * @memberof module:L2PRequests.l2pRequest.prototype
+ * @memberof module:RWTH/L2PRequests.l2pRequest.prototype
  *
  * @param {String} cid - l2p courseId for API-Call
  * @param {Function} cb - callback. Takes (err, parsedData)
@@ -59,7 +59,7 @@ function getAllDiscussions(cid, cb) {
 	request(this.options, cb);
 }
 /**
- * @memberof module:L2PRequests.l2pRequest.prototype
+ * @memberof module:RWTH/L2PRequests.l2pRequest.prototype
  *
  * @param {Function} cb - callback. Takes (err, parsedData)
  */
@@ -69,7 +69,7 @@ function getUserContext (cb) {
 }
 
 /**
- * @memberof module:L2PRequests.l2pRequest.prototype
+ * @memberof module:RWTH/L2PRequests.l2pRequest.prototype
  *
  * @param {String} cid - l2p courseId for API-Call
  * @param {Function} cb - callback. Takes (err, parsedData)
@@ -80,7 +80,7 @@ function getCourseInfo(cid, cb) {
 }
 
 /**
- * @memberof module:L2PRequests.l2pRequest.prototype
+ * @memberof module:RWTH/L2PRequests.l2pRequest.prototype
  *
  * @param {String} cid - l2p courseId for API-Call
  * @param {Function} cb - callback. Takes (err, parsedData)

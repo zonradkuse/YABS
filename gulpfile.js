@@ -163,7 +163,12 @@ gulp.task('docOld', function() {
         .pipe(jsdoc('docOld/client'));
 });
 
-gulp.task('doc', shell.task(
+gulp.task('cleanDoc', function () {
+    del.sync('doc/server/');
+    del.sync('doc/client/');
+});
+
+gulp.task('doc', ['cleanDoc'], shell.task(
     ['./node_modules/.bin/jsdoc models/* app/* -r -c .jsdoc -d doc/server',
     './node_modules/.bin/jsdoc client/js/* -r -c .jsdoc -d doc/client']
 ));

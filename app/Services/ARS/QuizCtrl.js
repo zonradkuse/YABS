@@ -1,4 +1,4 @@
-/** @module QuizCtrl*/
+/** @module QuizController */
 var async = require('async');
 var Scheduler = require('../Timing/Scheduler.js');
 var Rooms = require('../../../models/Room.js');

@@ -1,4 +1,5 @@
-/* global process */
+/** @module Authentication/Facebook */
+
 var FacebookStrategy = require('passport-facebook').Strategy;
 var authConf = require('../config/auth.json');
 

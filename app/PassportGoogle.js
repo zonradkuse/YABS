@@ -1,4 +1,5 @@
-/* global process */
+/** @module Authentication/Google */
+
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var authConf = require('../config/auth.json');
 var User = require('../models/User.js').User;

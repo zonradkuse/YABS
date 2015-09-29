@@ -1,4 +1,4 @@
-/** @module AccessManagement */
+/** @module Misc/AccessManagement */
 
 var inter = require('./RPC/LocalInterface.json');
 var roles = require('../config/UserRoles.json');

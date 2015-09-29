@@ -1,4 +1,4 @@
-/** @module Routes */
+/** @module Routes/AccountUpgrade */
 
 var addresses = require('../config/passwords.json').data;
 var config = require('../config.json');

@@ -1,4 +1,5 @@
-/* global process */
+/** @module Authentication/Twitter */
+
 var TwitterStrategy = require('passport-twitter').Strategy;
 var authConf = require('../config/auth.json');
 var User = require('../models/User.js').User;

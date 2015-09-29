@@ -1,4 +1,25 @@
-/** @module Logger */
+/**
+ * We provide different loglevels. Instead of console.log() use logger.debug(). If the debug level is configured this
+ * output will be shown. <br>
+ * Output will be printed to console/file iff. loglevel >= config.general.loglevel*
+ * <br>  <br>
+ * Possible transports are: <br>
+ * <table>
+ * <tr><td>transport</td>         <td>loglevel<td></tr>
+ * <tr><td>debug</td>             <td>0<td></tr>
+ * <tr><td>info</td>              <td>1<td></tr>
+ * <tr><td>warn</td>              <td>2<td></tr>
+ * <tr><td>err</td>               <td>3<td></tr>
+ * <tr><td>yabs</td>              <td>42<td></tr>
+ *</table>
+ * @module Misc/Logger
+ * @example
+ * var logger = require("Logger.js") // remember specifying the correct path.
+ * logger.debug("42");
+ * logger.info("test");
+ * // ...
+ * logger.yabs("")
+ */
 
 var winston = require('winston');
 var config = require('../config.json');
@@ -42,7 +63,7 @@ var logger = new winston.Logger({
 
 module.exports = logger;
 module.exports.stream = {
-	write: function (message, encoding) {
+	write: function (message) {
 		logger.info(message);
 	}
 };

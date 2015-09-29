@@ -1,6 +1,6 @@
 /**
  * This module makes calls to {@link https://oauth.campus.rwth-aachen.de/doc/ Campus API} possible.
- * @module CampusRequests
+ * @module RWTH/CampusRequests
  */
 
 var https = require('https');

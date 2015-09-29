@@ -1,4 +1,4 @@
-/** @module PollCtrl*/
+/** @module PollController */
 var async = require('async');
 var Scheduler = require('../Timing/Scheduler.js');
 var Timer = new Scheduler({ autoFin : false, registerLoopElements : 10 });

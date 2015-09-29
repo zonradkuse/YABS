@@ -1,4 +1,5 @@
-/** @module ProfilePicture */
+/** @module Misc/ProfilePicture */
+
 /* global __dirname */
 
 var config = require('../config.json');
@@ -8,7 +9,7 @@ var crypto = require('crypto');
 var fs = require('fs');
 var path = require('path').join(__dirname, '/../images/avatar');
 
-/**Avatar generator. Requires imagemagick!!! (apt-get install)*/
+/** Requires imagemagick */
 var gen = require('avatar-generator')({});
 
 /**Generate an avatar for an user profile.
