@@ -1,4 +1,8 @@
-/** @module Angular-Controller-loginController */
+/**
+ * Takes care of Client OAuth with Campus. Displays the link to the login page
+ * @module Controllers/loginController
+ * @requires Services/authentication
+ */
 
 clientControllers.controller("loginController", ["$scope", "$routeParams", "authentication", "$window", "$q", "$location",
     function($scope, $routeParams, authentication, $window, $q, $location) {

@@ -1,4 +1,4 @@
-/** @module Angular-Service authentication*/
+/** @module Services/authentication*/
 
 client.service("authentication", ["$window", "$q", "rpc", function($window, $q, rpc){
 	var username = ""; // Do not use default as we check if username is set by checking empty string.

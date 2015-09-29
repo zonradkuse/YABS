@@ -1,4 +1,10 @@
-/** @module Angular-Controller-navbarController */
+/**
+ * Takes care of near to global things like checking for embeddedness into L2P and loading the username to the navbar.
+ * @module Controllers/navbarController
+ * @requires $scope
+ * @requires $rootScope
+ * @requires Services/authentication
+ */
 
 clientControllers.controller('navbarController', ['$scope', "$rootScope", 'authentication',
     function($scope, $rootScope, authentication) {

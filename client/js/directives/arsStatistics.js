@@ -1,1 +1,1 @@
-/** @model Angular-Directive-ARSStatistics */
+/** @module Directives/ARSStatistics */

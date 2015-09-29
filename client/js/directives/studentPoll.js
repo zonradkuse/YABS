@@ -1,4 +1,4 @@
-/** @model Angular-Directive-ARSStudentPoll */
+/** @module Directive/ARSStudentPoll */
 
 clientControllers.directive('studentPoll', ['rooms', function (rooms) {
 	return {
@@ -6,7 +6,7 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
 		templateUrl: 'poll_student.html',
 		controller: 'studentPollController',
 		link: {
-            pre: function ($scope, elemt, attrs) {
+            pre: function ($scope) {
                 $scope.pollSending = true;
 
                 $scope.getNext = function (cb) {

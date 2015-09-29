@@ -1,3 +1,9 @@
+/**
+ * @module Services/errorService
+ * @requires $rootScope
+ * @requires $timeout
+ */
+
 client.service("errorService", ["$rootScope", "$timeout", function ($rootScope, $timeout) {
     /**
      * This writes an error text to $rootScope.error for 5 seconds.

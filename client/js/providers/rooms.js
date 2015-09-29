@@ -1,4 +1,9 @@
-/** @module Angular-Service rooms*/
+/**
+ * @module Services/rooms
+ * @requires module:Services/rpc
+ * @requires $rootScope
+ * @requires $q
+ */
 
 client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q){
 	var rooms = [];

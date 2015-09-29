@@ -1,7 +1,13 @@
 /**
- * Created by j0h on 10.05.15.
+ * @module Services/users
+ * @requires module:Services/rpc
  */
-client.service("users", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q){
+client.service("users", ["rpc", function(rpc){
+    /**
+     * Takes care of saving a new username
+     * @param {String} username -
+     * @param {function} next - callback taking a boolean for status
+     */
     this.saveUserName = function (username, next) {
         rpc.call("user:changeName", { "username" : username }, function (data) {
             if (data.status === true) {

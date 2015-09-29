@@ -1,4 +1,9 @@
-/** @model Angular-Controller-courseController */
+/**
+ * @module Controllers/courseController
+ * @requires Services/authentication
+ * @requires Services/rooms
+ * @requires Services/rpc
+ */
 
 clientControllers.controller("courseController", ["$scope", "$routeParams", "rooms", "$location",
                                                     "authentication", "rpc", "$timeout", "$http",
@@ -67,6 +72,9 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
             }
         }, true);
 
+        /**
+         * Adds a Question and delegates to the rooms Service
+         */
         $scope.addQuestion = function() {
             if($scope.imageUploads.question === undefined) {
                 $scope.imageUploads.question = [];
@@ -76,6 +84,10 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
             $scope.imageUploads.question = undefined;
         };
 
+        /**
+         * Answer a Question and delegate work to rooms Service
+         * @param {Question} question - answered Question
+         */
         $scope.addAnswer = function(question) {
             if($scope.imageUploads[question._id] === undefined) {
                 $scope.imageUploads[question._id] = [];

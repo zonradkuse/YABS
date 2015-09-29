@@ -1,4 +1,13 @@
-/** @model Angular-Directive-statisticsModal */
+/**
+ * Provides a Modal Element. Use &#60;statistics-modal&#62;&#60;/statistics-modal&#62; <br>
+ * It fully takes care of displaying the panic statistics for the room in scope.room. Therefor it needs to be embedded into a
+ * scope that has a room set.
+ * The ModalId is "#statModal"
+ *
+ * @module Directives/statisticsModal
+ * @requires Services/rooms
+ * @requires Services/errorService
+ */
 
 clientControllers.directive('statisticsModal', ['$timeout', 'rooms', "errorService", function($timeout, rooms, errorService){
 	return {
@@ -53,6 +62,9 @@ clientControllers.directive('statisticsModal', ['$timeout', 'rooms', "errorServi
 	                });
 	            });
 
+                /**
+                 * Draws the chart into modal
+                 */
 				scope.drawChart = function() {
 		            rooms.getPanicGraph(scope.room).then(function(data) {
 		                var labels = [];

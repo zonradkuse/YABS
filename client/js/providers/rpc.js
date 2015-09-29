@@ -1,8 +1,11 @@
-client.service("rpc", ["errorService", function(errorService){
-    /*
-     * Code related to sending requests
-     */
+/**
+ * Takes care of displaying error messages
+ *
+ * @module Services/rpc
+ * @requires errorService
+ */
 
+client.service("rpc", ["errorService", function(errorService){
     var callbackTable = {};
 	var wsUrl = (window.location.protocol == "http:" ? "ws" : "wss") + "://" + appUrl;
 	var ws = new WebSocket(wsUrl);

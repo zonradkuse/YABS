@@ -1,4 +1,4 @@
-/** @model Angular-Directive-studentQuiz */
+/** @module Directives/ARSStudentQuiz */
 
 clientControllers.directive('studentQuiz', ['rooms', function (rooms) {
 	return {
@@ -6,7 +6,7 @@ clientControllers.directive('studentQuiz', ['rooms', function (rooms) {
 		templateUrl: 'quiz_student.html',
 		controller: 'studentQuizController',
 		link: {
-            pre: function ($scope, elemt, attrs) {
+            pre: function ($scope) {
                 $scope.quizSending = false;
                 $scope.quizQuestionSelection = 0;
 

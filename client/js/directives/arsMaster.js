@@ -1,4 +1,7 @@
-/** @model Angular-Directive-ARSMaster */
+/**
+ * @module Directives/ARSMaster
+ * @requires Services/rooms
+ */
 
 clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeout, rooms){
 	return {
