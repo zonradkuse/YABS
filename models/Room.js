@@ -19,7 +19,18 @@ var RoomSchema = mongoose.Schema({
 	hasPoll : Boolean,
 	hasQuiz : Boolean,
 	poll : [{ type: ObjectId, ref: 'ARSQuestion' }],
-	quiz : [{ type: ObjectId, ref: 'ARSQuiz' }]
+	quiz : [{ type: ObjectId, ref: 'ARSQuiz' }],
+    config : {
+        components : {
+            discussions : { type : Boolean, default: true },
+            panicbutton : { type : Boolean, default: true},
+            quiz : { type : Boolean, default: true }
+        },
+        userMayAnswerToQuestion : { type : Boolean, default: true },
+        questionerMayMarkAnswer : { type : Boolean, default: true },
+        mulitOptionPanicButton : { type : Boolean, default: true },
+        thresholdForImportantQuestion : { type : Number, default: 5 }
+    }
 });
 
 RoomSchema.plugin(deepPopulate);
@@ -37,8 +48,16 @@ RoomSchema.plugin(findOrCreate);
  * @property {String} url - external link to the l2p-system room site
  * @property {String} status - status
  * @property {String} semester - in which semester the room is
+ * @property {Boolean} [config.userMayAnswerToQuestion=true] - option allowing users answering questions
+ * @property {Boolean} [config.questionerMayMarkAnswer=true] - option allowing a questioner marking a answer as good one
+ * @property {Boolean} [config.mulitOptionPanicButton=true] - option allowing the panic button to be multi optional
+ * @property {Number} [config.thresholdForImportantQuestion=5] - number in users when a question is important.
+ * @property {Boolean} [config.components.discussions=true] - status of discussion board
+ * @property {Boolean} [config.components.panicbutton=true] - status of panicbutton
+ * @property {Boolean} [config.components.quiz=true] - status of quiz module activation
  * @example
- * new Room({l2pID: "", name: "", description: "", url: "", status: "", semester: ""});
+ * var room = new Room({l2pID: "", name: "", description: "", url: "", status: "", semester: ""});
+ * room.save();
  */
 var Room = mongoose.model('Room', RoomSchema);
 module.exports.Room = Room;

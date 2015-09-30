@@ -1,4 +1,3 @@
-/** @model app*/
 (function(){
     var client = angular.module('client', [
             'ngRoute',
