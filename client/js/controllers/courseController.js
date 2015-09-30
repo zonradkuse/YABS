@@ -11,7 +11,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         authentication.enforceLoggedIn();
         $scope.Math = window.Math;
         $scope.orderProp = '-votes';
-
+        $scope.authentication = authentication;
         $scope.modules = ["Fragen Übersicht", "Umfragen und Quizfragen Verwaltung"];
         $scope.activeModule = 0;
         $scope.arsNavSelection = 0;

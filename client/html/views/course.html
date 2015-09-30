@@ -13,7 +13,7 @@
             <div ng-switch on="activeModule">
                 <div ng-switch-when="0">
                     <div ng-include="'course_student.html'"></div>
-                    <div class="container row shadowed">
+                    <div class="container row shadowed" ng-if="room.config.components.discussions">
                         <h2>Optionen</h2>
                         Im folgenden findest Du einige Optionen, die Dir helfen, schneller auf Fragen zuzugreifen. Sortiere alle Fragen oder wende einen Volltextfilter auf jegliche Inhalte an. Die Filter werden automatisch auf neue Inhalte angewandt.
                         <br><br>
@@ -55,7 +55,7 @@
                                                     Optionen 
                                                     <span class="caret"></span>
                                                 </button>
-                                                <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="optionsDropdown1">
+                                                <ul ng-if="showAdmin" class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="optionsDropdown1">
                                                     <li role="presentation">
                                                         <a role="menuitem" tabindex="-1" href="#" ng-click="deleteQuestion(question)"> 
                                                             Frage löschen    
@@ -74,7 +74,7 @@
                                     <a href="{{image.path}}" target="_blank"><img src="{{image.path}}" class="col-sm-3 img-thumbnail" /></a>
                                 </div>
                             </div>
-                            <div ng-style="{'background-color' : !embedded ? embedded : '#eee'}" class="panel panel-default">
+                            <div ng-if="room.config.userMayAnswerToQuestion" ng-style="{'background-color' : !embedded ? embedded : '#eee'}" class="panel panel-default">
                                 <a class="collapsed" data-toggle="collapse" data-target="#{{question._id}}">
                                     <div class="panel-heading">
                                         <h4>Antworten</h4>
@@ -88,9 +88,9 @@
                                             <div class="row text-center shadowed userinfo">
                                                 <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{answer.author.avatar}}" /></div><!--
                                              --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{answer.author.name}}</span><span class="time">vor {{answer.elapsedSince <= 60 ? answer.elapsedSince + ' Minuten' : (Math.floor(answer.elapsedSince/60) < 24 ? Math.floor(answer.elapsedSince/60) + ' Stunden' : Math.floor(answer.elapsedSince/60/24) + ' Tagen')}} </span></div><!--
-                                             --><div ng-if="showAdmin || answer.isAnswer" class="col-xs-7 col-sm-12 votebutton vcenter">
+                                             --><div ng-if="showAdmin || answer.isAnswer || (room.config.questionerMayMarkAnswer && authentication.getUserName() == question.author.name)" class="col-xs-7 col-sm-12 votebutton vcenter">
                                                     <!-- refactor -->
-                                                    <div class="dropdown" ng-if="showAdmin" aria-expanded="false">
+                                                    <div class="dropdown" ng-if="showAdmin || room.config.questionerMayMarkAnswer" aria-expanded="false">
                                                         <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="optionsDropdown2" data-toggle="dropdown" aria-expanded="false"> 
                                                             Optionen 
                                                             <span class="caret"></span>
@@ -102,7 +102,7 @@
                                                                     <span class="label label-danger"> ! </span>
                                                                 </a>
                                                             </li>
-                                                            <li role="presentation" ng-class="(answer.isAnswer || answer.deleted) ? 'disabled' : ''" ng-if="showAdmin">
+                                                            <li role="presentation" ng-class="(answer.isAnswer || answer.deleted) ? 'disabled' : ''" ng-if="showAdmin || room.config.questionerMayMarkAnswer">
                                                                 <a role="menuitem" ng-click="answer.isAnswer || answer.deleted || markAsAnswer(question, answer)" tabindex="-1"> 
                                                                     {{answer.isAnswer ? 'Richtige Antwort' : 'Als Antwort markieren'}}   
                                                                 </a>

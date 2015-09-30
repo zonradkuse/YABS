@@ -78,7 +78,9 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 										r.questions = [];
 										self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': r });
 										logger.info("added new room: " + r.l2pID);
-                                        self.processRoleByRoom(room);
+                                        process.nextTick(function () {
+                                            self.processRoleByRoom(room);
+                                        });
 									});
 								});
 							}
