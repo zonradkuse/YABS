@@ -162,7 +162,7 @@ UserWorker.prototype.refreshAccessToken = function (next) {
 			return next(err);
 		}
 
-		if (expires && expires < 300) {
+		if (expires < 300) {
 			campusReq.postReqCampus('token', querystring.stringify({
 				"client_id": config.login.l2p.clientID,
 				"refresh_token": self.user.rwth.refresh_token,
@@ -196,6 +196,7 @@ UserWorker.prototype.refreshAccessToken = function (next) {
                                             return next(null);
                                         }
                                     });
+                                    self.user.rwth.token = answer.access_token;
 								});
 							} else {
 								logger.warn("user should have existed: " + self.user);
