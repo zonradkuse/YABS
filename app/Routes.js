@@ -54,7 +54,7 @@ module.exports.routes = function () {
     // route uploads
     fileup(app);
     // route account upgrades - not yet deprecated
-    if (config.hackfix.userRoleWorkaround) {
+    if (config.hackfix.userRoleWorkaround || config.general.env.dev) {
         upgrade(app);
     }
 

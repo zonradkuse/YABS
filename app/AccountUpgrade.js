@@ -32,6 +32,11 @@ module.exports = function (app) {
 				}
 				if (room) {
 					if (addresses.indexOf(req.body.password) > -1) {
+                        for (var i = 0; i < req.session.user.rights.length; i++) {
+                            if (req.session.user.rights[i].roomId === req.params.roomId) {
+                                req.session.user.rights.splice(i,1);
+                            }
+                        }
 						req.session.user.rights.push({roomId : req.params.roomId, accessLevel: roles.defaultAdmin});
 						res.redirect("/course/" + req.params.roomId);
 					} else {
