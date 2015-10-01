@@ -487,4 +487,16 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
         rpc.call("mod:setRoomConfigQuiz", { roomId : room._id, status : status}, function(data){});
     };
 
+    this.toggleUserMayAnswer = function (room, status) {
+        rpc.call("mod:userMayAnswerToQuestion", { roomId : room._id, status : status}, function(data){});
+    };
+
+    this.toggleQuestionerMayMarkAnswer = function (room, status) {
+        rpc.call("mod:questionerMayMarkAnswer", { roomId : room._id, status : status}, function(data){});
+    };
+
+    this.toggleMuliOptionPanic = function (room, status) {
+        rpc.call("mod:mulitOptionPanicButton", { roomId : room._id, status : status}, function(data){});
+    };
+
 }]);

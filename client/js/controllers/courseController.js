@@ -206,5 +206,18 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         $scope.toggleComponentQuiz = function () {
             rooms.toggleComponentQuiz($scope.room, $scope.room.config.components.quiz);
         };
+
+        $scope.toggleUserMayAnswer  = function () {
+            rooms.toggleUserMayAnswer($scope.room, $scope.room.config.userMayAnswerToQuestion);
+        };
+
+        $scope.toggleQuestionerMayMarkAnswer = function () {
+            rooms.toggleQuestionerMayMarkAnswer($scope.room, $scope.room.config.questionerMayMarkAnswer);
+        };
+
+        $scope.toggleMuliOptionPanic = function () {
+            rooms.toggleMuliOptionPanic($scope.room, $scope.room.config.mulitOptionPanicButton);
+        };
+
     }
 ]);

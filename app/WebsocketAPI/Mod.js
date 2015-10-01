@@ -33,6 +33,24 @@ module.exports = function (wsControl) {
         });
     });
 
+    wsControl.on("mod:userMayAnswerToQuestion", function (req) {
+        configurationChangePreparation(req, function (room) {
+            room.config.userMayAnswerToQuestion = req.params.status;
+        });
+    });
+
+    wsControl.on("mod:questionerMayMarkAnswer", function (req) {
+        configurationChangePreparation(req, function (room) {
+            room.config.questionerMayMarkAnswer = req.params.status;
+        });
+    });
+
+    wsControl.on("mod:mulitOptionPanicButton", function (req) {
+        configurationChangePreparation(req, function (room) {
+            room.config.mulitOptionPanicButton = req.params.status;
+        });
+    });
+
 	wsControl.on("mod:deleteAnswer", function (req) {
 		checkAccess(wsControl, req, function () {
 			answerDAO.getByID(req.params.answerId, {population: 'author author.avatar'}, function (err, ans) {

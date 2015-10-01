@@ -307,5 +307,26 @@
           "status" : ""
         },
         "accessLevel" : 2
+      },{
+        "uri" : "mod:mulitOptionPanicButton",
+        "parameters" : {
+          "roomId" : "",
+          "status" : ""
+        },
+        "accessLevel" : 2
+      },{
+        "uri" : "mod:questionerMayMarkAnswer",
+        "parameters" : {
+          "roomId" : "",
+          "status" : ""
+        },
+        "accessLevel" : 2
+      },{
+        "uri" : "mod:userMayAnswerToQuestion",
+        "parameters" : {
+          "roomId" : "",
+          "status" : ""
+        },
+        "accessLevel" : 2
       }]
 }
