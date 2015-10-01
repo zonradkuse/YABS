@@ -51,6 +51,12 @@ module.exports = function (wsControl) {
         });
     });
 
+    wsControl.on("mod:thresholdForImportantQuestion", function (req) {
+        configurationChangePreparation(req, function (room) {
+            room.config.thresholdForImportantQuestion = req.params.val;
+        });
+    });
+
 	wsControl.on("mod:deleteAnswer", function (req) {
 		checkAccess(wsControl, req, function () {
 			answerDAO.getByID(req.params.answerId, {population: 'author author.avatar'}, function (err, ans) {

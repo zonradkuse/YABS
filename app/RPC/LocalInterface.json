@@ -328,5 +328,12 @@
           "status" : ""
         },
         "accessLevel" : 2
+      },{
+        "uri" : "mod:thresholdForImportantQuestion",
+        "parameters" : {
+          "roomId" : "",
+          "val" : ""
+        },
+        "accessLevel" : 2
       }]
 }

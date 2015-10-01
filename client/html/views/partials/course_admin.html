@@ -56,7 +56,7 @@
                 <div class="form-group">
                     <label>
                         Eine Frage ist wichtig, wenn mehr als
-                        <input type="input" ng-model="room.config.thresholdForImportantQuestion" ng-change="setPanicThreshold()">
+                        <input type="input" ng-model-options="{ debounce: 500 }" ng-model="room.config.thresholdForImportantQuestion" ng-change="setPanicThreshold()">
                         Studenten diese Frage unterstützen.
                     </label>
                 </div>    

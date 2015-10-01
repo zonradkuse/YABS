@@ -219,5 +219,11 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
             rooms.toggleMuliOptionPanic($scope.room, $scope.room.config.mulitOptionPanicButton);
         };
 
+        $scope.setPanicThreshold = function () {
+            if (parseInt($scope.room.config.thresholdForImportantQuestion) !== NaN) {
+                rooms.setPanicThreshold($scope.room, parseInt($scope.room.config.thresholdForImportantQuestion));
+            }
+        };
+
     }
 ]);
