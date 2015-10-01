@@ -16,37 +16,21 @@ module.exports = function (wsControl) {
 	});
 
     wsControl.on("mod:setRoomConfigDiscussion", function (req) {
-        if (req.authed) {
-            roomDAO.Room.findOne({ _id : req.params.roomId }).
-                deepPopulate('questions questions.author questions.author.avatar questions.answers questions.answers.author questions.answers.author.avatar').
-                exec(function (err, room) {
-                if (err) {
-                    logger.warn("Could not set room config! Error: " + err);
-                    wsControl.build(req.ws, new Error("An Error occured."), null, req.refId);
-                } else {
-                    room.config.components.discussions = req.params.status;
-                    room.save(function (err) {
-                        if (err) {
-                            logger.warn(err);
-                            wsControl.build(req.ws, new Error("An Error occured."), null, req.refId);
-                        } else {
-                            room = apiHelpers.prepareRoom(req.session.user, room.toObject());
-                            req.wss.roomBroadcast(req.ws, "room:add", { room : room }, req.params.roomId);
-                        }
-                    });
-                }
-            });
-        } else {
-            wsControl.build(req.ws, new Error("Access Denied."), null, req.refId);
-        }
+        configurationChangePreparation(req, function (room) {
+            room.config.components.discussions = req.params.status;
+        });
     });
 
     wsControl.on("mod:setRoomConfigPanicbutton", function (req) {
-
+        configurationChangePreparation(req, function (room) {
+            room.config.components.panicbutton = req.params.status;
+        });
     });
 
     wsControl.on("mod:setRoomConfigQuiz", function (req) {
-
+        configurationChangePreparation(req, function (room) {
+            room.config.components.quiz = req.params.status;
+        });
     });
 
 	wsControl.on("mod:deleteAnswer", function (req) {
@@ -105,7 +89,7 @@ module.exports = function (wsControl) {
 	wsControl.on("mod:markAsAnswer", function (req) {
 		checkAccess(wsControl, req, function () {
 			answerDAO.getByID(req.params.answerId, {population: 'author author.avatar images'}, function (err, ans) {
-				ans.isAnswer = true;
+                ans.isAnswer = true;
 				ans.save(function (err) {
 					if (err) {
 						wsControl.build(req.ws, new Error("Could not save the new state."), null, req.refId);
@@ -191,5 +175,36 @@ var checkAccess = function (wsControl, req, cb) {
 		wsControl.build(req.ws, new Error("Access Denied."), null, req.refId);
 	}
 };
-
-
+/**
+ * This function performs default checks before setting some configuration. It is just existing in order to save code.
+ * <strong>The callback has to be synchronous!!</strong>
+ * @param req
+ * @param cb
+ */
+function configurationChangePreparation(req, cb) {
+    if (req.authed) {
+        roomDAO.Room.findOne({ _id : req.params.roomId }).
+            deepPopulate('questions.author.avatar questions.answers.author.avatar').
+            exec(function (err, room) {
+                if (err) {
+                    logger.warn("Could not set room config! Error: " + err);
+                    wsControl.build(req.ws, new Error("An Error occured."), null, req.refId);
+                } else {
+                    cb(room);
+                    process.nextTick(function(){
+                        room.save(function (err) {
+                            if (err) {
+                                logger.warn(err);
+                                wsControl.build(req.ws, new Error("An Error occured."), null, req.refId);
+                            } else {
+                                room = apiHelpers.prepareRoom(req.session.user, room.toObject());
+                                req.wss.roomBroadcast(req.ws, "room:add", { room : room }, req.params.roomId);
+                            }
+                        });
+                    });
+                }
+            });
+    } else {
+        wsControl.build(req.ws, new Error("Access Denied."), null, req.refId);
+    }
+}

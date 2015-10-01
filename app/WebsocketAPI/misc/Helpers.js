@@ -21,9 +21,9 @@ module.exports = {
  */
 function prepareRoom(user, room) {
     room = JSON.parse(JSON.stringify(room)); // make sure prototype is wayne
-    if (room.questions && room.questions.length != 0) {
+    if (room.questions && room.questions.length !== 0) {
         for (var i = 0; i < room.questions.length; i++) {
-            room.questions[i] = prepareQuestion(user, room.questions[i]);
+            room.questions[ i ] = prepareQuestion(user, room.questions[ i ]);
         }
     }
     return room;
@@ -37,9 +37,9 @@ function prepareRoom(user, room) {
  * @returns {Question}
  */
 function prepareQuestion(user, question) {
-    if (user && user._id && question.votes && question.votes.length != 0) {
-        for (var j = 0; j < question.votes.length; j++) {
-            if (user._id == question.votes[j]) {
+    if (user && user._id && question.votes && question.votes.length !== 0) {
+        for (var k = 0; k < question.votes.length; k++) {
+            if (user._id == question.votes[ k ]) {
                 question.hasVote = true;
             }
         }
@@ -48,9 +48,9 @@ function prepareQuestion(user, question) {
     }
     question.author = prepareUserTags(question.author);
     question.votes = question.votes.length;
-    if (question.answers && question.answers.length != 0) {
+    if (question.answers && question.answers.length !== 0) {
         for (var j = 0; j < question.answers.length; j++) {
-            question.answers[j] = prepareAnswer(question.answers[j]);
+            question.answers[ j ] = prepareAnswer(question.answers[ j ]);
         }
     }
     return question;

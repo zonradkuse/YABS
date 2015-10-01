@@ -293,5 +293,19 @@
             "status" : ""
         },
         "accessLevel" : 2
-    }]
+    },{
+        "uri" : "mod:setRoomConfigPanicbutton",
+        "parameters" : {
+          "roomId" : "",
+          "status" : ""
+        },
+        "accessLevel" : 2
+      },{
+        "uri" : "mod:setRoomConfigQuiz",
+        "parameters" : {
+          "roomId" : "",
+          "status" : ""
+        },
+        "accessLevel" : 2
+      }]
 }

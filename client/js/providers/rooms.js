@@ -477,6 +477,14 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 
     this.toggleComponentDiscussion = function (room, status) {
         rpc.call("mod:setRoomConfigDiscussion", { roomId : room._id, status : status}, function(data){});
-    }
+    };
+
+    this.toggleComponentPanicbutton = function (room, status) {
+        rpc.call("mod:setRoomConfigPanicbutton", { roomId : room._id, status : status}, function(data){});
+    };
+
+    this.toggleComponentQuiz = function (room, status) {
+        rpc.call("mod:setRoomConfigQuiz", { roomId : room._id, status : status}, function(data){});
+    };
 
 }]);
