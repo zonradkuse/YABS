@@ -38,13 +38,13 @@ AnswerSchema.plugin(deepPopulate);
 /**
  * @class
  * @classdesc This is a moongose schema for an answer of a question.
- * @property {ObjectId} author - user refId
+ * @property {ObjectId|User} author - user refId
  * @property {Date} creationTime=Date.now - creation time
  * @property {Date} updateTime=Date.now - the time when the last change has been performed
- * @property {Boolean} isAnswer=false - flaf for "This is THE Answer" - or better goodAnswer.
+ * @property {Boolean} isAnswer=false - flag for "This is THE Answer" - or better goodAnswer.
  * @property {Boolean} deleted=false - deleted flag, deprecated
  * @property {String} content - the question text
- * @property {ObjectId[]} images - image refId, images in answer
+ * @property {ObjectId[]|Image} images - image refId, images in answer
  * @property {Boolean} visible=true - visibility
  * @example
  * var answer = new Answer({author: author._id, content: "Sunny weather!"});

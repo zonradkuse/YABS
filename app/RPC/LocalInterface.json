@@ -132,7 +132,7 @@
             "questionId": "",
             "answerId": ""
             },
-        "accessLevel": 2
+        "accessLevel": 1
     },{
         "uri": "mod:unmarkAsAnswer",
         "parameters": {
@@ -140,7 +140,7 @@
             "questionId": "",
             "answerId": ""
             },
-        "accessLevel": 2
+        "accessLevel": 1
     },{
         "uri": "mod:question:markAsGood",
         "parameters": {
@@ -286,5 +286,12 @@
             "active" : ""
         },
         "accessLevel": 2
+    },{
+        "uri" : "mod:setRoomConfigDiscussion",
+        "parameters" : {
+            "roomId" : "",
+            "status" : ""
+        },
+        "accessLevel" : 2
     }]
 }

@@ -194,5 +194,9 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 });
             });
         };
+
+        $scope.toggleComponentDiscussion = function () {
+            rooms.toggleComponentDiscussion($scope.room, $scope.room.config.components.discussions);
+        }
     }
 ]);

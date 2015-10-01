@@ -22,13 +22,14 @@ QuestionSchema.plugin(deepPopulate);
 /**
  * @class
  * @classdesc This is a moongose schema for a question of a room.
- * @property {ObjectId} author - user refId
+ * @property {ObjectId} _id - the mongoose ObjectId
+ * @property {ObjectId|User} author - user refId
  * @property {Date} creationTime=Date.now - creation time
  * @property {Date} updateTime=Date.now - the time when the last change has been performed
  * @property {String} content - the question text
  * @property {ObjectId[]} votes - user refId, users who have voted
- * @property {ObjectId[]} images - image refId, images in question
- * @property {ObjectId[]} answers - answer refId
+ * @property {ObjectId[]|Image} images - image refId, images in question
+ * @property {ObjectId[]|Answer} answers - answer refId
  * @property {Boolean} visible=true - visibility
  * @example
  * var question = new Question({author: ObjectId{User}, content: "Who are you?"});

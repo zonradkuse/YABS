@@ -12,19 +12,19 @@
             <form class="form-horizontal">
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" value="" checked>
+                        <input type="checkbox" ng-model="room.config.components.discussions" ng-change="toggleComponentDiscussion()">
                         Diskussionsplattform
                     </label>
                 </div>
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" value="" checked>
+                        <input type="checkbox" ng-model="room.config.components.panicbutton" ng-change="toggleComponentPanicbutton">
                         Panicbutton
                     </label>
                 </div>
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" value="" checked>
+                        <input type="checkbox" ng-model="room.config.components.quiz" ng-change="toggleComponentQuiz()">
                         Quizmodul
                     </label>
                 </div>
@@ -35,19 +35,19 @@
             <form class="form-horizontal">
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" value="" checked>
+                        <input type="checkbox" ng-model="room.config.userMayAnswerToQuestion" ng-change="toggleUserMayAnswer()">
                         Studenten dürfen auf Fragen antworten
                     </label>
                 </div>
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" value="" checked>
+                        <input type="checkbox" ng-model="room.config.questionerMayMarkAnswer" ng-change="toggleQuestionerMayMarkAnswer()">
                         Der Fragenautor darf Antworten als richtig markieren
                     </label>
                 </div>
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" value="" checked>
+                        <input type="checkbox" ng-model="room.config.mulitOptionPanicButton" ng-change="toggleMuliOptionPanic">
                         Panicbutton mit "zu langsam"- <u>und</u> "zu schnell"-Option ausstatten
                     </label>
                 </div>
@@ -56,8 +56,8 @@
                 <div class="form-group">
                     <label>
                         Eine Frage ist wichtig, wenn mehr als
-                        <input type="input" value="5">
-                        Prozent der Studenten diese Frage haben.
+                        <input type="input" ng-model="room.config.thresholdForImportantQuestion" ng-change="setPanicThreshold">
+                        Studenten diese Frage unterstützen.
                     </label>
                 </div>    
             </form>

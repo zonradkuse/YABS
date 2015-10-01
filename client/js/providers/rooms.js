@@ -475,4 +475,8 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
     	rpc.call("mod:deleteAnswer", {roomId: room._id , questionId: question._id, answerId: answer._id}, function(data){});
     };
 
+    this.toggleComponentDiscussion = function (room, status) {
+        rpc.call("mod:setRoomConfigDiscussion", { roomId : room._id, status : status}, function(data){});
+    }
+
 }]);

@@ -2,9 +2,11 @@
 
 var answerDAO = require('../../models/Answer.js');
 var questionDAO = require('../../models/Question.js');
+var roomDAO = require('../../models/Room.js');
 var accessManager = require('../AccessManagement.js');
 var roomWSControl = require('./Room.js');
 var logger = require('../Logger.js');
+var apiHelpers = require('./misc/Helpers.js');
 
 module.exports = function (wsControl) {
 	wsControl.on('mod:markAsGoodQuestion', function (req) {
@@ -12,7 +14,41 @@ module.exports = function (wsControl) {
 			
 		});
 	});
-	
+
+    wsControl.on("mod:setRoomConfigDiscussion", function (req) {
+        if (req.authed) {
+            roomDAO.Room.findOne({ _id : req.params.roomId }).
+                deepPopulate('questions questions.author questions.author.avatar questions.answers questions.answers.author questions.answers.author.avatar').
+                exec(function (err, room) {
+                if (err) {
+                    logger.warn("Could not set room config! Error: " + err);
+                    wsControl.build(req.ws, new Error("An Error occured."), null, req.refId);
+                } else {
+                    room.config.components.discussions = req.params.status;
+                    room.save(function (err) {
+                        if (err) {
+                            logger.warn(err);
+                            wsControl.build(req.ws, new Error("An Error occured."), null, req.refId);
+                        } else {
+                            room = apiHelpers.prepareRoom(req.session.user, room.toObject());
+                            req.wss.roomBroadcast(req.ws, "room:add", { room : room }, req.params.roomId);
+                        }
+                    });
+                }
+            });
+        } else {
+            wsControl.build(req.ws, new Error("Access Denied."), null, req.refId);
+        }
+    });
+
+    wsControl.on("mod:setRoomConfigPanicbutton", function (req) {
+
+    });
+
+    wsControl.on("mod:setRoomConfigQuiz", function (req) {
+
+    });
+
 	wsControl.on("mod:deleteAnswer", function (req) {
 		checkAccess(wsControl, req, function () {
 			answerDAO.getByID(req.params.answerId, {population: 'author author.avatar'}, function (err, ans) {
@@ -155,3 +191,5 @@ var checkAccess = function (wsControl, req, cb) {
 		wsControl.build(req.ws, new Error("Access Denied."), null, req.refId);
 	}
 };
+
+
