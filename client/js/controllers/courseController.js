@@ -15,6 +15,11 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         $scope.modules = ["Fragen Übersicht", "Umfragen und Quizfragen Verwaltung"];
         $scope.activeModule = 0;
         $scope.arsNavSelection = 0;
+        $scope.quizMode = false;
+
+        $scope.inverseQuizMode = function() {
+            $scope.quizMode = !$scope.quizMode;
+        };
 
         $scope.$watch(function() { return rooms.getById($routeParams.courseid); }, function(room) {
             $scope.room = room;

@@ -1,6 +1,6 @@
 /** @module Directives/ARSStudentQuiz */
 
-clientControllers.directive('studentQuiz', ['rooms', function (rooms) {
+clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (rooms, errorService) {
 	return {
 		restrict: 'E',
 		templateUrl: 'quiz_student.html',
@@ -9,43 +9,10 @@ clientControllers.directive('studentQuiz', ['rooms', function (rooms) {
             pre: function ($scope) {
                 $scope.quizSending = false;
                 $scope.quizQuestionSelection = 0;
-
-                /*$scope.getAll = function(cb){
-                    rooms.getAllQuizzes($scope.room, function(data){
-                        console.log(JSON.stringify(data,null,2));
-                        if(data && data.quizzes && data.quizzes.length > 0) {
-                            $scope.quiz = data.quizzes[0];
-                            console.log(JSON.stringify(quiz,null,2));
-                        }
-                        if(cb){
-                            cb(true);
-                        }
-                    });
-                };*/
-
-                /*$scope.getNext = function (cb) {
-                    rooms.getNextPoll($scope.room, function(data) {
-                        if (data && data.arsObj && data.arsObj.poll) {
-                            for (var i = 0; i < data.arsObj.poll.answers.length; i++) {
-                                data.arsObj.poll.answers[i].checked = false;
-                            }
-                            $scope.$apply(function () {
-                                $scope.quiz = data.arsObj;
-                                $scope.sending = false;
-                            });
-                            if (cb) cb(true);
-                        } else {
-                            $scope.$apply(function () {
-                                //$scope.reset();
-                            });
-                            if (cb) cb(false);
-                        }
-                    });
-                };*/
+                $scope.quizSelection = "";
 
                 $scope.resetQuiz = function () {
                     $scope.quizSending = false;
-                    //$scope.questions = [];
                 };
 
                 $scope.sendQuiz = function () {
@@ -70,46 +37,35 @@ clientControllers.directive('studentQuiz', ['rooms', function (rooms) {
                         chkQuestions.push({question: question._id, answers: chkAnswers});
 
                     }
-                    //console.log(JSON.stringify(chkQuestions,null,2));
-                    rooms.answerQuiz($scope.room, $scope.quiz, chkQuestions, function (data) {
-                        //$scope.getNext(function (bool) {
-                            //if (!bool) {
-                                $('#quizStudentModal').modal('hide');
-                                $scope.$apply(function () {
-                                    $scope.resetQuiz();
-                                });
-                            //}
-                        //});
-                    });
-                    /*setTimeout(function(){
-                        setTimeout(function(){
-                            $('#quizStudentModal').modal('hide');
-                            $scope.$apply(function(){
-                                $scope.resetQuiz();
-                            });
-                        },100);
-                    },1500);*/
-                };
-            },
-            post : function ($scope, element, attrs) {
-                $('#quizStudentModal').modal({
-                    keyboard: false,
-                    backdrop: 'static',
-                    show: false
-                });
 
-                /*$("#quizStudentModal").off().on("shown.bs.modal", function() {
-                    $scope.$apply(function() {
-                        $scope.sending = true;
-                        $scope.getAll(function (bool) {
-                            if (!bool) {
-                                $("#pollStudentModal").modal('hide');
-                            } else {
-                                $scope.sending = false;
-                            }
+                    rooms.answerQuiz($scope.room, $scope.quiz, chkQuestions, function (data) {
+                        $scope.$apply(function () {
+                            $scope.resetQuiz();
                         });
                     });
-                });*/
+                };
+
+                $scope.changeQuiz = function (selection) {
+                    for (var key in $scope.quizzes) {
+                        if ($scope.quizzes[key].description === selection) {
+                            $scope.quiz = $scope.quizzes[key];
+                            break;
+                        }
+                    }
+                };
+
+            },
+            post : function ($scope) {
+                // do data loading
+                rooms.getAllQuizzes($scope.room, function(quizzes){
+                    $scope.quizzes = [];
+                    for (var key in quizzes.quizzes) { //crappy solution but server gives everything, even inactive objects
+                        if (quizzes.quizzes[key].active) {
+                            $scope.quizzes.push(quizzes.quizzes[key]);
+                        }
+                    }
+                    $scope.$digest();
+                });
             }
         }
 	};

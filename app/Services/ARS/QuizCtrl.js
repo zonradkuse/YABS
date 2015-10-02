@@ -18,7 +18,7 @@ var getAllQuizzes = function (roomId, options, callback) {
         options.deepPopulate = '';
     }
 
-    Rooms.Room.findOne({ _id : roomId}).deepPopulate('quiz.questions.quizQuestion' + options.deepPopulate).exec(function (err, room) {
+    Rooms.Room.findOne({ _id : roomId}).deepPopulate('quiz.questions.quizQuestion.answers').exec(function (err, room) {
         if (err) {
             logger.warn(err);
             return callback(err);

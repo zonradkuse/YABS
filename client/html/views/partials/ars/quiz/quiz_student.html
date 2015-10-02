@@ -1,10 +1,16 @@
-<div class="modal fade out" id="quizStudentModal" tabindex="-1" role="dialog" aria-labelledby="quizStudentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="quizStudentModalLabel">Quiz</h4>
+<div class="row row-chat-heading shadowed">
+    <div class="col-md-12">
+        <div class="pull-right" ng-if="room.config.components.discussions"> oder in den <button ng-click="inverseQuizMode()" class="btn btn-default">Fragemodus schalten</button></div>
+        <h2>Quiz</h2> 
+        <div ng-if="quizzes.length !== 0">
+            <!-- list all available quizzes to select -->
+            <div class="form-group">
+                <label for="sel1">Liste der Verfügbaren Quizeinheiten</label>
+                <select class="form-control" id="sel1" ng-model="quizSelection" ng-change="changeQuiz(quizSelection)">
+                    <option ng-repeat="quiz in quizzes">{{quiz.description}}</option>
+                </select>
             </div>
-            <div class="modal-body">
+            <div ng-if="quizSelection">
                 <ul class="pagination">
                     <li ng-repeat="question in quiz.questions" ng-click="$parent.quizQuestionSelection = $index" ng-class="($parent.quizQuestionSelection==$index)?'active':''">
                         <a href="#">{{$index+1}}</a>
@@ -25,16 +31,17 @@
                             <input ng-model="answer.checked" id="{{answer._id}}" type="text">
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
+                </form> 
                 <div ng-if="!quizSending">
                     <button type="button" ng-click="sendQuiz()" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden </button>
                 </div>
-                <div ng-if="quizSending">
+                <div ng-if="quizSending" class="pull-right">
                     <img src="loading.gif" style="height: 20px; width: 20px;" />
                 </div>
             </div>
+        </div>
+        <div ng-if="quizzes.length === 0">
+            <h4 style="color:#444;" class="text-center"> Es ist kein Quiz verfügbar :-( </h4>
         </div>
     </div>
 </div>

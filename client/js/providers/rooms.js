@@ -212,10 +212,6 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
         rpc.attachFunction("quiz:do", function(data) {
         	//var room = this.getById(data.roomId);
         	self.upsertQuizzes(data.roomId,[data.quiz]);
-            $("#quizStudentModal").modal('show');
-            $rootScope.$apply(function(){
-            	$rootScope.quiz = data.quiz;
-        	});
         });
     };
 

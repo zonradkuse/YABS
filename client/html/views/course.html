@@ -9,14 +9,14 @@
                 <div ng-switch-when="false"><div ng-include="'course_panic.html'"></div></div><!--either panic-->
                 <div ng-switch-when="true"><div ng-include="'course_admin.html'"></div></div><!--or admin view-->
             </div>
-            <div class="text-center" ng-if="!room.config.components.discussions && !room.config.components.panicbutton && !room.config.components.quiz">
+            <div class="text-center" ng-if="!room.config.components.discussions && !room.config.components.panicbutton && !room.config.components.quiz && !showAdmin">
                 <strong> Dieser Lernraum besitzt keine aktivierten Komponenten :-( </strong>
             </div>
 
             <div ng-switch on="activeModule">
                 <div ng-switch-when="0">
                     <div ng-include="'course_student.html'"></div>
-                    <div class="container row shadowed" ng-if="room.config.components.discussions">
+                    <div class="container row shadowed" ng-if="room.config.components.discussions && !quizMode">
                         <h2>Optionen</h2>
                         Im folgenden findest Du einige Optionen, die Dir helfen, schneller auf Fragen zuzugreifen. Sortiere alle Fragen oder wende einen Volltextfilter auf jegliche Inhalte an. Die Filter werden automatisch auf neue Inhalte angewandt.
                         <br><br>
@@ -38,7 +38,7 @@
                             </div>
                         </div>
                     </div>
-                    <div ng-repeat="question in room.questions | filter:query | orderBy:orderProp" ng-if="room.config.components.discussions">
+                    <div ng-repeat="question in room.questions | filter:query | orderBy:orderProp" ng-if="room.config.components.discussions && !quizMode">
                         <div ng-if="question.visible">
                             <h2>Frage</h2>
                             <div class="row question" ng-class="question.goodQuestion ? 'question-good' : ''">
