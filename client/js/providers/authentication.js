@@ -1,6 +1,6 @@
 /** @module Services/authentication*/
 
-client.service("authentication", ["$window", "$q", "rpc", function($window, $q, rpc){
+client.service("authentication", ["$window", "$q", "rpc", "$timeout", function($window, $q, rpc, $timeout){
 	var username = ""; // Do not use default as we check if username is set by checking empty string.
 	var user = {};
 

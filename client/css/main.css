@@ -23,12 +23,12 @@ div.row {
     margin-bottom: 30px;
 }
 
-h1 {
+h1, .background-course strong {
     color: #fff;
     text-align: center;
     padding-top: 70px;
     padding-bottom: 70px;
-    font-size: 36px;
+    /*font-size: 36px;*/
 }
 
 img.loading {
@@ -255,3 +255,10 @@ chartist .panel {
     border-radius: 0;
 }
 
+.footer {
+    position: fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index:-1;
+}

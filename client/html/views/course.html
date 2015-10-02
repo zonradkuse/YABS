@@ -9,6 +9,9 @@
                 <div ng-switch-when="false"><div ng-include="'course_panic.html'"></div></div><!--either panic-->
                 <div ng-switch-when="true"><div ng-include="'course_admin.html'"></div></div><!--or admin view-->
             </div>
+            <div class="text-center" ng-if="!room.config.components.discussions && !room.config.components.panicbutton && !room.config.components.quiz">
+                <strong> Dieser Lernraum besitzt keine aktivierten Komponenten :-( </strong>
+            </div>
 
             <div ng-switch on="activeModule">
                 <div ng-switch-when="0">
@@ -35,7 +38,7 @@
                             </div>
                         </div>
                     </div>
-                    <div ng-repeat="question in room.questions | filter:query | orderBy:orderProp">
+                    <div ng-repeat="question in room.questions | filter:query | orderBy:orderProp" ng-if="room.config.components.discussions">
                         <div ng-if="question.visible">
                             <h2>Frage</h2>
                             <div class="row question" ng-class="question.goodQuestion ? 'question-good' : ''">

@@ -220,7 +220,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         };
 
         $scope.setPanicThreshold = function () {
-            if (parseInt($scope.room.config.thresholdForImportantQuestion) !== NaN) {
+            if (!isNaN(parseInt($scope.room.config.thresholdForImportantQuestion))) {
                 rooms.setPanicThreshold($scope.room, parseInt($scope.room.config.thresholdForImportantQuestion));
             }
         };

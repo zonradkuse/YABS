@@ -3,7 +3,7 @@
         <button type="button" ng-if="!room.hasUserPanic" ng-disabled="!room.isRoomRegistered" ng-click="panic()" class="btn btn-danger btn-lg">Vorlesungstempo ist zu hoch!</button>
         <button type="button" ng-if="room.hasUserPanic" ng-disabled="!room.isRoomRegistered" ng-click="unpanic()" class="btn btn-success btn-lg">Ah, ich verstehe!</button>
         <span class="text-panicdescription">
-            Dieser Button informiert den Dozierenden sofort darüber, dass er zu schnell ist und Du dem Stoff nicht folgen kannst.<br>
+            Dieser Button informiert den Dozierenden sofort darüber, dass er zu schnell ist und Du dem Stoff nicht folgen kannst.<strong ng-if="!room.isRoomRegistered"> Dieser ist jedoch derzeit deaktiviert. </strong><br>
             <!--<a ng-href="{{docentLogin}}" target="_blank">Dozentenlogin</a>-->
         </span>
     </div>
