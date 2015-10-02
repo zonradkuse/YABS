@@ -156,6 +156,7 @@ UserWorker.prototype.addRoomToSessionRights = function (roomId, accessLevel, nex
  */
 UserWorker.prototype.refreshAccessToken = function (next) {
 	var self = this;
+	logger.info("refreshing with token: " + self.user.rwth.refresh_token);
 	if (!self.user.rwth.refresh_token) {
 		return next();
 	}
