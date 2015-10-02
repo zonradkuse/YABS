@@ -1,6 +1,6 @@
 <student-poll></student-poll>
 <student-quiz ng-if="room.config.components.quiz"></student-quiz>
-<div class="row row-chat-heading shadowed" ng-if="room.config.components.discussions">
+<div class="row row-chat-heading shadowed" ng-if="room.config.components.discussions && !quizMode">
     <div class="col-md-12">
         <h2>Fragen stellen</h2>
     </div>
@@ -25,3 +25,4 @@
         </p>
     </div>
 </div>
+<div ng-if="room.config.components.quiz && quizMode || !room.config.components.discussions"><div ng-include="'quiz_student.html'"></div></div>
