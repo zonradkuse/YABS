@@ -93,7 +93,7 @@ function processUserContext(room) {
                             newUser.rwth = {
                                 userId : parsedData.UserId,
                                 token : self.token,
-                                refresh_token : self.token
+                                refresh_token : undefined
                             };
 
                             if (err) {
