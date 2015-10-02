@@ -26,7 +26,7 @@ module.exports.routes = function () {
         logger.debug("Course: " + course + " with Token: " + token);
         if (req.session && req.session.user && req.session.user.rwth) {
             req.session.user.rwth.token = token;
-            req.session.user.rwth.refresh_token = token;
+            req.session.user.rwth.refresh_token = undefined;
         }
         if (course && token) {
             // set a cookie to indicate source location to client

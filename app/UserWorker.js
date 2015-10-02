@@ -53,7 +53,6 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 				}
                 var request = new l2p.l2pRequest(self.user.rwth.token);
                 request.getAllCourses(function (err, courses) {
-                    // TODO insert proper error handling here
 					if (err.message === 'Parse error') {
 						logger.warn("L2P courselist was not valid json: " + courses.toString());
 						return;
@@ -151,11 +150,15 @@ UserWorker.prototype.addRoomToSessionRights = function (roomId, accessLevel, nex
     });
 };
 
-/** Renews the Campus access_token if called and the user is still logged in/has a valid session.
+/** 
+ * Renews the Campus access_token if called and the user is still logged in/has a valid session.
  * @param {UserWorker~errorCallback} next - callback function
  */
 UserWorker.prototype.refreshAccessToken = function (next) {
 	var self = this;
+	if (!self.user.rwth.refresh_token) {
+		return next();
+	}
 	this.checkToken(function (err, expires) {
 		if (err) {
 			return next(err);
@@ -239,7 +242,8 @@ UserWorker.prototype.setSessionUser = function (sessionUser, next) {
 
 };
 
-/** Check token.
+/** 
+ * Check token.
  * @param {UserWorker~tokenCallback} next - callback function
  */
 UserWorker.prototype.checkToken = function (next) {
