@@ -215,7 +215,7 @@ function configurationChangePreparation(req, cb) {
                     wsControl.build(req.ws, new Error("An Error occured."), null, req.refId);
                 } else {
                     cb(room);
-                    process.nextTick(function(){
+                    process.nextTick(function () {
                         room.save(function (err) {
                             if (err) {
                                 logger.warn(err);
