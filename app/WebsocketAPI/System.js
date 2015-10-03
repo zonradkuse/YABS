@@ -1,5 +1,7 @@
 /** @module WSAPI/System */
 
+var infoCalls = require("./System/InfoCalls.js");
+var roomEntrance = require('./System/RoomEntrance.js');
 var logger = require('../Logger.js');
 var config = require('../../config.json');
 var querystring = require('querystring');
@@ -19,24 +21,18 @@ var fancyNames = moniker.generator([ moniker.adjective, moniker.noun ], { glue: 
 var workerMap = {};
 
 module.exports = function (wsControl) {
-	/*
-     * This method performs a big database query and sends it back to the client.
-     */
-	wsControl.on("system:benchmark", function (req) {
-		if (config.general.env.dev) {
-			roomDAO.getAll({ population: 'questions questions.author questions.votes questions.votes.access questions.answers questions.answers.author questions.author.access questions.answers.author.access' }, function (err, rooms) {
-				wsControl.build(req.ws, err, rooms, req.refId);
-			});
-		}
-	});
+	infoCalls(wsControl);
+	roomEntrance(wsControl, workerMap);
 
 	wsControl.on('system:close', function (req) {
 		//workerMap[req.sId].stop();
 		logger.info("a client disconnected.");
 		process.nextTick(function () {
+			logger.debug("disconnected client workerMap entry: " + workerMap[ req.sId ]);
 			delete workerMap[ req.sId ];
 		});
 	});
+
 	wsControl.on('system:open', function (req) {
 		logger.info("new client arrived.");
 		wsControl.build(req.ws, null, { message: 'welcome' }, null);
@@ -56,9 +52,6 @@ module.exports = function (wsControl) {
 				}
 			}, 600);
 		});
-	});
-	wsControl.on('system:ping', function (req) {
-		wsControl.build(req.ws, null, { message: "pong" }, req.refId);
 	});
     
 	wsControl.on('system:login', function (req) {
@@ -181,27 +174,6 @@ module.exports = function (wsControl) {
 		});
 	});
 
-	wsControl.on("system:whoami", function (req) {
-		if (req.refId) {
-			if (!req.session || !req.session.user || !req.session.user._id) {
-				wsControl.build(req.ws, null, {
-					status: false,
-					message: "You are currently not logged in."
-				}, req.refId);
-			} else {
-				imageDAO.get(req.session.user.avatar._id, function (err, avatar) {
-					wsControl.build(req.ws, null, {
-						status: true,
-						message: (req.session.user.name ? req.session.user.name : req.session.user._id),
-						userId: (req.session.user ? req.session.user._id : null),
-						userName: (req.session.user && req.session.user.name ? req.session.user.name : null),
-						userAvatar: (!err && avatar ? avatar.path : null),
-						user: req.session.passport ? req.session.passport.user : {}
-					}, req.refId);
-				});
-			}
-		}
-	});
 
 	wsControl.on("system:enterRoom", function (req) {
 		if (req.authed && req.params.roomId !== undefined) {
@@ -278,14 +250,13 @@ module.exports = function (wsControl) {
         });
 	});
 
-	wsControl.on("system:time", function (req) {
-		wsControl.build(req.ws, null, { time: Date.now() }, req.refId);
-	});
 };
 
 // @function
 var postReqCampus = campus.postReqCampus;
 
+module.exports.workerMap = workerMap;
 module.exports.getWorkerMap = function () {
 	return workerMap;
 };
+
