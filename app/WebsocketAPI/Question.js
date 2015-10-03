@@ -44,7 +44,6 @@ module.exports = function (wsControl) {
 				if (err) {
 					return wsControl.build(req.ws, new Error("Cannot get question."), null, req.refId);
 				}
-				//TODO check admin
 				if (question.author !== user._id.toString()) {
 					return wsControl.build(req.ws, new Error("Your not author of the question."), null, req.refId);
 				}

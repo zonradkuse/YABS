@@ -6,8 +6,8 @@
  */
 
 clientControllers.controller("courseController", ["$scope", "$routeParams", "rooms", "$location",
-                                                    "authentication", "rpc", "$timeout", "$http",
-    function($scope, $routeParams, rooms, $location, authentication, rpc, $timeout, $http) {
+                                                    "authentication", "rpc", "$timeout", "$http", "errorService",
+    function($scope, $routeParams, rooms, $location, authentication, rpc, $timeout, $http, errorService) {
         authentication.enforceLoggedIn();
         $scope.Math = window.Math;
         $scope.orderProp = '-votes';
@@ -21,12 +21,22 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
             $scope.quizMode = !$scope.quizMode;
         };
 
+        $scope.$watch(function () { return rooms.getUserCount($routeParams.courseid); }, function (userCount) {
+            $scope.activeUsers = userCount;
+        });
+
         $scope.$watch(function() { return rooms.getById($routeParams.courseid); }, function(room) {
             $scope.room = room;
             $scope.imageUploads = {};
             $scope.uploading = {};
             $scope.panics = 0;
-            $scope.activeUsers = 0;
+            $scope.activeUsers = (room && room.userCount) || $scope.activeUsers || 0; // lol, javascript
+            if (!$scope.activeUsers) {
+                $scope.activeUsers = 0;
+            }
+            if (room && room.userCount) {
+                $scope.activeUsers = room.userCount;
+            }
             $scope.importantQuestions = 0;
 
             // RPC shouldnt be handled here but is neccessary due to bad server api design (missing room ids in broadcasts)
@@ -57,9 +67,11 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 rooms.getAccessLevel($scope.room).then(function(level) {
                     if(level > 1) {
                         $scope.showAdmin = true;
-                        rooms.getAllQuizzes($scope.room);
-                        rooms.getAllPolls($scope.room);
+                        rpc.call("room:userCount", { roomId : $scope.room._id }, function(data) {
+                            $scope.activeUsers = data.count;    
+                        });
                     } else {
+                        rooms.getAllPolls($scope.room);
                         $scope.showAdmin = false;
                     }
                 });
@@ -227,6 +239,8 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         $scope.setPanicThreshold = function () {
             if (!isNaN(parseInt($scope.room.config.thresholdForImportantQuestion))) {
                 rooms.setPanicThreshold($scope.room, parseInt($scope.room.config.thresholdForImportantQuestion));
+            } else {
+                errorService.drawError("Dies ist keine gültige Zahl.");
             }
         };
 

@@ -213,15 +213,31 @@ module.exports = function (wsControl) {
                     worker.getRooms();
                 });
             }
+            var oldRoom = workerMap[ req.sId ].session.room;
             workerMap[ req.sId ].session.room = req.params.roomId;
 			sessionStore.set(req.sId, workerMap[ req.sId ].session, function (err) {
 				if (err) {
 					wsControl.build(req.ws, err, null, req.refId);
 				} else {
+					var broadcastOld = function () {
+						if (isNaN(oldRoom)) { 
+							req.wss.getActiveUsersByRoom(oldRoom, function (err, count) {
+								if (!err) {
+									req.roomBroadcastAdmins(oldRoom, "room:userCount", { 
+										roomId : oldRoom,
+										count : count
+									});
+								} else {
+									logger.warn(err);
+								}
+							});
+						}
+					};
 					if (req.params.roomId == 1) {
 						wsControl.build(req.ws, null, {
 							status: true
 						});
+						broadcastOld();
 					} else {
 						panicDAO.isRoomRegistered({ _id: req.params.roomId }, function (isRegistered) {
 							panicDAO.hasUserPanic(req.session.user, { _id: req.params.roomId }, function (err, panicEvent) {
@@ -232,6 +248,16 @@ module.exports = function (wsControl) {
 								}, req.refId);
 							});
 						});
+						// broadcast new Room
+						req.wss.getActiveUsersByRoom(req.params.roomId, function (err, count) {
+							if (!err) {
+								req.roomBroadcastAdmins(req.params.roomId, "room:userCount", { 
+									roomId : req.params.roomId,
+									count : count 
+								});
+							}
+						});
+						broadcastOld();	
 					}
 				}
 			});

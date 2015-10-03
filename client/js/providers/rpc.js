@@ -179,6 +179,13 @@ client.service("rpc", ["errorService", function(errorService){
                 quiz: ""
             },
             "func": ""
+        },{
+            "uri": "room:userCount",
+            "parameters": {
+                roomId: "",
+                count: 0
+            },
+            "func": ""
         }]
     };
 

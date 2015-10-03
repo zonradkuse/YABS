@@ -60,7 +60,7 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                 rooms.getAllQuizzes($scope.room, function(quizzes){
                     $scope.quizzes = [];
                     for (var key in quizzes.quizzes) { //crappy solution but server gives everything, even inactive objects
-                        if (quizzes.quizzes[key].active) {
+                        if (quizzes.quizzes[key].active) { // TODO fix that already answered items are not shown
                             $scope.quizzes.push(quizzes.quizzes[key]);
                         }
                     }

@@ -58,6 +58,15 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		}
 	};
 
+	this.getUserCount = function(roomId) {
+		var room = self.getById(roomId);
+		if (room) {
+			return room.userCount;
+		} else {
+			return 0;
+		}
+	};
+
 	/** Enter a room.
 	* @param {Room} room - target room object
 	*/
@@ -212,6 +221,14 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
         rpc.attachFunction("quiz:do", function(data) {
         	//var room = this.getById(data.roomId);
         	self.upsertQuizzes(data.roomId,[data.quiz]);
+        });
+        rpc.attachFunction("room:userCount", function(data) {
+        	var room = self.getById(data.roomId);
+	        if (room) {
+	        	$rootScope.$apply(function () {
+		        	room.userCount = data.count;
+	        	});
+	        }
         });
     };
 

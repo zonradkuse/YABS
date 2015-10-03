@@ -70,9 +70,9 @@ wss.getActiveUsersByRoom = function (roomId, next) {
  * @param {Object} data - data which should have sent to the user
  * @param {ObjectId} roomId - ObjectId of target room
  */
-wss.roomBroadcast = function (ws, uri, data, roomId, constraintFct) {
+wss.roomBroadcast = function (ws, uri, data, roomId, accessLevel) {
 	var oldQ;
-	if (data.question) {
+	if (data && data.question) {
 		oldQ = JSON.parse(JSON.stringify(data.question));
 	}
 	wss.clients.forEach(function each(client) {
@@ -90,10 +90,8 @@ wss.roomBroadcast = function (ws, uri, data, roomId, constraintFct) {
 							data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
 							logger.debug(data.question);
 						}
-
-						if (constraintFct && typeof constraintFct === 'function') {
-							constraintFct(sess.user._id, function () {
-								logger.debug("broadcast message to " + sess.user._id);
+						if (accessLevel) {
+							accessManager.checkAccessLevel(sId, { requiredAccess : accessLevel }, roomId, function (err, access) {
 								build(client, null, null, null, uri, data);
 							});
 						} else {
@@ -209,6 +207,7 @@ var WebsocketHandler = function () {
 										var authed = session && session.user && session.user._id;
 										// build a request object.
 										var req = {};
+										req.message = {};
 										req.uri = message.uri;
 										req.wss = wss;
 										req.session = session;
@@ -219,11 +218,25 @@ var WebsocketHandler = function () {
 										req.sId = ws.upgradeReq.signedCookies[ "connect.sid" ];
 										req.authed = authed;
 										req.userId = req.session && req.session.user ? req.session.user._id : null;
+										req.setError = function (err) {
+											req.message.error = err;
+										};
+										req.send = function (data) {
+											build(req.ws, req.message.error, data, req.refId);
+										};
+										req.sendCommand = function (uri, data) {
+											build(req.wss, req.message.error, null, null, uri, data);
+										};
+										req.roomBroadcastAdmins = function (roomId, uri, data) {
+											req.wss.roomBroadcast(req.ws, uri, data, roomId, 2);
+										};
+										req.roomBroadcastUser = function (roomId, uri, data) {
+											req.wss.roomBroadcast(req.ws, uri, data, roomId, 1);
+										};
+										req.roomBroadcast = function (data) {
+											req.wss.broadcast(data);
+										}; 
 
-										/*
-										* self.emit(message.uri, wss, ws, session, message.parameters,
-										*	interf.data[ i ], message.refId, ws.upgradeReq.signedCookies[ "connect.sid" ], authed);
-										*/
 										/*jshint -W083 */
 										accessManager.checkAccessBySId(req.uri, req.sId, req.params.roomId, function (err, access, accessLevel) {
 											req.accessLevel = accessLevel;
