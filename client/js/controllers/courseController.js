@@ -5,9 +5,9 @@
  * @requires Services/rpc
  */
 
-clientControllers.controller("courseController", ["$scope", "$routeParams", "rooms", "$location",
-                                                    "authentication", "rpc", "$timeout", "$http", "errorService",
-    function($scope, $routeParams, rooms, $location, authentication, rpc, $timeout, $http, errorService) {
+clientControllers.controller("courseController", ["$scope", "$routeParams", "rooms", "$location", "roomsConfiguration",
+                                                    "authentication", "rpc", "$timeout", "$http", "errorService", 
+    function($scope, $routeParams, rooms, $location, roomsConfiguration, authentication, rpc, $timeout, $http, errorService) {
         authentication.enforceLoggedIn();
         $scope.Math = window.Math;
         $scope.orderProp = '-votes';
@@ -213,32 +213,32 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         };
 
         $scope.toggleComponentDiscussion = function () {
-            rooms.toggleComponentDiscussion($scope.room, $scope.room.config.components.discussions);
+            roomsConfiguration.toggleComponentDiscussion($scope.room, $scope.room.config.components.discussions);
         };
 
         $scope.toggleComponentPanicbutton = function () {
-            rooms.toggleComponentPanicbutton($scope.room, $scope.room.config.components.panicbutton);
+            roomsConfiguration.toggleComponentPanicbutton($scope.room, $scope.room.config.components.panicbutton);
         };
 
         $scope.toggleComponentQuiz = function () {
-            rooms.toggleComponentQuiz($scope.room, $scope.room.config.components.quiz);
+            roomsConfiguration.toggleComponentQuiz($scope.room, $scope.room.config.components.quiz);
         };
 
         $scope.toggleUserMayAnswer  = function () {
-            rooms.toggleUserMayAnswer($scope.room, $scope.room.config.userMayAnswerToQuestion);
+            roomsConfiguration.toggleUserMayAnswer($scope.room, $scope.room.config.userMayAnswerToQuestion);
         };
 
         $scope.toggleQuestionerMayMarkAnswer = function () {
-            rooms.toggleQuestionerMayMarkAnswer($scope.room, $scope.room.config.questionerMayMarkAnswer);
+            roomsConfiguration.toggleQuestionerMayMarkAnswer($scope.room, $scope.room.config.questionerMayMarkAnswer);
         };
 
         $scope.toggleMuliOptionPanic = function () {
-            rooms.toggleMuliOptionPanic($scope.room, $scope.room.config.mulitOptionPanicButton);
+            roomsConfiguration.toggleMuliOptionPanic($scope.room, $scope.room.config.mulitOptionPanicButton);
         };
 
         $scope.setPanicThreshold = function () {
             if (!isNaN(parseInt($scope.room.config.thresholdForImportantQuestion))) {
-                rooms.setPanicThreshold($scope.room, parseInt($scope.room.config.thresholdForImportantQuestion));
+                roomsConfiguration.setPanicThreshold($scope.room, parseInt($scope.room.config.thresholdForImportantQuestion));
             } else {
                 errorService.drawError("Dies ist keine gültige Zahl.");
             }

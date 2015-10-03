@@ -478,7 +478,7 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
     this.deleteQuestion = function(room, question) {
     	rpc.call("mod:deleteQuestion", {roomId: room._id , questionId: question._id}, function(data){});
     };
-
+    
     /** Delete answer of specific question.
 	* @param {Room} room - room object
 	* @param {Question} question - question object
@@ -486,34 +486,6 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 	*/
     this.deleteAnswer = function(room, question, answer) {
     	rpc.call("mod:deleteAnswer", {roomId: room._id , questionId: question._id, answerId: answer._id}, function(data){});
-    };
-
-    this.toggleComponentDiscussion = function (room, status) {
-        rpc.call("mod:setRoomConfigDiscussion", { roomId : room._id, status : status}, function(data){});
-    };
-
-    this.toggleComponentPanicbutton = function (room, status) {
-        rpc.call("mod:setRoomConfigPanicbutton", { roomId : room._id, status : status}, function(data){});
-    };
-
-    this.toggleComponentQuiz = function (room, status) {
-        rpc.call("mod:setRoomConfigQuiz", { roomId : room._id, status : status}, function(data){});
-    };
-
-    this.toggleUserMayAnswer = function (room, status) {
-        rpc.call("mod:userMayAnswerToQuestion", { roomId : room._id, status : status}, function(data){});
-    };
-
-    this.toggleQuestionerMayMarkAnswer = function (room, status) {
-        rpc.call("mod:questionerMayMarkAnswer", { roomId : room._id, status : status}, function(data){});
-    };
-
-    this.toggleMuliOptionPanic = function (room, status) {
-        rpc.call("mod:mulitOptionPanicButton", { roomId : room._id, status : status}, function(data){});
-    };
-
-    this.setPanicThreshold = function (room, value) {
-        rpc.call("mod:thresholdForImportantQuestion", { roomId : room._id, val : value}, function(data){});
     };
 
 }]);
