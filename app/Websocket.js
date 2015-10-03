@@ -218,21 +218,27 @@ var WebsocketHandler = function () {
 										req.sId = ws.upgradeReq.signedCookies[ "connect.sid" ];
 										req.authed = authed;
 										req.userId = req.session && req.session.user ? req.session.user._id : null;
+										/*jshint -W083 */
 										req.setError = function (err) {
 											req.message.error = err;
 										};
+										/*jshint -W083 */
 										req.send = function (data) {
 											build(req.ws, req.message.error, data, req.refId);
 										};
+										/*jshint -W083 */
 										req.sendCommand = function (uri, data) {
 											build(req.wss, req.message.error, null, null, uri, data);
 										};
+										/*jshint -W083 */
 										req.roomBroadcastAdmins = function (roomId, uri, data) {
 											req.wss.roomBroadcast(req.ws, uri, data, roomId, 2);
 										};
+										/*jshint -W083 */
 										req.roomBroadcastUser = function (roomId, uri, data) {
 											req.wss.roomBroadcast(req.ws, uri, data, roomId, 1);
 										};
+										/*jshint -W083 */
 										req.roomBroadcast = function (data) {
 											req.wss.broadcast(data);
 										}; 
