@@ -1,7 +1,9 @@
 <div class="row row-chat-heading shadowed">
-    <div class="col-md-12">
+    <div class="col-md-12 questioninput-header">
         <div class="pull-right" ng-if="room.config.components.discussions"> oder in den <button ng-click="inverseQuizMode()" class="btn btn-default">Fragemodus schalten</button></div>
         <h2>Quiz</h2> 
+    </div>
+    <div class="col-md-12">
         <div ng-if="quizzes.length !== 0">
             <!-- list all available quizzes to select -->
             <div class="form-group">

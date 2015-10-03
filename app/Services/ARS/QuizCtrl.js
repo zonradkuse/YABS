@@ -12,8 +12,10 @@ var EvaluationModel = require('../../../models/ARSModels/Evaluation.js').Evaluat
 var QuizUserAnswerModel = require('../../../models/ARSModels/QuizUserAnswer.js').ARSQuizUserAnswer;
 var logger = require('../../Logger.js');
 
-//TODO deepPopulate not working...
 var getAllQuizzes = function (roomId, options, callback) {
+    if (!options) { //srsly. do this everywhere! it'll throw exceptions if u don't. This are options, make them kinda optional!
+        options = {};
+    }
     if (!options.deepPopulate) {
         options.deepPopulate = '';
     }

@@ -262,3 +262,11 @@ chartist .panel {
     right:0;
     z-index:-1;
 }
+
+.questioninput-header {
+    float: none;
+}
+
+h2.loading {
+    color: #555;
+}

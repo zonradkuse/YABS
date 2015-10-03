@@ -1,10 +1,11 @@
 <statistics-modal></statistics-modal>
 <ars-creator room="room"></ars-creator>
 <div class="container-course container-fluid">
-    <div class="background-course">
+    <h2 class="col-sm-12 col-xs-12 text-center loading" ng-if="!(showAdmin === true || showAdmin === false)"> Lade Inhalte </h2>
+    <div class="background-course" ng-if="(showAdmin === true || showAdmin === false)"> <!-- true false undefined null -->
         <span style="color: #DDD; font-size:9px; position:absolute; opacity:0.7; right: 0;">Bild &copy; Peter Winandy</span>
         <div class="container">
-            <h1 data-fittext="1.2" data-fittext-min="8" data-fittext-max="36">{{room.name}}</h1>
+            <h1 data-fittext="1.2" data-fittext-min="8" data-fittext-max="36">{{room.name}}</h1> <!-- size constants by try and error-->
             <div ng-switch on="showAdmin">
                 <div ng-switch-when="false"><div ng-include="'course_panic.html'"></div></div><!--either panic-->
                 <div ng-switch-when="true"><div ng-include="'course_admin.html'"></div></div><!--or admin view-->

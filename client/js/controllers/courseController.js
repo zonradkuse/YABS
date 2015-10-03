@@ -61,7 +61,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                         rooms.getAllPolls($scope.room);
                     } else {
                         $scope.showAdmin = false;
-                    }    
+                    }
                 });
             }
         });
