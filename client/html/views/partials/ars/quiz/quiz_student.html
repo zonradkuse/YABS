@@ -20,7 +20,7 @@
                 </ul>
                 <h2 style="margin-top:0;">Frage: {{quiz.questions[quizQuestionSelection].description}}</h2>
                 <form>
-    				<div ng-repeat="answer in quiz.questions[quizQuestionSelection].quizQuestion.answers">
+    				<div ng-repeat="answer in quiz.questions[quizQuestionSelection].quizQuestion.answers" ng-class="{ 'answer-correct': isCorrect(answer), 'answer-bad' : isBad(answer)}">
                         <div class="checkbox" ng-if="answer.checkbox">
                             <label for="{{answer._id}}"> <input ng-model="answer.checked" id="{{answer._id}}" type="checkbox"> {{answer.description}} </label>
                         </div>
@@ -34,7 +34,7 @@
                         </div>
                     </div>
                 </form> 
-                <div ng-if="!quizSending">
+                <div ng-if="!quizSending && !(quiz.questions[quizQuestionSelection].evaluationUserAnswers.userRight.length || quiz.questions[quizQuestionSelection].evaluationUserAnswers.userFalse.length)">
                     <button type="button" ng-click="sendQuiz()" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden </button>
                 </div>
                 <div ng-if="quizSending" class="pull-right">

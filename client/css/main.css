@@ -270,3 +270,11 @@ chartist .panel {
 h2.loading {
     color: #555;
 }
+
+.answer-correct {
+    color:green;
+}
+
+.answer-bad {
+    color: red;
+}

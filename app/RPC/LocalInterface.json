@@ -271,6 +271,13 @@
         "accessLevel": 1
     },
     {
+        "uri": "quiz:get",
+        "parameters": {
+            "arsId" : ""
+        },
+        "accessLevel": 1
+    },
+    {
         "uri": "quiz:delete",
         "parameters": {
             "roomId" : "",

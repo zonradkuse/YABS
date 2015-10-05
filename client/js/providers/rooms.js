@@ -349,6 +349,18 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
     	}
     };
 
+    this.getQuiz = function(quiz, cb) {
+        if(quiz){
+	        rpc.call("quiz:get", {
+	            arsId : quiz._id
+	        }, function(data){
+	        	if(cb){
+	        		cb(data);
+	        	}
+	        });
+    	}
+    };
+
     this.deleteQuiz = function(room, quiz, cb) {
         if(room){
 	        rpc.call("quiz:delete", {

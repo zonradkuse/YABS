@@ -19,7 +19,7 @@ var RoomSchema = mongoose.Schema({
 	hasPoll : Boolean,
 	hasQuiz : Boolean,
 	poll : [{ type: ObjectId, ref: 'ARSQuestion' }],
-	quiz : [{ type: ObjectId, ref: 'ARSQuiz' }],
+	quiz : [{ type: ObjectId, ref: 'ARSQuiz' }], 
     config : {
         components : {
             discussions : { type : Boolean, default: true },

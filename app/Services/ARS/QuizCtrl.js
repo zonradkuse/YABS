@@ -30,6 +30,9 @@ var getAllQuizzes = function (roomId, options, callback) {
 };
 
 var getQuiz = function (userId, quizId, options, callback) {
+    if (!options) {
+        options = {};
+    }
     if (!options.deepPopulate) {
         options.deepPopulate = '';
     }
@@ -41,12 +44,13 @@ var getQuiz = function (userId, quizId, options, callback) {
         evaluationUserAnswers.userFalse = [];
         evaluationUserAnswers.userRight = [];
 
-        var q;
-
-        for (var i= 0; i<quiz.questions.length; i++) {
+        var q = {};
+        quiz.toObject();
+        //logger.debug(quiz.toObject());
+        for (var i= 0; i<quiz.questions.length; i++) { // every question belonging to quiz
             q = quiz.questions[ i ].toObject();
 
-            for (var k= 0; k < q.quizQuestion.givenAnswers.length; k++) {
+            for (var k= 0; k < q.quizQuestion.givenAnswers.length; k++) { // every answer given by user
                 if (q.quizQuestion.givenAnswers[ k ].user.toString() === userId.toString()) {
                     for (var j= 0; j < q.quizQuestion.givenAnswers[ k ].answers.length; j++) {
 
@@ -70,7 +74,7 @@ var getQuiz = function (userId, quizId, options, callback) {
             q.evaluationUserAnswers = evaluationUserAnswers;
             quiz.questions[ i ] = q;
         }
-        return callback(null, q);
+        return callback(null, quiz);
     });
 };
 

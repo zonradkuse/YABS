@@ -8,19 +8,11 @@ var StatisticsModel = require('../../models/ARSModels/Statistic.js').ARSStatisti
 
 module.exports = function (wsCtrl) {
     /**
-     * @api
+     * Gets all quizzes.
+     * 
      * @method quiz:getAll
-     * This gets all quizzes.
+     * 
      */
-    wsCtrl.on("quiz:getAll", function (req) {
-        quizCtrl.getAllQuizzes(req.params.roomId, {}, function (err, quizzes) {
-            if (err) {
-                return wsCtrl.build(req.ws, new Error("could not get quizzes"), null, req.refId);
-            }
-            wsCtrl.build(req.ws, null, { quizzes : quizzes }, req.refId);
-        });
-    });
-
     wsCtrl.on("quiz:getAll", function (req) {
         quizCtrl.getAllQuizzes(req.params.roomId, {}, function (err, quizzes) {
             if (err) {
@@ -144,7 +136,7 @@ module.exports = function (wsCtrl) {
                     wsCtrl.build(req.ws, err, null, req.refId);
                 } else {
                     wsCtrl.build(req.ws, null, { active: req.params.active }, req.refId);
-                    if (req.params.active) {
+                    if (req.params.active) { // this is not a poll.
 
                         req.wss.roomBroadcast(
                             req.ws,

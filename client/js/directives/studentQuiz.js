@@ -15,7 +15,7 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                     $scope.quizSending = false;
                 };
 
-                $scope.sendQuiz = function () {
+                $scope.sendQuiz = function (question) {
                     $scope.quizSending = true;
                     var chkQuestions = [];
 
@@ -45,6 +45,24 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                     });
                 };
 
+                $scope.isBad = function (answer) {
+                    for (var idIndex = 0; idIndex < $scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers.userFalse.length; idIndex++) {
+                        if (answer._id === $scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers.userFalse[idIndex]) {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+
+                $scope.isCorrect = function (answer) {
+                    for (var idIndex = 0; idIndex < $scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers.userRight.length; idIndex++) {
+                        if (answer._id === $scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers.userRight[idIndex]) {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+
                 $scope.changeQuiz = function (selection) {
                     for (var key in $scope.quizzes) {
                         if ($scope.quizzes[key].description === selection) {
@@ -60,8 +78,13 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                 rooms.getAllQuizzes($scope.room, function(quizzes){
                     $scope.quizzes = [];
                     for (var key in quizzes.quizzes) { //crappy solution but server gives everything, even inactive objects
-                        if (quizzes.quizzes[key].active) { // TODO fix that already answered items are not shown
-                            $scope.quizzes.push(quizzes.quizzes[key]);
+
+                        if (quizzes.quizzes[key].active) { // TODO fix that already answered items are not shown/evaluated
+                            /*jshint -W083 */
+                            rooms.getQuiz(quizzes.quizzes[key], function (data) {
+                                var newArrayLength = $scope.quizzes.push(quizzes.quizzes[key]);
+                                $scope.quizzes[newArrayLength - 1] = data.quiz;
+                            });
                         }
                     }
                     $scope.$digest();
