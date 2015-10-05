@@ -70,17 +70,14 @@ module.exports = function (wsCtrl) {
                     var statistics = q.poll.statistics;
                     StatisticsModel.find({ _id : statistics }).deepPopulate('statisticAnswer statisticAnswer.answer').exec(function (err, s) {
                         wsCtrl.build(req.ws, null, {status: true}, req.refId);
-                        req.wss.roomBroadcast(req.ws, "poll:statistic", {
-                            roomId: req.params.roomId,
-                            statistics: s
-                        }, req.params.roomId, function (userId, cb) {
-                            // check if user already answered
-                            for (var i = 0; i < q.answered.length; ++i) {
-                                if (q.answered[ i ].toString() === userId || req.accessLevel >= userRoles.defaultMod) {
-                                    cb();
-                                }
+                        for (var i = 0; i < q.answered.length; ++i) {
+                            if (req.user._id === q.answered[ i ].toString()) {
+                                req.roomBroadcastAdmin(req.ws, "poll:statistic", {
+                                    roomId: req.params.roomId,
+                                    statistics: s
+                                });
                             }
-                        });
+                        }
                     });
                 }
             });

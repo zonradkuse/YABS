@@ -1,3 +1,8 @@
+# generated docs
+doc/server/
+doc/index.html
+doc/client
+
 #config files for security reasons
 config.json
 stats

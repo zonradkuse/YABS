@@ -7,6 +7,19 @@ var userRoles = require('../../config/UserRoles.json');
 var StatisticsModel = require('../../models/ARSModels/Statistic.js').ARSStatistic;
 
 module.exports = function (wsCtrl) {
+    /**
+     * @api
+     * @method quiz:getAll
+     * This gets all quizzes.
+     */
+    wsCtrl.on("quiz:getAll", function (req) {
+        quizCtrl.getAllQuizzes(req.params.roomId, {}, function (err, quizzes) {
+            if (err) {
+                return wsCtrl.build(req.ws, new Error("could not get quizzes"), null, req.refId);
+            }
+            wsCtrl.build(req.ws, null, { quizzes : quizzes }, req.refId);
+        });
+    });
 
     wsCtrl.on("quiz:getAll", function (req) {
         quizCtrl.getAllQuizzes(req.params.roomId, {}, function (err, quizzes) {

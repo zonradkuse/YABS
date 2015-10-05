@@ -4,8 +4,8 @@
  * @requires Services/authentication
  */
 
-clientControllers.controller("loginController", ["$scope", "$routeParams", "authentication", "$window", "$q", "$location",
-    function($scope, $routeParams, authentication, $window, $q, $location) {
+clientControllers.controller("loginController", ["$scope", "$sce", "$routeParams", "authentication", "$window", "$q", "$location",
+    function($scope, $sce, $routeParams, authentication, $window, $q, $location) {
     	$scope.loginurl = "";
     	authentication.isUserLoggedIn()
 			.then(function(result) {
@@ -21,8 +21,9 @@ clientControllers.controller("loginController", ["$scope", "$routeParams", "auth
 				}
 			})
 			.then(function(url) {
-				$scope.loginurl = url;
+				$scope.loginurl = $sce.trustAsResourceUrl(url);
 				$window.open(url);
+				//$('#loginModal').modal('show');
 			});
 	}	
 ]);

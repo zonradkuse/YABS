@@ -218,6 +218,7 @@ var WebsocketHandler = function () {
 										req.sId = ws.upgradeReq.signedCookies[ "connect.sid" ];
 										req.authed = authed;
 										req.userId = req.session && req.session.user ? req.session.user._id : null;
+										req.user = session.user;
 										/*jshint -W083 */
 										req.setError = function (err) {
 											req.message.error = err;
@@ -241,7 +242,7 @@ var WebsocketHandler = function () {
 										/*jshint -W083 */
 										req.roomBroadcast = function (data) {
 											req.wss.broadcast(data);
-										}; 
+										};
 
 										/*jshint -W083 */
 										accessManager.checkAccessBySId(req.uri, req.sId, req.params.roomId, function (err, access, accessLevel) {
@@ -251,8 +252,7 @@ var WebsocketHandler = function () {
 												self.emit(message.uri, req);
 												logger.info('emitted ' + message.uri + ' WSAPI event.');
 											} else {
-												logger.warn("Detected unprivileged access try by user " +
-													req.sId + '<<unauthenticated>>');
+												logger.warn("Detected unprivileged access try by user " + req.sId);
 											}
 										});
 										return;
