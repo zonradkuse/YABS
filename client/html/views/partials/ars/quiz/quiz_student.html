@@ -22,21 +22,23 @@
                 <form>
     				<div ng-repeat="answer in quiz.questions[quizQuestionSelection].quizQuestion.answers" ng-class="{ 'answer-correct': isCorrect(answer), 'answer-bad' : isBad(answer)}">
                         <div class="checkbox" ng-if="answer.checkbox">
-                            <label for="{{answer._id}}"> <input ng-model="answer.checked" id="{{answer._id}}" type="checkbox"> {{answer.description}} </label>
+                            <label for="{{answer._id}}"> <input ng-if="!quiz.answered" ng-model="answer.checked" id="{{answer._id}}" type="checkbox"> {{answer.description}} </label>
                         </div>
                         <div ng-if="answer.radiobox">
-                            <input name="quiz" ng-model="quiz.questions[quizQuestionSelection].quizQuestion.radioChecked" id="{{answer._id}}" type="radio" ng-value="answer._id">
+                            <input name="quiz" ng-if="!quiz.answered" ng-model="quiz.questions[quizQuestionSelection].quizQuestion.radioChecked" id="{{answer._id}}" type="radio" ng-value="answer._id">
                             <label for="{{answer._id}}"> {{answer.description}} </label>
                         </div>
                         <div ng-if="answer.text">
                             <label for="{{answer._id}}"> {{answer.description}} </label>
-                            <input ng-model="answer.checked" id="{{answer._id}}" type="text">
+                            <input ng-if="!quiz.answered" ng-model="answer.checked" id="{{answer._id}}" type="text">
                         </div>
                     </div>
                 </form> 
                 <div ng-if="!quizSending && !(quiz.questions[quizQuestionSelection].evaluationUserAnswers.userRight.length || quiz.questions[quizQuestionSelection].evaluationUserAnswers.userFalse.length)">
-                    <button ng-disabled="quizQuestionSelection != quiz.questions.length - 1" type="button" ng-click="sendQuiz()" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> {{ quizQuestionSelection != quiz.questions.length - 1 ? 'nächste Seite wählen' : 'Absenden' }} </button>
-                    <!--<button ng-if="quizQuestionSelection < quiz.questions.length - 1" type="button" ng-click="$parent.quizQuestionSelection = $index + 1" class="btn btn-primary pull-right"> Weiter </button>-->
+                    <button ng-if="!quiz.answered" ng-disabled="quizQuestionSelection != quiz.questions.length - 1" type="button" ng-click="sendQuiz()" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> {{ quizQuestionSelection != quiz.questions.length - 1 ? 'nächste Seite wählen' : 'Absenden' }} </button>
+                    <div ng-if="quiz.answered" class="pull-right">
+                        Du hast dieses Quiz bereits bearbeitet 
+                    </div>
                 </div>
                 <div ng-if="quizSending" class="pull-right">
                     <img src="loading.gif" style="height: 20px; width: 20px;" />

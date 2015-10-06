@@ -40,34 +40,57 @@ var getQuiz = function (userId, quizId, options, callback) {
         if (err || !quiz) {
             return callback(err);
         }
+
         var evaluationUserAnswers = {};
         evaluationUserAnswers.userFalse = [];
         evaluationUserAnswers.userRight = [];
 
         var q = {};
-        quiz.toObject();
-        //logger.debug(quiz.toObject());
-        for (var i= 0; i<quiz.questions.length; i++) { // every question belonging to quiz
-            q = quiz.questions[ i ].toObject();
+        quiz = quiz.toObject();
+        var answered = false;
 
-            for (var k= 0; k < q.quizQuestion.givenAnswers.length; k++) { // every answer given by user
-                if (q.quizQuestion.givenAnswers[ k ].user.toString() === userId.toString()) {
-                    for (var j= 0; j < q.quizQuestion.givenAnswers[ k ].answers.length; j++) {
-
-                        for (var l = 0; l < q.quizQuestion.evaluation.answers.length; l++) {
-                            if (q.quizQuestion.givenAnswers[ k ].answers[ j ].toString() === q.quizQuestion.evaluation.answers[ l ].toString()) {
-                                evaluationUserAnswers.userRight.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]);
-                                break;
-                            } else {
-                                evaluationUserAnswers.userFalse.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]);
-                            }
-                        }
-
-                    }
+        for (var h = 0; h < quiz.questions.length; h++) {
+            logger.debug(JSON.stringify(quiz.questions[h]));
+            for (var l = 0; l < quiz.questions[h].answered.length; ++l) {
+                logger.debug(quiz.questions[h].answered[l].toString());
+                logger.debug(userId.toString());
+                if (userId.toString() === quiz.questions[h].answered[ l ].toString()) {
+                    logger.debug("entered");
+                    answered = true;
                     break;
                 }
             }
+        }
+        quiz.answered = answered;
 
+        for (var i= 0; i<quiz.questions.length; i++) { // every question belonging to quiz
+            q = quiz.questions[ i ];
+            if (answered) {
+                // TODO iterating over givenAnswers causes that it is not possible to check the evaluation
+                for (var k= 0; k < q.quizQuestion.givenAnswers.length; k++) { // every answer given by user
+                    if (q.quizQuestion.givenAnswers[ k ].user.toString() === userId.toString()) { // if user in givenAnswers found
+                        for (var j= 0; j < q.quizQuestion.givenAnswers[ k ].answers.length; j++) { // for every answer made
+                            logger.debug(q.quizQuestion.givenAnswers[ k ].user.toString() + ", " + userId.toString());
+
+                            // answers array could be empty!!
+                            if (q.quizQuestion.evaluation.answers.length == 0) {
+                                logger.debug("array empty, pushed to false: " + q.quizQuestion.givenAnswers[ k ].answers[ j ]);
+                                evaluationUserAnswers.userFalse.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]);
+                            } else {
+                                if (isAnswerInEvaluation(q.quizQuestion.givenAnswers[ k ].answers[ j ].toString(),
+                                    q.quizQuestion.evaluation)) {
+                                    evaluationUserAnswers.userRight.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]);
+                                } else {
+                                    valuationUserAnswers.userFalse.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]);
+                                }
+                            }
+
+                        }
+                        break;
+                    }
+                }
+            }
+            // need to check if every evaluation is hit. there could be less givenAnswers than evaluation answers.
             delete q.quizQuestion.givenAnswers;
             delete q.answered;
             delete q.quizQuestion.evaluation;
@@ -77,6 +100,20 @@ var getQuiz = function (userId, quizId, options, callback) {
         return callback(null, quiz);
     });
 };
+
+/**
+ * @private
+ */
+var isAnswerInEvaluation = function(answerId, evaluation) {
+    logger.debug(evaluation);
+    logger.debug(answerId + ", " + evaluation.answers.length + ", ");
+    for (var index = 0; index < evaluation.answers.length; index++) {
+        if (answerId === evaluation.answers[index].toString()) {
+            return true;
+        }
+    }
+    return false;
+}
 
 var newQuiz = function (params, callback) {
     var dueDate;
