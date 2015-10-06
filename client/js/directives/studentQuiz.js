@@ -15,7 +15,7 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                     $scope.quizSending = false;
                 };
 
-                $scope.sendQuiz = function (question) {
+                $scope.sendQuiz = function () {
                     $scope.quizSending = true;
                     var chkQuestions = [];
 
@@ -46,18 +46,22 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                 };
 
                 $scope.isBad = function (answer) {
-                    for (var idIndex = 0; idIndex < $scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers.userFalse.length; idIndex++) {
-                        if (answer._id === $scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers.userFalse[idIndex]) {
-                            return true;
+                    if ($scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers) {    
+                        for (var idIndex = 0; idIndex < $scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers.userFalse.length; idIndex++) {
+                            if (answer._id === $scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers.userFalse[idIndex]) {
+                                return true;
+                            }
                         }
                     }
                     return false;
                 };
 
                 $scope.isCorrect = function (answer) {
-                    for (var idIndex = 0; idIndex < $scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers.userRight.length; idIndex++) {
-                        if (answer._id === $scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers.userRight[idIndex]) {
-                            return true;
+                    if ($scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers) {
+                        for (var idIndex = 0; idIndex < $scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers.userRight.length; idIndex++) {
+                            if (answer._id === $scope.quiz.questions[$scope.quizQuestionSelection].evaluationUserAnswers.userRight[idIndex]) {
+                                return true;
+                            }
                         }
                     }
                     return false;
@@ -70,6 +74,13 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                             break;
                         }
                     }
+                };
+                $scope.setQuestionSelection = function (number) {
+                    $scope.quizQuestionSelection = number;
+                };
+
+                $scope.nextQuestion = function () {
+                    $scope.quizQuestionSelection += 1;
                 };
 
             },

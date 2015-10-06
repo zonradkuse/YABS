@@ -14,8 +14,8 @@
             </div>
             <div ng-if="quizSelection">
                 <ul class="pagination">
-                    <li ng-repeat="question in quiz.questions" ng-click="$parent.quizQuestionSelection = $index" ng-class="($parent.quizQuestionSelection==$index)?'active':''">
-                        <a href="#">{{$index+1}}</a>
+                    <li ng-repeat="question in quiz.questions" ng-class="($parent.quizQuestionSelection==$index)?'active':''">
+                        <a ng-click="$parent.quizQuestionSelection = $index;">{{$index+1}}</a>
                     </li>
                 </ul>
                 <h2 style="margin-top:0;">Frage: {{quiz.questions[quizQuestionSelection].description}}</h2>
@@ -35,7 +35,8 @@
                     </div>
                 </form> 
                 <div ng-if="!quizSending && !(quiz.questions[quizQuestionSelection].evaluationUserAnswers.userRight.length || quiz.questions[quizQuestionSelection].evaluationUserAnswers.userFalse.length)">
-                    <button type="button" ng-click="sendQuiz()" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden </button>
+                    <button ng-disabled="quizQuestionSelection != quiz.questions.length - 1" type="button" ng-click="sendQuiz()" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> {{ quizQuestionSelection != quiz.questions.length - 1 ? 'nächste Seite wählen' : 'Absenden' }} </button>
+                    <!--<button ng-if="quizQuestionSelection < quiz.questions.length - 1" type="button" ng-click="$parent.quizQuestionSelection = $index + 1" class="btn btn-primary pull-right"> Weiter </button>-->
                 </div>
                 <div ng-if="quizSending" class="pull-right">
                     <img src="loading.gif" style="height: 20px; width: 20px;" />
