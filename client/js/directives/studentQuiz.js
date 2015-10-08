@@ -98,6 +98,9 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                 // do data loading
                 rooms.getAllQuizzes($scope.room, function(quizzes){
                     $scope.quizzes = [];
+                    if (quizzes.quizzes.length === 0) {
+                        $scope.initLoading = false;
+                    }
                     for (var key in quizzes.quizzes) { //crappy solution but server gives everything, even inactive objects
 
                         if (quizzes.quizzes[key].active) { // TODO fix that already answered items are not shown/evaluated

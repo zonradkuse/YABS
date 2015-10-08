@@ -271,7 +271,7 @@ h2.loading {
     color: #555;
 }
 
-.answer-correct {
+form > .answer-correct {
     color:green;
 }
 

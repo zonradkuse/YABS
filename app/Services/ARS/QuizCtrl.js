@@ -256,12 +256,9 @@ var answer = function (userId, roomId, questionId, answerIds, callback) {
                     if (answerIds[ j ].toString() === question.quizQuestion.answers[ k ].toString()) {
 
                         for (var i = 0; i < question.quizQuestion.statistics.statisticAnswer.length; ++i) {
-
-                            if (question.quizQuestion.statistics.statisticAnswer[ i ].answer && answerIds[ j ].toString() === question.quizQuestion.statistics.statisticAnswer[ i ].answer.toString()) {
-                                logger.debug(question.quizQuestion.statistics.statisticAnswer[ i ].answer.toString());
-
+                            if (question.quizQuestion.statistics.statisticAnswer[ i ].answer && answerIds[ j ].toString() === question.quizQuestion.statistics.statisticAnswer[ i ].answer._id.toString()) {
                                 answered = true;
-                                StatisticObjModel.findOne(question.quizQuestion.statistics.statisticAnswer[ i ]._id).exec(function (err, obj) {
+                                StatisticObjModel.findOne({ _id : question.quizQuestion.statistics.statisticAnswer[ i ]._id.toString() }).exec(function (err, obj) {
                                     if (!err && obj) {
                                         obj.count++;
                                         obj.save();
