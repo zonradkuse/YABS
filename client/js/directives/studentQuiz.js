@@ -10,6 +10,7 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                 $scope.quizSending = false;
                 $scope.quizQuestionSelection = 0;
                 $scope.quizSelection = "";
+                $scope.initLoading = true;
 
                 $scope.resetQuiz = function () {
                     $scope.quizSending = false;
@@ -104,6 +105,7 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                             rooms.getQuiz(quizzes.quizzes[key], function (data) {
                                 var newArrayLength = $scope.quizzes.push(quizzes.quizzes[key]);
                                 $scope.quizzes[newArrayLength - 1] = data.quiz;
+                                $scope.initLoading = false;
                             });
                         }
                     }

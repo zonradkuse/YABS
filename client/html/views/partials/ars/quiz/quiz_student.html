@@ -4,7 +4,7 @@
         <h2>Quiz</h2> 
     </div>
     <div class="col-md-12">
-        <div ng-if="quizzes.length !== 0">
+        <div ng-if="quizzes.length !== 0 && !initLoading">
             <!-- list all available quizzes to select -->
             <div class="form-group">
                 <label for="sel1">Liste der Verfügbaren Quizeinheiten</label>
@@ -45,8 +45,11 @@
                 </div>
             </div>
         </div>
-        <div ng-if="quizzes.length === 0">
+        <div ng-if="quizzes.length === 0 && !initLoading">
             <h4 style="color:#444;" class="text-center"> Es ist kein Quiz verfügbar :-( </h4>
+        </div>
+        <div ng-if="initLoading" class="text-center">
+            <img src="loading.gif" style="height: 40px; width: 40px;"/>
         </div>
     </div>
 </div>
