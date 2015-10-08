@@ -10,24 +10,28 @@ var Answer = require('../models/Answer.js');
 var UserSchema = mongoose.Schema({
 	active: {
 		type: Boolean,
-		default: false
+		default: false,
+        select: false
 	},
 	avatar: { type: ObjectId, ref: 'Image' },
 	name: String,
 	local: {
 		name: String,
 		password: String, // this and the next line are only needed for local register/login
-		mail: String
+		mail: String,
+        select : false
 	},
 	rwth: {
 		token: String,
 		refresh_token: String,
 		expires_in: Number,
-        userId : String
+        userId : String,
+        select : false
 	},
 	creationTime: {
 		type: Date,
-		default: Date.now
+		default: Date.now,
+        select: false
 	},
 	rights: [{
         roomId: String,
@@ -41,25 +45,29 @@ var UserSchema = mongoose.Schema({
 		id : String,
 		token: String,
 		name: String,
-		username: String
+		username: String,
+        select : false
 	},
 	google: {
 		id: String,
 		token: String,
 		email: String,
-		name: String
+		name: String,
+        select : false
 	},
 	github: {
 		id: String,
 		token: String,
 		email: String,
-		name: String
+		name: String,
+        select : false
 	},
 	twitter: {
 		id: String,
 		token: String,
 		displayName: String,
-		username: String
+		username: String,
+        select : false
 	}
 });
 
