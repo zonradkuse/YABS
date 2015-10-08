@@ -39,8 +39,17 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                     }
 
                     rooms.answerQuiz($scope.room, $scope.quiz, chkQuestions, function (data) {
-                        $scope.$apply(function () {
-                            $scope.resetQuiz();
+                        rooms.getQuiz($scope.quiz, function (data) {
+                            for (var i = 0; i < $scope.quizzes.length; i++) {
+                                if ($scope.quizzes[i]._id === data.quiz._id) {
+                                    /*jshint -W083 */
+                                    $scope.$apply(function () {
+                                        $scope.quizzes[i].answered = data.quiz.answered;
+                                        $scope.quizzes[i].questions = data.quiz.questions;
+                                        $scope.resetQuiz();
+                                    });
+                                }
+                            }
                         });
                     });
                 };

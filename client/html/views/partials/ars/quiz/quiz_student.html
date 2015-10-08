@@ -20,7 +20,7 @@
                 </ul>
                 <h2 style="margin-top:0;">Frage: {{quiz.questions[quizQuestionSelection].description}}</h2>
                 <form>
-    				<div ng-repeat="answer in quiz.questions[quizQuestionSelection].quizQuestion.answers" ng-class="{ 'answer-correct': isCorrect(answer), 'answer-bad' : isBad(answer)}">
+    				<div ng-repeat="answer in quiz.questions[quizQuestionSelection].quizQuestion.answers" ng-class="{ 'answer-correct': isCorrect(answer) || (!isBad(answer) && quiz.answered), 'answer-bad' : isBad(answer)}">
                         <div class="checkbox" ng-if="answer.checkbox">
                             <label for="{{answer._id}}"> <input ng-if="!quiz.answered" ng-model="answer.checked" id="{{answer._id}}" type="checkbox"> {{answer.description}} </label>
                         </div>
