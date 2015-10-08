@@ -6,7 +6,7 @@ var userWorker = require('../../UserWorker.js');
 
 module.exports = function (wsControl, workerMap) {
 
-	wsControl.on("system:enterRoom", function (req) {
+	wsControl.on("system:enterRoom", function (req, res) {
 		if (req.authed && req.params.roomId !== undefined) {
             if (!workerMap[ req.sId ]) {
                 var worker = new userWorker(req.sId, req.session.user, req.ws, req.session.user, wsControl, true);
@@ -26,7 +26,7 @@ module.exports = function (wsControl, workerMap) {
 						if (isNaN(oldRoom)) { 
 							req.wss.getActiveUsersByRoom(oldRoom, function (err, count) {
 								if (!err) {
-									req.roomBroadcastAdmins(oldRoom, "room:userCount", { 
+									res.roomBroadcastAdmins(oldRoom, "room:userCount", {
 										roomId : oldRoom,
 										count : count
 									});
@@ -54,7 +54,7 @@ module.exports = function (wsControl, workerMap) {
 						// broadcast new Room
 						req.wss.getActiveUsersByRoom(req.params.roomId, function (err, count) {
 							if (!err) {
-								req.roomBroadcastAdmins(req.params.roomId, "room:userCount", { 
+								res.roomBroadcastAdmins(req.params.roomId, "room:userCount", {
 									roomId : req.params.roomId,
 									count : count 
 								});

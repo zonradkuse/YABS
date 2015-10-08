@@ -100,6 +100,7 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                     $scope.quizzes = [];
                     if (quizzes.quizzes.length === 0) {
                         $scope.initLoading = false;
+                        $scope.$digest();
                     }
                     for (var key in quizzes.quizzes) { //crappy solution but server gives everything, even inactive objects
 
@@ -109,11 +110,14 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                                 var newArrayLength = $scope.quizzes.push(quizzes.quizzes[key]);
                                 $scope.quizzes[newArrayLength - 1] = data.quiz;
                                 $scope.initLoading = false;
+                                rooms.getStatistics(data.quiz);
+                                $scope.$digest();
                             });
                         }
                     }
-                    $scope.$digest();
                 });
+
+
             }
         }
 	};

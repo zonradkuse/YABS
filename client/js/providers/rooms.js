@@ -374,6 +374,16 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
     	}
     };
 
+    this.getStatistics = function(quiz, cb) {
+        rpc.call("quiz:getStatistics", {
+            quizId : quiz._id
+        }, function(data){
+            if(cb){
+                cb(data);
+            }
+        });
+    };
+
     this.toggleQuizActivation = function(room, quiz, active, cb) {
         if(room){
 	        rpc.call("quiz:toggleActivation", {

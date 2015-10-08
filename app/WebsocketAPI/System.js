@@ -24,13 +24,25 @@ module.exports = function (wsControl) {
 	infoCalls(wsControl);
 	roomEntrance(wsControl, workerMap);
 
-	wsControl.on('system:close', function (req) {
+	wsControl.on('system:close', function (req, res) {
 		//workerMap[req.sId].stop();
 		logger.info("a client disconnected.");
 		process.nextTick(function () {
 			logger.debug("disconnected client workerMap entry: " + workerMap[ req.sId ]);
 			delete workerMap[ req.sId ];
 		});
+        if(isNaN(req.session.room)) {
+            req.wss.getActiveUsersByRoom(req.session.room, function (err, count) {
+                if (!err) {
+                    res.roomBroadcastAdmins(req.session.room, "room:userCount", {
+                        roomId: req.session.room,
+                        count: count
+                    });
+                } else {
+                    logger.warn(err);
+                }
+            });
+        }
 	});
 
 	wsControl.on('system:open', function (req) {

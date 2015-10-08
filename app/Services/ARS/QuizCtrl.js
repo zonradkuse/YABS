@@ -12,6 +12,16 @@ var EvaluationModel = require('../../../models/ARSModels/Evaluation.js').Evaluat
 var QuizUserAnswerModel = require('../../../models/ARSModels/QuizUserAnswer.js').ARSQuizUserAnswer;
 var logger = require('../../Logger.js');
 
+var getStatistics = function (quizId, cb) {
+    QuizModel.findOne( { _id : quizId }).deepPopulate('questions.quizQuestion.answers questions.quizQuestion.statistics.statisticAnswer.answer').exec(function (err, quiz) {
+        if (err) {
+            logger.warn(err);
+            return cb(err);
+        }
+        return cb(null, quiz);
+    });
+};
+
 var getAllQuizzes = function (roomId, options, callback) {
     if (!options) { //srsly. do this everywhere! it'll throw exceptions if u don't. This are options, make them kinda optional!
         options = {};
@@ -390,3 +400,4 @@ module.exports.newQuiz = newQuiz;
 module.exports.answer = answer;
 module.exports.deleteQuiz = deleteQuiz;
 module.exports.toggleQuizActivation = toggleQuizActivation;
+module.exports.getStatistics = getStatistics;

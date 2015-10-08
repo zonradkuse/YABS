@@ -57,7 +57,7 @@ module.exports = function (wsCtrl) {
         }
     });
 
-    wsCtrl.on('poll:answer', function (req) {
+    wsCtrl.on('poll:answer', function (req, res) {
         req.params.userId = req.session.user._id;
         if (req.params.arsId && req.params.answerId && req.params.answerId !== []) {
             pollCtrl.answer(req.params, function (err, q) {
@@ -72,7 +72,7 @@ module.exports = function (wsCtrl) {
                         wsCtrl.build(req.ws, null, {status: true}, req.refId);
                         for (var i = 0; i < q.answered.length; ++i) {
                             if (req.user._id === q.answered[ i ].toString()) {
-                                req.roomBroadcastAdmin(req.ws, "poll:statistic", {
+                                res.roomBroadcastAdmin(req.ws, "poll:statistic", {
                                     roomId: req.params.roomId,
                                     statistics: s
                                 });

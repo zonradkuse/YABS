@@ -207,7 +207,8 @@ var WebsocketHandler = function () {
 										var authed = session && session.user && session.user._id;
 										// build a request object.
 										var req = {};
-										req.message = {};
+                                        var res = {};
+                                        res.error = undefined;
 										req.uri = message.uri;
 										req.wss = wss;
 										req.session = session;
@@ -220,27 +221,33 @@ var WebsocketHandler = function () {
 										req.userId = req.session && req.session.user ? req.session.user._id : null;
 										req.user = session.user;
 										/*jshint -W083 */
-										req.setError = function (err) {
-											req.message.error = err;
+										res.setError = function (err) {
+											res.error = err;
+                                            return res;
 										};
 										/*jshint -W083 */
-										req.send = function (data) {
-											build(req.ws, req.message.error, data, req.refId);
+										res.send = function (data) {
+                                            if (!data && !res.error) {
+                                                throw new Error("Empty Message creation.");
+                                            }
+                                            logger.debug(data + ", " + res.error);
+                                            logger.debug(res.error);
+											build(req.ws, res.error, data, req.refId);
 										};
 										/*jshint -W083 */
-										req.sendCommand = function (uri, data) {
-											build(req.wss, req.message.error, null, null, uri, data);
+										res.sendCommand = function (uri, data) {
+											build(req.wss, res.error, null, null, uri, data);
 										};
 										/*jshint -W083 */
-										req.roomBroadcastAdmins = function (roomId, uri, data) {
+										res.roomBroadcastAdmins = function (roomId, uri, data) {
 											req.wss.roomBroadcast(req.ws, uri, data, roomId, 2);
 										};
 										/*jshint -W083 */
-										req.roomBroadcastUser = function (roomId, uri, data) {
+										res.roomBroadcastUser = function (roomId, uri, data) {
 											req.wss.roomBroadcast(req.ws, uri, data, roomId, 1);
 										};
 										/*jshint -W083 */
-										req.roomBroadcast = function (data) {
+										res.roomBroadcast = function (data) {
 											req.wss.broadcast(data);
 										};
 
@@ -249,7 +256,7 @@ var WebsocketHandler = function () {
 											req.accessLevel = accessLevel;
 											logger.debug("accesslevel: " + accessLevel +  " access: " + access);
 											if (access) {
-												self.emit(message.uri, req);
+												self.emit(message.uri, req, res);
 												logger.info('emitted ' + message.uri + ' WSAPI event.');
 											} else {
 												logger.warn("Detected unprivileged access try by user " + req.sId);
@@ -271,10 +278,22 @@ var WebsocketHandler = function () {
 				});
 				ws.on('close', function (code, message) {
 					// emit the close event and give some more information.
-					var req = {};
-					req.ws = ws;
-					req.sId = ws.upgradeReq.signedCookies[ "connect.sid" ]; 
-					self.emit('system:close', req);
+                    sessionStore.get(ws.upgradeReq.signedCookies[ "connect.sid" ], function (err, sess) {
+                        if (err) {
+                            return self.build(ws, new Error("Error on session init.")); // TODO HANDLE ERROR CORRECTLY
+                        }
+                        session = sess;
+                        var req = {};
+                        var res = {};
+                        req.ws = ws;
+                        req.wss = wss;
+                        req.session = session;
+                        req.sId = ws.upgradeReq.signedCookies[ "connect.sid" ];
+                        res.roomBroadcastAdmins = function (roomId, uri, data) {
+                            req.wss.roomBroadcast(req.ws, uri, data, roomId, 2);
+                        };
+                        self.emit('system:close', req, res);
+                    });
 				});
 				ws.on('error', function (err) {
 					logger.warn("An error occured on socket connection. " + err); // TODO What to handle here?

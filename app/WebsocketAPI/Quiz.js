@@ -22,6 +22,16 @@ module.exports = function (wsCtrl) {
         });
     });
 
+    wsCtrl.on("quiz:getStatistics", function(req, res) {
+        quizCtrl.getStatistics(req.params.quizId, function (err, quiz) {
+            if (err) {
+                res.setError(err).send();
+            } else {
+                res.send(quiz);
+            }
+        });
+    });
+
     wsCtrl.on("quiz:get", function (req) {
         quizCtrl.getQuiz(req.userId, req.params.arsId, {}, function (err, quiz) {
             if (err) {
