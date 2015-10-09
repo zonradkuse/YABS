@@ -278,7 +278,7 @@ UserWorker.prototype.checkToken = function (next) {
 UserWorker.prototype.getRooms = function () {
 	var self = this;
 	if (self.user && self.user._id) {
-        User.getRoomAccess(self.user, { population: '' }, function (err, rooms) {
+        User.getRoomAccess(self.user, { population: 'quiz.questions' }, function (err, rooms) {
 			var _roomSend = function (room) {
                 self.processRoleByRoom(room);
 
