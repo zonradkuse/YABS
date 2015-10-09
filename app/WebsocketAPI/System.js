@@ -31,7 +31,7 @@ module.exports = function (wsControl) {
 			logger.debug("disconnected client workerMap entry: " + workerMap[ req.sId ]);
 			delete workerMap[ req.sId ];
 		});
-        if(isNaN(req.session.room)) {
+        if(req.session && isNaN(req.session.room)) {
             req.wss.getActiveUsersByRoom(req.session.room, function (err, count) {
                 if (!err) {
                     res.roomBroadcastAdmins(req.session.room, "room:userCount", {
