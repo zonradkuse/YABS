@@ -16,6 +16,8 @@ var util = require('util');
 var events = require('events');
 var roomWSControl = require('./WebsocketAPI/Room.js');
 var accessManager = require('./AccessManagement.js');
+var websocketRequest = require('./Websocket/request.js');
+var websocketResponse = require('./Websocket/response.js');
 
 // ------------- begin Websocket Server init with helper functions
 var wss = new WebSocketServer({
@@ -204,52 +206,8 @@ var WebsocketHandler = function () {
                                          * whoa. that have been a lot of checks. now emit the event. Optionals need
                                          *  to be checked by the event handler. They will maybe build into the interface
                                         **/
-										var authed = session && session.user && session.user._id;
-										// build a request object.
-										var req = {};
-                                        var res = {};
-                                        res.error = undefined;
-										req.uri = message.uri;
-										req.wss = wss;
-										req.session = session;
-										req.ws = ws;
-										req.params = message.parameters;
-										req.interfaceEntry = interf.data[ i ];
-										req.refId = message.refId;
-										req.sId = ws.upgradeReq.signedCookies[ "connect.sid" ];
-										req.authed = authed;
-										req.userId = req.session && req.session.user ? req.session.user._id : null;
-										req.user = session.user;
-										/*jshint -W083 */
-										res.setError = function (err) {
-											res.error = err;
-                                            return res;
-										};
-										/*jshint -W083 */
-										res.send = function (data) {
-                                            if (!data && !res.error) {
-                                                throw new Error("Empty Message creation.");
-                                            }
-                                            logger.debug(data + ", " + res.error);
-                                            logger.debug(res.error);
-											build(req.ws, res.error, data, req.refId);
-										};
-										/*jshint -W083 */
-										res.sendCommand = function (uri, data) {
-											build(req.wss, res.error, null, null, uri, data);
-										};
-										/*jshint -W083 */
-										res.roomBroadcastAdmins = function (roomId, uri, data) {
-											req.wss.roomBroadcast(req.ws, uri, data, roomId, 2);
-										};
-										/*jshint -W083 */
-										res.roomBroadcastUser = function (roomId, uri, data) {
-											req.wss.roomBroadcast(req.ws, uri, data, roomId, 1);
-										};
-										/*jshint -W083 */
-										res.roomBroadcast = function (data) {
-											req.wss.broadcast(data);
-										};
+										var req = new websocketRequest(message, session, ws, wss);
+										var res = new websocketResponse(req, build);
 
 										/*jshint -W083 */
 										accessManager.checkAccessBySId(req.uri, req.sId, req.params.roomId, function (err, access, accessLevel) {
