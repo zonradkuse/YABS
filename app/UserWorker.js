@@ -21,14 +21,17 @@ var roles = require('../config/UserRoles.json');
  * @param {Object} wsFrame
  * @param {Boolean} initialBool
  */
-var UserWorker = function (sId, sessionUser, ws, user, wsFrame, initialBool) {
+var UserWorker = function (req, res, user, initialBool) {
 	var self = this;
-    this.sId = sId;
-	this.ws = ws;
+	this.req = req;
+	this.res = res;
+	this.res.reusable = true;
+    this.sId = req.sId;
+	this.ws = res.ws;
 	this.user = user;
-	this.wsControl = wsFrame;
 	this.initialized = initialBool;
-    this.sessionUser = sessionUser;
+    this.sessionUser = req.session.user;
+    logger.debug("new user worker: " + self);
     sessionStore.get(this.sId, function (err, session) {
         self.session = session;
     });
@@ -42,14 +45,14 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 	var self = this;
 	this.checkSession(function (err, value) {
 		if (err) {
-			self.wsControl.build(self.ws, err);
+			self.res.setError(err).send();
 			logger.warn("could not fetch rooms: " + err);
 		} else if (value) {
 			// valid session existing - check access token
 			self.refreshAccessToken(function (err) {
 				if (err) {
 					logger.warn("could not refresh access token: " + err);
-					return self.wsControl.build(self.ws, new Error("Could not refresh your token."), null, refId);
+					return self.res.setError(new Error("Could not refresh your token.")).send();
 				}
                 var request = new l2p.l2pRequest(self.user.rwth.token);
                 request.getAllCourses(function (err, courses) {
@@ -57,7 +60,7 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 						logger.warn("L2P courselist was not valid json: " + courses.toString());
 						return;
 					} else if (err) {
-                        self.wsControl.build(self.ws, new Error("Something bad happened"), null, refId);
+                        self.res.setError(new Error("Something bad happened")).send();
                         logger.warn('unexpected error: ' + err);
                         return;
                     }
@@ -74,7 +77,7 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 										r.hasUserPanic = (!err && panicEvent) ? true : false;
 										r.isRoomRegistered = isRegistered;
 										r.questions = [];
-										self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': r });
+										self.res.sendCommand("room:add", { 'room': r });
 										logger.info("added new room: " + r.l2pID);
                                         process.nextTick(function () {
                                             self.processRoleByRoom(room);
@@ -96,7 +99,7 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 							User.addRoomToUser(self.user, _room, _addRoom);
 						}
 					} else {
-						self.wsControl.build(self.ws, new Error("L2P returned bad things."), null, refId);
+						self.res.setError(new Error("L2P returned bad things.")).send();
 						logger.warn("Bad L2P answer: " + courses.toString());
 					}
 					if (next) {
@@ -105,7 +108,7 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 				});
 			});
 		} else if (!value) {
-			self.wsControl.build(self.ws, new Error("Your session is invalid."));
+			self.res.setError(new Error("Your session is invalid.")).send();
 		}
 	});
 };
@@ -117,7 +120,7 @@ UserWorker.prototype.checkSession = function (next) {
 	var self = this;
 	sessionStore.get(self.sId, function (err, session) {
 		if (err) {
-			self.wsControl.build(self.ws, err);
+			self.res.setError(err).send();
 			logger.warn("error on session retrieving: " + err);
 			return next(err);
 		} else if (!session) {
@@ -134,7 +137,7 @@ UserWorker.prototype.addRoomToSessionRights = function (roomId, accessLevel, nex
     var self = this;
     sessionStore.get(self.sId, function (err, session) {
         if (err) {
-            self.wsControl.build(self.ws, err);
+            self.res.setError(err).send();
             logger.warn("error on session retrieving: " + err);
             return next(err);
         } else if (!session) {
@@ -287,7 +290,7 @@ UserWorker.prototype.getRooms = function () {
 						room.hasUserPanic = (!err && panicEvent) ? true : false;
 						room.isRoomRegistered = isRegistered;
 						room.questions = [];
-						self.wsControl.build(self.ws, null, null, null, "room:add", { 'room': room });
+						self.res.sendCommand("room:add", { 'room': room });
 					});
 				});
 			};
@@ -299,7 +302,7 @@ UserWorker.prototype.getRooms = function () {
 			}
 		});
 	} else {
-		self.wsControl.build(self.ws, new Error("Your session is invalid."), null);
+		self.res.setError(new Error("Your session is invalid.")).send();
 	}
 };
 

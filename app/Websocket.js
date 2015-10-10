@@ -166,16 +166,14 @@ var WebsocketHandler = function () {
 				var session;
 				var sessionID = ws.upgradeReq.signedCookies[ "connect.sid" ];
 				sessionStore.get(sessionID, function (err, sess) {
+					var message = {};
+					message.uri = "system:open";
+					var req = new websocketRequest(message, sess, ws, wss);
+					var res = new websocketResponse(req);
 					if (err) {	
-						return self.build(ws, new Error("Error on session init.")); // TODO HANDLE ERROR CORRECTLY
+						return res.setError(new Error("Error on session init.")).send(); // TODO HANDLE ERROR CORRECTLY
 					}
-					session = sess;
-					var req = {};
-					req.ws = ws;
-					req.wss = wss;
-					req.session = session;
-					req.sId = ws.upgradeReq.signedCookies[ "connect.sid" ];
-					self.emit('system:open', req);
+					self.emit('system:open', req, res);
 				});
 				//check for binary data
 				//parse message string and call the attached functions in the interface
@@ -188,68 +186,66 @@ var WebsocketHandler = function () {
 					} catch (e) {
 						return ws.send(self.build(ws, new Error("no valid json or not a string"), null, message.refId));
 					}
-					if (session || (message.uri === "system:benchmark")) {
-						if (message && message.uri) {
-							for (var i = 0; i<interf.data.length; i++) {
-								if (interf.data[ i ].uri === message.uri) { //uri exists
-									if (message.parameters) { //parameters set
-										var obj = interf.data[ i ].parameters;
-										var c = 0;
-										for (var key in obj) { // check structure
-											//check if interface is made like specified in the interface file.
-											if (typeof message.parameters === 'object' && !(key in message.parameters)) {
-												return self.build(ws, new Error("missing or bad parameter."), null, message.refId);
+					sessionStore.get(ws.upgradeReq.signedCookies[ "connect.sid" ], function (err, sess) {
+						var req = new websocketRequest(message, sess, ws, wss);
+						var res = new websocketResponse(req);
+						if (err) {
+							logger.warn(err);
+							return res.setError(new Error("Could not get session from store")).send();
+						} else if (sess) {
+							if (message && message.uri) {
+								for (var i = 0; i<interf.data.length; i++) {
+									if (interf.data[ i ].uri === message.uri) { //uri exists
+										if (message.parameters) { //parameters set
+											var obj = interf.data[ i ].parameters;
+											var c = 0;
+											for (var key in obj) { // check structure
+												//check if interface is made like specified in the interface file.
+												if (typeof message.parameters === 'object' && !(key in message.parameters)) {
+													return self.build(ws, new Error("missing or bad parameter."), null, message.refId);
+												}
+												c += 1;
 											}
-											c += 1;
-										}
-										/**
-                                         * whoa. that have been a lot of checks. now emit the event. Optionals need
-                                         *  to be checked by the event handler. They will maybe build into the interface
-                                        **/
-										var req = new websocketRequest(message, session, ws, wss);
-										var res = new websocketResponse(req, build);
+											/**
+	                                         * whoa. that have been a lot of checks. now emit the event. Optionals need
+	                                         *  to be checked by the event handler. They will maybe build into the interface
+	                                        **/
 
-										/*jshint -W083 */
-										accessManager.checkAccessBySId(req.uri, req.sId, req.params.roomId, function (err, access, accessLevel) {
-											req.accessLevel = accessLevel;
-											logger.debug("accesslevel: " + accessLevel +  " access: " + access);
-											if (access) {
-												self.emit(message.uri, req, res);
-												logger.info('emitted ' + message.uri + ' WSAPI event.');
-											} else {
-												logger.warn("Detected unprivileged access try by user " + req.sId);
-											}
-										});
-										return;
+											/*jshint -W083 */
+											accessManager.checkAccessBySId(req.uri, req.sId, req.params.roomId, function (err, access, accessLevel) {
+												req.accessLevel = accessLevel;
+												logger.debug("accesslevel: " + accessLevel +  " access: " + access);
+												if (access) {
+													self.emit(message.uri, req, res);
+													logger.info('emitted ' + message.uri + ' WSAPI event.');
+												} else {
+													logger.warn("Detected unprivileged access try by user " + req.sId);
+												}
+											});
+											return;
+										}
 									}
 								}
+								res.setError(new Error("uri not existing.")).send();
+							} else {
+								res.setError(new Error("missing parameter.")).send();
 							}
-							ws.send(self.build(ws, new Error("uri not existing."), null, message.refId));
 						} else {
-							ws.send(self.build(ws, new Error("missing parameter."), null, message.refId));
+							res.setError(new Error("Your session is invalid.")).send();
 						}
-					} else {
-						ws.send(self.build(ws, new Error("Your session is invalid."), null, message.refId));
-					}
+					});
+					
 					//check if message.parameters structure is same or if optional
 					//local.checkAndCall(session, ws, wss, message); //deprecated
 				});
 				ws.on('close', function (code, message) {
 					// emit the close event and give some more information.
                     sessionStore.get(ws.upgradeReq.signedCookies[ "connect.sid" ], function (err, sess) {
+                        var req = new websocketRequest(message, sess, ws, wss);
+                        var res = new websocketResponse(req);
                         if (err) {
-                            return self.build(ws, new Error("Error on session init.")); // TODO HANDLE ERROR CORRECTLY
+                            return res.setError(ws, new Error("Error on session init.")).send(); // TODO HANDLE ERROR CORRECTLY
                         }
-                        session = sess;
-                        var req = {};
-                        var res = {};
-                        req.ws = ws;
-                        req.wss = wss;
-                        req.session = session;
-                        req.sId = ws.upgradeReq.signedCookies[ "connect.sid" ];
-                        res.roomBroadcastAdmins = function (roomId, uri, data) {
-                            req.wss.roomBroadcast(req.ws, uri, data, roomId, 2);
-                        };
                         self.emit('system:close', req, res);
                     });
 				});

@@ -13,16 +13,16 @@ module.exports = function (wsCtrl) {
      * @method quiz:getAll
      * 
      */
-    wsCtrl.on("quiz:getAll", function (req) {
+    wsCtrl.on("quiz:getAll", function (req, res) {
         quizCtrl.getAllQuizzes(req.params.roomId, {}, function (err, quizzes) {
             if (err) {
-                return wsCtrl.build(req.ws, new Error("could not get quizzes"), null, req.refId);
+                return res.setError(new Error("could not get quizzes")).send();
             }
-            wsCtrl.build(req.ws, null, { quizzes : quizzes }, req.refId);
+            res.send({ quizzes : quizzes });
         });
     });
 
-    wsCtrl.on("quiz:getStatistics", function(req, res) {
+    wsCtrl.on("quiz:getStatistics", function (req, res) {
         quizCtrl.getStatistics(req.params.quizId, function (err, quiz) {
             if (err) {
                 res.setError(err).send();
@@ -32,12 +32,12 @@ module.exports = function (wsCtrl) {
         });
     });
 
-    wsCtrl.on("quiz:get", function (req) {
+    wsCtrl.on("quiz:get", function (req, res) {
         quizCtrl.getQuiz(req.userId, req.params.arsId, {}, function (err, quiz) {
             if (err) {
-                return wsCtrl.build(req.ws, new Error("could not get quiz"), null, req.refId);
+                return res.setError(new Error("could not get quiz")).send();
             }
-            wsCtrl.build(req.ws, null, { quiz : quiz }, req.refId);
+            res.send({ quiz : quiz });
         });
     });
 
@@ -45,24 +45,28 @@ module.exports = function (wsCtrl) {
      * This Call implements the full workflow for creating a new quiz. This especially takes care of pushing the new
      * quiz to the client.
      */
-    wsCtrl.on('quiz:create', function (req) {
+    wsCtrl.on('quiz:create', function (req, res) {
         if (req.params.dueDate && req.params.description && req.params.questions && req.params.question !== []) {
             //TODO more input checks
             quizCtrl.newQuiz(req.params, function (err, quiz) {
                 if (err) {
-                    wsCtrl.build(req.ws, new Error("Could not create new quiz"), null, req.refId);
+                    res.setError(new Error("Could not create new quiz")).send();
                     return logger.warn("Could not create new quiz. Error occured: " + err);
                 }
-                wsCtrl.build(req.ws, null, {status: true, description: "new quiz successfully created.", quiz: quiz}, req.refId);
+                res.send({
+                    status: true, 
+                    description: "new quiz successfully created.", 
+                    quiz: quiz
+                });
                 logger.info("successfully created new quiz in " + req.params.roomId);
                 logger.debug("new ars object: " + quiz);
             });
         } else {
-            wsCtrl.build(req.ws, new Error("Invalid Parameters."), null, req.refId);
+            res.setError(new Error("Invalid Parameters.")).send();
         }
     });
 
-    wsCtrl.on('quiz:answer', function (req) {
+    wsCtrl.on('quiz:answer', function (req, res) {
         req.params.userId = req.session.user._id;
         if (req.params.quizId && req.params.answerIds && req.params.answerIds !== []) {
             var asyncTasks = [];
@@ -84,9 +88,9 @@ module.exports = function (wsCtrl) {
 
             async.parallel(asyncTasks, function (err) {
                 if (err) {
-                    wsCtrl.build(req.ws, err, null, req.refId);
+                    res.setError(err).send();
                 } else {
-                    wsCtrl.build(req.ws, null, { status: true }, req.refId);
+                    res.send({ status: true });
                 }
             });
 
@@ -117,51 +121,39 @@ module.exports = function (wsCtrl) {
                 }
             });*/
         } else {
-            wsCtrl.build(req.ws, new Error("Invalid Parameters."), null, req.refId);
+            res.setError(new Error("Invalid Parameters.")).send();
         }
     });
 
-    wsCtrl.on('quiz:delete', function (req) {
+    wsCtrl.on('quiz:delete', function (req, res) {
         req.params.userId = req.session.user._id;
         if (req.params.quizId && req.params.roomId) {
             quizCtrl.deleteQuiz(req.params.roomId, req.params.quizId, function (err, bool) {
                 if (err) {
                     logger.info("An error occurred on deleting quiz: " + err);
-                    wsCtrl.build(req.ws, err, null, req.refId);
+                    res.setError(err).send();
                 } else {
-                    wsCtrl.build(req.ws, null, { status: bool }, req.refId);
+                    res.send({ status: bool });
                 }
             });
         } else {
-            wsCtrl.build(req.ws, new Error("Invalid Parameters."), null, req.refId);
+            res.setError(new Error("Invalid Parameters."));
         }
     });
 
-    wsCtrl.on('quiz:toggleActivation', function (req) {
+    wsCtrl.on('quiz:toggleActivation', function (req, res) {
         req.params.userId = req.session.user._id;
         if (req.params.quizId && req.params.roomId) {
             quizCtrl.toggleQuizActivation(req.params.roomId, req.params.quizId, req.params.active, function (err, quiz) {
                 if (err) {
                     logger.info("An error occurred on activate quiz: " + err);
-                    wsCtrl.build(req.ws, err, null, req.refId);
+                    res.setError(err).send();
                 } else {
-                    wsCtrl.build(req.ws, null, { active: req.params.active }, req.refId);
-                    if (req.params.active) { // this is not a poll.
-
-                        req.wss.roomBroadcast(
-                            req.ws,
-                            'quiz:do',
-                            {
-                                "quiz": quiz,
-                                "roomId": req.params.roomId
-                            },
-                            req.params.roomId
-                        );
-                    }
+                    res.send({ active: req.params.active });
                 }
             });
         } else {
-            wsCtrl.build(req.ws, new Error("Invalid Parameters."), null, req.refId);
+            res.setError(new Error("Invalid Parameters.")).send();
         }
     });
 };

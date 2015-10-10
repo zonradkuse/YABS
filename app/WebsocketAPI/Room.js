@@ -9,28 +9,28 @@ var accessManager = require('../AccessManagement.js');
 var logger = require('../Logger.js');
 
 module.exports = function (wsControl) {
-	wsControl.on("room:userCount", function (req) {
+	wsControl.on("room:userCount", function (req, res) {
 		accessManager.checkAccessBySId("room:userCount", req.sId, req.params.roomId, function (err, hasAccess) {
 			if (hasAccess) {
 				req.wss.getActiveUsersByRoom(req.params.roomId, function (err, num) {
 					if (err) {
 						logger.warn("Could not get Usercount: " + err);
-						wsControl.build(req.ws, new Error("Could not get Usercount"), null, req.refId);
+						res.setError(new Error("Could not get Usercount"));
 					}
-					wsControl.build(req.ws, null, { count : num }, req.refId);
+					res.send({ count : num });
 				});
 			} else {
-				wsControl.build(req.ws, new Error("Access Denied"), null, req.refId);
+				res.setError(new Error("Access Denied")).send();
 			}
 		});
 
 	});
-	wsControl.on("room:getQuestions", function (req) {
+	wsControl.on("room:getQuestions", function (req, res) {
 		//req.params.roomId
 		if (req.session.user && req.params.roomId) {
 			userDAO.hasAccessToRoom(req.session.user, { _id : req.params.roomId }, {population: 'questions.author.avatar questions.answers.images questions.images questions.answers.author.avatar'}, function (err, user, room) {
 				if (err) {
-					return wsControl.build(req.ws, err, null, req.refId);
+					return res.setError(err).send();
 				}
 				room = room.toObject();
 				room.questions = removeAuthorTokens(room.questions);
@@ -44,7 +44,7 @@ module.exports = function (wsControl) {
 						}
 					}
 					if (room.questions[ j ].content !== "") {
-						wsControl.build(req.ws, null, null, null, "question:add", {
+						res.sendCommand("question:add", {
 							roomId : req.params.roomId,
 							question : createVotesFields(req.session.user, room.questions[ j ])
 						});
@@ -52,125 +52,125 @@ module.exports = function (wsControl) {
 				}
 			});
 		} else {
-			wsControl.build(req.ws, new Error("Your req.session is invalid."), null, req.refId);
+			res.setError(new Error("Your req.session is invalid.")).send();
 		}
 	});
 
-	wsControl.on("room:getAnswers", function (req) {
+	wsControl.on("room:getAnswers", function (req, res) {
 		//req.params.roomId
 		//req.params.questionId
 		if (req.session.user && req.params.roomId && req.params.questionId) {
 			userDAO.hasAccessToQuestion(req.session.user, { _id : req.params.roomId }, { _id : req.params.questionId }, {population: 'answers.author.avatar'}, function (err, user, question) {
 				if (err) {
 					logger.warn("Cannot get question.: "+ err);
-					wsControl.build(req.ws, new Error("Cannot get question."), null, req.refId);
+					res.setError(new Error("Cannot get question."));
 				} else {
 					question.answers = removeAuthorTokens(question.answers);
-					wsControl.build(req.ws, null, {'answers': question.answers}, req.refId);
+					res.send({'answers': question.answers});
 				}
 			});
 		} else {
-			wsControl.build(req.ws, new Error("Your req.session is invalid."), null, req.refId);
+			res.setError(new Error("Your req.session is invalid.")).send();
 		}
 	});
 
-	wsControl.on("room:exists", function (req) {
+	wsControl.on("room:exists", function (req, res) {
 		//req.params.roomId
 		if (req.session.user && req.params.roomId) {
 			userDAO.hasAccessToRoom(req.session.user, {_id: req.params.roomId}, {population: ''}, function (err, room) {
 				if (err) {
-					return wsControl.build(req.ws, new Error("Access denied."), null, req.refId);
+					return res.setError(new Error("Access denied.")).send();
 				}
-				wsControl.build(req.ws, null, {'exists': (room ? true : false)}, req.refId);
+				res.send({'exists': (room ? true : false)});
 			});
 		} else {
-			wsControl.build(req.ws, new Error("Your req.session is invalid."), null, req.refId);
+			res.setError(new Error("Your req.session is invalid.")).send();
 		}
 	});
 
-	wsControl.on("room:enablePanicEvents", function (req) {
+	wsControl.on("room:enablePanicEvents", function (req, res) {
 		if (req.authed) {
 			if (req.params.roomId && req.params.intervals) {
 				accessManager.checkAccessBySId("room:enablePanicEvents", req.sId, req.params.roomId, function (err, hasAccess) {
 					if (err || !hasAccess) {
-						return wsControl.build(req.ws, new Error("Access denied."), null, req.refId);
+						return res.setError(new Error("Access denied.")).send();
 					}
 					userDAO.hasAccessToRoom(req.session.user, {_id: req.params.roomId}, {population: ''}, function (err, room) {
 						if (err) {
-							return wsControl.build(req.ws, new Error("Access denied."), null, req.refId);
+							return res.setError(new Error("Access denied.")).send();
 						}
 						var options = {};
 						options.intervals = req.params.intervals;
 						panicDAO.register({_id: req.params.roomId}, wsControl, req.wss, req.ws, options, function (err) {
 							if (err) {
-								return wsControl.build(req.ws, new Error("Cannot enable panic events."), null, req.refId);
+								return res.setError(new Error("Cannot enable panic events.")).send();
 							}
-							req.wss.roomBroadcast(req.ws, "room:panicStatus", {isEnabled: true, hasUserPanic: false}, req.params.roomId);
+							res.roomBroadcastUser("room:panicStatus", {isEnabled: true, hasUserPanic: false}, req.params.roomId);
 						});
 					});
 				});
 			}else {
-				wsControl.build(req.ws, new Error("Invalid req.params."), null, req.refId);
+				res.setError(new Error("Invalid req.params.")).send();
 			}
 		} else {
-			wsControl.build(req.ws, new Error("Your req.session is invalid."), null, req.refId);
+			res.setError(new Error("Your req.session is invalid.")).send();
 		}
 	});
 
-	wsControl.on("room:disablePanicEvents", function (req) {
+	wsControl.on("room:disablePanicEvents", function (req, res) {
 		if (req.authed) {
 			if (req.params.roomId) {
 				accessManager.checkAccessBySId("room:disablePanicEvents", req.sId, req.params.roomId, function (err, hasAccess) {
 					if (err || !hasAccess) {
-						return wsControl.build(req.ws, new Error("Access denied."), null, req.refId);
+						return res.setError(new Error("Access denied.")).send();
 					}
 					userDAO.hasAccessToRoom(req.session.user, {_id: req.params.roomId}, {population: ''}, function (err, room) {
 						if (err) {
-							return wsControl.build(req.ws, new Error("Access denied."), null, req.refId);
+							return res.setError(new Error("Access denied.")).send();
 						}
 						panicDAO.unregister({_id: req.params.roomId}, function (err) {
 							if (err) {
-								return wsControl.build(req.ws, new Error("Cannot disable panic events."), null, req.refId);
+								return res.setError(new Error("Cannot disable panic events.")).send();
 							}
-							req.wss.roomBroadcast(req.ws, "room:panicStatus", {isEnabled: false, hasUserPanic: false}, req.params.roomId);
+							res.roomBroadcastUser("room:panicStatus", {isEnabled: false, hasUserPanic: false}, req.params.roomId);
 						});
 					});
 				});
 			}else {
-				wsControl.build(req.ws, new Error("Invalid req.params."), null, req.refId);
+				res.setError(new Error("Invalid req.params.")).send();
 			}
 		} else {
-			wsControl.build(req.ws, new Error("Your req.session is invalid."), null, req.refId);
+			res.setError(new Error("Your req.session is invalid.")).send();
 		}
 	});
 	
-	wsControl.on("room:getPanicGraph", function (req) {
+	wsControl.on("room:getPanicGraph", function (req, res) {
 		if (req.authed) {
 			if (req.params.roomId) {
 				accessManager.checkAccessBySId("room:getPanicGraph", req.sId, req.params.roomId, function (err, hasAccess) {
 					if (err || !hasAccess) {
-						return wsControl.build(req.ws, new Error("Access denied."), null, req.refId);
+						return res.setError(new Error("Access denied."));
 					}
 					userDAO.hasAccessToRoom(req.session.user, {_id: req.params.roomId}, {population: ''}, function (err, room) {
 						if (err) {
-							return wsControl.build(req.ws, new Error("Access denied."), null, req.refId);
+							return res.setError(new Error("Access denied."));
 						}
 						panicGraphDAO.getGraph({_id: req.params.roomId}, {population: ''}, function (err, graph) {
 							if (err) {
-								return wsControl.build(req.ws, new Error("Cannot get graph."), null, req.refId);
+								return res.setError(new Error("Cannot get graph."));
 							}
 							if (!graph) {
-								return wsControl.build(req.ws, null, {'graph': []}, req.refId);
+								return res.send({'graph': []});
 							}
-							wsControl.build(req.ws, null, {'graph': removeIdFields(graph.data.toObject())}, req.refId);
+							res.send({'graph': removeIdFields(graph.data.toObject())});
 						});
 					});
 				});
 			}else {
-				wsControl.build(req.ws, new Error("Invalid req.params."), null, req.refId);
+				res.setError(new Error("Invalid req.params.")).send();
 			}
 		} else {
-			wsControl.build(req.ws, new Error("Your req.session is invalid."), null, req.refId);
+			res.setError(new Error("Your req.session is invalid.")).send();
 		}
 	});
 };

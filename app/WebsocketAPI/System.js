@@ -34,10 +34,10 @@ module.exports = function (wsControl) {
         if(req.session && isNaN(req.session.room)) {
             req.wss.getActiveUsersByRoom(req.session.room, function (err, count) {
                 if (!err) {
-                    res.roomBroadcastAdmins(req.session.room, "room:userCount", {
+                    res.roomBroadcastAdmins("room:userCount", {
                         roomId: req.session.room,
                         count: count
-                    });
+                    }, req.session.room);
                 } else {
                     logger.warn(err);
                 }
@@ -45,14 +45,14 @@ module.exports = function (wsControl) {
         }
 	});
 
-	wsControl.on('system:open', function (req) {
+	wsControl.on('system:open', function (req, res) {
 		logger.info("new client arrived.");
 		wsControl.build(req.ws, null, { message: 'welcome' }, null);
 		process.nextTick(function () {
 			setTimeout(function () {
 				if (req.session && req.session.user && req.session.user._id) {
 					UserModel.get(req.session.user._id, function (err, _user) {
-						var worker = new userWorker(req.sId, req.session.user, req.ws, _user, wsControl, true);
+						var worker = new userWorker(req, res, _user, true);
 						workerMap[ req.sId ] = worker;
 						worker.fetchRooms(null, function () { //get new rooms
 							worker.getRooms(); //send all rooms
@@ -66,29 +66,29 @@ module.exports = function (wsControl) {
 		});
 	});
     
-	wsControl.on('system:login', function (req) {
+	wsControl.on('system:login', function (req, res) {
 		postReqCampus('code', querystring.stringify({
 			"client_id": config.login.l2p.clientID,
 			"scope": config.login.l2p.scope
 		}), function (err, answer) {
 			if (err) {
-				wsControl.build(req.ws, err, null, req.refId);
+				res.setError(err).send();
 				logger.warn(err);
 				return;
 			} else if (answer) {
 				try {
 					answer = JSON.parse(answer);
 				} catch (e) {
-					wsControl.build(req.ws, new Error("An error occured when communicating with Campus. lol."), null, req.refId);
+					res.setError(new Error("An error occured when communicating with Campus. lol.")).send();
 					logger.warn('An error occured whon communicating with Campus OAuth. Response was: ' + answer);
 					return;
 				}
 				var _url = answer.verification_url + '?q=verify&d=' + answer.user_code;
 				logger.debug(_url);
-				wsControl.build(req.ws, null, {
+				res.send({
 					message: "Please visit the provided url.",
 					url: _url
-				}, req.refId);
+				});
 				var auth = false;
 				var reqTime = 0;
 				var timer = setInterval(function () {
@@ -100,7 +100,7 @@ module.exports = function (wsControl) {
 							"grant_type": "device"
 						}), function (err, response) {
 							if (err) {
-								wsControl.build(req.ws, err, null, req.refId);
+								res.setError(err).send();
 								logger.warn(err);
 								return;
 							} else if (response) {
@@ -108,7 +108,7 @@ module.exports = function (wsControl) {
 								try {
 									response = JSON.parse(response);
 								} catch (e) {
-									wsControl.build(req.ws, new Error("An error occured when communicating with Campus. lol."), null, req.refId);
+									res.setError(new Error("An error occured when communicating with Campus. lol.")).send();
 									logger.warn('An error occured when communicating with Campus OAuth. Response was: ' + response);
 								}
 								if (response.status) {
@@ -132,7 +132,7 @@ module.exports = function (wsControl) {
 											_user.rwth.expires_in = response.expires_in;
 											_user.save(function (err) {
 												if (err) {
-													wsControl.build(req.ws, err, null, req.refId);
+													res.setError(err).send();
 													logger.warn(err);
 													return;
 												}
@@ -140,12 +140,12 @@ module.exports = function (wsControl) {
 													req.session.user = _user;
 													sessionStore.set(req.sId, req.session, function (err) {
 														if (err) {
-															wsControl.build(req.ws, err, null, req.refId);
+															res.setError(err).send();
 															return;
 														}
-														wsControl.build(req.ws, null, { status: true }, req.refId);
+														res.send({ status: true });
 														// start a worker that fetches rooms.
-														var worker = new userWorker(req.sId, req.session.user, req.ws, _user, wsControl, false);
+														var worker = new userWorker(req, res, _user, false);
 														if (!workerMap[ req.sId ]) {
 															workerMap[ req.sId ] = worker;
 														} else {
@@ -160,18 +160,18 @@ module.exports = function (wsControl) {
 														logger.info("created new user.");
 													});
 												} else {
-													wsControl.build(req.ws, new Error("Your req.session is invalid"), null, req.refId);
+													res.setError(new Error("Your req.session is invalid")).send();
 												}
 											});
 										});
 									}
 								} else {
-									wsControl.build(req.ws, new Error("There was no status in Campus answer."), null, req.refId);
+									res.setError(new Error("There was no status in Campus answer.")).send();
 								}
 							}
 						});
 					} else if (reqTime >= answer.expires_in) {
-						wsControl.build(req.ws, new Error("Your authentication request failed. Please try again."), null, req.refId);
+						res.setError(new Error("Your authentication request failed. Please try again.")).send();
 						clearInterval(timer);
 					} else { // authenticated or connection was dumped
 						clearInterval(timer);
@@ -180,19 +180,19 @@ module.exports = function (wsControl) {
 				}, answer.interval * 1000);
 				// Campus currently responds with 30 minutes polltime. srsly?
 			} else {
-				wsControl.build(req.ws, new Error("Campus Response not set."));
+				res.setError(new Error("Campus Response not set.")).send();
 				logger.debug("Campus Response not set. Answer was " + answer); //yes, it must have been empty
 			}
 		});
 	});
 
-	wsControl.on("system:logout", function (req) {
+	wsControl.on("system:logout", function (req, res) {
         sessionStore.destroy(req.sId, function (err) {
             if (err) {
-                wsControl.build(req.ws, new Error("Could not delete your req.session."), { status: false, message: "An error occured." }, req.refId);
+                res.setError(new Error("Could not delete your req.session.")).send();
                 return logger.warn("could not delete req.session: " + err);
             }
-            wsControl.build(req.ws, null, { status: true, message: "Goodbye." }, req.refId);
+            res.send({ status: true, message: "Goodbye." });
         });
 	});
 
