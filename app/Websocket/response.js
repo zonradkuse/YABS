@@ -91,3 +91,4 @@ function build(ws, err, data, refId, uri, param) {
 }
 
 module.exports = WebsocketResponse;
+module.exports.build = build;

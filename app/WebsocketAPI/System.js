@@ -47,7 +47,7 @@ module.exports = function (wsControl) {
 
 	wsControl.on('system:open', function (req, res) {
 		logger.info("new client arrived.");
-		wsControl.build(req.ws, null, { message: 'welcome' }, null);
+		res.send({ message: 'welcome' });
 		process.nextTick(function () {
 			setTimeout(function () {
 				if (req.session && req.session.user && req.session.user._id) {

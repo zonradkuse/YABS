@@ -255,10 +255,6 @@ var WebsocketHandler = function () {
 			});
 		});
 	};
-	// build the response object as string
-	this.build = function (ws, err, data, refId, uri, param) {
-		build(ws, err, data, refId, uri, param);
-	};
 };
 
 /** Build a json object for a response or a broadcast, which will be send via websocket.
@@ -270,32 +266,7 @@ var WebsocketHandler = function () {
  * @param {Object} param - parameters for a broadcast
  */
 function build(ws, err, data, refId, uri, param) {
-	if (!ws || !ws.send) {
-		throw new Error("Websocket not set.");
-	}
-	var json = {};
-	if (refId || !uri) { // response
-		json = {
-			"error": (err ? err.message : null),
-			"data": data,
-			"refId": refId
-		};
-	} else { // broadcast TODO
-		json = {
-			"error": (err ? err.message : null),
-			"uri": uri,
-			"parameters": param
-		};
-	}
-	json.status = (err || !data ? false : true); // if error occured set statulocals false, else true
-	
-	if (ws.readyState === 1) {
-        logger.debug("Sending message: " + JSON.stringify(json));
-		ws.send(JSON.stringify(json)); // TODO here we should do some queueing
-	} else {
-		// here should go logic for queuing messages for users.
-		logger.info("A client disconnected but should receive a message.");
-	}
+	websocketResponse.build(ws, err, data, refId, uri, param);
 }
 
 
