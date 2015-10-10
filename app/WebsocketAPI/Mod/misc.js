@@ -4,7 +4,7 @@ var accessManager = require('../../AccessManagement.js');
 
 module.exports = {
 	checkAccess : checkAccess
-}
+};
 
 /**
  * Calls Callback iff all requirements are met. This is only for mod uris containing nswer or question as they are similar
