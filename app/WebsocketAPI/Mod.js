@@ -79,7 +79,9 @@ module.exports = function (wsControl) {
 						'answer' : _ans
 					}, req.params.roomId);
 					answerDAO.remove(_ans, function (err) {
-						if (err) logger.warn(err);
+						if (err) {
+							logger.warn(err);
+						}
 					});
 				});
 			});
@@ -109,7 +111,9 @@ module.exports = function (wsControl) {
 						'question' : roomWSControl.createVotesFields(req.session.user, _q)
 					}, req.params.roomId);
 					questionDAO.remove(_q, function (err) {
-						if (err) logger.warn(err);
+						if (err) {
+							logger.warn(err);
+						}
 					});
 				});
 			});

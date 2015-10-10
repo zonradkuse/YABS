@@ -50,7 +50,7 @@ function WebsocketResponse (request) {
 			self.error = null;
 		}
 		return self;
-	}
+	};
 }
 
 /** Build a json object for a response or a broadcast, which will be send via websocket.

@@ -284,7 +284,7 @@ module.exports = function (wsControl) {
 						user.save(function (err) {
 							if (err) {
 								logger.warn("Saving Username into Database failed.");
-								res.setError(err).send()
+								res.setError(err).send();
 							} else {
 								res.send({ status : true });
 							}
