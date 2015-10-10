@@ -201,15 +201,15 @@ var WebsocketHandler = function () {
 											var c = 0;
 											for (var key in obj) { // check structure
 												//check if interface is made like specified in the interface file.
-												if (typeof message.parameters === 'object' && !(key in message.parameters)) {
-													return self.build(ws, new Error("missing or bad parameter."), null, message.refId);
+												if (typeof message.parameters === 'object' && !(key in message.parameters) && !message.parameters[key]) {
+													return res.setError(new Error("missing or bad parameter.")).send();
 												}
 												c += 1;
 											}
-											/**
+											/*
 	                                         * whoa. that have been a lot of checks. now emit the event. Optionals need
 	                                         *  to be checked by the event handler. They will maybe build into the interface
-	                                        **/
+	                                         */
 
 											/*jshint -W083 */
 											accessManager.checkAccessBySId(req.uri, req.sId, req.params.roomId, function (err, access, accessLevel) {

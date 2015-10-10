@@ -219,29 +219,28 @@ module.exports = function (wsControl) {
 	});
 
 	wsControl.on('user:panic', function (req, res) {
-		if (req.authed) {
-			if (req.params && req.params.roomId) {
-				userDAO.hasAccessToRoom(req.session.user, {_id: req.params.roomId}, {population: ''}, function (err) {
-					if (err) {
-						res.setError(new Error("Access denied.")).send();
-						return logger.warn("could not check room access: " + err);
-					}
-					panicDAO.panic(req.session.user, {_id: req.params.roomId}, function (err) {
-						if (err) {
-							return res.setError(new Error("Cannot save user's panic.")).send();
-						}
-						res.send({'status': true});
-					});                
-				});
-			} else {
-				res.setError(new Error("Your req.session is invalid.")).send();
-			}
-		} else {
-			res.setError(new Error("Your req.session is invalid.")).send();
-		}
+		panicPreCheck(req, res, function () {
+			panicDAO.panic(req.session.user, {_id: req.params.roomId}, function (err) {
+				if (err) {
+					return res.setError(new Error("Cannot save user's panic.")).send();
+				}
+				res.send({'status': true});
+			});
+		});                	
 	});
 
 	wsControl.on('user:unpanic', function (req, res) {
+		panicPreCheck(req, res, function () {
+			panicDAO.unpanic(req.session.user, {_id: req.params.roomId}, function (err) {
+				if (err) {
+					return res.setError(new Error("Cannot delete user's panic.")).send();
+				}
+				res.send({'status': true});
+			});
+		});	
+	});
+
+	function panicPreCheck(req, res, cb) {
 		if (req.authed) {
 			if (req.params && req.params.roomId) {
 				userDAO.hasAccessToRoom(req.session.user, {_id: req.params.roomId}, {population: ''}, function (err) {
@@ -249,12 +248,7 @@ module.exports = function (wsControl) {
 						res.setError(new Error("Access denied.")).send();
 						return logger.warn("could not check room access: " + err);
 					}
-					panicDAO.unpanic(req.session.user, {_id: req.params.roomId}, function (err) {
-						if (err) {
-							return res.setError(new Error("Cannot delete user's panic.")).send();
-						}
-						res.send({'status': true});
-					});                
+					cb();               
 				});
 			} else {
 				res.setError(new Error("Your req.session is invalid.")).send();
@@ -262,7 +256,7 @@ module.exports = function (wsControl) {
 		} else {
 			res.setError(new Error("Your req.session is invalid.")).send();
 		}
-	});
+	}
 
 	wsControl.on('user:changeName', function (req, res) {
 		if (req.authed) {
