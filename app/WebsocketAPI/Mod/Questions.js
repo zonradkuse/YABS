@@ -1,4 +1,4 @@
-var checkAccess = require('../Mod.js').checkAccess;
+var checkAccess = require('./misc.js').checkAccess;
 
 var logger = require('../../Logger.js');
 var questionDAO = require('../../../models/Question.js');
