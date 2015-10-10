@@ -1,3 +1,5 @@
+var checkAccess = require('../Mod.js').checkAccess;
+
 var logger = require('../../Logger.js');
 var questionDAO = require('../../../models/Question.js');
 var roomWSControl = require('../Room.js');
