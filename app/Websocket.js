@@ -201,7 +201,7 @@ var WebsocketHandler = function () {
 											var c = 0;
 											for (var key in obj) { // check structure
 												//check if interface is made like specified in the interface file.
-												if (typeof message.parameters === 'object' && !(key in message.parameters) && !message.parameters[key]) {
+												if (typeof message.parameters === 'object' && !(key in message.parameters) && !message.parameters[ key ]) {
 													return res.setError(new Error("missing or bad parameter.")).send();
 												}
 												c += 1;

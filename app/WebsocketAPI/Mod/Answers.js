@@ -80,5 +80,4 @@ module.exports = function (wsControl) {
 			});
 		});
 	});
-
-}
+};

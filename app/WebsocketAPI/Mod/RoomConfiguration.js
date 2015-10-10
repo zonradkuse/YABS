@@ -44,7 +44,7 @@ module.exports = function (wsControl) {
             room.config.thresholdForImportantQuestion = req.params.val;
         });
     });
-}
+};
 
 /**
  * This function performs default checks before setting some configuration. It is just existing in order to save code.
