@@ -7,6 +7,10 @@ function WebsocketResponse (request) {
 	this.authed = false;
 	this.error = null;
 
+	var roomBroadcast = function (uri, data, roomId, level) {
+		self.request.wss.roomBroadcast(self.request.ws, uri, data, roomId, level);
+	};
+
 	this.setError = function (err) {
 		self.error = err;
         return self;
@@ -28,13 +32,13 @@ function WebsocketResponse (request) {
 	};
 
 	this.roomBroadcastAdmins = function (uri, data, roomId) {
-		self.request.wss.roomBroadcast(self.request.ws, uri, data, roomId, 2);
+		roomBroadcast(uri, data, roomId, 2);
 		self.resetError();
 		return self;
 	};
 
 	this.roomBroadcastUser = function (uri, data, roomId) {
-		self.request.wss.roomBroadcast(self.request.ws, uri, data, roomId, 1);
+		roomBroadcast(uri, data, roomId, 1);
 		self.resetError();
 		return self;
 	};
