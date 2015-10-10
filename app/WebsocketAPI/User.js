@@ -42,7 +42,7 @@ module.exports = function (wsControl) {
 							question.answers = roomWSControl.removeAuthorTokens(question.answers);
 							logger.debug("broadcast question:add in room " + req.params.roomId);
 							logger.debug(question);
-							resroomBroadcastUser('question:add', {
+							res.roomBroadcastUser('question:add', {
 								'roomId': req.params.roomId,
 								'question': question
 							}, req.params.roomId);
@@ -345,7 +345,7 @@ function sendAndSaveAnswer(res, q, a, room, answerToSend) {
 	questionDAO.addAnswer(q, a, function (err, question, answer) {
 		if (err) {
 			logger.warn("could not add or create question: " + err);
-			wsControl.build(ws, new Error("could not add or create answer"), null, refId);
+			res.setError(new Error("could not add or create answer")).send();
 		} else {
 			answerDAO.getByID(answer._id, {population: 'author author.avatar images'}, function (err, ans) {
 				//ans.toObject();
