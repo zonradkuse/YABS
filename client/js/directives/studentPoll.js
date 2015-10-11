@@ -75,7 +75,11 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                 });
 
                 setTimeout(function () {
-                    $scope.getNext();
+                    $scope.getNext(function (bool) {
+                        if (bool) {
+                            $("#pollStudentModal").modal('show');
+                        }
+                    });
                 }, 2000);
             }
         }

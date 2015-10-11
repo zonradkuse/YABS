@@ -68,7 +68,7 @@ module.exports = function (wsCtrl) {
                 } else {
                     var statistics = q.poll.statistics;
                     StatisticsModel.find({ _id : statistics }).deepPopulate('statisticAnswer statisticAnswer.answer').exec(function (err, s) {
-                        wsCtrl.build(req.ws, null, {status: true}, req.refId);
+                        res .send({status: true});
                         for (var i = 0; i < q.answered.length; ++i) {
                             if (req.user._id === q.answered[ i ].toString()) {
                                 res.roomBroadcastAdmins("poll:statistic", {
