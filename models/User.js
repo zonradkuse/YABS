@@ -207,7 +207,7 @@ module.exports.addRoomToUser = function (user, room, callback) {
 			if (err) {
 				throw new Error("cannot update users room access");
 			}
-			room.deepPopulate('quiz.questions', function (err, _room) {
+			room.deepPopulate('quiz.questions poll', function (err, _room) {
 				return callback(err, user, _room);
 			});
 		});
