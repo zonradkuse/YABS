@@ -32,6 +32,7 @@
                             <label for="{{answer._id}}"> {{answer.description}} </label>
                             <input ng-if="!quiz.answered" ng-model="answer.checked" id="{{answer._id}}" type="text">
                         </div>
+                        Deine Antwort: {{  }}
                     </div>
                 </form> 
                 <div ng-if="!quizSending && !(quiz.questions[quizQuestionSelection].evaluationUserAnswers.userRight.length || quiz.questions[quizQuestionSelection].evaluationUserAnswers.userFalse.length)">

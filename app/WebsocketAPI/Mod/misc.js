@@ -7,7 +7,7 @@ module.exports = {
 };
 
 /**
- * Calls Callback iff all requirements are met. This is only for mod uris containing nswer or question as they are similar
+ * Calls Callback iff all requirements are met. This is only for mod uris containing nswer or question as they are similar to handle
  */
 function checkAccess (req, res, cb) {
 	if (req.authed) {
@@ -26,4 +26,4 @@ function checkAccess (req, res, cb) {
 	} else {
 		res.setError(new Error("Access Denied.")).send();
 	}
-};
+}

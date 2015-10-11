@@ -48,7 +48,7 @@ var getQuiz = function (userId, quizId, options, callback) {
     if (!options.deepPopulate) {
         options.deepPopulate = '';
     }
-    QuizModel.findOne({ _id : quizId }).deepPopulate('questions.quizQuestion.answers questions.quizQuestion.evaluation questions.quizQuestion.givenAnswers '+ options.deepPopulate).exec(function (err, quiz) {
+    QuizModel.findOne({ _id : quizId }).deepPopulate('questions.quizQuestion.answers questions.quizQuestion.evaluation.answers questions.quizQuestion.givenAnswers.answers '+ options.deepPopulate).exec(function (err, quiz) {
         if (err || !quiz) {
             return callback(err);
         }
@@ -79,16 +79,16 @@ var getQuiz = function (userId, quizId, options, callback) {
                     if (q.quizQuestion.givenAnswers[ k ].user.toString() === userId.toString()) { // if user in givenAnswers found
                         for (var j= 0; j < q.quizQuestion.givenAnswers[ k ].answers.length; j++) { // for every answer made
                             // answers array could be empty!!
+                            q.givenAnswers = q.quizQuestion.givenAnswers[ k ].answers;
                             if (q.quizQuestion.evaluation.answers.length === 0) {
                                 evaluationUserAnswers.userFalse.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]);
                             } else {
-                                if (isAnswerInEvaluation(
-                                    q.quizQuestion.givenAnswers[ k ].answers[ j ].toString(),
-                                    q.quizQuestion.evaluation)
-                                ) {
-                                    evaluationUserAnswers.userRight.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]);
+                                if (isAnswerInEvaluationAndCorrect(
+                                    q.quizQuestion.givenAnswers[ k ].answers[ j ],
+                                    q.quizQuestion.evaluation)) {
+                                    evaluationUserAnswers.userRight.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]._id.toString());
                                 } else {
-                                    evaluationUserAnswers.userFalse.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]);
+                                    evaluationUserAnswers.userFalse.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]._id.toString());
                                 }
                             }
 
@@ -110,10 +110,14 @@ var getQuiz = function (userId, quizId, options, callback) {
 /**
  * @private
  */
-var isAnswerInEvaluation = function (answerId, evaluation) {
+var isAnswerInEvaluationAndCorrect = function (answer, evaluation) {
     for (var index = 0; index < evaluation.answers.length; index++) {
-        if (answerId === evaluation.answers[ index ].toString()) {
-            return true;
+        if (answer._id.toString() === evaluation.answers[ index ]._id.toString()) {
+            if (!evaluation.answers[ index ].text) {
+                return true;
+            } else {
+                return (answer.userText && answer.userText.toUpperCase() === evaluation.answers[ index ].userText.toUpperCase());
+            }
         }
     }
     return false;
@@ -165,6 +169,7 @@ var newQuiz = function (params, callback) {
                 _answer.radiobox = answerParam.radiobox;
                 _answer.checkbox = answerParam.checkbox;
                 _answer.text = answerParam.text;
+                _answer.userText = answerParam.rightAnswer;
                 _quizQuestion.answers.push(_answer._id); //reference the new answer
                 if (answerParam.rightAnswer) {
                     _evaluation.answers.push(_answer._id);
