@@ -57,7 +57,8 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "gulp check && ./node_modules/mocha/bin/mocha --timeout 5000 ./test/*test.js"
+    "test": "gulp check && ./node_modules/mocha/bin/mocha --timeout 5000 ./test/*test.js",
+    "postinstall" : "node_modules/bower/bin/bower install && node_modules/gulp/bin/gulp.js fast-build && node_modules/gulp/bin/gulp.js release-build && mv public/js public/css ./ && rm -r public/*.css* public/*.js* && mv js css public/"
   },
   "description": "YABS ====",
   "main": "server.js",
