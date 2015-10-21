@@ -147,7 +147,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 var formData = new FormData();
                 formData.append("image", this.files[0]);
                 $scope.uploading[identifier] = true;
-                $http.post("api/upload", formData, {
+                $http.post("upload", formData, {
                         headers: {
                             "Content-Type" : undefined
                         },
