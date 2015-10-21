@@ -18,11 +18,11 @@
 				<tr ng-repeat="room in rooms | filter:query | orderBy:'-l2pID'">
 					<td>{{room.l2pID}}</td>
 					<td>
-						<a href="/course/{{room._id}}">
+						<a href="course/{{room._id}}">
 							{{room.name}}
 						</a>
 					</td>
-					<td><a class="btn btn-success" href="/course/{{room._id}}" role="button">Los!</a></td>
+					<td><a class="btn btn-success" href="course/{{room._id}}" role="button">Los!</a></td>
 				</tr>
 			</tbody>
 		</table>

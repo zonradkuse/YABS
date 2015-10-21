@@ -45,7 +45,7 @@
                             <div class="row question" ng-class="question.goodQuestion ? 'question-good' : ''">
                                 <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
                                     <div class="row text-center shadowed userinfo">
-                                        <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{question.author.avatar}}" /></div><!--
+                                        <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{question.author.avatar.substr(1)}}" /></div><!--
                                      --><div class="col-sm-12 vcenter" ng-class="!showAdmin ? 'col-xs-5' : 'col-xs-3'"><span class="username">{{question.author.name}}</span><span class="time">vor {{question.elapsedSince < 60 ? question.elapsedSince + ' Minuten' : (Math.floor(question.elapsedSince/60) < 24 ? Math.floor(question.elapsedSince/60) + ' Stunden' : Math.floor(question.elapsedSince/60/24) + ' Tagen')}}</span></div><!--
                                      --><div class="col-sm-12 votebutton vcenter" ng-class="!showAdmin ? 'col-xs-6' : 'col-xs-4'">
                                             <button type="button" ng-if="!showAdmin" ng-click="voteQuestion(question)" class="btn btn-default" ng-disabled="question.hasVote" >
@@ -75,7 +75,7 @@
                                     {{question.content}}
                                 </div>
                                 <div ng-repeat="image in question.images" class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
-                                    <a href="{{image.path}}" target="_blank"><img src="{{image.path}}" class="col-sm-3 img-thumbnail" /></a>
+                                    <a href="{{image.path.substr(1)}}" target="_blank"><img src="{{image.path.substr(1)}}" class="col-sm-3 img-thumbnail" /></a>
                                 </div>
                             </div>
                             <div ng-if="room.config.userMayAnswerToQuestion" ng-style="{'background-color' : !embedded ? embedded : '#eee'}" class="panel panel-default">
@@ -90,7 +90,7 @@
                                         
                                         <div class="col-md-3 col-sm-3 col-lg-2 col-xs-12">
                                             <div class="row text-center shadowed userinfo">
-                                                <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{answer.author.avatar}}" /></div><!--
+                                                <div class="hidden-xs col-sm-12 vcenter"><img class="img-circle avatar" ng-src="{{answer.author.avatar.substr(1)}}" /></div><!--
                                              --><div class="col-xs-5 col-sm-12 vcenter"><span class="username">{{answer.author.name}}</span><span class="time">vor {{answer.elapsedSince <= 60 ? answer.elapsedSince + ' Minuten' : (Math.floor(answer.elapsedSince/60) < 24 ? Math.floor(answer.elapsedSince/60) + ' Stunden' : Math.floor(answer.elapsedSince/60/24) + ' Tagen')}} </span></div><!--
                                              --><div ng-if="showAdmin || answer.isAnswer || (room.config.questionerMayMarkAnswer && authentication.getUserName() == question.author.name)" class="col-xs-7 col-sm-12 votebutton vcenter">
                                                     <!-- refactor -->
@@ -120,7 +120,7 @@
                                             {{answer.content}}
                                         </div>
                                         <div ng-repeat="image in answer.images" class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
-                                            <a href="{{image.path}}" target="_blank"><img src="{{image.path}}" class="col-sm-3 img-thumbnail" /></a>
+                                            <a href="{{image.path.substr(1)}}" target="_blank"><img src="{{image.path.substr(1)}}" class="col-sm-3 img-thumbnail" /></a>
                                         </div>
                                         
                                     </div>

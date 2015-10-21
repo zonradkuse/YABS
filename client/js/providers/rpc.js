@@ -7,7 +7,7 @@
 
 client.service("rpc", ["errorService", function(errorService){
     var callbackTable = {};
-	var wsUrl = (window.location.protocol == "http:" ? "ws" : "wss") + "://" + appUrl + "/ws";
+	var wsUrl = (window.location.protocol == "http:" ? "ws" : "wss") + "://" + appUrl + "/yabs/ws";
 	var ws = new WebSocket(wsUrl);
     var sendQueue = [];
     var reconnecting = false;

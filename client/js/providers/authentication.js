@@ -10,8 +10,9 @@ client.service("authentication", ["$window", "$q", "rpc", "$timeout", function($
 	this.enforceLoggedIn = function() {
 		this.isUserLoggedIn().then(function(status) {
 			if (!status) {
-				$window.location = "/login";
-			} 
+				$window.location = "login";
+				$window.location = "login";
+			}
 		});
 	};
 

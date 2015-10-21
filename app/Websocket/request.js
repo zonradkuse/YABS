@@ -1,6 +1,6 @@
 function WebsocketRequest (message, session, ws, wss) {
 	this.authed = session && session.user && session.user._id;
-	this.user = session.user;
+	this.user = session ? session.user : null;
 	this.session = session;
 	this.uri = message.uri;
 	this.wss = wss;

@@ -7,7 +7,7 @@
 clientControllers.controller('logoutController', ['$scope', 'authentication', '$window',
     function($scope, authentication, $window) {
         authentication.logout().then(function() {
-        	$window.location = "/";
+        	$window.location = document.getElementsByTagName('base')[0].href;
         });
     }
 ]);

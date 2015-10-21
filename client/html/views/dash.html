@@ -34,7 +34,7 @@
                             Dein Profilbild
                         </th>
                         <td align="center">
-                            <img class="img-circle" src="{{user.userAvatar}}">
+                            <img class="img-circle" src="{{user.userAvatar.substr(1)}}">
                         </td>
                     </tr>
                 </tbody>
@@ -58,7 +58,7 @@
                         </a>
                     </div>
                     <div ng-if="!user.user.facebook">
-                        <a target="_self" href="/login/facebook" class="btn btn-block btn-social btn-facebook">
+                        <a target="_self" href="login/facebook" class="btn btn-block btn-social btn-facebook">
                             <i class="fa fa-facebook"></i>
                             Mit Facebook verlinken!
                         </a>
@@ -72,7 +72,7 @@
                         </a>
                     </div>
                     <div ng-if="!user.user.github">
-                        <a target="_self" href="/login/github" class="btn btn-block btn-social btn-github">
+                        <a target="_self" href="login/github" class="btn btn-block btn-social btn-github">
                             <i class="fa fa-github"></i>
                             Mit GitHub verlinken!
                         </a>
@@ -86,7 +86,7 @@
                         </a>
                     </div>
                     <div ng-if="!user.user.google">
-                        <a target="_self" href="/login/google" class="btn btn-block btn-social btn-google">
+                        <a target="_self" href="login/google" class="btn btn-block btn-social btn-google">
                             <i class="fa fa-google"></i>
                             Mit Google verlinken!
                         </a>
@@ -100,7 +100,7 @@
                         </a>
                     </div>
                     <div ng-if="!user.user.twitter">
-                        <a target="_self" href="/login/twitter" class="btn btn-block btn-social btn-twitter">
+                        <a target="_self" href="login/twitter" class="btn btn-block btn-social btn-twitter">
                             <i class="fa fa-twitter"></i>
                             Mit Twitter verlinken!
                         </a>

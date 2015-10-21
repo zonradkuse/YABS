@@ -109,6 +109,7 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 			});
 		} else if (!value) {
 			self.res.setError(new Error("Your session is invalid.")).send();
+            sessionStore.destroy(self.sId);
 		}
 	});
 };
@@ -303,6 +304,7 @@ UserWorker.prototype.getRooms = function () {
 		});
 	} else {
 		self.res.setError(new Error("Your session is invalid.")).send();
+        sessionStore.destroy(self.sId);
 	}
 };
 
