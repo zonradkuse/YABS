@@ -85,24 +85,20 @@ wss.roomBroadcast = function (ws, uri, data, roomId, accessLevel) {
 				return logger.err("An error occurred on getting the user session: " + err);
 			}
 			if (sess) {
-				if (sess.room) {
-					if (sess.room == roomId) {
-						if (data.question) {
-							data.question = JSON.parse(JSON.stringify(oldQ));
-							data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
-							logger.debug(data.question);
-						}
-						if (accessLevel) {
-							accessManager.checkAccessLevel(sId, { requiredAccess : accessLevel }, roomId, function (err, access) {
-								build(client, null, null, null, uri, data);
-							});
-						} else {
-							logger.debug("broadcast message to " + sess.user._id);
-							build(client, null, null, null, uri, data);
-						}
+				if (sess.room && sess.room == roomId) {
+					if (data.question) {
+						data.question = JSON.parse(JSON.stringify(oldQ));
+						data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
+						logger.debug(data.question);
 					}
-				} else {
-					build(ws, new Error("Your current room is not set."));
+					if (accessLevel) {
+						accessManager.checkAccessLevel(sId, { requiredAccess : accessLevel }, roomId, function (err, access) {
+							build(client, null, null, null, uri, data);
+						});
+					} else {
+						logger.debug("broadcast message to " + sess.user._id);
+						build(client, null, null, null, uri, data);
+					}
 				}
 			} else {
 				logger.warn("There is a sessionId without a session. sId: " + sId + 
