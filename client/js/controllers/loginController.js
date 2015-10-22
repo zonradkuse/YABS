@@ -17,7 +17,7 @@ clientControllers.controller("loginController", ["$scope", "$sce", "$routeParams
 					});
 				}
 				else {
-					$window.location = "/";
+					$window.location = document.getElementsByTagName('base')[0].href;
 				}
 			})
 			.then(function(url) {
