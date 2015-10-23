@@ -14,6 +14,13 @@ var passport = require('passport');
 var mongoose = require('mongoose');
 var flash = require('connect-flash');
 var fs = require('fs');
+
+
+process.on('uncaughtException', function (err) {
+    process.exit(1)
+});
+
+asd();
 fs.mkdir(__dirname + '/images', function (err) { }); // create needed image root folder
 
 
@@ -103,19 +110,5 @@ logger.yabs(" \n \n \
 \
 Scotty, beam me up! \n \
 ");
-if (config.general.env.dev) {
-    logger.yabs("You are in development mode. In order to avoid bugs caused by old data we recommend " +
-        "to drop the session cache and the mongodb database. As we don't want that you loose any data " +
-        "we won't delete anything by default.");
-    logger.yabs("Type 1 or 2 for:");
-    logger.yabs("1: DON'T delete anything [default]");
-    logger.yabs("2: Drop my data");
-    process.stdin.on('readable', function() {
-        var chunk = process.stdin.read();
-        if (chunk !== null) {
-            process.stdout.write('data: ' + chunk);
-        }
-    });
-}
 
 logger.yabs("We are online!");
