@@ -37,7 +37,7 @@ module.exports.routes = function () {
                     next();
                 } else {
                     req.session.user = user.toObject();
-                    res.redirect("/course/" + authReq.roomId);
+                    res.redirect("course/" + authReq.roomId);
                 }
                 req.session.room = authReq.roomId;
             });
