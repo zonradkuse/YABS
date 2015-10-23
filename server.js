@@ -1,4 +1,3 @@
-/* global __dirname */
 var express = require('express');
 var app = express();
 var config = require('./config.json');
@@ -104,4 +103,19 @@ logger.yabs(" \n \n \
 \
 Scotty, beam me up! \n \
 ");
-logger.yabs("We are online!")
+if (config.general.env.dev) {
+    logger.yabs("You are in development mode. In order to avoid bugs caused by old data we recommend " +
+        "to drop the session cache and the mongodb database. As we don't want that you loose any data " +
+        "we won't delete anything by default.");
+    logger.yabs("Type 1 or 2 for:");
+    logger.yabs("1: DON'T delete anything [default]");
+    logger.yabs("2: Drop my data");
+    process.stdin.on('readable', function() {
+        var chunk = process.stdin.read();
+        if (chunk !== null) {
+            process.stdout.write('data: ' + chunk);
+        }
+    });
+}
+
+logger.yabs("We are online!");

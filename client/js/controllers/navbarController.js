@@ -13,7 +13,7 @@ clientControllers.controller('navbarController', ['$scope', "$rootScope", 'authe
         	$scope.username = name;
         });
 
-        $scope.embedded = authentication.checkIfEmbeddedIntoL2P();
+        $scope.embedded = authentication.checkIfEmbeddedIntoL2P(self);
         $rootScope.embedded = $scope.embedded;
         // whiten background for l2p
         if($scope.embedded) {

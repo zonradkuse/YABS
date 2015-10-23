@@ -55,6 +55,11 @@
         $('#creators').tooltip();
     }]);
 
+    client.run(["authentication", function(authentication) {
+        authentication.enableListeners();
+        $('#creators').tooltip();
+    }]);
+
     var controllers = angular.module('clientControllers', ["angular-chartist"]);
     window.clientControllers = controllers;
 })();

@@ -59,9 +59,8 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 					if (err.message === 'Parse error') {
 						logger.warn("L2P courselist was not valid json: " + courses.toString());
 						return;
-					} else if (err) {
-                        self.res.setError(new Error("Something bad happened")).send();
-                        logger.warn('unexpected error: ' + err);
+					} else if (err.message === "Access Denied") {
+                        self.res.sendCommand("system:relogin");
                         return;
                     }
 					if (courses.Status) {
@@ -320,7 +319,9 @@ UserWorker.prototype.processRoleByRoom = function (room) {
         request.getUserRole(room.l2pID, function (err, userRole) {
             // data is well formatted if error not set.
             if (err) {
-                logger.warn("Error getting userRole: " + err); // do not warn user: he is probably a student
+                if (err.message === "Access Denied") {
+                    self.res.sendCommand("system:relogin")
+                }
             } else {
                 logger.debug("userRole: " + userRole.toString());
                 if (userRole && (userRole.indexOf('manager') > -1 || userRole.indexOf('tutors') > -1)) {

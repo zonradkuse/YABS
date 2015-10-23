@@ -12,7 +12,7 @@ body {
 .background-course {
     background-size: cover;
     height: 400px;
-    background-image: url('/yabs/hkw-background.jpg');
+    background-image: url('../hkw-background.jpg');
     background-position: center;
     overflow: visible;
 }

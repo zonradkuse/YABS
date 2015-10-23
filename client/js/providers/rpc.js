@@ -186,6 +186,10 @@ client.service("rpc", ["errorService", function(errorService){
                 count: 0
             },
             "func": ""
+        },{
+            "uri": "system:relogin",
+            "parameters" : {},
+            "func" : ""
         }]
     };
 

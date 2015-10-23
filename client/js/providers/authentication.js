@@ -3,14 +3,21 @@
 client.service("authentication", ["$window", "$q", "rpc", "$timeout", function($window, $q, rpc, $timeout){
 	var username = ""; // Do not use default as we check if username is set by checking empty string.
 	var user = {};
+    var self = this;
 
+    this.enableListeners = function () {
+        rpc.attachFunction("system:relogin", function () {
+            self.logout().then(function () {
+               self.enforceLoggedIn();
+            });
+        });
+    };
     /**
      * Function redirects to /login if user is not logged in.
      */
 	this.enforceLoggedIn = function() {
 		this.isUserLoggedIn().then(function(status) {
 			if (!status) {
-				$window.location = "login";
 				$window.location = "login";
 			}
 		});
@@ -20,9 +27,9 @@ client.service("authentication", ["$window", "$q", "rpc", "$timeout", function($
      * Checks if embedded into an iFrame.
      * @returns {boolean} - true iff embedded.
      */
-    this.checkIfEmbeddedIntoL2P = function () {
+    this.checkIfEmbeddedIntoL2P = function (window) {
         // self !== true iff embedded in iframe
-        return self !== top;
+        return window !== top;
     };
 
     /**

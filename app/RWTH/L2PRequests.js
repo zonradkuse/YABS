@@ -92,7 +92,7 @@ function getUserRole(cid, cb) {
         if (data && data.Status && data.role) {
             cb(null, data.role);
         } else {
-            cb(new Error("L2P said no."));
+            cb(err ? err : new Error("unknown error."));
         }
     });
 }
@@ -121,7 +121,10 @@ function parseData(data) {
 function request(options, next) {
     checkMethod(options.method);
 	var req = https.request(options, function (res) {
-		var response = '';
+		if (res.statusCode === 401) {
+            return next(new Error("Access Denied"));
+        }
+        var response = '';
 		res.setEncoding('utf8');
 		res.on('data', function (chunk) {
 			response += chunk;

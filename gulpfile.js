@@ -19,21 +19,6 @@ gulp.task('clean', function (cb) {
     cb(null);
 });
 gulp.task('fast-build', ['clean', 'js', 'css', 'img', 'html'], function() {
-
-    gulp.src(["client/bower_components/chartist/dist/chartist.min.css"])
-    .pipe(rename("chartist.css"))
-    .pipe(gulp.dest("public/"));
-
-    gulp.src(['client/bower_components/**/*.{css,js,map}',
-        '!client/bower_components/jquery/src/**/*.{css,js}',
-        '!client/bower_components/bootstrap/{grunt,js}/*.{css,js}',
-        '!client/bower_components/angular-chartist.js/{example,spec}/**/*.{css,js}',
-        '!client/bower_components/bootstrap-switch/{src,dist/**/bootstrap2}/**/*.{css,js}',
-        '!client/bower_components/**/{grunt,gruntfile,Gruntfile,npm,karma.conf,gulpfile}.{css,js}',
-        '!client/bower_components/**/*.min.{css,js}'])
-        .pipe(flatten())
-        .pipe(gulp.dest('public/'));
-    
     gulp.src(['client/bower_components/bootstrap/fonts/*.*'])
         .pipe(flatten())
         .pipe(gulp.dest('public/fonts/'));
@@ -44,6 +29,16 @@ gulp.task('fast-build', ['clean', 'js', 'css', 'img', 'html'], function() {
 });
 
 gulp.task('js', function() {
+    gulp.src(['client/bower_components/**/*.{js,map}',
+        '!client/bower_components/jquery/src/**/*.js',
+        '!client/bower_components/bootstrap/{grunt,js}/*.js',
+        '!client/bower_components/angular-chartist.js/{example,spec}/**/*.js',
+        '!client/bower_components/bootstrap-switch/{src,dist/**/bootstrap2}/**/*.js',
+        '!client/bower_components/**/{grunt,gruntfile,Gruntfile,npm,karma.conf,gulpfile}.js',
+        '!client/bower_components/**/*.min.js'])
+        .pipe(flatten())
+        .pipe(gulp.dest('public/'));
+
     gulp.src(['client/js/**/*.js'])
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
@@ -67,9 +62,23 @@ gulp.task('img', function() {
 });
 
 gulp.task('css', function() {
+    gulp.src(['client/bower_components/**/*.{css,map}',
+        '!client/bower_components/jquery/src/**/*.{css,js}',
+        '!client/bower_components/bootstrap/{grunt,js}/*.{css,js}',
+        '!client/bower_components/angular-chartist.js/{example,spec}/**/*.{css,js}',
+        '!client/bower_components/bootstrap-switch/{src,dist/**/bootstrap2}/**/*.{css,js}',
+        '!client/bower_components/**/{grunt,gruntfile,Gruntfile,npm,karma.conf,gulpfile}.{css,js}',
+        '!client/bower_components/**/*.min.{css,js}'])
+        .pipe(flatten())
+        .pipe(gulp.dest('public/css/'));
+
+    gulp.src(["client/bower_components/chartist/dist/chartist.min.css"])
+        .pipe(rename("chartist.css"))
+        .pipe(gulp.dest("public/css/"));
+
     gulp.src(['client/css/**/*.css'])
         .pipe(flatten())
-        .pipe(gulp.dest('public/'));
+        .pipe(gulp.dest('public/css/'));
     console.log("css files updates");
 });
 
