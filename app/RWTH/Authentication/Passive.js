@@ -121,18 +121,22 @@ function processUserContext(room) {
                         });
                     } else {
                         user.rwth.token = self.token;
-                        var entryExists = false;
+                        var theEntry = null;
                         for (var key in user.rights) {
                             if (user.rights[ key ].roomId === room._id.toString()) {
-                                entryExists = true;
+                                theEntry = user.rights[ key ];
                                 break;
                             }
                         }
-                        if (!entryExists) {
-                            if (parsedData && parsedData.userRoles && (parsedData.userRoles.indexOf('manager') > -1 ||
-                                parsedData.userRoles.indexOf('tutor') > -1)) {
+                        if (parsedData && parsedData.UserRoles && (parsedData.UserRoles.indexOf('manager') > -1 ||
+                            parsedData.UserRoles.indexOf('tutor') > -1)) {
+                            if (!theEntry) {
                                 user.rights.push({roomId: room._id.toString(), accessLevel: roles.defaultAdmin});
                             } else {
+                                theEntry.accessLevel = roles.defaultAdmin;
+                            }
+                        } else {
+                            if (!theEntry) {
                                 user.rights.push({roomId: room._id.toString(), accessLevel: roles.defaultLoggedIn});
                             }
                         }
