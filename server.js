@@ -19,7 +19,6 @@ var mongoose = require('mongoose');
 var flash = require('connect-flash');
 var fs = require('fs');
 
-asd();
 fs.mkdir(__dirname + '/images', function (err) { }); // create needed image root folder
 
 
