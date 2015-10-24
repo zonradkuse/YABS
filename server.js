@@ -18,7 +18,7 @@ logger.yabs("\n" +
 "Scotty, beam me up! \n");
 
 process.on('uncaughtException', function (err) {
-	process.exit(1)
+	process.exit(1);
 });
 
 var webserver = require("./app/Startup/webserver.js")(__dirname);

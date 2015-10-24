@@ -124,12 +124,7 @@ function initwss(expressApp) {
                         data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
                     }
                     build(client, null, null, null, uri, data);
-                } else {
-                    if (ws === client) {
-                        build(ws, new Error("Access denied."));
-                    }
                 }
-
             });
         });
     };
