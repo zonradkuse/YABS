@@ -53,6 +53,12 @@ fi
 echo "DONE generating files."
 echo "Registering and starting service"
 systemctl enable $TARGET_SERVICE_FILE_NAME
+set +e
+systemctl enable mongod.service 
+systemctl enable redis.service
+systemctl start mongod.service
+systemctl start redis.service
+set -e
 systemctl stop $TARGET_SERVICE_FILE_NAME
 systemctl start $TARGET_SERVICE_FILE_NAME
 echo "DONE."

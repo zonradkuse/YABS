@@ -320,7 +320,7 @@ UserWorker.prototype.processRoleByRoom = function (room) {
             // data is well formatted if error not set.
             if (err) {
                 if (err.message === "Access Denied") {
-                    self.res.sendCommand("system:relogin")
+                    self.res.sendCommand("system:relogin");
                 }
             } else {
                 logger.debug("userRole: " + userRole.toString());
