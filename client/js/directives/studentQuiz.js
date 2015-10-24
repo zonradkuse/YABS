@@ -93,6 +93,19 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                     $scope.quizQuestionSelection += 1;
                 };
 
+                $scope.getMyAnswer = function (givenAnswers, answer) {
+                    for (var i = 0; i < givenAnswers.length; i++) {
+                        if (givenAnswers[i]._id === answer._id) {
+                            if (answer.text) {
+                                return givenAnswers[i].userText;
+                            } else {
+                                return "Ja";
+                            }
+                        }
+                    }
+                    return "Nein";
+                };
+
             },
             post : function ($scope) {
                 // do data loading

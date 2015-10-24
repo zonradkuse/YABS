@@ -19,6 +19,7 @@
                     </li>
                 </ul>
                 <h2 style="margin-top:0;">Frage: {{quiz.questions[quizQuestionSelection].description}}</h2>
+                <hr>
                 <form>
     				<div ng-repeat="answer in quiz.questions[quizQuestionSelection].quizQuestion.answers" ng-class="{ 'answer-correct': isCorrect(answer) || (!isBad(answer) && quiz.answered), 'answer-bad' : isBad(answer)}">
                         <div class="checkbox" ng-if="answer.checkbox">
@@ -32,7 +33,8 @@
                             <label for="{{answer._id}}"> {{answer.description}} </label>
                             <input ng-if="!quiz.answered" ng-model="answer.checked" id="{{answer._id}}" type="text">
                         </div>
-                        Deine Antwort: {{  }}
+                        <div ng-if="quiz.answered"> Deine Antwort: {{ getMyAnswer(quiz.questions[quizQuestionSelection].givenAnswers, answer) }} </div>
+                        <hr>
                     </div>
                 </form> 
                 <div ng-if="!quizSending && !(quiz.questions[quizQuestionSelection].evaluationUserAnswers.userRight.length || quiz.questions[quizQuestionSelection].evaluationUserAnswers.userFalse.length)">

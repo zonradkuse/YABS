@@ -271,8 +271,9 @@ h2.loading {
     color: #555;
 }
 
-form > .answer-correct {
+form > .answer-correct label{
     color:green;
+    padding-left: 0;
 }
 
 .answer-bad {
