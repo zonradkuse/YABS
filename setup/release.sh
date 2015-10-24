@@ -1,6 +1,7 @@
 #!/bin/bash
-set -e
+set +e
 npm install
+set -e
 node_modules/bower/bin/bower install
 node_modules/gulp/bin/gulp.js fast-build
 node_modules/gulp/bin/gulp.js release-build
