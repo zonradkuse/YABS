@@ -1,96 +1,6 @@
-process.on('uncaughtException', function (err) {
-	process.exit(1)
-});
+require("./app/Startup/filesystemDependencies.js")(__dirname);
 
-var express = require('express');
-var app = express();
-var config = require('./config.json');
-var morgan = require('morgan');
-var cookieParser = require('cookie-parser');
-var session = require('express-session');
-var bodyParser = require('body-parser');
-var sessionStore = require('connect-redis')(session);
-var config = require('./config.json');
-var fs = require('fs');
-var compression = require('compression');
 var logger = require('./app/Logger.js');
-var passport = require('passport');
-var mongoose = require('mongoose');
-var flash = require('connect-flash');
-var fs = require('fs');
-
-fs.mkdir(__dirname + '/images', function (err) { }); // create needed image root folder
-
-
-mongoose.connect(config.database.host);
-
-/*
- * Initiate Express.js Webserver with
- *  default sessioncookie
- *  /public static file provider
- */
-app.use(morgan('dev', {
-    stream: logger.stream
-}));
-app.use(compression({
-    threshold: 1024
-}));
-app.disable('etag');
-app.use(cookieParser());
-//app.set('trust proxy', 1); // will be needed for production use with nginx
-app.use(session({
-    store: new sessionStore(),
-    roomId: "",
-    accessLevel: 0,
-    secret: config.general.cookie.secret,
-    cookie: {
-        //expires: new Date(Date.now() + 15778463000), // 6 month
-        maAge: 15778463000
-    },
-    resave: true,
-    saveUninitialized: true
-}));
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
-//app.use(flash());
-app.use(passport.initialize());
-app.use(passport.session());
-
-var routes = require('./app/Routes.js');
-routes(app);
-routes.routes();
-logger.info('initialized routes!');
-
-app.use(express.static(__dirname + '/public'));
-
-
-
-app.use(function (req, res) {
-    // Use res.sendfile, as it streams instead of reading the file into memory.
-    res.sendFile(__dirname + '/public/index.html');
-});
-var auth = require('./app/Authentication.js')(passport);
-
-/*
- *   Start the real server. If ssl is enabled start it too! http should not be used!
- */
-var server = require('http').createServer(app);
-if (config.general.https) {
-    var https = require('https');
-    https.createServer({
-        "key": fs.readFileSync(config.general.https.key),
-        "cert": fs.readFileSync(config.general.https.crt)
-    }, app).listen(config.general.https.port);
-    logger.info('Server now running on ssl ' + config.general.https.port + '!');
-}
-
-server.listen(config.general.http.port || 8080);
-logger.info('Server now running on ' + config.general.http.port + '!');
-module.exports.app = server;
-var ws = require('./app/WebsocketEventHandler.js'); //initialise websocket event handlers
 
 logger.yabs(" \n \n \
 .----------------.  .----------------.  .----------------.  .----------------. \n \
@@ -108,5 +18,14 @@ logger.yabs(" \n \n \
 \
 Scotty, beam me up! \n \
 ");
+
+process.on('uncaughtException', function (err) {
+	process.exit(1)
+});
+
+var webserver = require("./app/Startup/webserver.js")(__dirname);
+var wss = require('./app/Websocket/server.js')(webserver);
+require('./app/WebsocketEventHandler.js')(wss);
+require("./app/Startup/database.js")();
 
 logger.yabs("We are online!");

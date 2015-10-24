@@ -1,13 +1,16 @@
-var ws = require('./Websocket.js');
-var wsFrame = new ws();
+function init (wss) {
+    var ws = require('./Websocket.js');
+    var wsFrame = new ws(wss);
 
-// set all event handlers
-require('./WebsocketAPI/System.js')(wsFrame);
-require('./WebsocketAPI/Room.js')(wsFrame);
-require('./WebsocketAPI/User.js')(wsFrame);
-require('./WebsocketAPI/Question.js')(wsFrame);
-require('./WebsocketAPI/Mod.js')(wsFrame);
-require('./WebsocketAPI/Poll.js')(wsFrame);
-require('./WebsocketAPI/Quiz.js')(wsFrame);
+    // set all event handlers
+    require('./WebsocketAPI/System.js')(wsFrame);
+    require('./WebsocketAPI/Room.js')(wsFrame);
+    require('./WebsocketAPI/User.js')(wsFrame);
+    require('./WebsocketAPI/Question.js')(wsFrame);
+    require('./WebsocketAPI/Mod.js')(wsFrame);
+    require('./WebsocketAPI/Poll.js')(wsFrame);
+    require('./WebsocketAPI/Quiz.js')(wsFrame);
 
-wsFrame.start();
+    wsFrame.start();
+}
+module.exports = init;
