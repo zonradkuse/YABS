@@ -7,7 +7,6 @@ var gulp = require('gulp'),
     minifyCss = require('gulp-minify-css'),
     flatten = require('gulp-flatten'),
     del = require('del'),
-    jsdoc = require('gulp-jsdoc'),
     rename = require('gulp-rename'),
     exec = require('child_process').exec,
     jscs = require('gulp-jscs'),
@@ -163,14 +162,6 @@ gulp.task('install', ['check'], function(cb){
 });
 
 gulp.task('full', ['check', 'install' ,'build', 'jscs-app']);
-
-gulp.task('docOld', function() {
-    del.sync('docOld/*');
-    gulp.src(['app/**/*.js', 'models/**/*.js'])
-        .pipe(jsdoc('docOld/server'));
-    gulp.src(['client/**/*.js', '!client/bower_components/**/*.js'])
-        .pipe(jsdoc('docOld/client'));
-});
 
 gulp.task('cleanDoc', function () {
     del.sync('doc/server/');
