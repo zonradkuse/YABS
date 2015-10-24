@@ -1,3 +1,7 @@
+process.on('uncaughtException', function (err) {
+	process.exit(1)
+});
+
 var express = require('express');
 var app = express();
 var config = require('./config.json');
@@ -14,11 +18,6 @@ var passport = require('passport');
 var mongoose = require('mongoose');
 var flash = require('connect-flash');
 var fs = require('fs');
-
-
-process.on('uncaughtException', function (err) {
-    process.exit(1)
-});
 
 asd();
 fs.mkdir(__dirname + '/images', function (err) { }); // create needed image root folder

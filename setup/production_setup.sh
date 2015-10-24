@@ -32,7 +32,6 @@ if [ -d "$TARGET_SERVICE_FOLDER" ]; then
 #echo "Requires=network.target" >> $TARGET_SERVICE_FILE
 #echo "" >> $TARGET_SERVICE_FILE
 	echo "[Service]" > $TARGET_SERVICE_FILE
-	echo "Requires=redis.service mongod.service"  >> $TARGET_SERVICE_FILE
 	echo "WorkingDirectory=$WORKING_DIRECTORY" >> $TARGET_SERVICE_FILE
 	echo "ExecStart=$NODE $EXEC" >> $TARGET_SERVICE_FILE
 	echo "Restart=always" >> $TARGET_SERVICE_FILE
