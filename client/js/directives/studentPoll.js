@@ -78,14 +78,15 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                         });
                     });
                 });
-
-                setTimeout(function () {
-                    $scope.getNext(function (bool) {
-                        if (bool) {
-                            $("#pollStudentModal").modal('show');
-                        }
-                    });
-                }, 2000);
+                if (!$scope.showAdmin) {
+                    setTimeout(function () {
+                        $scope.getNext(function (bool) {
+                            if (bool) {
+                                $("#pollStudentModal").modal('show');
+                            }
+                        });
+                    }, 2000);
+                }
             }
         }
 	};

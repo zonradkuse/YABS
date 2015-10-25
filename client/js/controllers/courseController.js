@@ -17,6 +17,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         $scope.arsNavSelection = 0;
         $scope.quizMode = false;
         $scope.statisticsQuiz = {};
+        $scope.statisticShowing = false;
 
         $scope.inverseQuizMode = function() {
             $scope.quizMode = !$scope.quizMode;
