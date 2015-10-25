@@ -48,7 +48,7 @@ clientControllers.directive('statisticsModal', ['$timeout', 'rooms', "errorServi
         		} catch (e) {
         			// lol
         		}
-	            scope.chartist.lineData = { labels: [], series: []};
+
 			},
 			post: function(scope){
 				// as this function is post-load binded by angular default we can now do all the initialization

@@ -116,4 +116,8 @@ module.exports = function (wsCtrl) {
             res.setError(new Error("Invalid Parameters.")).send();
         }
     });
+
+    wsCtrl.on('poll:getStatistics', function (req, res) {
+
+    });
 };

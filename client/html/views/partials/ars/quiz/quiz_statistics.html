@@ -1,0 +1,18 @@
+<div class="modal fade out" id="quizStatisticsModal" tabindex="-1" role="dialog" aria-labelledby="quizStatisticsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="quizStatisticsModalLabel"> Quizauswertung der Frage {{ quiz.description }} </h4>
+            </div>
+            <div class="modal-body">
+                <div ng-repeat="q in quiz.questions">
+                    <h2>{{ q.description }}</h2>
+                    <chartist  chartist-data="chartist[q._id].barData" chartist-chart-type="Bar" class="ct-chart ct-golden-section" chartist-chart-options="chartist[q._id].barOptions" chartist-responsive-options="chartist[q._id].barResponsiveOptions"></chartist>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary pull-right"> Schließen </button>
+            </div>
+        </div>
+    </div>
+</div>

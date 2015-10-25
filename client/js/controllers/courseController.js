@@ -16,6 +16,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         $scope.activeModule = 0;
         $scope.arsNavSelection = 0;
         $scope.quizMode = false;
+        $scope.statisticsQuiz = {};
 
         $scope.inverseQuizMode = function() {
             $scope.quizMode = !$scope.quizMode;
@@ -182,6 +183,13 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
 
         $scope.changeDropdownModule = function(position){
             $scope.activeModule = position;
+        };
+
+        $scope.showQuizStatistics = function (quiz) {
+            $scope.statisticsQuiz = quiz;
+            $timeout(function () {
+                $("#quizStatisticsModal").modal('show');
+            });
         };
 
         $scope.deleteQuiz = function(quiz){

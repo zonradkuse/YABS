@@ -123,7 +123,6 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                                 var newArrayLength = $scope.quizzes.push(quizzes.quizzes[key]);
                                 $scope.quizzes[newArrayLength - 1] = data.quiz;
                                 $scope.initLoading = false;
-                                rooms.getStatistics(data.quiz);
                                 $scope.$digest();
                             });
                         }
