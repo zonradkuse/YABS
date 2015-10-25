@@ -36,7 +36,7 @@ var getStatistics = function (pollId, cb) {
         } else if (ars && ars.poll && ars.poll.statistics) {
             cb(null, ars.poll.statistics);
         } else {
-            cb(new Error("Not Found."))
+            cb(new Error("Not Found."));
         }
     });
 };

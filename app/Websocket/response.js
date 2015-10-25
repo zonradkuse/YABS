@@ -18,7 +18,7 @@ function WebsocketResponse (request) {
 
 	this.send = function (data) {
         if (!data && !self.error) {
-            logger.warn("empty message creation. somebody requested data that is not existing.")
+            logger.warn("empty message creation. somebody requested data that is not existing.");
             return self.setError(new Error("Not Found.")).send();
         }
 		build(self.request.ws, self.error, data, self.request.refId);
