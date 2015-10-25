@@ -38,7 +38,7 @@ module.exports = function (app) {
                             }
                         }
 						req.session.user.rights.push({roomId : req.params.roomId, accessLevel: roles.defaultAdmin});
-						res.redirect("/course/" + req.params.roomId);
+						res.redirect("course/" + req.params.roomId);
 					} else {
 						res.status(403).send("Wrong Password");
 					}

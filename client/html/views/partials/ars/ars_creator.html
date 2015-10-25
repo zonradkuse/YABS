@@ -85,11 +85,12 @@
                                                     Radiobox
                                                 </a>
                                             </li>
-                                            <li role="presentation">
-                                                <a role="menuitem" tabindex="-1" href="#" ng-click="addTextfield()"> 
+                                            <!-- It is potentially possible to have text fields, but server implementation is crappy. uncomment when correctly implemented -->
+                                            <!--<li role="presentation">
+                                                <a role="menuitem" tabindex="-1" href="#" ng-click="addTextfield()">
                                                     Textfeld
                                                 </a>
-                                            </li>
+                                            </li>-->
                                         </ul>
                                     </div>
                                 </div>
@@ -114,7 +115,7 @@
                             <select style="width:68%" class="form-control" ng-model="editAnswerItem.type">
                                 <option value="checkbox">Checkbox</option>
                                 <option value="radiobox">Radiobox</option>
-                                <option value="text">Textfeld</option>
+                                <!--<option value="text">Textfeld</option>-->
                             </select>
                             <div class="checkbox" ng-if="editAnswerItem.type == 'radiobox' && optionQuiz == 'Quizfrage'">
                                  <label class="checkbox"> <input type="checkbox" ng-model="editAnswerItem.rightAnswer"> Ist richtige Antwort </label>

@@ -1,4 +1,8 @@
-/** @module Panic */
+/**
+ * @file
+ * @author Jens Piekenbrinck [jens.piekenbrinck@rwth-aachen.de]
+ * @module Panic
+ */
 
 var roles = require('../config/UserRoles.json');
 var Room = require('../models/Room.js');
@@ -46,12 +50,14 @@ var RoomWorker = function (roomID, wsControl, wss, ws, options) {
 		options.importantQuestions = {};
 	}
 	if (options.importantQuestions.interval === undefined) {
-		options.importantQuestions.interval = 15* 60* 1000;
+		options.importantQuestions.interval = 90 * 60 * 1000;
 	}
 	if (options.importantQuestions.votes === undefined) {
 		options.importantQuestions.votes = 10;
 	}
-
+    Room.Room.findOne({ _id : roomID }, function(err, room) {
+        options.importantQuestions.votes = room.config.thresholdForImportantQuestion;
+    });
 
 	var self = this;
 

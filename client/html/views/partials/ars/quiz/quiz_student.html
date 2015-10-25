@@ -19,6 +19,11 @@
                     </li>
                 </ul>
                 <h2 style="margin-top:0;">Frage: {{quiz.questions[quizQuestionSelection].description}}</h2>
+                <div ng-if="quiz.answered">
+                    War Deine Antwort richtig, wird der Beschreibungstext <code style="color: green">grün</code>, sonst <code style="color:red">rot</code> markiert.
+                    Deine ursprüngliche Antwort wird Dir ebenfalls angezeigt.
+                    Hast Du ein Feld ausgewählt, lautet die Antwort <code>Ja</code>, sonst <code>Nein</code>.
+                </div>
                 <hr>
                 <form>
     				<div ng-repeat="answer in quiz.questions[quizQuestionSelection].quizQuestion.answers" ng-class="{ 'answer-correct': isCorrect(answer) || (!isBad(answer) && quiz.answered), 'answer-bad' : isBad(answer)}">
@@ -33,7 +38,11 @@
                             <label for="{{answer._id}}"> {{answer.description}} </label>
                             <input ng-if="!quiz.answered" ng-model="answer.checked" id="{{answer._id}}" type="text">
                         </div>
-                        <div ng-if="quiz.answered"> Deine Antwort: {{ getMyAnswer(quiz.questions[quizQuestionSelection].givenAnswers, answer) }} </div>
+                        <div ng-if="quiz.answered">
+                            Deine zuvor abgegebene Antwort war: {{ getMyAnswer(quiz.questions[quizQuestionSelection].givenAnswers, answer) }} <br>
+                            Die richtige Antwort lautet: {{ getCorrectAnswer(quiz.questions[quizQuestionSelection].quizQuestion.evaluation, answer) }}
+                        </div>
+
                         <hr>
                     </div>
                 </form> 

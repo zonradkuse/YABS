@@ -106,18 +106,32 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                     return "Nein";
                 };
 
+                $scope.getCorrectAnswer = function (evaluation, answer) {
+                    for (var i = 0; i < evaluation.answers.length; i++) {
+                        if (evaluation.answers[i]._id === answer._id) {
+                            if (evaluation.answers[i].text) {
+                                return evaluation.answers[i].userText;
+                            } else {
+                                return "Ja";
+                            }
+                        }
+                    }
+                    return "Nein";
+                };
+
             },
             post : function ($scope) {
                 // do data loading
                 rooms.getAllQuizzes($scope.room, function(quizzes){
                     $scope.quizzes = [];
+                    var hasActive = false;
                     if (quizzes.quizzes.length === 0) {
                         $scope.initLoading = false;
-                        $scope.$digest();
                     }
                     for (var key in quizzes.quizzes) { //crappy solution but server gives everything, even inactive objects
 
-                        if (quizzes.quizzes[key].active) { // TODO fix that already answered items are not shown/evaluated
+                        if (quizzes.quizzes[key].active) {
+                            hasActive = true;
                             /*jshint -W083 */
                             rooms.getQuiz(quizzes.quizzes[key], function (data) {
                                 var newArrayLength = $scope.quizzes.push(quizzes.quizzes[key]);
@@ -127,6 +141,10 @@ clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (r
                             });
                         }
                     }
+                    if (!hasActive) {
+                        $scope.initLoading = false;
+                    }
+                    $scope.$digest();
                 });
 
 

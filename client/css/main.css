@@ -276,6 +276,12 @@ form > .answer-correct label{
     padding-left: 0;
 }
 
-.answer-bad {
+form > .answer-bad label {
     color: red;
+}
+
+.ct-labels span{
+    font-size: 12px !important;
+    color: black;
+    font-weight:600;
 }

@@ -1,4 +1,8 @@
-/** @module Models/PanicEvent */
+/**
+ * @file
+ * @author Jens Piekenbrinck [jens.piekenbrinck@rwth-aachen.de]
+ * @module Models/PanicEvent
+ */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');

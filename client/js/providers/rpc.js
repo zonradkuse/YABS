@@ -105,7 +105,7 @@ client.service("rpc", ["errorService", function(errorService){
 	function receiveMessage(event) {
         var data = JSON.parse(event.data);
         if ("error" in data && data.error !== null) {
-            console.log("WS Error: data.error");
+            console.log("WS Error: " + data.error);
             return errorService.drawError("WS Error received: " + data.error, true);
         }
 		if ("data" in data) {

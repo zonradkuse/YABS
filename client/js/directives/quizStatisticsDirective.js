@@ -11,7 +11,7 @@ clientControllers.directive('quizStatistics', ['$timeout', 'rooms', function($ti
                 $scope.chartist = [];
                 $scope.prepareQuizzes = function () {
                     var barOptions = {
-                        seriesBarDistance: 15
+                        seriesBarDistance: 1
                     };
 
                     var barResponsiveOptions = [
@@ -24,12 +24,7 @@ clientControllers.directive('quizStatistics', ['$timeout', 'rooms', function($ti
                             }
                         }],
                         ['screen and (max-width: 640px)', {
-                            seriesBarDistance: 5,
-                            axisX: {
-                                labelInterpolationFnc: function(value) {
-                                    return value[0];
-                                }
-                            }
+                            seriesBarDistance: 5
                         }]
                     ];
                     for (var i = 0; i < $scope.quiz.questions.length; i++) {

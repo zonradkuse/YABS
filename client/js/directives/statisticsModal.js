@@ -89,7 +89,7 @@ clientControllers.directive('statisticsModal', ['$timeout', 'rooms', "errorServi
 
 		                $('.ct-chart').on('mouseenter', '.ct-point', function() {
 		                    var $point = $(this);
-		                    var count = $point.attr('ct:value');
+		                    var count = $point.attr('ct:value') || 0; // || 0 as chartist currently gives undefined on 0 value
 		                    var time = $point.attr('ct:meta');
 		                    // this is bad but scope variables are too slow. gotta go for an angular module
 		                    $toolTip.html('<div class="panel-heading">' + time + 

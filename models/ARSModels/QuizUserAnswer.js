@@ -1,4 +1,8 @@
-/** @module Models/ARSQuizUserAnswer */
+/**
+ * @file
+ * @author Jens Piekenbrinck [jens.piekenbrinck@rwth-aachen.de]
+ * @module Models/ARSQuizUserAnswer
+ */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');

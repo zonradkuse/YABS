@@ -1,6 +1,7 @@
 var logger = require('../../Logger.js');
 var roomDAO = require('../../../models/Room.js');
 var apiHelpers = require('../misc/Helpers.js');
+var panicDAO = require('../../Panic.js');
 
 module.exports = function (wsControl) {
     wsControl.on("mod:setRoomConfigDiscussion", function (req, res) {
@@ -69,7 +70,15 @@ function configurationChangePreparation(req, res, cb) {
                                 res.setError(new Error("An Error occured.")).send();
                             } else {
                                 room = apiHelpers.prepareRoom(req.session.user, room.toObject());
-                                res.roomBroadcastUser("room:add", { room : room }, req.params.roomId);
+                                panicDAO.hasUserPanic(req.session.user, room, function (err, panicEvent) {
+                                    panicDAO.isRoomRegistered(room, function (isRegistered) {
+                                        room.hasUserPanic = (!err && panicEvent) ? true : false;
+                                        room.isRoomRegistered = isRegistered;
+                                        res.roomBroadcastUser("room:add", { room : room }, req.params.roomId);
+                                    });
+                                });
+
+
                             }
                         });
                     });

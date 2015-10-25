@@ -1,4 +1,8 @@
-/** @module QuizController */
+/**
+ * @file
+ * @author Jens Piekenbrinck [jens.piekenbrinck@rwth-aachen.de]
+ * @module QuizController
+ */
 var async = require('async');
 var Scheduler = require('../Timing/Scheduler.js');
 var Rooms = require('../../../models/Room.js');
@@ -75,31 +79,50 @@ var getQuiz = function (userId, quizId, options, callback) {
         for (var i= 0; i<quiz.questions.length; i++) { // every question belonging to quiz
             q = quiz.questions[ i ];
             if (answered) {
+                var userReallyAnswered = false;
                 for (var k= 0; k < q.quizQuestion.givenAnswers.length; k++) { // every answer given by user
                     if (q.quizQuestion.givenAnswers[ k ].user.toString() === userId.toString()) { // if user in givenAnswers found
+                        userReallyAnswered = true;
                         for (var j= 0; j < q.quizQuestion.givenAnswers[ k ].answers.length; j++) { // for every answer made
-                            // answers array could be empty!!
+                            // answers array could be empty!! - case: user answered
                             q.givenAnswers = q.quizQuestion.givenAnswers[ k ].answers;
                             if (q.quizQuestion.evaluation.answers.length === 0) {
                                 evaluationUserAnswers.userFalse.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]);
                             } else {
-                                if (isAnswerInEvaluationAndCorrect(
-                                    q.quizQuestion.givenAnswers[ k ].answers[ j ],
-                                    q.quizQuestion.evaluation)) {
+                                if (isAnswerInEvaluationAndCorrect( // case: answer is in evaluation.
+                                        q.quizQuestion.givenAnswers[ k ].answers[ j ],
+                                        q.quizQuestion.evaluation
+                                    )
+                                ) {
                                     evaluationUserAnswers.userRight.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]._id.toString());
                                 } else {
                                     evaluationUserAnswers.userFalse.push(q.quizQuestion.givenAnswers[ k ].answers[ j ]._id.toString());
                                 }
                             }
-
+                        }
+                        // case: every(!) evaluation is in givenAnswers
+                        for (var l = 0; l < q.quizQuestion.evaluation.answers.length; l++) {
+                            if (!isEvaluationInUserAnswer(q.quizQuestion.evaluation.answers[l], q.quizQuestion.givenAnswers[ k ].answers)) {
+                                evaluationUserAnswers.userFalse.push(q.quizQuestion.evaluation.answers[l]._id.toString());
+                            } else {
+                                evaluationUserAnswers.userRight.push(q.quizQuestion.evaluation.answers[l]._id.toString());
+                            }
                         }
                         break;
+                    }
+                }
+                // case: user might not have answered but there are answers in evaluation. then user is wrong
+                if (!userReallyAnswered) {
+                    for (var l = 0; l < q.quizQuestion.evaluation.answers.length; l++) {
+                        evaluationUserAnswers.userFalse.push(q.quizQuestion.evaluation.answers[l]._id.toString());
                     }
                 }
             }
             delete q.quizQuestion.givenAnswers;
             delete q.answered;
-            delete q.quizQuestion.evaluation;
+            if (!answered) {
+                delete q.quizQuestion.evaluation;
+            }
             q.evaluationUserAnswers = evaluationUserAnswers;
             quiz.questions[ i ] = q;
         }
@@ -117,6 +140,19 @@ var isAnswerInEvaluationAndCorrect = function (answer, evaluation) {
                 return true;
             } else {
                 return (answer.userText && answer.userText.toUpperCase() === evaluation.answers[ index ].userText.toUpperCase());
+            }
+        }
+    }
+    return false;
+};
+
+var isEvaluationInUserAnswer = function (evalAnswer, allUserAnswers) {
+    for (var m = 0; m < allUserAnswers.length; m++) {
+        if (evalAnswer._id.toString() === allUserAnswers[m]._id.toString()) {
+            if (allUserAnswers[m].text) {
+                return (allUserAnswers[m].userText && allUserAnswers[m].userText.toUpperCase() === evalAnswer.userText.toUpperCase());
+            } else {
+                return true;
             }
         }
     }
@@ -236,7 +272,7 @@ var answer = function (userId, roomId, questionId, answerIds, callback) {
     // params.userId, params.answerIds, params.arsId, params.roomId
     QuestionModel.findOne({ _id : questionId }).deepPopulate('quizQuestion.statistics.statisticAnswer.answer quizQuestion.evaluation').exec(function (err, question) {
         if (err) {
-            logger.debug(err);
+            logger.warn(err);
             return callback(err);
         }
         for (var l = 0; l < question.answered.length; ++l) {

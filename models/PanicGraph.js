@@ -1,4 +1,8 @@
-/** @module Models/PanicGraph */
+/**
+ * @file
+ * @author Jens Piekenbrinck [jens.piekenbrinck@rwth-aachen.de]
+ * @module Models/PanicGraph
+ */
 
 var mongoose = require('mongoose');
 var deepPopulate = require('mongoose-deep-populate');

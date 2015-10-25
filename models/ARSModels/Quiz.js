@@ -13,4 +13,3 @@ var ARSQuizSchema = mongoose.Schema({
 ARSQuizSchema.plugin(deepPopulate);
 var ARSQuiz = mongoose.model('ARSQuiz', ARSQuizSchema);
 module.exports.ARSQuiz = ARSQuiz;
-
