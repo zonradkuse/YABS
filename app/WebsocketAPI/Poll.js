@@ -41,11 +41,7 @@ module.exports = function (wsCtrl) {
                     description: "new Poll successfully created.", 
                     poll: poll
                 });
-                res.roomBroadcastUser('poll:do',
-                    {
-                        "arsObj": poll,
-                        "roomId": req.params.roomId
-                    }, req.params.roomId);
+
                 logger.info("successfully created new poll in " + req.params.roomId);
                 logger.debug("new ars object: " + poll);
             }, function (q) {
@@ -126,5 +122,25 @@ module.exports = function (wsCtrl) {
                 res.send(statistics);
             }
         });
+    });
+
+    wsCtrl.on('poll:toggleActivation', function (req, res) {
+        req.params.userId = req.session.user._id;
+            pollCtrl.togglePollActivation(req.params.roomId, req.params.pollId, req.params.active, function (err, poll) {
+                if (err) {
+                    logger.warn("An error occurred on activate quiz: " + err);
+                    res.setError(err).send();
+                } else {
+                    res.send({ active: req.params.active });
+                    if (req.params.active) {
+                        res.roomBroadcastUser('poll:do',
+                            {
+                                "arsObj": poll,
+                                "roomId": req.params.roomId,
+                                "message": "check yourself if you have not answered this one already."
+                            }, req.params.roomId);
+                    }
+                }
+            });
     });
 };

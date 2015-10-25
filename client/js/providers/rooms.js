@@ -212,7 +212,9 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 		rpc.attachFunction("answer:add", function(data) {
 			self.upsertAnswer(data.roomId, data.questionId, data.answer);
 		});
-        rpc.attachFunction("poll:do", function() {
+        rpc.attachFunction("poll:do", function(data) {
+            $rootScope.newPoll = data.arsObj;
+            $rootScope.$digest();
             $("#pollStudentModal").modal('show');
         });
         rpc.attachFunction("poll:statistic", function(data) {
@@ -406,6 +408,20 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
 	        	}
 	        });
     	}
+    };
+
+    this.togglePollActivation = function(room, poll, active, cb) {
+        if(room){
+            rpc.call("poll:toggleActivation", {
+                roomId : room._id,
+                pollId : poll._id,
+                active : active
+            }, function(data){
+                if(cb){
+                    cb(data.status);
+                }
+            });
+        }
     };
 
     this.upsertQuizzes = function(roomId, quizzes) {

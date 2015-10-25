@@ -180,8 +180,8 @@
                                         </div>
                                         <br>
                                         <button class="btn btn-default" ng-click="statisticShowing = !statisticShowing" type="button">{{ statisticShowing ? "Statistik verstecken" : "Statistik anzeigen" }}</button>
-                                        <!--<button class="btn" ng-class="(!arsPoll.active) ? 'btn-success' : 'btn-default'" type="button">
-                                            {{(arsPoll.active)?"Deaktivieren":"Aktivieren"}}-->
+                                        <button class="btn" ng-class="(!arsPoll.active) ? 'btn-success' : 'btn-default'" type="button" ng-click="togglePollActivation(arsPoll)">
+                                            {{(arsPoll.active)?"Deaktivieren":"Aktivieren"}}
                                         </button>
                                         <button class="btn btn-danger" type="button" ng-click="deletePoll(arsPoll)">Löschen</button>
                                         <div ng-if="statisticShowing">

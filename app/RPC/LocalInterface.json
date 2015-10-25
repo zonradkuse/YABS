@@ -301,6 +301,15 @@
         "accessLevel": 2
     },
     {
+      "uri": "poll:toggleActivation",
+      "parameters": {
+        "roomId" : "",
+        "pollId" : "",
+        "active" : ""
+      },
+      "accessLevel": 2
+    },
+    {
       "uri": "quiz:getStatistics",
       "parameters": {
         "quizId" : ""

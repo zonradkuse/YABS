@@ -34,7 +34,7 @@ var getStatistics = function (pollId, cb) {
         if (err) {
             return cb(err);
         } else if (ars && ars.poll && ars.poll.statistics) {
-            cb(null, ars.poll.statistics);
+            cb(null, ars);
         } else {
             cb(new Error("Not Found."));
         }
@@ -141,7 +141,7 @@ var newPoll = function (params, cb, tcb) {
     var _question = new QuestionModel();
 	_question.description = params.description;
     _question.dueDate = dueDate* 1000 + Date.now();
-    _question.active = true;
+    _question.active = false;
 	var _poll = new PollModel();
     var _statistic = new StatisticModel();
     _statistic.save();
@@ -157,7 +157,7 @@ var newPoll = function (params, cb, tcb) {
             q.save();
             tcb(q);
         });
-	}, dueDate* 1000 + 1000);
+	}, 500 * 60 * 1000 + 1000);
 	
 	var _tempAnswers = []; // having something like a transaction to prevent saving invalid data
 	var i;
@@ -364,6 +364,19 @@ var deletePoll = function (roomId, pollId, callback) {
     });
 };
 
+var togglePollActivation = function (roomId, pollId, bool, cb) {
+    QuestionModel.findOne({ _id : pollId}).deepPopulate('poll.statistics.statisticAnswer.answer').exec(function (err, ars) {
+        if (err) {
+            return cb(err);
+        } else {
+            ars.active = bool;
+            ars.save(function (err, arsObj) {
+                cb(err, arsObj)
+            });
+        }
+    });
+};
+
 
 module.exports.answer = answer;
 module.exports.newPoll = newPoll;
@@ -372,3 +385,4 @@ module.exports.getNext = getNext;
 module.exports.getAllPollsInRoom = getAllPollsInRoom;
 module.exports.deletePoll = deletePoll;
 module.exports.getStatistics = getStatistics;
+module.exports.togglePollActivation = togglePollActivation;

@@ -1,6 +1,6 @@
 /** @module Directive/ARSStudentPoll */
 
-clientControllers.directive('studentPoll', ['rooms', function (rooms) {
+clientControllers.directive('studentPoll', ['rooms', '$rootScope', function (rooms, $rootScope) {
 	return {
 		restrict: 'E',
 		templateUrl: 'poll_student.html',
@@ -71,10 +71,12 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                         $scope.pollSending = true;
                         $scope.getNext(function (bool) {
                             if (!bool) {
-                                $("#pollStudentModal").modal('hide');
+                                $scope.question = $rootScope.newPoll;
+                                $scope.statisticsShowing = true;
                             } else {
                                 $scope.pollSending = false;
                             }
+                            $scope.$digest();
                         });
                     });
                 });

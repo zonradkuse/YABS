@@ -221,6 +221,14 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
             });
         };
 
+        $scope.togglePollActivation = function(poll){
+            rooms.togglePollActivation($scope.room, poll, !poll.active, function(){
+                $scope.$apply(function(){
+                    poll.active = !poll.active;
+                });
+            });
+        };
+
         $scope.toggleComponentDiscussion = function () {
             roomsConfiguration.toggleComponentDiscussion($scope.room, $scope.room.config.components.discussions);
         };

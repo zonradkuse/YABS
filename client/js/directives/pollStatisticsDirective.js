@@ -1,4 +1,4 @@
-clientControllers.directive('pollStatistics', ['$timeout', 'rooms', function($timeout, rooms) {
+clientControllers.directive('pollStatistics', ['$timeout', 'rooms', "$rootScope", function($timeout, rooms, $rootScope) {
     return {
         restrict: 'E',
         templateUrl: 'poll_statistics.html',
@@ -50,11 +50,16 @@ clientControllers.directive('pollStatistics', ['$timeout', 'rooms', function($ti
             },
             post: function ($scope) {
                 var init = function(){
-                    rooms.getPollStatistics($scope.poll, function (data) {
-                        $scope.statistics = data;
-                        $scope.preparePolls();
-                        $scope.$digest();
-                    });
+                    if (!$scope.poll || ($scope.poll && !$scope.poll._id)) {
+                        $scope.poll = $rootScope.newPoll;
+                    }
+                    if ($scope.poll) {
+                        rooms.getPollStatistics($scope.poll, function (data) {
+                            $scope.statistics = data.poll.statistics;
+                            $scope.preparePolls();
+                            $scope.$digest();
+                        });
+                    }
                 };
                 $scope.interval = setInterval(init, 7000);
                 $scope.$on("$destroy", function() {
