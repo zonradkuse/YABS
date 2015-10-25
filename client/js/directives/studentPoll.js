@@ -8,6 +8,8 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
 		link: {
             pre: function ($scope) {
                 $scope.pollSending = true;
+                $scope.statisticsShowing = false;
+                $scope.hasNext = true;
 
                 $scope.getNext = function (cb) {
                     rooms.getNextPoll($scope.room, function(data) {
@@ -19,19 +21,28 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                                 $scope.question = data.arsObj;
                                 $scope.pollSending = false;
                             });
-                            if (cb) cb(true);
+                            if (cb) {
+                                cb(true);
+                            } else {
+                                $scope.statisticsShowing = false;
+                            }
                         } else {
-                            $scope.$apply(function () {
-                                $scope.resetPoll();
-                            });
-                            if (cb) cb(false);
+                            if (cb) {
+                                cb(false);
+                            } else {
+                                $scope.hasNext = false;
+                            }
                         }
+                        $scope.$digest();
                     });
                 };
 
                 $scope.resetPoll = function () {
                     $scope.pollSending = false;
+                    $scope.statisticsShowing = false;
+                    $scope.hasNext = true;
                     $scope.question = {};
+                    $("#pollStudentModal").modal('hide');
                 };
 
                 $scope.sendPoll = function () {
@@ -43,18 +54,12 @@ clientControllers.directive('studentPoll', ['rooms', function (rooms) {
                         }
                     }
                     rooms.answerPoll($scope.room, $scope.question, chk, function (resp) {
-                        $scope.getNext(function (bool) {
-                            if (!bool) {
-                                $('#pollStudentModal').modal('hide');
-                                $scope.$apply(function () {
-                                    $scope.resetPoll();
-                                });
-                            }
-                        });
+                        $scope.statisticsShowing = true;
+                        $scope.$digest();
                     });
                 };
             },
-            post : function ($scope, element, attrs) {
+            post : function ($scope) {
                 $('#pollStudentModal').modal({
                     keyboard: false,
                     backdrop: 'static',

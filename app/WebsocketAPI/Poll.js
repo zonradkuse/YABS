@@ -118,6 +118,13 @@ module.exports = function (wsCtrl) {
     });
 
     wsCtrl.on('poll:getStatistics', function (req, res) {
-
+        pollCtrl.getStatistics(req.params.pollId, function (err, statistics) {
+            if (err) {
+                logger.warn("Could not fetch statistics: " + err);
+                res.setError(err).send();
+            } else {
+                res.send(statistics);
+            }
+        });
     });
 };

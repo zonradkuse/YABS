@@ -47,7 +47,7 @@ clientControllers.directive('quizStatistics', ['$timeout', 'rooms', function($ti
             },
             post: function ($scope) {
                 $('#quizStatisticsModal').off().on("show.bs.modal", function () {
-                    rooms.getStatistics($scope.quiz, function (data) {
+                    rooms.getQuizStatistics($scope.quiz, function (data) {
                         $scope.quiz = data;
                         $scope.prepareQuizzes();
                         $scope.$digest();

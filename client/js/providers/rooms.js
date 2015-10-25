@@ -374,9 +374,19 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
     	}
     };
 
-    this.getStatistics = function(quiz, cb) {
+    this.getQuizStatistics = function(quiz, cb) {
         rpc.call("quiz:getStatistics", {
             quizId : quiz._id
+        }, function(data){
+            if(cb){
+                cb(data);
+            }
+        });
+    };
+
+    this.getPollStatistics = function(poll, cb) {
+        rpc.call("poll:getStatistics", {
+            pollId : poll._id
         }, function(data){
             if(cb){
                 cb(data);

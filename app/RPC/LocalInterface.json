@@ -253,6 +253,12 @@
             "pollId" : ""
         },
         "accessLevel": 2
+    },{
+        "uri": "poll:getStatistics",
+        "parameters": {
+          "pollId" : ""
+        },
+        "accessLevel": 1
     },
     {
         "uri": "quiz:answer",

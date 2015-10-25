@@ -29,6 +29,17 @@ var getAllPollsInRoom = function (roomId, dpOptions, cb) {
     }); 
 };
 
+var getStatistics = function (pollId, cb) {
+    QuestionModel.findOne({ _id : pollId}).deepPopulate('poll.statistics.statisticAnswer.answer').exec(function (err, ars) {
+        if (err) {
+            return cb(err);
+        } else if (ars && ars.poll && ars.poll.statistics) {
+            cb(null, ars.poll.statistics);
+        } else {
+            cb(new Error("Not Found."))
+        }
+    });
+};
 /**
  * The Function title is misleading. It gets a poll by id but decides if a user already answered the question.
  * @param  {String} userId the users userId.
@@ -246,11 +257,10 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
                     logger.debug(q.poll.answers[ k ].toString());
                     if (params.answerId[ j ] === q.poll.answers[ k ].toString()) {
                         for (var i = 0; i < q.poll.statistics.statisticAnswer.length; ++i) {
-                            if (q.poll.statistics.statisticAnswer[ i ].answer && params.answerId[ j ] === q.poll.statistics.statisticAnswer[ i ].answer.toString()) {
-                                logger.debug(q.poll.statistics.statisticAnswer[ i ].answer.toString());
+                            if (q.poll.statistics.statisticAnswer[ i ].answer && params.answerId[ j ] === q.poll.statistics.statisticAnswer[ i ].answer._id.toString()) {
                                 // there is already an object for this answer
                                 answered = true;
-                                StatisticObjModel.findOne(q.poll.statistics.statisticAnswer[ i ]._id).exec(function (err, obj) {
+                                StatisticObjModel.findOne({ _id : q.poll.statistics.statisticAnswer[ i ]._id.toString() }).exec(function (err, obj) {
                                     if (!err && obj) {
                                         obj.count++;
                                         obj.save();
@@ -361,3 +371,4 @@ module.exports.getPoll = getPoll;
 module.exports.getNext = getNext;
 module.exports.getAllPollsInRoom = getAllPollsInRoom;
 module.exports.deletePoll = deletePoll;
+module.exports.getStatistics = getStatistics;
