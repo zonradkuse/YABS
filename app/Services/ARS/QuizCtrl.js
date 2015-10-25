@@ -101,11 +101,11 @@ var getQuiz = function (userId, quizId, options, callback) {
                             }
                         }
                         // case: every(!) evaluation is in givenAnswers
-                        for (var l = 0; l < q.quizQuestion.evaluation.answers.length; l++) {
-                            if (!isEvaluationInUserAnswer(q.quizQuestion.evaluation.answers[l], q.quizQuestion.givenAnswers[ k ].answers)) {
-                                evaluationUserAnswers.userFalse.push(q.quizQuestion.evaluation.answers[l]._id.toString());
+                        for (var o = 0; o < q.quizQuestion.evaluation.answers.length; o++) {
+                            if (!isEvaluationInUserAnswer(q.quizQuestion.evaluation.answers[ o ], q.quizQuestion.givenAnswers[ k ].answers)) {
+                                evaluationUserAnswers.userFalse.push(q.quizQuestion.evaluation.answers[ o ]._id.toString());
                             } else {
-                                evaluationUserAnswers.userRight.push(q.quizQuestion.evaluation.answers[l]._id.toString());
+                                evaluationUserAnswers.userRight.push(q.quizQuestion.evaluation.answers[ o ]._id.toString());
                             }
                         }
                         break;
@@ -113,8 +113,8 @@ var getQuiz = function (userId, quizId, options, callback) {
                 }
                 // case: user might not have answered but there are answers in evaluation. then user is wrong
                 if (!userReallyAnswered) {
-                    for (var l = 0; l < q.quizQuestion.evaluation.answers.length; l++) {
-                        evaluationUserAnswers.userFalse.push(q.quizQuestion.evaluation.answers[l]._id.toString());
+                    for (var p = 0; p < q.quizQuestion.evaluation.answers.length; p++) {
+                        evaluationUserAnswers.userFalse.push(q.quizQuestion.evaluation.answers[ p ]._id.toString());
                     }
                 }
             }
@@ -148,9 +148,9 @@ var isAnswerInEvaluationAndCorrect = function (answer, evaluation) {
 
 var isEvaluationInUserAnswer = function (evalAnswer, allUserAnswers) {
     for (var m = 0; m < allUserAnswers.length; m++) {
-        if (evalAnswer._id.toString() === allUserAnswers[m]._id.toString()) {
-            if (allUserAnswers[m].text) {
-                return (allUserAnswers[m].userText && allUserAnswers[m].userText.toUpperCase() === evalAnswer.userText.toUpperCase());
+        if (evalAnswer._id.toString() === allUserAnswers[ m ]._id.toString()) {
+            if (allUserAnswers[ m ].text) {
+                return (allUserAnswers[ m ].userText && allUserAnswers[ m ].userText.toUpperCase() === evalAnswer.userText.toUpperCase());
             } else {
                 return true;
             }

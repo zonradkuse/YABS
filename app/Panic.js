@@ -55,7 +55,7 @@ var RoomWorker = function (roomID, wsControl, wss, ws, options) {
 	if (options.importantQuestions.votes === undefined) {
 		options.importantQuestions.votes = 10;
 	}
-    Room.Room.findOne({ _id : roomID }, function(err, room) {
+    Room.Room.findOne({ _id : roomID }, function (err, room) {
         options.importantQuestions.votes = room.config.thresholdForImportantQuestion;
     });
 
