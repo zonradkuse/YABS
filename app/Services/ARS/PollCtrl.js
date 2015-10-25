@@ -371,7 +371,7 @@ var togglePollActivation = function (roomId, pollId, bool, cb) {
         } else {
             ars.active = bool;
             ars.save(function (err, arsObj) {
-                cb(err, arsObj)
+                cb(err, arsObj);
             });
         }
     });
