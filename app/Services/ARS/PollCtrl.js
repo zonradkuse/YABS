@@ -247,7 +247,7 @@ var answer = function (params, cb) { // refactor this. it is perhaps much too co
         }
         q.answered.push(params.userId);
         q.save();
-        if (q.active && q.dueDate - q.timestamp + 1000 > 0) {
+        if (q.active) {
             // we can answer this one
             var _statObj,
                 existing = false,

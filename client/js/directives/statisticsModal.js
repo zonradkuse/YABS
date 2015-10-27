@@ -74,10 +74,12 @@ clientControllers.directive('statisticsModal', ['$timeout', 'rooms', "errorServi
 		                    labels.push(date);
 		                    values.push({ value: data.graph[i].panics, meta: date });
 		                }
-		                scope.chartist.lineData = { labels: labels, series: [{
-		                        name: "Panics",
-		                        data: values }
-		                ]};
+		                if (values.length !== 0) {
+			                scope.chartist.lineData = { labels: labels, series: [{
+			                        name: "Panics",
+			                        data: values }
+			                ]};
+		                }
                         if (data.graph.length <= 0) {
                             errorService.drawError("Es liegen bisher keine Daten vor. Starten Sie eine Vorlesung um Daten zu sammeln.", true);
                         }

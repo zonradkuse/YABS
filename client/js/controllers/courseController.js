@@ -76,6 +76,9 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                         rooms.getAllPolls($scope.room);
                         $scope.showAdmin = false;
                     }
+                    setTimeout(function () {
+                        window.onload(); // l2p iframe size hack
+                    },500);
                 });
             }
         });
