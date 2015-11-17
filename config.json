@@ -8,7 +8,7 @@
    "login": {
       "local": false,
       "l2p": {
-         "clientID": "rwth client oauth",
+         "clientID": "",
          "scope": "l2p2013.rwth"
       },
       "other": {
@@ -27,7 +27,7 @@
          "port": 8080
       },
       "cookie": {
-         "secret": "s3cr37"
+         "secret": "s3cr37
       },
       "env": {
          "dev": true
