@@ -27,7 +27,7 @@
          "port": 8080
       },
       "cookie": {
-         "secret": "s3cr37
+         "secret": "s3cr37"
       },
       "env": {
          "dev": true
