@@ -1,5 +1,5 @@
 [![Code Climate](https://codeclimate.com/repos/553cbb63e30ba00a38006646/badges/e059755cfd07f9faef88/gpa.svg)](https://codeclimate.com/repos/553cbb63e30ba00a38006646/feed)
-
+[![Build Status](https://travis-ci.org/j0h/YABS.svg?branch=master)](https://travis-ci.org/j0h/YABS)
 
 # YABS
 
