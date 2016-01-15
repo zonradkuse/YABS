@@ -1,3 +1,6 @@
+[![Code Climate](https://codeclimate.com/repos/553cbb63e30ba00a38006646/badges/e059755cfd07f9faef88/gpa.svg)](https://codeclimate.com/repos/553cbb63e30ba00a38006646/feed)
+
+
 # YABS
 
 YABS is yet another backchannel system. See the doc directory for more information or consult the CONTRIBUTE.md.
@@ -18,7 +21,7 @@ npm start
 ```
 
 By default YABS is configured to be run behind some proxy like nginx or apache. It is 
-important that you have some proxy module for websockets. *If not, YABS won't work.*  
+important that you have some proxy module for websockets. **If not, YABS won't work.**  
 
 You can still use YABS without a webserver. For this purpose manipulate the base url in the
 `client/html/index.html` to `/`.
@@ -31,7 +34,7 @@ If someone is a lecturer, this person may delete questions and answers or mark a
 The learning rooms are configurable. The lecturers may deactivate components or give students the
 right to mark answers as correct. The idea is similar to stackoverflow. Lecturers may even
 create polls and quizzes for their students. They can look at statistics and how the questions were 
-answered. The statistics are only cummulated and this way anonymized. *Students can not be tracked*.
+answered. The statistics are only cummulated and this way anonymized. **Students can not be tracked**.
 Even the names are generated at first. If they want to change their names afterwards, they 
 are free to do so in their personal dashboard.  
 Altough YABS was introduced as a backchannel system, it might be used as a conference room ticker or
@@ -40,7 +43,7 @@ Afterwards questions in the board can be discussed by the speaker. People are st
 the questions beforehand in the background.  
 
 The layer of registration is currently missing but is going to be implemented in the next few weeks.
-*A RWTH Aachen TIM ID is required* at the current state of development.
+**A RWTH Aachen TIM ID is required** at the current state of development.
 
 ## Contribute
 We would be happy to receive contributions. Just drop a pull request and we will discuss 
@@ -74,4 +77,5 @@ client/js		# js code. We use angularjs
 client/img		# static images
 client/css		# the css files
 ```
-
+To give you a first starting point, we would really appreciate to improve our code climate ranking. 
+Grab some file and start refactoring. 
