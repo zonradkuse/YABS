@@ -8,5 +8,4 @@ services:
   - mongodb
 notifications:
   email:
-    - johannes.neuhaus@rwth-aachen.de
-    - jens.piekenbrinck@rwth-aachen.de
+    - johannes.neuhaus@entenhausen.io
