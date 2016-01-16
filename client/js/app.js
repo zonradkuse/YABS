@@ -3,6 +3,7 @@
             'ngRoute',
             'clientControllers',
             'ngFitText',
+            'ja.qr'
         ]);
     window.client = client;
     window.appUrl = window.location.host;

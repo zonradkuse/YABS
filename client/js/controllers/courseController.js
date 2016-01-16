@@ -18,6 +18,8 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         $scope.quizMode = false;
         $scope.statisticsQuiz = {};
         $scope.statisticShowing = false;
+        $scope.showQR = false;
+        $scope.joinURL = window.location.protocol + "//" + window.location.host + "/join/" + $routeParams.courseid;
 
         $scope.inverseQuizMode = function() {
             $scope.quizMode = !$scope.quizMode;
@@ -253,7 +255,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         };
 
         $scope.toggleMuliOptionPanic = function () {
-            roomsConfiguration.toggleMuliOptionPanic($scope.room, $scope.room.config.mulitOptionPanicButton);
+            roomsConfiguration.toggleMultiOptionPanic($scope.room, $scope.room.config.multiOptionPanicButton);
         };
 
         $scope.setPanicThreshold = function () {
@@ -263,6 +265,10 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
                 errorService.drawError("Dies ist keine gültige Zahl.");
             }
         };
+
+        $scope.toggleExternalStudentsMayEnterRoom = function () {
+            roomsConfiguration.setExternalStudentsMayEnterRoom($scope.room, $scope.room.config.externalStudentsMayEnterRoom);
+        }
 
     }
 ]);

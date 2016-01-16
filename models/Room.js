@@ -28,8 +28,9 @@ var RoomSchema = mongoose.Schema({
         },
         userMayAnswerToQuestion : { type : Boolean, default: true },
         questionerMayMarkAnswer : { type : Boolean, default: true },
-        mulitOptionPanicButton : { type : Boolean, default: true },
-        thresholdForImportantQuestion : { type : Number, default: 5 }
+        multiOptionPanicButton : { type : Boolean, default: true },
+        thresholdForImportantQuestion : { type : Number, default: 5 },
+		externalStudentsMayEnterRoom : { type : Boolean, default : false}
     }
 });
 

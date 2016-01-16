@@ -285,3 +285,8 @@ form > .answer-bad label {
     color: black;
     font-weight:600;
 }
+
+.qr {
+    text-align: center;
+    margin-top: 20px;
+}

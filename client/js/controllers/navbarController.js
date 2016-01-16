@@ -8,6 +8,7 @@
 
 clientControllers.controller('navbarController', ['$scope', "$rootScope", 'authentication',
     function($scope, $rootScope, authentication) {
+        $scope.developerMail = "johannes neuhaus_asd-aachen de".replace(' ', '.').replace('_', '@').replace('asd', 'rwth');
 		authentication.fetchUserName();
         $scope.$watch(authentication.getUserName, function(name) {
         	$scope.username = name;

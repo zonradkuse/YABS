@@ -26,12 +26,15 @@ client.service("roomsConfiguration", ["rpc", function(rpc){
         rpc.call("mod:questionerMayMarkAnswer", { roomId : room._id, status : status}, function(data){});
     };
 
-    this.toggleMuliOptionPanic = function (room, status) {
-        rpc.call("mod:mulitOptionPanicButton", { roomId : room._id, status : status}, function(data){});
+    this.toggleMultiOptionPanic = function (room, status) {
+        rpc.call("mod:multiOptionPanicButton", { roomId : room._id, status : status}, function(data){});
     };
 
     this.setPanicThreshold = function (room, value) {
         rpc.call("mod:thresholdForImportantQuestion", { roomId : room._id, val : value}, function(data){});
     };
 
+    this.setExternalStudentsMayEnterRoom = function (room, status) {
+        rpc.call("mod:externalStudentsMayEnterRoom", { roomId : room._id, status : status}, function(data){});
+    }
 }]);

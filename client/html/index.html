@@ -5,7 +5,7 @@
         <meta name="description" content="Interaktives Backchannel System - Blended Learning in Vorlesungen">
         <meta name="generator" content="YABS">
         <title>YABS - Interaktives Feedbacksystem</title>
-        <base href="/yabs/">
+        <base href="/">
         <!-- build:js min/_.js -->
         <script src="angular.js"></script>
         <script src="chartist.js"></script>
@@ -14,6 +14,8 @@
         <script src="jquery.js"></script>
         <script src="ng-FitText.js"></script>
         <script src="bootstrap.js"></script>
+        <script src="qrcode.js"></script>
+        <script src="angular-qr.js"></script>
         <script src="app.js"></script>
         <script src="rpc.js"></script>
         <script src="users.js"></script>
@@ -75,6 +77,7 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="https://github.com/j0h/YABSTracker/raw/master/YABS_Betriebsanleitung.pdf">Betriebsanleitung</a></li>
                                 <li><a href="https://github.com/j0h/YABSTracker">Bugtracker</a></li>
+                                <li><a href="mailto:{{developerMail}}">Entwickler kontaktieren</a></li>
                             </ul>
                         </li>
                         <li class="dropdown">

@@ -45,6 +45,12 @@ module.exports = function (wsControl) {
             room.config.thresholdForImportantQuestion = req.params.val;
         });
     });
+
+    wsControl.on("mod:externalStudentsMayEnterRoom", function (req, res) {
+        configurationChangePreparation(req, res, function (room) {
+            room.config.externalStudentsMayEnterRoom = req.params.status;
+        });
+    });
 };
 
 /**

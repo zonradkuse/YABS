@@ -45,6 +45,12 @@
                         Der Fragenautor darf Antworten als richtig markieren
                     </label>
                 </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="room.config.externalStudentsMayEnterRoom" ng-change="toggleExternalStudentsMayEnterRoom()">
+                        Externe dürfen diesem Raum beitreten
+                    </label>
+                </div>
                 <!--<div class="checkbox">
                     <label>
                         <input type="checkbox" ng-model="room.config.mulitOptionPanicButton" ng-change="toggleMuliOptionPanic()">
@@ -62,12 +68,18 @@
                 </div>    
             </form>
     </div>
+
     <div class="clearfix col-md-12"> <h3> Aktionen </h3>
         <div class="col-sm-5">
             <form class="form-horizontal">
                 <div class="form-group">
                     <button type="button" class="btn btn-default btn-block" data-toggle="modal" data-target="#statModal">
                         <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Verständnisstatistik anzeigen
+                    </button>
+                </div>
+                <div class="form-group" ng-show="room.config.externalStudentsMayEnterRoom">
+                    <button type="button" class="btn btn-default btn-block" ng-click="showQR = !showQR">
+                        <span class="glyphicon glyphicon-qrcode" aria-hidden="true"></span> QR Code {{ showQR ? 'verbergen' : 'anzeigen' }}
                     </button>
                 </div>
                 <div class="form-group">
@@ -99,5 +111,12 @@
                 </div>
             </form>
         </div>
+    </div>
+    <div ng-if="showQR" class="clearfix col-md-12 qr">
+        <qr text="joinURL" size="'500'" corrction-level="'H'"></qr> <br>
+        Dieser QR-Code beinhaltet den Link: <h4> {{joinURL}} </h4>. <br>
+        Zeigen Sie diesen Ihren Teilnehmern, damit sie dem Lernraum beitreten können. Speichern Sie das
+        Bild mit einem Rechtsklick und "Bild speichern unter..." zur Einbindung in eine
+        Präsentation. Wir empfehlen den oben stehenden Link ebenfalls anzuzeigen.
     </div>
 </div>

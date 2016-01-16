@@ -1,368 +1,432 @@
 {
-    "data": [{
-        "uri": "system:ping",
-        "parameters": {},
-        "accessLevel": 0
-    },{
-        "uri": "system:benchmark",
-        "parameters": {},
-        "accessLevel": 42
-    },{
-        "uri": "system:login",
-        "parameters": {},
-        "accessLevel": 0
-    },{
-        "uri": "system:time",
-        "parameters": {},
-        "accessLevel": 0
-    },{
-        "uri": "system:logout",
-        "parameters": {},
-        "accessLevel": 0
-    },{
-        "uri": "system:enterRoom",
-        "parameters": {
-            "roomId" : ""
-        },
-        "accessLevel": 1
-    },{
-        "uri": "system:whoami",
-        "parameters": {},
-        "accessLevel": 0
-    },{
-        "uri": "user:fetchRooms",
-        "parameters": {},
-        "accessLevel": 1
-    },{
-        "uri": "user:getRooms",
-        "parameters": {},
-        "accessLevel": 1
-    },{
-        "uri": "user:ask",
-        "parameters": {
-            "roomId": "",
-            "question": ""
-            },
-        "accessLevel": 1
-    },{
-        "uri": "user:answer",
-        "parameters": {
-            "roomId": "",
-            "questionId": "",
-            "answer": ""
-            },
-        "accessLevel": 1
-    },{
-        "uri": "user:vote",
-        "parameters": {
-            "roomId" : "",
-            "questionId": ""
-            },
-        "accessLevel": 1
-    },{
-        "uri": "user:changeName",
-        "parameters": {
-            "username" : ""
-        },
-        "accessLevel": 1
-    },{
-        "uri": "room:getQuestions",
-        "parameters": {
-            "roomId": ""
-            },
-        "accessLevel": 1
-    },{
-        "uri": "room:getAnswers",
-        "parameters": {
-            "roomId": "",
-            "questionId": ""
-            },
-        "accessLevel": 1
-    },{
-        "uri": "room:exists",
-        "parameters": {
-            "roomId": ""
-            },
-        "accessLevel": 1
-    },{
-        "uri": "room:enablePanicEvents",
-        "parameters": {
-            "roomId": "",
-            "intervals": {}
-            },
-        "accessLevel": 2
-    },{
-        "uri": "room:disablePanicEvents",
-        "parameters": {
-            "roomId": ""
-            },
-        "accessLevel": 2
-    },{
-        "uri": "room:getPanicGraph",
-        "parameters": {
-            "roomId": ""
-            },
-        "accessLevel": 2
-    },{
-        "uri": "question:getVotes",
-        "parameters": {
-            "questionId": ""
-            },
-        "accessLevel": 1
-    },{
-        "uri": "question:setContent",
-        "parameters": {
-            "roomId": "",
-            "questionId": "",
-            "content": ""
-            },
-        "accessLevel": 2
-    },{
-        "uri": "question:setVisibility",
-        "parameters": {
-            "roomId": "",
-            "questionId": "",
-            "isVisible": ""
-            },
-        "accessLevel": 2
-    },{
-        "uri": "mod:markAsAnswer",
-        "parameters": {
-            "roomId": "",
-            "questionId": "",
-            "answerId": ""
-            },
-        "accessLevel": 1
-    },{
-        "uri": "mod:unmarkAsAnswer",
-        "parameters": {
-            "roomId": "",
-            "questionId": "",
-            "answerId": ""
-            },
-        "accessLevel": 1
-    },{
-        "uri": "mod:question:markAsGood",
-        "parameters": {
-            "roomId": "",
-            "questionId": ""
-            },
-        "accessLevel": 2
-    },{
-        "uri": "mod:question:unmarkAsGood",
-        "parameters": {
-            "roomId": "",
-            "questionId": ""
-            },
-        "accessLevel": 2
-    },{
-        "uri": "mod:deleteQuestion",
-        "parameters": {
-            "roomId": "",
-            "questionId": ""
-            },
-        "accessLevel": 2
-    },{
-        "uri": "mod:deleteAnswer",
-        "parameters": {
-            "roomId": "",
-            "questionId": "",
-            "answerId": ""
-            },
-        "accessLevel": 2
-    },{
-        "uri": "room:userCount",
-        "parameters": {
-            "roomId": ""
-            },
-        "accessLevel": 2
-    },{
-        "uri": "user:panic",
-        "parameters": {
-            "roomId": ""
-            },
-        "accessLevel": 1
-    },{
-        "uri": "user:unpanic",
-        "parameters": {
-            "roomId": ""
-            },
-        "accessLevel": 1
-    },{
-        "uri": "user:getAccessLevel",
-        "parameters": {
-            "roomId" : ""
-        },
-        "accessLevel": 1
+  "data": [
+    {
+      "uri": "system:ping",
+      "parameters": {},
+      "accessLevel": 0
     },
     {
-        "uri": "quiz:create",
-        "parameters": {
-            "roomId" : "",
-            "questions" : "",
-            "dueDate" : "",
-            "description" : ""
-        },
-        "accessLevel": 2
+      "uri": "system:benchmark",
+      "parameters": {},
+      "accessLevel": 42
     },
     {
-        "uri": "poll:create",
-        "parameters": {
-            "roomId" : "",
-            "answers" : "",
-            "dueDate" : "",
-            "description" : ""
-        },
-        "accessLevel": 2
+      "uri": "system:login",
+      "parameters": {},
+      "accessLevel": 0
     },
     {
-        "uri": "poll:answer",
-        "parameters": {
-            "roomId" : "",
-            "arsId" :"",
-            "answerId" : []
-        },
-        "accessLevel": 1
+      "uri": "system:time",
+      "parameters": {},
+      "accessLevel": 0
     },
     {
-        "uri": "poll:getAll",
-        "parameters": {
-            "roomId" : ""
-        },
-        "accessLevel": 1
+      "uri": "system:logout",
+      "parameters": {},
+      "accessLevel": 0
     },
     {
-        "uri": "poll:get",
-        "parameters": {
-            "roomId" : "",
-            "arsId" :""
-        },
-        "accessLevel": 1
+      "uri": "system:enterRoom",
+      "parameters": {
+        "roomId": ""
+      },
+      "accessLevel": 1
     },
     {
-        "uri": "poll:getNext",
-        "parameters": {
-          "roomId" : ""
-        },
-        "accessLevel": 1
+      "uri": "system:whoami",
+      "parameters": {},
+      "accessLevel": 0
     },
     {
-        "uri": "poll:delete",
-        "parameters": {
-            "roomId" : "",
-            "pollId" : ""
-        },
-        "accessLevel": 2
-    },{
-        "uri": "poll:getStatistics",
-        "parameters": {
-          "pollId" : ""
-        },
-        "accessLevel": 1
+      "uri": "user:fetchRooms",
+      "parameters": {},
+      "accessLevel": 1
     },
     {
-        "uri": "quiz:answer",
-        "parameters": {
-            "roomId" : "",
-            "quizId" : "",
-            "answerIds" : []
-        },
-        "accessLevel": 1
+      "uri": "user:getRooms",
+      "parameters": {},
+      "accessLevel": 1
     },
     {
-        "uri": "quiz:getAll",
-        "parameters": {
-            "roomId" : ""
-        },
-        "accessLevel": 1
+      "uri": "user:ask",
+      "parameters": {
+        "roomId": "",
+        "question": ""
+      },
+      "accessLevel": 1
     },
     {
-        "uri": "quiz:get",
-        "parameters": {
-            "arsId" : ""
-        },
-        "accessLevel": 1
+      "uri": "user:answer",
+      "parameters": {
+        "roomId": "",
+        "questionId": "",
+        "answer": ""
+      },
+      "accessLevel": 1
     },
     {
-        "uri": "quiz:delete",
-        "parameters": {
-            "roomId" : "",
-            "quizId" : ""
-        },
-        "accessLevel": 2
+      "uri": "user:vote",
+      "parameters": {
+        "roomId": "",
+        "questionId": ""
+      },
+      "accessLevel": 1
     },
     {
-        "uri": "quiz:toggleActivation",
-        "parameters": {
-            "roomId" : "",
-            "quizId" : "",
-            "active" : ""
-        },
-        "accessLevel": 2
+      "uri": "user:changeName",
+      "parameters": {
+        "username": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "room:getQuestions",
+      "parameters": {
+        "roomId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "room:getAnswers",
+      "parameters": {
+        "roomId": "",
+        "questionId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "room:exists",
+      "parameters": {
+        "roomId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "room:enablePanicEvents",
+      "parameters": {
+        "roomId": "",
+        "intervals": {}
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "room:disablePanicEvents",
+      "parameters": {
+        "roomId": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "room:getPanicGraph",
+      "parameters": {
+        "roomId": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "question:getVotes",
+      "parameters": {
+        "questionId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "question:setContent",
+      "parameters": {
+        "roomId": "",
+        "questionId": "",
+        "content": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "question:setVisibility",
+      "parameters": {
+        "roomId": "",
+        "questionId": "",
+        "isVisible": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "mod:markAsAnswer",
+      "parameters": {
+        "roomId": "",
+        "questionId": "",
+        "answerId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "mod:unmarkAsAnswer",
+      "parameters": {
+        "roomId": "",
+        "questionId": "",
+        "answerId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "mod:question:markAsGood",
+      "parameters": {
+        "roomId": "",
+        "questionId": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "mod:question:unmarkAsGood",
+      "parameters": {
+        "roomId": "",
+        "questionId": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "mod:deleteQuestion",
+      "parameters": {
+        "roomId": "",
+        "questionId": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "mod:deleteAnswer",
+      "parameters": {
+        "roomId": "",
+        "questionId": "",
+        "answerId": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "room:userCount",
+      "parameters": {
+        "roomId": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "user:panic",
+      "parameters": {
+        "roomId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "user:unpanic",
+      "parameters": {
+        "roomId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "user:getAccessLevel",
+      "parameters": {
+        "roomId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "quiz:create",
+      "parameters": {
+        "roomId": "",
+        "questions": "",
+        "dueDate": "",
+        "description": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "poll:create",
+      "parameters": {
+        "roomId": "",
+        "answers": "",
+        "dueDate": "",
+        "description": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "poll:answer",
+      "parameters": {
+        "roomId": "",
+        "arsId": "",
+        "answerId": []
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "poll:getAll",
+      "parameters": {
+        "roomId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "poll:get",
+      "parameters": {
+        "roomId": "",
+        "arsId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "poll:getNext",
+      "parameters": {
+        "roomId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "poll:delete",
+      "parameters": {
+        "roomId": "",
+        "pollId": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "poll:getStatistics",
+      "parameters": {
+        "pollId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "quiz:answer",
+      "parameters": {
+        "roomId": "",
+        "quizId": "",
+        "answerIds": []
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "quiz:getAll",
+      "parameters": {
+        "roomId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "quiz:get",
+      "parameters": {
+        "arsId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "quiz:delete",
+      "parameters": {
+        "roomId": "",
+        "quizId": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "quiz:toggleActivation",
+      "parameters": {
+        "roomId": "",
+        "quizId": "",
+        "active": ""
+      },
+      "accessLevel": 2
     },
     {
       "uri": "poll:toggleActivation",
       "parameters": {
-        "roomId" : "",
-        "pollId" : "",
-        "active" : ""
+        "roomId": "",
+        "pollId": "",
+        "active": ""
       },
       "accessLevel": 2
     },
     {
       "uri": "quiz:getStatistics",
       "parameters": {
-        "quizId" : ""
+        "quizId": ""
       },
       "accessLevel": 1
-    },{
-        "uri" : "mod:setRoomConfigDiscussion",
-        "parameters" : {
-            "roomId" : "",
-            "status" : ""
-        },
-        "accessLevel" : 2
-    },{
-        "uri" : "mod:setRoomConfigPanicbutton",
-        "parameters" : {
-          "roomId" : "",
-          "status" : ""
-        },
-        "accessLevel" : 2
-      },{
-        "uri" : "mod:setRoomConfigQuiz",
-        "parameters" : {
-          "roomId" : "",
-          "status" : ""
-        },
-        "accessLevel" : 2
-      },{
-        "uri" : "mod:mulitOptionPanicButton",
-        "parameters" : {
-          "roomId" : "",
-          "status" : ""
-        },
-        "accessLevel" : 2
-      },{
-        "uri" : "mod:questionerMayMarkAnswer",
-        "parameters" : {
-          "roomId" : "",
-          "status" : ""
-        },
-        "accessLevel" : 2
-      },{
-        "uri" : "mod:userMayAnswerToQuestion",
-        "parameters" : {
-          "roomId" : "",
-          "status" : ""
-        },
-        "accessLevel" : 2
-      },{
-        "uri" : "mod:thresholdForImportantQuestion",
-        "parameters" : {
-          "roomId" : "",
-          "val" : ""
-        },
-        "accessLevel" : 2
-      }]
+    },
+    {
+      "uri": "mod:setRoomConfigDiscussion",
+      "parameters": {
+        "roomId": "",
+        "status": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "mod:setRoomConfigPanicbutton",
+      "parameters": {
+        "roomId": "",
+        "status": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "mod:setRoomConfigQuiz",
+      "parameters": {
+        "roomId": "",
+        "status": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "mod:mulitOptionPanicButton",
+      "parameters": {
+        "roomId": "",
+        "status": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "mod:questionerMayMarkAnswer",
+      "parameters": {
+        "roomId": "",
+        "status": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "mod:userMayAnswerToQuestion",
+      "parameters": {
+        "roomId": "",
+        "status": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "mod:thresholdForImportantQuestion",
+      "parameters": {
+        "roomId": "",
+        "val": ""
+      },
+      "accessLevel": 2
+    },
+    {
+      "uri": "user:joinRoom",
+      "parameters": {
+        "roomId": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri": "user:createRoom",
+      "parameters": {
+        "roomName": ""
+      },
+      "accessLevel": 1
+    },
+    {
+      "uri" : "mod:externalStudentsMayEnterRoom",
+      "parameters" : {
+        "status" : "",
+        "roomId" : ""
+      },
+      "accessLevel" : 2
+    }
+
+  ]
 }
