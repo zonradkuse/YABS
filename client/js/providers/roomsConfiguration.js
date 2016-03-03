@@ -36,5 +36,5 @@ client.service("roomsConfiguration", ["rpc", function(rpc){
 
     this.setExternalStudentsMayEnterRoom = function (room, status) {
         rpc.call("mod:externalStudentsMayEnterRoom", { roomId : room._id, status : status}, function(data){});
-    }
+    };
 }]);

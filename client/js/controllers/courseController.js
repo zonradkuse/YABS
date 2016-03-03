@@ -268,7 +268,7 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
 
         $scope.toggleExternalStudentsMayEnterRoom = function () {
             roomsConfiguration.setExternalStudentsMayEnterRoom($scope.room, $scope.room.config.externalStudentsMayEnterRoom);
-        }
+        };
 
     }
 ]);

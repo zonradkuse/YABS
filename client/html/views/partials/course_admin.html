@@ -112,7 +112,7 @@
             </form>
         </div>
     </div>
-    <div ng-if="showQR" class="clearfix col-md-12 qr">
+    <div ng-if="showQR && room.config.externalStudentsMayEnterRoom" class="clearfix col-md-12 qr">
         <qr text="joinURL" size="'500'" corrction-level="'H'"></qr> <br>
         Dieser QR-Code beinhaltet den Link: <h4> {{joinURL}} </h4>. <br>
         Zeigen Sie diesen Ihren Teilnehmern, damit sie dem Lernraum beitreten können. Speichern Sie das
