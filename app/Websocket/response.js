@@ -1,6 +1,6 @@
 var logger = require("../Logger.js");
 
-function WebsocketResponse (request) {
+function Response (request) {
 	var self = this;
 	this.request = request;
 	this.reusable = false;
@@ -8,7 +8,7 @@ function WebsocketResponse (request) {
 	this.error = null;
 
 	var roomBroadcast = function (uri, data, roomId, level) {
-		self.request.wss.roomBroadcast(self.request.ws, uri, data, roomId, level);
+		self.request.wss.roomBroadcast(self.request.adapter, uri, data, roomId, level);
 	};
 
 	this.setError = function (err) {
@@ -21,13 +21,13 @@ function WebsocketResponse (request) {
             logger.warn("empty message creation. somebody requested data that is not existing.");
             return self.setError(new Error("Not Found.")).send();
         }
-		build(self.request.ws, self.error, data, self.request.refId);
+		build(self.request.adapter, self.error, data, self.request.refId);
 		self.resetError();
 		return self;
 	};
 
 	this.sendCommand = function (uri, data) {
-		build(self.request.ws, self.error, null, null, uri, data);
+		build(self.request.adapter, self.error, null, null, uri, data);
 		self.resetError();
 		return self;
 	};
@@ -66,10 +66,7 @@ function WebsocketResponse (request) {
  * @param {String} uri - rpc uri
  * @param {Object} param - parameters for a broadcast
  */
-function build(ws, err, data, refId, uri, param) {
-	if (!ws || !ws.send) {
-		throw new Error("Websocket not set.");
-	}
+function build(adapter, err, data, refId, uri, param) {
 	var json = {};
 	if (refId || !uri) { // response
 		json = {
@@ -86,14 +83,17 @@ function build(ws, err, data, refId, uri, param) {
 	}
 	json.status = (err || !data ? false : true); // if error occured set statulocals false, else true
 	
-	if (ws.readyState === 1) {
+	if ((adapter.ws && adapter.ws.readyState === 1) || (adapter.rest && !adapter.used)) {
+		adapter.used = true;
         logger.debug("Sending message: " + JSON.stringify(json));
-		ws.send(JSON.stringify(json)); // TODO here we should do some queueing
+		adapter.send(JSON.stringify(json)); // TODO here we should do some queueing
+	} else if (adapter.used) {
+		logger.warn("Possible bad design: multipart send action in one adapter");
 	} else {
 		// here should go logic for queuing messages for users.
-		logger.info("A client disconnected but should receive a message.");
+		logger.info("A client should have received a message.");
 	}
 }
 
-module.exports = WebsocketResponse;
+module.exports = Response;
 module.exports.build = build;

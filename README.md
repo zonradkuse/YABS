@@ -67,7 +67,7 @@ app/RWTH/		# code for the RWTH API
 app/RPC/		# Interfacedefinition with user access level and parameters. 
 app/Services/		# Quiz and Poll Services and a Timer Service
 app/Startup/		# Code that is called before startup by app.js
-app/WebsocketAPI/	# API definition that is called by app/Websocket.js.
+app/WebsocketAPI/	# API definition that is called by app/Dispatcher.js.
 
 models/			# all MongoDB database models.
 

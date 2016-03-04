@@ -18,12 +18,18 @@ logger.yabs("\n" +
 "Scotty, beam me up! \n");
 
 process.on('uncaughtException', function (err) {
+	logger.err(err);
 	process.exit(1);
 });
 
 var webserver = require("./app/Startup/webserver.js")(__dirname);
-var wss = require('./app/Websocket/server.js')(webserver);
-require('./app/WebsocketEventHandler.js')(wss);
+var wss = require('./app/Websocket/server.js')(webserver.server);
+
+var dispatcher = require('./app/Dispatcher.js');
+var api = new dispatcher(wss, webserver.app);
+require('./app/EventHandlerCollection.js')(api);
+api.start();
+
 require("./app/Startup/database.js")();
 
 logger.yabs("We are online!");

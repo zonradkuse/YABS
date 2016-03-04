@@ -35,14 +35,18 @@ function startUp (basedir) {
     server.listen(config.general.http.port || 8080);
     logger.info('Server now running on ' + config.general.http.port + '.');
 
-    return server;
+    return { server : server, app : app };
 }
 
 function initStatic (basedir) {
     app.use(express.static(basedir + '/public'));
 
-    app.use(function (req, res) {
-        res.sendFile(basedir + '/public/index.html');
+    app.use(function (req, res, next) {
+        if (req.path.indexOf('/api/') >= 0) {
+            next();
+        } else {
+            res.sendFile(basedir + '/public/index.html');
+        }
     });
 }
 

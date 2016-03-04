@@ -16,24 +16,22 @@ module.exports = function (wsControl) {
 	});
 
 	wsControl.on("system:whoami", function (req, res) {
-		if (req.refId) {
-			if (!req.session || !req.session.user || !req.session.user._id) {
+		if (!req.session || !req.session.user || !req.session.user._id) {
+			res.send({
+				status: false,
+				message: "You are currently not logged in."
+			});
+		} else {
+			imageDAO.get(req.session.user.avatar._id, function (err, avatar) {
 				res.send({
-					status: false,
-					message: "You are currently not logged in."
-				});
-			} else {
-				imageDAO.get(req.session.user.avatar._id, function (err, avatar) {
-					res.send({
-						status: true,
-						message: (req.session.user.name ? req.session.user.name : req.session.user._id),
-						userId: (req.session.user ? req.session.user._id : null),
-						userName: (req.session.user && req.session.user.name ? req.session.user.name : null),
-						userAvatar: (!err && avatar ? avatar.path : null),
-						user: req.session.passport ? req.session.passport.user : {}
-					}, req.refId);
-				});
-			}
+					status: true,
+					message: (req.session.user.name ? req.session.user.name : req.session.user._id),
+					userId: (req.session.user ? req.session.user._id : null),
+					userName: (req.session.user && req.session.user.name ? req.session.user.name : null),
+					userAvatar: (!err && avatar ? avatar.path : null),
+					user: req.session.passport ? req.session.passport.user : {}
+				}, req.refId);
+			});
 		}
 	});
 
