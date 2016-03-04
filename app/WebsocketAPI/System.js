@@ -43,6 +43,7 @@ module.exports = function (wsControl) {
                 }
             });
         }
+		res.send("Goodbye");
 	});
 
 	wsControl.on('system:open', function (req, res) {
@@ -92,7 +93,7 @@ module.exports = function (wsControl) {
 				var auth = false;
 				var reqTime = 0;
 				var timer = setInterval(function () {
-					if (!auth && reqTime < answer.expires_in && req.ws.readyState === 1) {
+					if (!auth && reqTime < answer.expires_in) {
 						// poll
 						postReqCampus('token', querystring.stringify({
 							"client_id": config.login.l2p.clientID,

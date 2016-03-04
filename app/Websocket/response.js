@@ -27,7 +27,9 @@ function Response (request) {
 	};
 
 	this.sendCommand = function (uri, data) {
-		build(self.request.adapter, self.error, null, null, uri, data);
+		if (self.request.isWebsocket) {
+			build(self.request.adapter, self.error, null, null, uri, data);
+		}
 		self.resetError();
 		return self;
 	};
@@ -59,7 +61,7 @@ function Response (request) {
 }
 
 /** Build a json object for a response or a broadcast, which will be send via websocket.
- * @param {Websocket} ws - websocket of receiver
+ * @param {Websocket} adapter - websocket of receiver or adapter object
  * @param {Error} err - if an error should be send, otherwise null
  * @param {Object} data - data
  * @param {String} refId - refId of request, when needed

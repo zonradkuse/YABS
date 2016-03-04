@@ -426,6 +426,16 @@
         "roomId" : ""
       },
       "accessLevel" : 2
+    },
+    {
+      "uri" : "system:open",
+      "parameters" : {},
+      "accessLevel" : 0
+    },
+    {
+      "uri" : "system:close",
+      "parameters" : {},
+      "accessLevel" : 0
     }
 
   ]

@@ -6,6 +6,7 @@ var accessManager = require('../AccessManagement.js');
 var WebSocketServer = require('ws').Server;
 var websocketResponse = require('../Websocket/response.js');
 var roomWSControl = require('../WebsocketAPI/Room.js');
+var dispatchAdapter = require('../DispatchRequestAdapter.js');
 
 function initwss(expressApp) {
     app = expressApp;
@@ -82,11 +83,11 @@ function initwss(expressApp) {
                         }
                         if (accessLevel) {
                             accessManager.checkAccessLevel(sId, { requiredAccess : accessLevel }, roomId, function (err, access) {
-                                build(client, null, null, null, uri, data);
+                                build(new dispatchAdapter(null, {ws : client, wss: wss}, null), null, null, null, uri, data);
                             });
                         } else {
                             logger.debug("broadcast message to " + sess.user._id);
-                            build(client, null, null, null, uri, data);
+                            build(new dispatchAdapter(null, {ws : client, wss: wss}, null), null, null, null, uri, data);
                         }
                     }
                 } else {
@@ -123,7 +124,7 @@ function initwss(expressApp) {
                         data.question = JSON.parse(JSON.stringify(oldQ));
                         data.question.hasVote = roomWSControl.createVotesFields(sess.user, data.question).hasVote;
                     }
-                    build(client, null, null, null, uri, data);
+                    build(new dispatchAdapter(null, {ws : client, wss: wss}, null), null, null, null, uri, data);
                 }
             });
         });

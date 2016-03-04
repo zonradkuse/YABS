@@ -64,6 +64,7 @@ module.exports = function (wsControl) {
 			var worker = system.getWorkerMap()[ req.sId ];
 			if (worker) {
 				worker.fetchRooms(req.refId);
+				res.send("Processing");
 			} else {
 				res.setError(new Error("Your worker is invalid.")).send();
 			}
@@ -79,21 +80,25 @@ module.exports = function (wsControl) {
 					return logger.warn("could not get rooms: " + err);
 				}
 				rooms = rooms.toObject();
-				var _roomSend = function (room) {
-					panicDAO.hasUserPanic(req.session.user, room, function (err, panicEvent) {
-						panicDAO.isRoomRegistered(room, function (isRegistered) {
-							room.hasUserPanic = (!err && panicEvent) ? true : false;
-							room.isRoomRegistered = isRegistered;
-							res.sendCommand("room:add", {
-								'room': room
+				if (req.isWebsocket) {
+					var _roomSend = function (room) {
+						panicDAO.hasUserPanic(req.session.user, room, function (err, panicEvent) {
+							panicDAO.isRoomRegistered(room, function (isRegistered) {
+								room.hasUserPanic = (!err && panicEvent) ? true : false;
+								room.isRoomRegistered = isRegistered;
+								res.sendCommand("room:add", {
+									'room': room
+								});
 							});
 						});
-					});
-				};
-				for (var i = rooms.length - 1; i >= 0; i--) {
-					var r = rooms[ i ].toObject();
-					(_roomSend)(r);
-				}                    
+					};
+					for (var i = rooms.length - 1; i >= 0; i--) {
+						var r = rooms[i].toObject();
+						(_roomSend)(r);
+					}
+				} else if (req.isRestful) {
+					res.send(rooms);
+				}
 			});
 		} else {
 			res.setError(new Error("Your req.session is invalid.")).send();

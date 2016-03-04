@@ -32,15 +32,15 @@ var Dispatcher = function (wss, app) {
 		logger.info('Initializing Websockets');
 
 		websocketHandling.call(self, wss);
-		restHandling.call(self, app);
+		restHandling.call(self, app, wss);
 	};
 };
 
-function restHandling (app) {
+function restHandling (app, wss) {
 	var self = this;
 
 	app.all('/api/*', function (req, res, next) {
-		defaultMessageProcessing.call(self, new dispatchRequestAdapter(null, null, { req : req, res : res }));
+		defaultMessageProcessing.call(self, new dispatchRequestAdapter(null, { wss : wss }, { req : req, res : res }));
 	});
 }
 

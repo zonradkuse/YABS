@@ -1,12 +1,14 @@
 module.exports = function DispatchRequestAdapter (message, ws, rest) {
-    if (ws && rest) {
+    if (ws && ws.ws && rest && ws.wss) {
         throw new Error("Whooops, ws and app can not be set at the same time.");
     }
     this.preHook = this.postHook = noop;
-
-    if (ws) {
+    this.wss = ws.wss;
+    if (ws.ws) {
         this.remoteAddress = ws.ws.upgradeReq.connection.remoteAddress;
-        this.send = ws.ws.send;
+        this.send = function (message) {
+            ws.ws.send(message);
+        };
         this.sessionId = ws.ws.upgradeReq.signedCookies[ "connect.sid" ];
         this.message = message;
         this.ws = ws.ws;
@@ -35,15 +37,14 @@ module.exports = function DispatchRequestAdapter (message, ws, rest) {
             this.message.parameters[ key ] = rest.req.query[ key ];
         }
 
+        for (key in rest.req.body) {
+            this.message.parameters[ key ] = rest.req.body[ key ];
+        }
+
     } else {
         throw new Error("Not all cases were catched. Check request methods.");
     }
-    // remoteAdress
-    // session
-    // sessionId
-    // send
-    // preHook
-    // postHook
+
 };
 
 function noop () {}
