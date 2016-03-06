@@ -1,59 +1,61 @@
-{
+var userRoles = require('./../../config/UserRoles.json');
+
+module.exports = {
   "data": [
     {
       "uri": "system:ping",
       "parameters": {},
-      "accessLevel": 0
+      "accessLevel": userRoles.default
     },
     {
       "uri": "system:benchmark",
       "parameters": {},
-      "accessLevel": 42
+      "accessLevel": userRoles.defaultRoot
     },
     {
       "uri": "system:login",
       "parameters": {},
-      "accessLevel": 0
+      "accessLevel": userRoles.default
     },
     {
       "uri": "system:time",
       "parameters": {},
-      "accessLevel": 0
+      "accessLevel": userRoles.default
     },
     {
       "uri": "system:logout",
       "parameters": {},
-      "accessLevel": 0
+      "accessLevel": userRoles.default
     },
     {
       "uri": "system:enterRoom",
       "parameters": {
-        "roomId": ""
+        "roomId": String
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "system:whoami",
       "parameters": {},
-      "accessLevel": 0
+      "accessLevel": userRoles.default
     },
     {
       "uri": "user:fetchRooms",
       "parameters": {},
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "user:getRooms",
       "parameters": {},
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "user:ask",
       "parameters": {
-        "roomId": "",
-        "question": ""
+        "roomId": String,
+        "question": String
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "user:answer",
@@ -62,7 +64,7 @@
         "questionId": "",
         "answer": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "user:vote",
@@ -70,21 +72,21 @@
         "roomId": "",
         "questionId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "user:changeName",
       "parameters": {
         "username": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "room:getQuestions",
       "parameters": {
         "roomId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "room:getAnswers",
@@ -92,14 +94,14 @@
         "roomId": "",
         "questionId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "room:exists",
       "parameters": {
         "roomId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "room:enablePanicEvents",
@@ -107,28 +109,28 @@
         "roomId": "",
         "intervals": {}
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "room:disablePanicEvents",
       "parameters": {
         "roomId": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "room:getPanicGraph",
       "parameters": {
         "roomId": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "question:getVotes",
       "parameters": {
         "questionId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "question:setContent",
@@ -137,7 +139,7 @@
         "questionId": "",
         "content": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "question:setVisibility",
@@ -146,7 +148,7 @@
         "questionId": "",
         "isVisible": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "mod:markAsAnswer",
@@ -155,7 +157,7 @@
         "questionId": "",
         "answerId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "mod:unmarkAsAnswer",
@@ -164,7 +166,7 @@
         "questionId": "",
         "answerId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "mod:question:markAsGood",
@@ -172,7 +174,7 @@
         "roomId": "",
         "questionId": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "mod:question:unmarkAsGood",
@@ -180,7 +182,7 @@
         "roomId": "",
         "questionId": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "mod:deleteQuestion",
@@ -188,7 +190,7 @@
         "roomId": "",
         "questionId": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "mod:deleteAnswer",
@@ -197,35 +199,35 @@
         "questionId": "",
         "answerId": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "room:userCount",
       "parameters": {
         "roomId": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "user:panic",
       "parameters": {
         "roomId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "user:unpanic",
       "parameters": {
         "roomId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "user:getAccessLevel",
       "parameters": {
         "roomId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "quiz:create",
@@ -235,7 +237,7 @@
         "dueDate": "",
         "description": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "poll:create",
@@ -245,7 +247,7 @@
         "dueDate": "",
         "description": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "poll:answer",
@@ -254,14 +256,14 @@
         "arsId": "",
         "answerId": []
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "poll:getAll",
       "parameters": {
         "roomId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "poll:get",
@@ -269,14 +271,14 @@
         "roomId": "",
         "arsId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "poll:getNext",
       "parameters": {
         "roomId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "poll:delete",
@@ -284,14 +286,14 @@
         "roomId": "",
         "pollId": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "poll:getStatistics",
       "parameters": {
         "pollId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "quiz:answer",
@@ -300,21 +302,21 @@
         "quizId": "",
         "answerIds": []
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "quiz:getAll",
       "parameters": {
         "roomId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "quiz:get",
       "parameters": {
         "arsId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "quiz:delete",
@@ -322,7 +324,7 @@
         "roomId": "",
         "quizId": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "quiz:toggleActivation",
@@ -331,7 +333,7 @@
         "quizId": "",
         "active": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "poll:toggleActivation",
@@ -340,14 +342,14 @@
         "pollId": "",
         "active": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "quiz:getStatistics",
       "parameters": {
         "quizId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "mod:setRoomConfigDiscussion",
@@ -355,7 +357,7 @@
         "roomId": "",
         "status": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "mod:setRoomConfigPanicbutton",
@@ -363,7 +365,7 @@
         "roomId": "",
         "status": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "mod:setRoomConfigQuiz",
@@ -371,7 +373,7 @@
         "roomId": "",
         "status": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "mod:mulitOptionPanicButton",
@@ -379,7 +381,7 @@
         "roomId": "",
         "status": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "mod:questionerMayMarkAnswer",
@@ -387,7 +389,7 @@
         "roomId": "",
         "status": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "mod:userMayAnswerToQuestion",
@@ -395,7 +397,7 @@
         "roomId": "",
         "status": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "mod:thresholdForImportantQuestion",
@@ -403,21 +405,21 @@
         "roomId": "",
         "val": ""
       },
-      "accessLevel": 2
+      "accessLevel": userRoles.defaultMod
     },
     {
       "uri": "user:joinRoom",
       "parameters": {
         "roomId": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri": "user:createRoom",
       "parameters": {
         "roomName": ""
       },
-      "accessLevel": 1
+      "accessLevel": userRoles.defaultLoggedIn
     },
     {
       "uri" : "mod:externalStudentsMayEnterRoom",
@@ -425,18 +427,18 @@
         "status" : "",
         "roomId" : ""
       },
-      "accessLevel" : 2
+      "accessLevel" : userRoles.defaultMod
     },
     {
       "uri" : "system:open",
       "parameters" : {},
-      "accessLevel" : 0
+      "accessLevel" : userRoles.default
     },
     {
       "uri" : "system:close",
       "parameters" : {},
-      "accessLevel" : 0
+      "accessLevel" : userRoles.default
     }
 
   ]
-}
+};

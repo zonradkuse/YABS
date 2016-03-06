@@ -6,7 +6,7 @@
 
 var roles = require('../config/UserRoles.json');
 var Room = require('../models/Room.js');
-var System = require('./WebsocketAPI/System.js');
+var System = require('./API/System.js');
 var PanicGraph = require('../models/PanicGraph.js');
 var PanicEvent = require('../models/PanicEvent.js');
 

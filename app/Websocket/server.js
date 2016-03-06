@@ -5,7 +5,7 @@ sessionStore = new sessionStore();
 var accessManager = require('../AccessManagement.js');
 var WebSocketServer = require('ws').Server;
 var websocketResponse = require('../Websocket/response.js');
-var roomWSControl = require('../WebsocketAPI/Room.js');
+var roomWSControl = require('./../API/Room.js');
 var dispatchAdapter = require('../DispatchRequestAdapter.js');
 
 function initwss(expressApp) {
@@ -14,8 +14,10 @@ function initwss(expressApp) {
         server: app
     });
 
-    /** Send a broadcast to all clients.
+    /**
+     * Send a broadcast to all clients on local server.
      * @param {Object} data - data which should have sent to the user
+     * @deprecated
      */
     wss.broadcast = function broadcast(data) {
         wss.clients.forEach(function each(client) {
@@ -23,7 +25,7 @@ function initwss(expressApp) {
         });
     };
 
-    /** Count all active users.
+    /** Count all active users on current server
      * @memberof! wss
      * @returns {Number} count of users
      */
@@ -142,6 +144,8 @@ function initwss(expressApp) {
  * @param {Object} param - parameters for a broadcast
  */
 function build(ws, err, data, refId, uri, param) {
+    // here should go the redis publish part, the build fnct in res object will then listen to the channel and send
+    // the data
     websocketResponse.build(ws, err, data, refId, uri, param);
 }
 module.exports = initwss;

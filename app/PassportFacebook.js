@@ -7,7 +7,6 @@ var UserDAO = require('../models/User.js');
 var User = UserDAO.User;
 var logger = require('./Logger.js');
 
-//TODO: Logger work
 module.exports = function (passport) {
 	passport.use(new FacebookStrategy({
 		clientID: authConf.facebook.clientID,

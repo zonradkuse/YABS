@@ -1,11 +1,11 @@
 function init (api) {
     // set all event handlers
-    require('./WebsocketAPI/System.js')(api);
-    require('./WebsocketAPI/Room.js')(api);
-    require('./WebsocketAPI/User.js')(api);
-    require('./WebsocketAPI/Question.js')(api);
-    require('./WebsocketAPI/Mod.js')(api);
-    require('./WebsocketAPI/Poll.js')(api);
-    require('./WebsocketAPI/Quiz.js')(api);
+    require('./API/System.js')(api);
+    require('./API/Room.js')(api);
+    require('./API/User.js')(api);
+    require('./API/Question.js')(api);
+    require('./API/Mod.js')(api);
+    require('./API/Poll.js')(api);
+    require('./API/Quiz.js')(api);
 }
 module.exports = init;
