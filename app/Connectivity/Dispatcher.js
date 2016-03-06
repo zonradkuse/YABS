@@ -4,8 +4,8 @@
  * @module Websocket
  */
 
-var logger = require('./Logger.js');
-var config = require('../config.json');
+var logger = require('./../Logger.js');
+var config = require('../../config.json');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var sessionStore = require('connect-redis')(session);
@@ -13,7 +13,7 @@ var interf = require('./RPC/LocalInterface.js');
 sessionStore = new sessionStore();
 var util = require('util');
 var events = require('events');
-var accessManager = require('./AccessManagement.js');
+var accessManager = require('./../AccessManagement.js');
 var websocketRequest = require('./Websocket/request.js');
 var websocketResponse = require('./Websocket/response.js');
 var dispatchRequestAdapter = require('./DispatchRequestAdapter.js');

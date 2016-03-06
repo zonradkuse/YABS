@@ -1,10 +1,10 @@
 /** @module Routes/AccountUpgrade */
 
-var addresses = require('../config/passwords.json').data;
-var config = require('../config.json');
-var logger = require('./Logger.js');
-var roomDAO = require('../models/Room.js');
-var roles = require('../config/UserRoles.json');
+var addresses = require('../../config/passwords.json').data;
+var config = require('../../config.json');
+var logger = require('./../Logger.js');
+var roomDAO = require('../../models/Room.js');
+var roles = require('../../config/UserRoles.json');
 
 
 module.exports = function (app) {

@@ -1,9 +1,9 @@
 /** @module Authentication/Google */
 
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-var authConf = require('../config/auth.json');
-var User = require('../models/User.js').User;
-var logger = require('./Logger.js');
+var authConf = require('../../config/auth.json');
+var User = require('../../models/User.js').User;
+var logger = require('./../Logger.js');
 
 module.exports = function (passport) {
 

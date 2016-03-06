@@ -1,10 +1,9 @@
 /** @module Authentication/Local */
 
-var User = require('../models/User.js');
-var logger = require('./Logger.js');
-var authConf = require('../config/auth.json');
-var conf = require('../config.json');
-var LocalStrategy = require('passport-local').Strategy;
+var User = require('../../models/User.js');
+var logger = require('./../Logger.js');
+var authConf = require('../../config/auth.json');
+var conf = require('../../config.json');
 var Twitter = require('./PassportTwitter.js');
 var Facebook = require('./PassportFacebook.js');
 var Google = require('./PassportGoogle.js');
@@ -49,7 +48,7 @@ module.exports.loginLocal = function (email, password, success, fail) {
 			fail(new Error("User not found or wrong password"));
 		} else {
 			logger.info('local login of: ' + username);
-			if (user.password === require('crypto').createHash('sha1').update(req.body.password).digest('hex')) {
+			if (user.password === require('crypto').createHash('sha256').update(req.body.password).digest('hex')) {
 				req.session.sessionId = token;
 				success(null, user);
 			} else {
@@ -89,7 +88,7 @@ module.exports.registerLocal = function (name, password, email, next) {
 				'local.name': username,
 				'local.email': email,
 				// hash the password.
-				'local.password': require('crypto').createHash('sha1').update(password).digest('hex')
+				'local.password': require('crypto').createHash('sha256').update(password).digest('hex')
 			});
 			_user.save(function (err) {
 				if (err) {

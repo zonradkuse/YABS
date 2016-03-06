@@ -1,4 +1,4 @@
-var logger = require("../Logger.js");
+var logger = require("../../Logger.js");
 
 function Response (request) {
 	var self = this;

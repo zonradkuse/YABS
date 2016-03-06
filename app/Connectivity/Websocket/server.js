@@ -1,11 +1,11 @@
-var logger = require('../Logger.js');
+var logger = require('../../Logger.js');
 var session = require('express-session');
 var sessionStore = require('connect-redis')(session);
 sessionStore = new sessionStore();
-var accessManager = require('../AccessManagement.js');
+var accessManager = require('../../AccessManagement.js');
 var WebSocketServer = require('ws').Server;
-var websocketResponse = require('../Websocket/response.js');
-var roomWSControl = require('./../API/Room.js');
+var websocketResponse = require('./response.js');
+var roomWSControl = require('./../../API/Room.js');
 var dispatchAdapter = require('../DispatchRequestAdapter.js');
 
 function initwss(expressApp) {

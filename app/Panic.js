@@ -2,6 +2,8 @@
  * @file
  * @author Jens Piekenbrinck [jens.piekenbrinck@rwth-aachen.de]
  * @module Panic
+ *
+ * Rewrite this
  */
 
 var roles = require('../config/UserRoles.json');

@@ -55,7 +55,7 @@ function initRoutes () {
     routes(app);
     routes.routes();
     logger.info('initialized routes!');
-    require('../Authentication.js')(passport);
+    require('../Authentication/Authentication.js')(passport);
 }
 
 function initCookie () {

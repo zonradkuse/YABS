@@ -1,4 +1,4 @@
-var userRoles = require('./../../config/UserRoles.json');
+var userRoles = require('./../../../config/UserRoles.json');
 
 module.exports = {
   "data": [

@@ -8,7 +8,7 @@ var passport = require('passport');
 var config = require('../config.json');
 var logger = require('./Logger.js');
 var roles = require('../config/UserRoles.json');
-var upgrade = require('./AccountUpgrade.js');
+var upgrade = require('./Authentication/AccountUpgrade.js');
 var fileup = require('./FileUpload.js');
 var fs = require('fs');
 var path = require('path');
@@ -57,23 +57,6 @@ module.exports.routes = function () {
     if (config.hackfix.userRoleWorkaround || config.general.env.dev) {
         upgrade(app);
     }
-
-    /**
-     * A short sessiontest
-     */
-    app.get('/sessiontest', function (req, res) {
-        var sess = req.session;
-        if (!sess || !config.general.env.dev) {
-            res.redirect('/404');
-        } else {
-            res.setHeader('Content-Type', 'text/html');
-            res.write('<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's (' + (sess.cookie.maxAge / 60 / 1000) + ' min or ' +
-                (sess.cookie.maxAge / (60 * 60 * 1000)) + 'h or ' + (sess.cookie.maxAge / (60 * 60 * 24 * 1000)) + 'd)</p>');
-            res.write('<p>logged in with Session: ' + JSON.stringify(sess) + '<p>');
-            res.write('<p>Your User Information: ' + JSON.stringify(sess.user) + '</p>');
-            res.end();
-        }
-    });
 
     // Facebook OAuth
     if (config.login.other.enabled) {

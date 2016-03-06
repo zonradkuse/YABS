@@ -1,9 +1,9 @@
 /** @module Authentication/Twitter */
 
 var TwitterStrategy = require('passport-twitter').Strategy;
-var authConf = require('../config/auth.json');
-var User = require('../models/User.js').User;
-var logger = require('./Logger.js');
+var authConf = require('../../config/auth.json');
+var User = require('../../models/User.js').User;
+var logger = require('./../Logger.js');
 
 module.exports = function (passport) {
     

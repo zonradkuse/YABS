@@ -1,11 +1,11 @@
 /** @module Authentication/Facebook */
 
 var FacebookStrategy = require('passport-facebook').Strategy;
-var authConf = require('../config/auth.json');
+var authConf = require('../../config/auth.json');
 
-var UserDAO = require('../models/User.js');
+var UserDAO = require('../../models/User.js');
 var User = UserDAO.User;
-var logger = require('./Logger.js');
+var logger = require('./../Logger.js');
 
 module.exports = function (passport) {
 	passport.use(new FacebookStrategy({
