@@ -2,7 +2,6 @@
 
 var User = require('../../models/User.js');
 var logger = require('./../Logger.js');
-var authConf = require('../../config/auth.json');
 var conf = require('../../config.json');
 var Twitter = require('./PassportTwitter.js');
 var Facebook = require('./PassportFacebook.js');
@@ -31,35 +30,34 @@ module.exports = function (passport) {
 };
 
  /** Local login.
- * @param {String} email
- * @param {String} password
+ * @param {String} mail
+ * @param {String} pw
  * @param {successCallback} success - callback if success
  * @param {failCallback} fail - callback if fail
  */
-module.exports.loginLocal = function (email, password, success, fail) {
+module.exports.loginLocal = function (mail, pw, success, fail) {
 	User.User.findOne({
-		'local.mail': email
+		'local.mail': mail
 	}, function (err, user) {
 		if (err) {
-			fail(err);
+			return fail(err);
 		}
 		//genereate a token
 		if (!user) {
-			fail(new Error("User not found or wrong password"));
+			return fail(new Error("User not found or wrong password"));
 		} else {
-			logger.info('local login of: ' + username);
-			if (user.password === require('crypto').createHash('sha256').update(req.body.password).digest('hex')) {
-				req.session.sessionId = token;
-				success(null, user);
+			logger.info('local login of: ' + mail);
+			if (user.local.password === require('crypto').createHash('sha256').update(pw).digest('hex')) {
+				return success(null, user);
 			} else {
-				fail(new Error("User not found or wrong password"));
+				return fail(new Error("User not found or wrong password"));
 			}
 		}
 	});
 };
 
 /**
- * Register user locally. The request will not! be checked. A logged in user should set information on its own.
+ * Register user locally.
  * @param {String} name - user name
  * @param {String} password
  * @param {String} email
@@ -68,37 +66,37 @@ module.exports.loginLocal = function (email, password, success, fail) {
 module.exports.registerLocal = function (name, password, email, next) {
 	//perform checks
 	if (arguments.length < 4) {
-		next(new Error('Not enough arguments'));
+		return next(new Error('Not enough arguments'));
 	} else if (name === undefined) {
-		next(new Error('username undefined'));
+		return next(new Error('username undefined'));
 	} else if (email === undefined) {
-		next(new Error('email undefined'));
+		return next(new Error('email undefined'));
 	} else if (password === undefined) {
-		next(new Error('password is undefined'));
+		return next(new Error('password is undefined'));
 	}
 	User.User.findOne({
 		'local.mail' : email
 	}, function (err, user) {
 		if (err) {
-			next(err);
+			return next(err);
 		}
 		if (!user) {
 			//the user with this mail address is not existing
 			var _user = new User.User({
-				'local.name': username,
-				'local.email': email,
+				'local.name': name,
+				'local.mail': email,
 				// hash the password.
 				'local.password': require('crypto').createHash('sha256').update(password).digest('hex')
 			});
 			_user.save(function (err) {
 				if (err) {
-					next(err);
+					return next(err);
 				}
 				logger.info('successfully created user ' + _user.local.name);
-				next(null, _user);
+				return next(null, _user);
 			});
 		} else {
-			next(new Error("E-Mail already taken."));
+			return next(new Error("E-Mail already taken."));
 		}
 	});
 };

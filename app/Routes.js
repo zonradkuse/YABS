@@ -12,6 +12,7 @@ var upgrade = require('./Authentication/AccountUpgrade.js');
 var fileup = require('./FileUpload.js');
 var fs = require('fs');
 var path = require('path');
+var auth = require('./Authentication/Authentication.js');
 var app;
 
 module.exports = function (pExpressApp) {
@@ -51,12 +52,25 @@ module.exports.routes = function () {
         //if parameters are set, log in (set cookies, generate everything) -> redirect to room
     });
 
-    // route uploads
-    fileup(app);
-    // route account upgrades - not yet deprecated
-    if (config.hackfix.userRoleWorkaround || config.general.env.dev) {
-        upgrade(app);
-    }
+    app.post('/local/login', function(req, res) {
+        auth.loginLocal(req.body.email, req.body.password, function(err, user) {
+            req.session.user = user;
+            return res.send(JSON.stringify({status : true, message : user}));
+        }, function(err) {
+            res.send(JSON.stringify({status : false, message : err.message }));
+        });
+    });
+
+    app.post('/local/register', function(req, res) {
+        auth.registerLocal(req.body.name, req.body.password, req.body.email, function(err, user) {
+            if (err) {
+                return res.send(JSON.stringify({ status : false, message : err.message }));
+            } else {
+                // we should verify the email address
+                return res.send(JSON.stringify({status:true, message: user}));
+            }
+        });
+    });
 
     // Facebook OAuth
     if (config.login.other.enabled) {
@@ -120,4 +134,12 @@ module.exports.routes = function () {
             });
         });
     }
+
+    // route uploads
+    fileup(app);
+    // route account upgrades - not yet deprecated
+    if (config.hackfix.userRoleWorkaround || config.general.env.dev) {
+        upgrade(app);
+    }
+
 };

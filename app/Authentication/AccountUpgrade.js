@@ -18,7 +18,7 @@ module.exports = function (app) {
 	app.get('/roles/admin/:roomId', function (req, res) {
 		var path = require('path');
 		if (req.session && req.session.user) {
-			res.sendFile(path.resolve(__dirname, '../', 'public/upgrade.html'));
+			res.sendFile(path.resolve(__dirname, '../../', 'public/upgrade.html'));
 		} else {
 			res.sendStatus(403);
 		}
