@@ -19,6 +19,7 @@ var avatarGenerator = require('../ProfilePicture.js');
 var imageDAO = require('../../models/Image.js');
 var fancyNames = moniker.generator([ moniker.adjective, moniker.noun ], { glue: ' ' });
 var workerMap = {};
+var auth = require('../Authentication/Authentication.js');
 
 module.exports = function (wsControl) {
 	infoCalls(wsControl);
@@ -75,7 +76,7 @@ module.exports = function (wsControl) {
 			if (err) {
 				res.setError(err).send();
 				logger.warn(err);
-				return;
+
 			} else if (answer) {
 				try {
 					answer = JSON.parse(answer);
@@ -103,7 +104,7 @@ module.exports = function (wsControl) {
 							if (err) {
 								res.setError(err).send();
 								logger.warn(err);
-								return;
+
 							} else if (response) {
 								logger.debug(response);
 								try {
@@ -195,6 +196,27 @@ module.exports = function (wsControl) {
             }
             res.send({ status: true, message: "Goodbye." });
         });
+	});
+
+	wsControl.on("local:login", function (req, res) {
+		auth.loginLocal(req.params.email, req.params.password, function (err, user) {
+			req.session.user = JSON.parse(JSON.stringify(user.toObject()));
+            req.saveSession();
+            return res.send(user);
+		}, function (err) {
+            return res.setError(err).send();
+		});
+	});
+
+	wsControl.on("local:register", function (req, res) {
+		auth.registerLocal(req.params.name, req.params.password, req.params.email, function (err, user) {
+			if (err) {
+				return res.setError(err).send();
+			} else {
+				// we should verify the email address
+				return res.send(user);
+			}
+		});
 	});
 
 };

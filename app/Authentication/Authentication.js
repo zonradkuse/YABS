@@ -7,6 +7,9 @@ var Twitter = require('./PassportTwitter.js');
 var Facebook = require('./PassportFacebook.js');
 var Google = require('./PassportGoogle.js');
 var Github = require('./PassportGithub.js');
+var avatarGenerator = require('../ProfilePicture.js');
+var moniker = require('moniker');
+var fancyNames = moniker.generator([ moniker.adjective, moniker.noun ], { glue: ' ' });
 
 module.exports = function (passport) {
 	passport.serializeUser(function (user, done) {
@@ -88,13 +91,23 @@ module.exports.registerLocal = function (name, password, email, next) {
 				// hash the password.
 				'local.password': require('crypto').createHash('sha256').update(password).digest('hex')
 			});
-			_user.save(function (err) {
-				if (err) {
-					return next(err);
-				}
-				logger.info('successfully created user ' + _user.local.name);
-				return next(null, _user);
-			});
+            var gender = (Math.random() <= 0.5) ? 'male' : 'female';
+            avatarGenerator.generate(_user, gender, 70, function (err, avatar) {
+                if (err) {
+                    logger.warn("User avatar could not be created");
+                }
+                _user.name = fancyNames.choose().replace(/\b(\w)/g, function (m) {
+                    return m.toUpperCase();
+                });
+                _user.avatar = avatar;
+                _user.save(function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+                    logger.info('successfully created user ' + _user.local.name);
+                    return next(null, _user);
+                });
+            });
 		} else {
 			return next(new Error("E-Mail already taken."));
 		}

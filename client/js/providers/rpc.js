@@ -5,8 +5,9 @@
  * @requires errorService
  */
 
-client.service("rpc", ["errorService", function(errorService){
+client.service("rpc", ["errorService", "$q", function(errorService, $q){
     var callbackTable = {};
+    var promiseTable = {};
 	var wsUrl = (window.location.protocol == "http:" ? "ws" : "wss") + "://" + appUrl + "/yabs/ws";
 	var ws = new WebSocket(wsUrl);
     var sendQueue = [];
@@ -90,6 +91,7 @@ client.service("rpc", ["errorService", function(errorService){
     }, 2000);
 
 	this.call = function(method, params, callback) {
+        var q = $q.defer();
 		var id = Math.floor(Math.random() * 10000000);
 		send(JSON.stringify({
 			uri : method,
@@ -97,6 +99,8 @@ client.service("rpc", ["errorService", function(errorService){
 			refId: id
 		}));
 		callbackTable[id] = callback;
+        promiseTable[id] = q;
+        return q.promise;
 	};
 
 
@@ -106,13 +110,19 @@ client.service("rpc", ["errorService", function(errorService){
         var data = JSON.parse(event.data);
         if ("error" in data && data.error !== null) {
             console.log("WS Error: " + data.error);
-            return errorService.drawError("WS Error received: " + data.error, true);
+            if (promiseTable[data.refId]) {
+                promiseTable[data.refId].reject(data.error);
+            }
+            return errorService.drawError(data.error, true);
         }
 		if ("data" in data) {
 			// Response
 			if (callbackTable[data.refId] !== undefined) {
 				callbackTable[data.refId](data.data);
 			}
+            if (promiseTable[data.refId]) {
+                promiseTable[data.refId].resolve(data.data);
+            }
 		}
 		else {
 			// Broadcast

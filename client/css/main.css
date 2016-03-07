@@ -290,3 +290,17 @@ form > .answer-bad label {
     text-align: center;
     margin-top: 20px;
 }
+
+.white {
+    background-color: white;
+}
+
+.row#local_login {
+    background-color: #ddd;
+}
+
+#local_login form {
+    background-color: white;
+    padding : 15px;
+    padding-bottom:50px;
+}

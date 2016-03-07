@@ -52,26 +52,6 @@ module.exports.routes = function () {
         //if parameters are set, log in (set cookies, generate everything) -> redirect to room
     });
 
-    app.post('/local/login', function(req, res) {
-        auth.loginLocal(req.body.email, req.body.password, function(err, user) {
-            req.session.user = user;
-            return res.send(JSON.stringify({status : true, message : user}));
-        }, function(err) {
-            res.send(JSON.stringify({status : false, message : err.message }));
-        });
-    });
-
-    app.post('/local/register', function(req, res) {
-        auth.registerLocal(req.body.name, req.body.password, req.body.email, function(err, user) {
-            if (err) {
-                return res.send(JSON.stringify({ status : false, message : err.message }));
-            } else {
-                // we should verify the email address
-                return res.send(JSON.stringify({status:true, message: user}));
-            }
-        });
-    });
-
     // Facebook OAuth
     if (config.login.other.enabled) {
         app.get('/login/facebook', passport.authenticate('facebook', {

@@ -39,6 +39,10 @@
                 templateUrl: 'news.html'
                 //controller: 'frontpageController' // no controller needed yet. TODO build some news controller with API
             }).
+            when('/local/login', {
+                templateUrl : 'login_local.html',
+                controller: 'authController'
+            }).
             otherwise({
                 redirectTo: '/'
         });

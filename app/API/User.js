@@ -93,7 +93,7 @@ module.exports = function (wsControl) {
 						});
 					};
 					for (var i = rooms.length - 1; i >= 0; i--) {
-						var r = rooms[i].toObject();
+						var r = rooms[ i ].toObject();
 						(_roomSend)(r);
 					}
 				} else if (req.isRestful) {
@@ -183,7 +183,7 @@ module.exports = function (wsControl) {
 							} else {
 								sendAndSaveAnswer(res, q, a, room, a);
 							}
-							return;
+
 						}
 					};
 					for (var i = access.length - 1; i >= 0; i--) {

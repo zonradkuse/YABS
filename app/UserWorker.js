@@ -63,7 +63,7 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
                         self.res.sendCommand("system:relogin");
                         return;
                     }
-					if (courses.Status) {
+					if (courses && courses.Status) {
 						var _addRoom = function (err, user, room) {
 							if (err) {
 								logger.warn("error on adding room to user: " + err);
@@ -99,7 +99,7 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 						}
 					} else {
 						self.res.setError(new Error("L2P returned bad things.")).send();
-						logger.warn("Bad L2P answer: " + courses.toString());
+						logger.warn("Bad L2P answer: " + courses ? courses.toString() : "");
 					}
 					if (next) {
 						next();
@@ -159,9 +159,8 @@ UserWorker.prototype.addRoomToSessionRights = function (roomId, accessLevel, nex
  */
 UserWorker.prototype.refreshAccessToken = function (next) {
 	var self = this;
-	logger.debug("refreshing with token: " + self.user.rwth.refresh_token);
-	if (!self.user.rwth.refresh_token) {
-		return next();
+	if (!self.user.rwth || !self.user.rwth.refresh_token) {
+		return next(new Error("No refresh_token"));
 	}
 	this.checkToken(function (err, expires) {
 		if (err) {
