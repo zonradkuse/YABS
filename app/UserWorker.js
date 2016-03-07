@@ -159,8 +159,11 @@ UserWorker.prototype.addRoomToSessionRights = function (roomId, accessLevel, nex
  */
 UserWorker.prototype.refreshAccessToken = function (next) {
 	var self = this;
+	if (self.user.external) {
+		return;
+	}
 	if (!self.user.rwth || !self.user.rwth.refresh_token) {
-		return next(new Error("No refresh_token"));
+		return next();
 	}
 	this.checkToken(function (err, expires) {
 		if (err) {

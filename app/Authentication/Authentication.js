@@ -8,8 +8,6 @@ var Facebook = require('./PassportFacebook.js');
 var Google = require('./PassportGoogle.js');
 var Github = require('./PassportGithub.js');
 var avatarGenerator = require('../ProfilePicture.js');
-var moniker = require('moniker');
-var fancyNames = moniker.generator([ moniker.adjective, moniker.noun ], { glue: ' ' });
 
 module.exports = function (passport) {
 	passport.serializeUser(function (user, done) {
@@ -96,10 +94,9 @@ module.exports.registerLocal = function (name, password, email, next) {
                 if (err) {
                     logger.warn("User avatar could not be created");
                 }
-                _user.name = fancyNames.choose().replace(/\b(\w)/g, function (m) {
-                    return m.toUpperCase();
-                });
+                _user.name = name;
                 _user.avatar = avatar;
+                _user.external = true;
                 _user.save(function (err) {
                     if (err) {
                         return next(err);

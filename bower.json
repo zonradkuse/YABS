@@ -27,7 +27,8 @@
     "ngFitText": "^2.4.0",
     "bootstrap-social": "^4.9.0",
     "fontawesome": "^4.3.0",
-    "angular-qr": "~0.2.0"
+    "angular-qr": "~0.2.0",
+    "MathJax": "~2.6.1"
   },
   "resolutions": {
     "angular": "^1.4.8"

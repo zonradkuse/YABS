@@ -20,7 +20,6 @@ clientControllers.controller("authController", ["$scope", "rpc", "$location", "a
                     window.location.href = "/";
                 },function (error) {
                     $scope.error = error;
-                    $scope.$digest();
                 });
         };
 

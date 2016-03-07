@@ -68,6 +68,10 @@ var UserSchema = mongoose.Schema({
 		displayName: String,
 		username: String,
         select : false
+	},
+	external : {
+		type : Boolean,
+		default : false
 	}
 });
 
