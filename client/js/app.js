@@ -43,6 +43,10 @@
                 templateUrl : 'login_local.html',
                 controller: 'authController'
             }).
+            when('/local/register', {
+                templateUrl : 'register_local.html',
+                controller: 'authController'
+            }).
             otherwise({
                 redirectTo: '/'
         });
