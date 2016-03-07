@@ -40,9 +40,7 @@ Request.prototype.saveSession = function () {
             session[key] = self.session[key];
         }
 
-        sessionStore.set(self.sId, self.session, function (err) {
-            if (err) console.log(err);
-        });
+        sessionStore.set(self.sId, self.session);
     });
 };
 
