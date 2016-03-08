@@ -19,6 +19,8 @@ clientControllers.controller("courseController", ["$scope", "$routeParams", "roo
         $scope.statisticsQuiz = {};
         $scope.statisticShowing = false;
         $scope.showQR = false;
+        $scope.imageUploads = {};
+        $scope.uploading = {};
         $scope.joinURL = window.location.protocol + "//" + window.location.host + "/join/" + $routeParams.courseid;
 
         $scope.inverseQuizMode = function() {

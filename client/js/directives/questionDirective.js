@@ -29,38 +29,6 @@ clientControllers.directive('question', ['$timeout', 'rooms', "$rootScope", func
                 rooms.markAsAnswer($scope.room, question, answer);
             };
 
-            $scope.uploadImage = function($event, identifier) {
-                // Actually this should be an ng-directive, needs refactoring at some point of time
-                var fileInput = jQuery($event.currentTarget.children[0]);
-                fileInput.off().on("change", function() {
-                    var formData = new FormData();
-                    formData.append("image", this.files[0]);
-                    $scope.uploading[identifier] = true;
-                    $http.post("upload", formData, {
-                        headers: {
-                            "Content-Type" : undefined
-                        },
-                        transformRequest: angular.identity
-                    }).then(function(response) {
-                        if("error" in response) {
-                            alert(response.error);
-                            $scope.uploading[identifier] = false;
-                        }
-                        else {
-                            if($scope.imageUploads[identifier] === undefined) {
-                                $scope.imageUploads[identifier] = [];
-                            }
-                            $scope.imageUploads[identifier].push(response.data);
-                            $scope.uploading[identifier] = false;
-                        }
-                    });
-                });
-                $timeout(function() { // Without this the event will be triggered in the current digest, which might blow up things
-                    fileInput.click(); // and causes an exception
-                    return true;
-                });
-            };
-
             $scope.deleteQuestion = function(question) {
                 rooms.deleteQuestion($scope.room, question);
             };

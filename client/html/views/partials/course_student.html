@@ -11,7 +11,7 @@
             <form role="form">
                 <div class="form-group">
                     <div class="btn-group" role="group" aria-label="...">
-                        <button ng-click="uploadImage($event, 'question')" type="button" class="btn btn-default"><input type="file" accept="image/*" style="display:none"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></button>
+                        <upload identifier="'question'" image-uploads="imageUploads" uploading="uploading"></upload>
                         <!--<button type="button" class="btn btn-default">LaTeX</button>-->
                     </div>
                 </div>
