@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 /**
  * Takes care that a user is logged in when trying to access rooms.
  * @module Controllers/roomsController

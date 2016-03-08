@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 clientControllers.directive('quizStatistics', ['$timeout', 'rooms', function($timeout, rooms) {
     return {
         restrict: 'E',

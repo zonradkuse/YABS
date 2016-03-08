@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 /**
  * Takes care of near to global things like checking for embeddedness into L2P and loading the username to the navbar.
  * @module Controllers/navbarController

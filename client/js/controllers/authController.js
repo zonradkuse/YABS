@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 clientControllers.controller("authController", ["$scope", "rpc", "$location", "authentication",
     function($scope, rpc, $location, authentication) {
         $scope.password = "";

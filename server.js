@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 require("./app/Startup/filesystemDependencies.js")(__dirname);
 
 var logger = require('./app/Logger.js');

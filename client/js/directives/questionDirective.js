@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 clientControllers.directive('question', ['$timeout', 'rooms', "$rootScope", function($timeout, rooms, $rootScope) {
     return {
         restrict: 'E',

@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 /**
  * Provides a Modal Element. Use &#60;statistics-modal&#62;&#60;/statistics-modal&#62; <br>
  * It fully takes care of displaying the panic statistics for the room in scope.room. Therefor it needs to be embedded into a

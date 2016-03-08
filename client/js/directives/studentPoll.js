@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 /** @module Directive/ARSStudentPoll */
 
 clientControllers.directive('studentPoll', ['rooms', '$rootScope', function (rooms, $rootScope) {

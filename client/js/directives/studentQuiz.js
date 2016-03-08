@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 /** @module Directives/ARSStudentQuiz */
 
 clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (rooms, errorService) {

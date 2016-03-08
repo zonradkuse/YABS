@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 /** @model Angular-Controller-ARSMasterController */
 
 clientControllers.controller('arsMaster', ['$scope', function($scope) {

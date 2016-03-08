@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 /**
  * @module Services/rooms
  * @requires module:Services/rpc

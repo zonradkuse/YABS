@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 /** @module Services/authentication*/
 
 client.service("authentication", ["$window", "$q", "rpc", "$timeout", function($window, $q, rpc, $timeout){

@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 /**
  * Takes care of Client OAuth with Campus. Displays the link to the login page
  * @module Controllers/loginController

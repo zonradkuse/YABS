@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 clientControllers.directive('upload', ['$timeout', '$http', function($timeout, $http) {
     return {
         restrict: 'E',

@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 /**
  * This services provides room configuration interface to server.
  *

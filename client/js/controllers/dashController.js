@@ -1,3 +1,5 @@
+// This file is part of YABS. See License for more information
+
 /**
  * @module Controllers/dashController
  * @requires Services/users
