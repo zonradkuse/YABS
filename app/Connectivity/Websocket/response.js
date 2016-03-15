@@ -1,4 +1,6 @@
 var logger = require("../../Logger.js");
+var redis = require("redis");
+var publisher = redis.createClient();
 
 function Response (request) {
 	var self = this;
@@ -6,57 +8,63 @@ function Response (request) {
 	this.reusable = false;
 	this.authed = false;
 	this.error = null;
-
-	var roomBroadcast = function (uri, data, roomId, level) {
-		self.request.wss.roomBroadcast(self.request.adapter, uri, data, roomId, level);
-	};
-
+        
 	this.setError = function (err) {
-		self.error = err;
-        return self;
+            self.error = err;
+            return self;
 	};
 
 	this.send = function (data) {
-        if (!data && !self.error) {
-            logger.warn("empty message creation. somebody requested data that is not existing.");
-            return self.setError(new Error("Not Found.")).send();
-        }
-		build(self.request.adapter, self.error, data, self.request.refId);
-		self.resetError();
-		return self;
+            if (!data && !self.error) {
+                logger.warn("empty message creation. somebody requested data that is not existing.");
+                return self.setError(new Error("Not Found.")).send();
+            }
+
+            build(self.request.adapter, self.error, data, self.request.refId);
+            self.resetError();
+            return self;
 	};
 
 	this.sendCommand = function (uri, data) {
-		if (self.request.isWebsocket) {
-			build(self.request.adapter, self.error, null, null, uri, data);
-		}
-		self.resetError();
-		return self;
+            if (self.request.isWebsocket) {
+                    build(self.request.adapter, self.error, null, null, uri, data);
+            }
+            self.resetError();
+            return self;
 	};
 
 	this.roomBroadcastAdmins = function (uri, data, roomId) {
-		roomBroadcast(uri, data, roomId, 2);
-		self.resetError();
-		return self;
+            var _data = {
+                uri : uri,
+                data : data,
+                roomId : roomId,
+                level : 2
+            };
+
+            publisher.publish("roomBroadcastAdmins", JSON.stringify(_data));
+		
+            self.resetError();
+            return self;
 	};
 
 	this.roomBroadcastUser = function (uri, data, roomId) {
-		roomBroadcast(uri, data, roomId, 1);
-		self.resetError();
-		return self;
-	};
+            var _data = {
+                uri : uri,
+                data : data,
+                roomId : roomId,
+                level : 1
+            };
 
-	this.roomBroadcast = function (data) {
-		self.request.wss.broadcast(data);
-		self.resetError();
-		return self;
+            publisher.publish("roomBroadcastUser", JSON.stringify(_data));
+            self.resetError();
+            return self;
 	};
 
 	this.resetError = function () {
-		if (self.reusable) {
-			self.error = null;
-		}
-		return self;
+            if (self.reusable) {
+                    self.error = null;
+            }
+            return self;
 	};
 }
 

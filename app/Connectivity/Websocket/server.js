@@ -7,6 +7,8 @@ var WebSocketServer = require('ws').Server;
 var websocketResponse = require('./response.js');
 var roomWSControl = require('./../../API/Room.js');
 var dispatchAdapter = require('../DispatchRequestAdapter.js');
+var redis = require("redis");
+var subscriber = redis.createClient();
 
 function initwss(expressApp) {
     app = expressApp;
@@ -99,6 +101,25 @@ function initwss(expressApp) {
             });
         });
     };
+
+    var roomBroadcast = function (uri, data, roomId, level) {
+        wss.roomBroadcast(null, uri, data, roomId, level);
+    };
+
+    
+    subscriber.on("message", function (channel, message) {
+        message = JSON.parse(message);
+        var uri = message.uri;
+        var data = message.data;
+        var roomId = message.roomId;
+        var level = message.level;
+        
+        roomBroadcast(uri, data, roomId, level);
+    });
+
+    subscriber.subscribe("roomBroadcastUser");
+    subscriber.subscribe("roomBroadcastAdmin");
+
 
     /** Send a broadcast to all users, in a room, which have a required access level or higher.
      * @param {Websocket} ws - ws object of initiator
