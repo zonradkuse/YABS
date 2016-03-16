@@ -108,6 +108,7 @@ function initwss(expressApp) {
 
     
     subscriber.on("message", function (channel, message) {
+        logger.debug("PID " + process.pid + " received broadcast event.");
         message = JSON.parse(message);
         var uri = message.uri;
         var data = message.data;

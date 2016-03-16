@@ -37,7 +37,7 @@ Request.prototype.saveSession = function () {
 
         // copy keys of new session
         for (var key in self.session) {
-            session[key] = self.session[key];
+            session[ key ] = self.session[ key ];
         }
 
         sessionStore.set(self.sId, self.session);
