@@ -39,14 +39,15 @@ function startUp (basedir) {
 }
 
 function initStatic (basedir) {
-    app.use(express.static(basedir + '/public'));
+    if ( process.env.YABS === 'prod' ) {
+        basedir = basedir + '/dist';
+    } else {
+        basedir = basedir + '/client';
+    }
+    app.use(express.static(basedir));
 
-    app.use(function (req, res, next) {
-        if (req.path.indexOf('/api/') >= 0) {
-            next();
-        } else {
-            res.sendFile(basedir + '/public/index.html');
-        }
+    app.use('/course', function (req, res, next) { // parametrized route which will be handled via angular.
+        res.sendFile(basedir + '/index.html');
     });
 }
 

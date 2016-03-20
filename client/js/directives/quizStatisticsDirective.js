@@ -3,7 +3,7 @@
 clientControllers.directive('quizStatistics', ['$timeout', 'rooms', function($timeout, rooms) {
     return {
         restrict: 'E',
-        templateUrl: 'quiz_statistics.html',
+        templateUrl: 'html/views/partials/ars/quiz/quiz_statistics.html',
         scope: {
             quiz: "="
         },

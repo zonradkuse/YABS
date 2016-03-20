@@ -3,7 +3,7 @@
 clientControllers.directive('question', ['$timeout', 'rooms', "$rootScope", function($timeout, rooms, $rootScope) {
     return {
         restrict: 'E',
-        templateUrl: 'course_question.html',
+        templateUrl: 'html/views/partials/course_question.html',
         scope: {
             room: "=",
             showAdmin: "=",

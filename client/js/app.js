@@ -14,39 +14,39 @@
         $locationProvider.html5Mode(true);
         $routeProvider.
             when('/course/:courseid', {
-                templateUrl: 'course.html',
+                templateUrl: 'html/views/course.html',
                 controller: 'courseController'
             }).
             when('/login', {
-                templateUrl: 'login.html',
+                templateUrl: 'html/views/login.html',
                 controller: 'loginController'
             }).
             when('/logout', {
                 controller: "logoutController",
-                templateUrl: 'frontpage.html'
+                templateUrl: 'html/views/frontpage.html'
             }).        
             when('/rooms', {
-                templateUrl: 'rooms.html',
+                templateUrl: 'html/views/rooms.html',
                 controller: 'roomsController'
             }).
             when('/dashboard', {
-                templateUrl: 'dash.html',
+                templateUrl: 'html/views/dash.html',
                 controller: 'dashController'
             }).
             when('/', {
-                templateUrl: 'frontpage.html',
+                templateUrl: 'html/views/frontpage.html',
                 controller: 'frontpageController'
             }).
             when('/news', {
-                templateUrl: 'news.html'
+                templateUrl: 'html/views/news.html'
                 //controller: 'frontpageController' // no controller needed yet. TODO build some news controller with API
             }).
             when('/local/login', {
-                templateUrl : 'login_local.html',
+                templateUrl : 'html/views/login_local.html',
                 controller: 'authController'
             }).
             when('/local/register', {
-                templateUrl : 'register_local.html',
+                templateUrl : 'html/views/register_local.html',
                 controller: 'authController'
             }).
             otherwise({

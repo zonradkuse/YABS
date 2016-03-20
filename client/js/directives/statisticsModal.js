@@ -14,7 +14,7 @@
 clientControllers.directive('statisticsModal', ['$timeout', 'rooms', "errorService", function($timeout, rooms, errorService){
 	return {
 		restrict: 'E',
-		templateUrl: 'course_statistics.html',
+		templateUrl: 'html/views/partials/course_statistics.html',
 		controller:  "courseController",
 		link: {
 			pre: function(scope){

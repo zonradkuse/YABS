@@ -7,55 +7,55 @@
         <title>YABS - Interaktives Feedbacksystem</title>
         <base href="/">
         <!-- build:js min/_.js -->
-        <script src="angular.js"></script>
-        <script src="chartist.js"></script>
-        <script src="angular-chartist.js"></script>
-        <script src="angular-route.js"></script>
-        <script src="jquery.js"></script>
-        <script src="ng-FitText.js"></script>
-        <script src="bootstrap.js"></script>
-        <script src="qrcode.js"></script>
-        <script src="angular-qr.js"></script>
-        <script src="app.js"></script>
-        <script src="rpc.js"></script>
-        <script src="users.js"></script>
-        <script src="rooms.js"></script>
-        <script src="authentication.js"></script>
-        <script src="navbarController.js"></script>
-        <script src="loginController.js"></script>
-        <script src="logoutController.js"></script>
-        <script src="frontpageController.js"></script>
-        <script src="dashController.js"></script>
-        <script src="roomsController.js"></script>
-        <script src="courseController.js"></script>
-        <script src="authController.js"></script>
-        <script src="statisticsModal.js"></script>
-        <script src="arsMaster.js"></script>
-        <script src="arsMasterController.js"></script>
-        <script src="arsStudentPollController.js"></script>
-        <script src="studentPoll.js"></script>
-        <script src="arsStudentQuizController.js"></script>
-        <script src="studentQuiz.js"></script>
-        <script src="quizStatisticsDirective.js"></script>
-        <script src="pollStatisticsDirective.js"></script>
+        <script src="bower_components/angular/angular.js"></script>
+        <script src="bower_components/chartist/dist/chartist.js"></script>
+        <script src="bower_components/angular-chartist.js/dist/angular-chartist.js"></script>
+        <script src="bower_components/angular-route/angular-route.js"></script>
+        <script src="bower_components/jquery/dist/jquery.js"></script>
+        <script src="bower_components/ngFitText/ng-FitText.js"></script>
+        <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="bower_components/qrcode/lib/qrcode.js"></script>
+        <script src="bower_components/angular-qr/src/angular-qr.js"></script>
+        <script src="js/app.js"></script>
+        <script src="js/providers/rpc.js"></script>
+        <script src="js/providers/users.js"></script>
+        <script src="js/providers/rooms.js"></script>
+        <script src="js/providers/authentication.js"></script>
+        <script src="js/controllers/navbarController.js"></script>
+        <script src="js/controllers/loginController.js"></script>
+        <script src="js/controllers/logoutController.js"></script>
+        <script src="js/controllers/frontpageController.js"></script>
+        <script src="js/controllers/dashController.js"></script>
+        <script src="js/controllers/roomsController.js"></script>
+        <script src="js/controllers/courseController.js"></script>
+        <script src="js/controllers/authController.js"></script>
+        <script src="js/directives/statisticsModal.js"></script>
+        <script src="js/directives/arsMaster.js"></script>
+        <script src="js/controllers/ars/arsMasterController.js"></script>
+        <script src="js/controllers/ars/arsStudentPollController.js"></script>
+        <script src="js/directives/studentPoll.js"></script>
+        <script src="js/controllers/ars/arsStudentQuizController.js"></script>
+        <script src="js/directives/studentQuiz.js"></script>
+        <script src="js/directives/quizStatisticsDirective.js"></script>
+        <script src="js/directives/pollStatisticsDirective.js"></script>
 
-        <script src="questionDirective.js"></script>
-        <script src="fileUploadDirective.js"></script>
+        <script src="js/directives/questionDirective.js"></script>
+        <script src="js/directives/fileUploadDirective.js"></script>
 
-        <script src="errorService.js"></script>
-        <script src="roomsConfiguration.js"></script>
-        <script src="resizeme.js"></script>
+        <script src="js/providers/errorService.js"></script>
+        <script src="js/providers/roomsConfiguration.js"></script>
+        <script src="js/misc/resizeme.js"></script>
         <!-- endbuild -->
         <!-- build:css min/_.css -->
-        <link rel="stylesheet" href="css/bootstrap.css">
-        <link rel="stylesheet" href="css/font-awesome.css">
-        <link rel="stylesheet" href="css/bootstrap-social.css">
-        <link rel="stylesheet" href="css/bootstrap-theme.css">
-        <link rel="stylesheet" href="css/chartist.css">
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+        <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
+        <link rel="stylesheet" href="bower_components/bootstrap-social/bootstrap-social.css">
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css">
+        <link rel="stylesheet" href="bower_components/chartist/dist/chartist.min.css">
         <link rel="stylesheet" href="css/main.css">
         <!-- endbuild -->
     </head>
-    
+
     <body>
 
         <div ng-controller="navbarController" >

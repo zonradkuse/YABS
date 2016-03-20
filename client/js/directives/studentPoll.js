@@ -5,7 +5,7 @@
 clientControllers.directive('studentPoll', ['rooms', '$rootScope', function (rooms, $rootScope) {
 	return {
 		restrict: 'E',
-		templateUrl: 'poll_student.html',
+		templateUrl: 'html/views/partials/ars/poll/poll_student.html',
 		controller: 'studentPollController',
 		link: {
             pre: function ($scope) {

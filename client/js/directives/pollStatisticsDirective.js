@@ -3,7 +3,7 @@
 clientControllers.directive('pollStatistics', ['$timeout', 'rooms', "$rootScope", function($timeout, rooms, $rootScope) {
     return {
         restrict: 'E',
-        templateUrl: 'poll_statistics.html',
+        templateUrl: 'html/views/partials/ars/poll/poll_statistics.html',
         scope: {
             poll: "="
         },

@@ -8,7 +8,7 @@
 clientControllers.directive('arsCreator', ['$timeout', 'rooms', function($timeout, rooms){
 	return {
 		restrict: 'E',
-		templateUrl: 'ars_creator.html',
+		templateUrl: 'html/views/partials/ars/ars_creator.html',
 		controller: 'arsMaster',
         scope: {
             room : "="

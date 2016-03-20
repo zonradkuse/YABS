@@ -5,7 +5,7 @@
 clientControllers.directive('studentQuiz', ['rooms', 'errorService', function (rooms, errorService) {
 	return {
 		restrict: 'E',
-		templateUrl: 'quiz_student.html',
+		templateUrl: 'html/views/partials/ars/quiz/quiz_student.html',
 		controller: 'studentQuizController',
 		link: {
             pre: function ($scope) {

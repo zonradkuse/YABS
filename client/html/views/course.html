@@ -8,8 +8,8 @@
         <div class="container">
             <h1 data-fittext="1.2" data-fittext-min="8" data-fittext-max="36">{{room.name}}</h1> <!-- size constants by try and error-->
             <div ng-switch on="showAdmin">
-                <div ng-switch-when="false"><div ng-include="'course_panic.html'"></div></div><!--either panic-->
-                <div ng-switch-when="true"><div ng-include="'course_admin.html'"></div></div><!--or admin view-->
+                <div ng-switch-when="false"><div ng-include="'html/views/partials/course_panic.html'"></div></div><!--either panic-->
+                <div ng-switch-when="true"><div ng-include="'html/views/partials/course_admin.html'"></div></div><!--or admin view-->
             </div>
             <div class="text-center" ng-if="!room.config.components.discussions && !room.config.components.panicbutton && !room.config.components.quiz && !showAdmin">
                 <strong> Dieser Lernraum besitzt keine aktivierten Komponenten :-( </strong>
@@ -17,7 +17,7 @@
 
             <div ng-switch on="activeModule">
                 <div ng-switch-when="0">
-                    <div ng-include="'course_student.html'"></div>
+                    <div ng-include="'html/views/partials/course_student.html'"></div>
                     <div class="container row shadowed" ng-if="room.config.components.discussions && !quizMode">
                         <h2>Optionen</h2>
                         Im folgenden findest Du einige Optionen, die Dir helfen, schneller auf Fragen zuzugreifen. Sortiere alle Fragen oder wende einen Volltextfilter auf jegliche Inhalte an. Die Filter werden automatisch auf neue Inhalte angewandt.

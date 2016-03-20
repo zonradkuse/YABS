@@ -19,7 +19,7 @@
                     <textarea class="form-control" style="max-width:100%" rows="5" ng-model="questionText" placeholder="Deine Frage..."></textarea>
                 </div>
                 <span ng-if="imageUploads['question']">Angehängte Bilder: {{imageUploads['question'].length}}</span>
-                <span ng-if="uploading['question']">Bild wird hochgeladen <img src="loading.gif" style="height: 18px; width: 18px;" /></span>
+                <span ng-if="uploading['question']">Bild wird hochgeladen <img src="img/loading.gif" style="height: 18px; width: 18px;" /></span>
                 <button ng-disabled="uploading['question']" ng-click="addQuestion()" type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden</button>
             </form>
         </p>
