@@ -6,6 +6,21 @@
         <meta name="generator" content="YABS">
         <title>YABS - Interaktives Feedbacksystem</title>
         <base href="/">
+        <!-- inline MathJax configuration -->
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                extensions: ["tex2jax.js"],
+                jax: ["input/TeX", "output/HTML-CSS"],
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true
+                },
+                "HTML-CSS": { availableFonts: ["TeX"] },
+                skipStartupType : true
+            });
+            MathJax.Hub.Configured();
+        </script>
         <!-- build:js min/lib.js -->
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/chartist/dist/chartist.js"></script>
@@ -27,20 +42,6 @@
         <script src="bower_components/MathJax/extensions/MathZoom.js"></script>
         <!-- endbuild -->
 
-        <!-- inline MathJax configuration -->
-        <script type="text/x-mathjax-config">
-            MathJax.Hub.Config({
-                extensions: ["tex2jax.js"],
-                jax: ["input/TeX", "output/HTML-CSS"],
-                tex2jax: {
-                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-                    processEscapes: true
-                },
-                "HTML-CSS": { availableFonts: ["TeX", "LaTeX"] }
-            });
-        </script>
-
         <!-- build:js min/_.js -->
         <script src="js/app.js"></script>
         <script src="js/providers/rpc.js"></script>
@@ -57,11 +58,13 @@
         <script src="js/controllers/authController.js"></script>
         <script src="js/directives/statisticsModal.js"></script>
         <script src="js/directives/arsMaster.js"></script>
+        <script src="js/directives/mathjaxBindDirective.js"></script>
         <script src="js/controllers/ars/arsMasterController.js"></script>
         <script src="js/controllers/ars/arsStudentPollController.js"></script>
         <script src="js/directives/studentPoll.js"></script>
         <script src="js/controllers/ars/arsStudentQuizController.js"></script>
         <script src="js/directives/studentQuiz.js"></script>
+        <script src="js/directives/texButtonDirective.js"></script>
         <script src="js/directives/quizStatisticsDirective.js"></script>
         <script src="js/directives/pollStatisticsDirective.js"></script>
 

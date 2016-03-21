@@ -13,6 +13,7 @@ clientControllers.directive('question', ['$timeout', 'rooms', "$rootScope", func
             $scope.Math = window.Math;
             $scope.imageUploads = {};
             $scope.uploading = {};
+            $scope.TEXSAMPLE = "\\( 0 = 0 \\)";
 
             $scope.addAnswer = function(question) {
                 if($scope.imageUploads[question._id] === undefined) {

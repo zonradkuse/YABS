@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
-            {{question.content}}
+            <div mathjax-bind="question.content"></div>
         </div>
         <div ng-repeat="image in question.images" class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
             <a href="{{image.path.substr(1)}}" target="_blank"><img src="{{image.path.substr(1)}}" class="col-sm-3 img-thumbnail" /></a>
@@ -75,7 +75,7 @@
                     </div>
                 </div>
                 <div class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
-                    {{answer.content}}
+                    <div mathjax-bind="answer.content"></div>
                 </div>
                 <div ng-repeat="image in answer.images" class="col-sm-9 col-md-9 col-lg-10 col-xs-12 textpadding">
                     <a href="{{image.path.substr(1)}}" target="_blank"><img src="{{image.path.substr(1)}}" class="col-sm-3 img-thumbnail" /></a>
@@ -90,10 +90,8 @@
                 <div class="col-md-12 textpadding">
                     <form role="form" class="ng-pristine ng-valid">
                         <div class="form-group">
-                            <div class="btn-group" role="group" aria-label="...">
-                                <upload identifier="question._id" image-uploads="imageUploads" uploading="uploading"></upload>
-                                <!--<button type="button" class="btn btn-default">LaTeX</button>-->
-                            </div>
+                            <upload identifier="question._id" image-uploads="imageUploads" uploading="uploading"></upload>
+                            <tex-button text="answerText[question._id]"></tex-button>
                         </div>
                         <div class="form-group">
                             <textarea class="form-control" ng-model="answerText[question._id]" style="max-width:100%" rows="5" placeholder="Deine Antwort auf {{question.author.name}}s Frage..."></textarea>
