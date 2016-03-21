@@ -48,7 +48,7 @@ function initStatic (basedir) {
     
     var sendIndex = function (req, res, next) {
         res.sendFile(basedir + '/index.html');
-    }
+    };
 
     app.use('/course', sendIndex);
     app.use('/rooms', sendIndex);
