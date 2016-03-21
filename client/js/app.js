@@ -39,7 +39,6 @@
             }).
             when('/news', {
                 templateUrl: 'html/views/news.html'
-                //controller: 'frontpageController' // no controller needed yet. TODO build some news controller with API
             }).
             when('/local/login', {
                 templateUrl : 'html/views/login_local.html',
@@ -63,12 +62,10 @@
 
     client.run(["rooms", function(rooms) {
         rooms.enableListeners();
-        $('#creators').tooltip();
     }]);
 
     client.run(["authentication", function(authentication) {
         authentication.enableListeners();
-        $('#creators').tooltip();
     }]);
 
     var controllers = angular.module('clientControllers', ["angular-chartist"]);
