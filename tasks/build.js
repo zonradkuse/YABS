@@ -9,11 +9,13 @@ var flatten         = require('gulp-flatten');
 var rename          = require('gulp-rename');
 var templateCache   = require('gulp-angular-templatecache');
 var inject          = require('gulp-inject');
+var htmlclean       = require('gulp-htmlclean')
 
 module.exports = function build () {
     
     gulp.task('views-to-js', [], function () {
         return gulp.src(['client/**/*.html', '!client/bower_components/**/*.html'])
+           .pipe(htmlclean()) 
            .pipe(templateCache( { module : 'client' } ))
            .pipe(gulp.dest('dist/views'));
     });
