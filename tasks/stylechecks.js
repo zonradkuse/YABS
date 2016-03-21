@@ -25,7 +25,8 @@ module.exports = function () {
         return gulp.src(['app/**/*.{js, json}',
                 'models/**/*.{js,json}',
                 'config/**/*.{json, js}',
-                '*.{json, js}'])
+                '*.{json, js}',
+                '!node_modules/**/*.{js, json}'])
             .pipe(jshint())
             .pipe(jshint.reporter('default'), {
                 verbose: true,
