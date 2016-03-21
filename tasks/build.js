@@ -26,11 +26,14 @@ module.exports = function build () {
         gulp.src(['client/img/**'])
             .pipe(gulp.dest('dist/img'));
 
+        gulp.src(['**', '!*md', '!*.js', '!*.json', '!LICENSE', '!test', '!unpacked', '!docs'], { cwd : 'client/bower_components/MathJax/' }) // MathJax
+            .pipe(gulp.dest('dist/'));
+
         gulp.src(['client/bower_components/*o*/**/fonts/**']) // not(!) MathJax
             .pipe(flatten())
             .pipe(gulp.dest('dist/fonts'));
 
-        gulp.src(['client/bower_components/MathJax/fonts/**'], { base : 'client/bower_components/MathJax/fonts' }) // MathJax
+        gulp.src(['client/bower_components/MathJax/fonts/**']) // MathJax
             .pipe(gulp.dest('dist/fonts'));
         
         return gulp.src('client/index.html')
