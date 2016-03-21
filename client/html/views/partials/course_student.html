@@ -22,6 +22,10 @@
                 <span ng-if="uploading['question']">Bild wird hochgeladen <img src="img/loading.gif" style="height: 18px; width: 18px;" /></span>
                 <button ng-disabled="uploading['question']" ng-click="addQuestion()" type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Absenden</button>
             </form>
+            <div ng-if="questionText">
+                <h3> Preview </h3>
+                <p mathjax-bind="questionText"></p>
+            </div>
         </p>
     </div>
 </div>
