@@ -7,11 +7,19 @@ var jshint          = require('gulp-jshint');
 var minifyCss       = require('gulp-minify-css');
 var flatten         = require('gulp-flatten');
 var rename          = require('gulp-rename');
+var templateCache   = require('gulp-angular-templatecache');
+var inject          = require('gulp-inject');
 
 module.exports = function build () {
-    gulp.task('build', function () {
+    
+    gulp.task('views-to-js', [], function () {
+        return gulp.src(['client/**/*.html', '!client/bower_components/**/*.html'])
+           .pipe(templateCache( { module : 'client' } ))
+           .pipe(gulp.dest('dist/views'));
+    });
+
+    gulp.task('build', ['views-to-js'], function () {
         var assets = useref.assets();
-        del.sync('dist');
 
         gulp.src(['client/img/**'])
             .pipe(gulp.dest('dist/img'));
@@ -19,11 +27,15 @@ module.exports = function build () {
         gulp.src(['client/**/fonts/**'])
             .pipe(flatten())
             .pipe(gulp.dest('dist/fonts'));
-
-        gulp.src(['client/html/**'])
-            .pipe(gulp.dest('dist/html'));
-
+        
         return gulp.src('client/index.html')
+            .pipe(inject(gulp.src('./dist/views/*.js', { 
+                read : false, 
+            }),
+            {
+                ignorePath : 'dist',
+                addRootSlash : false
+            }))
             .pipe(assets)
             .pipe(gulpif('*.js', uglify()))
             .pipe(gulpif('*.css', minifyCss()))

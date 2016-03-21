@@ -6,7 +6,7 @@
         <meta name="generator" content="YABS">
         <title>YABS - Interaktives Feedbacksystem</title>
         <base href="/">
-        <!-- build:js min/_.js -->
+        <!-- build:js min/lib.js -->
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/chartist/dist/chartist.js"></script>
         <script src="bower_components/angular-chartist.js/dist/angular-chartist.js"></script>
@@ -16,6 +16,8 @@
         <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
         <script src="bower_components/qrcode/lib/qrcode.js"></script>
         <script src="bower_components/angular-qr/src/angular-qr.js"></script>
+        <!-- endbuild -->
+        <!-- build:js min/_.js -->
         <script src="js/app.js"></script>
         <script src="js/providers/rpc.js"></script>
         <script src="js/providers/users.js"></script>
@@ -54,6 +56,9 @@
         <link rel="stylesheet" href="bower_components/chartist/dist/chartist.min.css">
         <link rel="stylesheet" href="css/main.css">
         <!-- endbuild -->
+
+        <!-- inject:js -->
+        <!-- endinject -->
     </head>
 
     <body>
