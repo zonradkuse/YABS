@@ -6,7 +6,7 @@ clientControllers.directive('question', ['$timeout', 'rooms', "$rootScope", func
         templateUrl: 'html/views/partials/course_question.html',
         scope: {
             room: "=",
-            showAdmin: "=",
+            showAdmin: "=showAdmin",
             question: "="
         },
         link: function ($scope) {
@@ -14,7 +14,6 @@ clientControllers.directive('question', ['$timeout', 'rooms', "$rootScope", func
             $scope.imageUploads = {};
             $scope.uploading = {};
             $scope.TEXSAMPLE = "\\( 0 = 0 \\)";
-
             $scope.addAnswer = function(question) {
                 if($scope.imageUploads[question._id] === undefined) {
                     $scope.imageUploads[question._id] = [];

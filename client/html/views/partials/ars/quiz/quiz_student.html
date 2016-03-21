@@ -18,7 +18,7 @@
                         <a ng-click="$parent.quizQuestionSelection = $index;">{{$index+1}}</a>
                     </li>
                 </ul>
-                <h2 style="margin-top:0;">Frage: {{quiz.questions[quizQuestionSelection].description}}</h2>
+                <h2 style="margin-top:0;">Frage: <div mathjax-bind="quiz.questions[quizQuestionSelection].description"></div></h2>
                 <div ng-if="quiz.answered">
                     War Deine Antwort richtig, wird der Beschreibungstext <code style="color: green">grün</code>, sonst <code style="color:red">rot</code> markiert.
                     Deine ursprüngliche Antwort wird Dir ebenfalls angezeigt.
@@ -28,14 +28,14 @@
                 <form>
     				<div ng-repeat="answer in quiz.questions[quizQuestionSelection].quizQuestion.answers" ng-class="{ 'answer-correct': isCorrect(answer) || (!isBad(answer) && quiz.answered), 'answer-bad' : isBad(answer)}">
                         <div class="checkbox" ng-if="answer.checkbox">
-                            <label for="{{answer._id}}"> <input ng-if="!quiz.answered" ng-model="answer.checked" id="{{answer._id}}" type="checkbox"> {{answer.description}} </label>
+                            <label for="{{answer._id}}"> <input ng-if="!quiz.answered" ng-model="answer.checked" id="{{answer._id}}" type="checkbox"> <div mathjax-bind="answer.description"></div> </label>
                         </div>
                         <div ng-if="answer.radiobox">
                             <input name="quiz" ng-if="!quiz.answered" ng-model="quiz.questions[quizQuestionSelection].quizQuestion.radioChecked" id="{{answer._id}}" type="radio" ng-value="answer._id">
-                            <label for="{{answer._id}}"> {{answer.description}} </label>
+                            <label for="{{answer._id}}" mathjax-bind="answer.description"></label>
                         </div>
                         <div ng-if="answer.text">
-                            <label for="{{answer._id}}"> {{answer.description}} </label>
+                            <label for="{{answer._id}}" mathjax-bind="answer.description"></label>
                             <input ng-if="!quiz.answered" ng-model="answer.checked" id="{{answer._id}}" type="text">
                         </div>
                         <div ng-if="quiz.answered">

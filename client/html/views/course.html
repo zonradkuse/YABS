@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div ng-repeat="question in room.questions | filter:query | orderBy:orderProp" ng-if="room.config.components.discussions && !quizMode">
-                        <question room="room" showAdmin="showAdmin" question="question"></question>
+                        <question room="room" show-admin="showAdmin" question="question"></question>
                     </div>
                 </div>
 
