@@ -26,8 +26,11 @@ module.exports = function build () {
         gulp.src(['client/img/**'])
             .pipe(gulp.dest('dist/img'));
 
-        gulp.src(['client/**/fonts/**'])
+        gulp.src(['client/bower_components/*o*/**/fonts/**']) // not(!) MathJax
             .pipe(flatten())
+            .pipe(gulp.dest('dist/fonts'));
+
+        gulp.src(['client/bower_components/MathJax/fonts/**'], { base : 'client/bower_components/MathJax/fonts' }) // MathJax
             .pipe(gulp.dest('dist/fonts'));
         
         return gulp.src('client/index.html')

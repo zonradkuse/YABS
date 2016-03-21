@@ -99,7 +99,7 @@ UserWorker.prototype.fetchRooms = function (refId, next) {
 						}
 					} else {
 						self.res.setError(new Error("L2P returned bad things.")).send();
-						logger.warn("Bad L2P answer: " + courses ? courses.toString() : "");
+						logger.warn("Bad L2P answer: " + courses);
 					}
 					if (next) {
 						next();

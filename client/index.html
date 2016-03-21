@@ -16,7 +16,31 @@
         <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
         <script src="bower_components/qrcode/lib/qrcode.js"></script>
         <script src="bower_components/angular-qr/src/angular-qr.js"></script>
+        <script src="bower_components/MathJax/MathJax.js"></script>
         <!-- endbuild -->
+        
+        <!-- build:js extensions/MathMenu.js -->
+        <script src="bower_components/MathJax/extensions/MathMenu.js"></script>
+        <!-- endbuild -->
+
+        <!-- build:js extensions/MathZoom.js -->
+        <script src="bower_components/MathJax/extensions/MathZoom.js"></script>
+        <!-- endbuild -->
+
+        <!-- inline MathJax configuration -->
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                extensions: ["tex2jax.js"],
+                jax: ["input/TeX", "output/HTML-CSS"],
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true
+                },
+                "HTML-CSS": { availableFonts: ["TeX", "LaTeX"] }
+            });
+        </script>
+
         <!-- build:js min/_.js -->
         <script src="js/app.js"></script>
         <script src="js/providers/rpc.js"></script>
@@ -114,6 +138,5 @@
         </div>
 
         <div class="text-center footer"> Made with ❤ and lots of Pizza </div>
-
     </body>
 </html>

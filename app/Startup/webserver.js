@@ -45,10 +45,14 @@ function initStatic (basedir) {
         basedir = basedir + '/client';
     }
     app.use(express.static(basedir));
-
-    app.use('/course', function (req, res, next) { // parametrized route which will be handled via angular.
+    
+    var sendIndex = function (req, res, next) {
         res.sendFile(basedir + '/index.html');
-    });
+    }
+
+    app.use('/course', sendIndex);
+    app.use('/rooms', sendIndex);
+    app.use('/dashboard', sendIndex);
 }
 
 function initRoutes () {
