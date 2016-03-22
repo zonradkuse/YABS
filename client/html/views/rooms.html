@@ -1,38 +1,48 @@
 <div ng-style="{'margin-top' : !embedded ? embedded : '0'}" class="container rooms">
-	<div ng-if="rooms != undefined && rooms != null && rooms != [] && rooms.length != 0" class="row">
-		<table class="table table-hover table-striped table-bordered">
-			<thead>
-                <tr>
-                    <td colspan="2"><h2>Raumübersicht</h2></td>
-                    <td style="text-align:center; vertical-align:bottom; padding-bottom:1.3em;">
-                        <input type="search" class="form-control ng-pristine ng-valid ng-touched" placeholder="Suche..." ng-model="query">
-                    </td>
-                </tr>
-				<tr>
-					<th>ID</th>
-					<th>Raum</th>
-					<th>Raum betreten</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="room in rooms | filter:query | orderBy:'-l2pID'">
-					<td>{{room.l2pID}}</td>
-					<td>
-						<a href="course/{{room._id}}">
-							{{room.name}}
-						</a>
-					</td>
-					<td><a class="btn btn-success" href="course/{{room._id}}" role="button">Los!</a></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-    <div ng-if="rooms == [] || rooms.length == 0" class="row text-center" style="padding: 20px;">
-        <img class="loading" src="img/loading.gif" />
-        <strong>Wir verarbeiten gerade Deine Daten! Dies kann einen Moment dauern. </strong>
-    </div>
+    <div class="row">
+            <div ng-if="rooms != undefined && rooms != null && rooms != [] && rooms.length != 0">
+                    <table class="table table-hover table-striped table-bordered">
+                            <thead>
+                    <tr>
+                        <td colspan="2"><h2>Raumübersicht</h2></td>
+                        <td style="text-align:center; vertical-align:bottom; padding-bottom:1.3em;">
+                            <input type="search" class="form-control ng-pristine ng-valid ng-touched" placeholder="Suche..." ng-model="query">
+                        </td>
+                    </tr>
+                                    <tr>
+                                            <th>ID</th>
+                                            <th>Raum</th>
+                                            <th>Raum betreten</th>
+                                    </tr>
+                            </thead>
+                            <tbody>
+                                    <tr ng-repeat="room in rooms | filter:query | orderBy:'-l2pID'">
+                                            <td>{{room.l2pID}}</td>
+                                            <td>
+                                                    <a href="course/{{room._id}}">
+                                                            {{room.name}}
+                                                    </a>
+                                            </td>
+                                            <td><a class="btn btn-success" href="course/{{room._id}}" role="button">Los!</a></td>
+                                    </tr>
+                            </tbody>
+                    </table>
+            </div>
+        <div ng-if="rooms == [] || rooms.length == 0" class="text-center" style="padding: 20px;">
+            <img class="loading" src="img/loading.gif" />
+            <strong>Wir verarbeiten gerade Deine Daten! Dies kann einen Moment dauern. </strong>
+        </div>
 
-	<div ng-if="rooms == null" class="row text-center" style="padding: 20px;">
-		<strong>Du bist bisher keinem Raum beigetreten.</strong>
-	</div>
+            <div ng-if="rooms == null" class="text-center" style="padding: 20px;">
+                    <strong>Du bist bisher keinem Raum beigetreten.</strong> Gib im folgenden Feld den Raumnamen oder die L2P-ID ein, die zu dem Raum gehört, dem Du beitreten möchstest. Existiert dieser nicht, so kannst Du diesen erstellen.
+            </div>
+            <div class="col-sm-12 col-md-12">
+                <div class="input-group">
+                    <input ng-model="roomToEnter" ng-change="checkRoom(roomToEnter)" ng-model-options="{ debounce : 500 }" class="form-control" placeholder="Raumname"></input>
+                    <div class="input-group-btn">
+                        <button ng-disabled="roomExisting == null || !roomToEnter" class="btn btn-default"> {{ roomExisting ? 'Eintreten' : 'Erstellen' }} </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 </div>

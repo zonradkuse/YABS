@@ -10,37 +10,23 @@
  */
 
 clientControllers.controller("roomsController", ["$scope", "$timeout", "$routeParams", "rooms", "authentication",
-    function($scope, $timeout, $routeParams, rooms, authentication) {
-    	authentication.enforceLoggedIn();
-    	$scope.rooms = rooms.toArray();
-    	rooms.enter({_id: 1});
+        function($scope, $timeout, $routeParams, rooms, authentication) {
+            authentication.enforceLoggedIn();
+            $scope.rooms = rooms.toArray();
+            rooms.enter({_id: 1});
 
-        $timeout(function () {
+            $timeout(function () {
                 if ($scope.rooms.length === 0) {
-                        $scope.rooms = null;
-                        $scope.$digest();
+                    $scope.rooms = null;
+                    $scope.$digest();
                 }
-        }, 1000);
+            }, 300);
 
-        $scope.showCreateRoomForm = function () {
-            if (!$scope.rooms) {
-                $scope.rooms = [];
+            $scope.checkRoom = function (roomName) {
+                $scope.roomExisting = null;
+                rooms.hasUserAccess({ _id : 0, name : roomName }).then(function (access) {
+                    $scope.roomExisting = access;
+                });
             }
-            $scope.rooms.push({
-                state : "create",
-                l2pID : "-1"
-            });
         }
-
-        $scope.showEnterRoomForm = function () {
-            if (!$scope.rooms) {
-                $scope.rooms = [];
-            }
-            $scope.rooms.push({
-                state : "create",
-                l2pID : "-1"
-            });
-        }
-
-    }
 ]);

@@ -6,20 +6,20 @@ var findOrCreate = require('mongoose-findorcreate');
 var ObjectId = mongoose.Schema.ObjectId;
 
 var RoomSchema = mongoose.Schema({
-	l2pID: { type: String, unique: true },
-	name: {type: String, default: 'Unbekannter Lernraum'},
-	creationTime: { type: Date, default: Date.now },
-	updateTime: { type: Date, default: Date.now },
-	questions: [{ type: ObjectId, ref: 'Question' }],
-	visible: { type: Boolean, default: true },
-	description: String,
-	url: String,
-	status: String,
-	semester: String,
-	hasPoll : Boolean,
-	hasQuiz : Boolean,
-	poll : [{ type: ObjectId, ref: 'ARSQuestion' }],
-	quiz : [{ type: ObjectId, ref: 'ARSQuiz' }], 
+    l2pID: { type: String, unique: true },
+    name: {type: String, default: 'Unbekannter Lernraum'},
+    creationTime: { type: Date, default: Date.now },
+    updateTime: { type: Date, default: Date.now },
+    questions: [{ type: ObjectId, ref: 'Question' }],
+    visible: { type: Boolean, default: true },
+    description: String,
+    url: String,
+    status: String,
+    semester: String,
+    hasPoll : Boolean,
+    hasQuiz : Boolean,
+    poll : [{ type: ObjectId, ref: 'ARSQuestion' }],
+    quiz : [{ type: ObjectId, ref: 'ARSQuiz' }], 
     config : {
         components : {
             discussions : { type : Boolean, default: true },
@@ -30,7 +30,7 @@ var RoomSchema = mongoose.Schema({
         questionerMayMarkAnswer : { type : Boolean, default: true },
         multiOptionPanicButton : { type : Boolean, default: true },
         thresholdForImportantQuestion : { type : Number, default: 5 },
-		externalStudentsMayEnterRoom : { type : Boolean, default : false}
+        externalStudentsMayEnterRoom : { type : Boolean, default : false}
     }
 });
 
@@ -71,15 +71,15 @@ module.exports.RoomSchema = RoomSchema;
  * @param {roomCallback} callback - callback function
  */
 module.exports.getByID = function (roomID, options, callback) {
-	if (callback === undefined) {
-		throw new Error("callback not defined");
-	}
-	if (options.population === undefined) {
-		options.population = "";
-	}
-	Room.findById(roomID).deepPopulate(options.population).exec(function (err, room) {
-		return callback(err, room);
-	});
+    if (callback === undefined) {
+        throw new Error("callback not defined");
+    }
+    if (options.population === undefined) {
+        options.population = "";
+    }
+    Room.findById(roomID).deepPopulate(options.population).exec(function (err, room) {
+        return callback(err, room);
+    });
 };
 
 /** Get room by the l2p identifier.
@@ -88,17 +88,17 @@ module.exports.getByID = function (roomID, options, callback) {
  * @param {String} [options.population=""] - param for deepPopulate plugin
  * @param {roomCallback} callback - callback function
  */
-module.exports.getByL2PID = function (l2pID, options, callback) {
-	if (callback === undefined) {
-		throw new Error("callback not defined");
-	}
-	if (options.population === undefined) {
-		options.population = "";
-	}
-	Room.findOne({ 'l2pID': l2pID }).deepPopulate(options.population).exec(function (err, room) {
-		return callback(err, room);
-	});
-};
+    module.exports.getByL2PID = function (l2pID, options, callback) {
+        if (callback === undefined) {
+            throw new Error("callback not defined");
+        }
+        if (options.population === undefined) {
+            options.population = "";
+        }
+        Room.findOne({ 'l2pID': l2pID }).deepPopulate(options.population).exec(function (err, room) {
+            return callback(err, room);
+        });
+    };
 
 /** Get all rooms
  * @param {Object} options - options
@@ -106,15 +106,15 @@ module.exports.getByL2PID = function (l2pID, options, callback) {
  * @param {roomsCallback} callback - callback function
  */
 module.exports.getAll = function (options, callback) {
-	if (callback === undefined) {
-		throw new Error("callback not defined");
-	}
-	if (options.population === undefined) {
-		options.population = "";
-	}
-	Room.find({}).deepPopulate(options.population).exec(function (err, rooms) {
-		return callback(err, rooms);
-	});
+    if (callback === undefined) {
+        throw new Error("callback not defined");
+    }
+    if (options.population === undefined) {
+        options.population = "";
+    }
+    Room.find({}).deepPopulate(options.population).exec(function (err, rooms) {
+        return callback(err, rooms);
+    });
 };
 
 /** Create a room. The room is stored in the database.
@@ -122,12 +122,12 @@ module.exports.getAll = function (options, callback) {
  * @param {roomCallback} callback - callback function
  */
 module.exports.create = function (room, callback) {
-	if (callback === undefined) {
-		throw new Error("callback not defined");
-	}
-	room.save(function (err, room) {
-		return callback(err, room);
-	});
+    if (callback === undefined) {
+        throw new Error("callback not defined");
+    }
+    room.save(function (err, room) {
+        return callback(err, room);
+    });
 };
 
 /** Add a question from a user to the room object.
@@ -136,17 +136,17 @@ module.exports.create = function (room, callback) {
  * @param {roomQuestionCallback} callback - callback function
  */
 module.exports.addQuestion = function (room, question, callback) {
-	if (callback === undefined) {
-		throw new Error("callback not defined");
-	}
-	question.save(function (err) {
-		if (err) {
-			return callback(err);
-		}
-		Room.findByIdAndUpdate(room._id, { $push: { 'questions': question._id } }, function (err) {
-			return callback(err, room, question);
-		});
-	});
+    if (callback === undefined) {
+        throw new Error("callback not defined");
+    }
+    question.save(function (err) {
+        if (err) {
+            return callback(err);
+        }
+        Room.findByIdAndUpdate(room._id, { $push: { 'questions': question._id } }, function (err) {
+            return callback(err, room, question);
+        });
+    });
 };
 
 /**
@@ -161,9 +161,9 @@ module.exports.addQuestion = function (room, question, callback) {
  * @param {Room[]} rooms - array of updated room objects
  */
 
- /**
- * @callback roomQuestionCallback
- * @param {Error} err - if an error occurs
- * @param {Room} room - updated room object
- * @param {Question} question - updated question object
- */
+    /**
+     * @callback roomQuestionCallback
+     * @param {Error} err - if an error occurs
+     * @param {Room} room - updated room object
+     * @param {Question} question - updated question object
+     */
