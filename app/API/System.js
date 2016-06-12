@@ -166,6 +166,10 @@ module.exports = function (wsControl) {
 												}
 											});
 										});
+									} else {
+										logger.info("Bad answer: " + response.status);
+										clearInterval(timer);
+										return res.setError(new Error ("Bad answer: " + response.status)).send();
 									}
 								} else {
 									res.setError(new Error("There was no status in Campus answer.")).send();

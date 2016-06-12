@@ -40,7 +40,7 @@
                 <div class="input-group">
                     <input ng-model="roomToEnter" ng-change="checkRoom(roomToEnter)" ng-model-options="{ debounce : 500 }" class="form-control" placeholder="Raumname"></input>
                     <div class="input-group-btn">
-                        <button ng-disabled="roomExisting == null || !roomToEnter" class="btn btn-default"> {{ roomExisting ? 'Eintreten' : 'Erstellen' }} </button>
+                        <button ng-disabled="roomExisting === null || !roomToEnter" class="btn btn-default"> {{ roomExisting ? 'Eintreten' : 'Erstellen' }} </button>
                     </div>
                 </div>
             </div>

@@ -34,7 +34,7 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
      */
     this.hasUserAccess = function(room) {
         var deferred = $q.defer();
-        rpc.call("room:exists", {roomId: room._id}, function(result) {
+        rpc.call("room:exists", {roomId: room._id, name : room.name}, function(result) {
             deferred.resolve(result.exists === true);
         });	
         return deferred.promise;

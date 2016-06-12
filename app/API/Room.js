@@ -9,6 +9,14 @@ var accessManager = require('../AccessManagement.js');
 var logger = require('../Logger.js');
 
 module.exports = function (wsControl) {
+    wsControl.on("room:join", function (req, res) {
+
+    });
+
+    wsControl.on("room:create", function (req, res) {
+
+    });
+
     wsControl.on("room:userCount", function (req, res) {
         accessManager.checkAccessBySId("room:userCount", req.sId, req.params.roomId, function (err, hasAccess) {
             if (hasAccess) {
@@ -76,7 +84,12 @@ module.exports = function (wsControl) {
 
     wsControl.on("room:exists", function (req, res) {
         if ( req.params.roomId === 0 ) { // this checks whether the name is taken
-            roomDAO.Room.findOne({ name : req.params.name }, function (err, room) {
+            roomDAO.Room.findOne({
+                $or: [
+                    { name: req.params.name },
+                    { l2pID : req.params.name }
+                ]
+            }, function (err, room) {
                 if (err) {
                     return res.setError(err).send();
                 }
