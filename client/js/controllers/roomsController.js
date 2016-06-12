@@ -12,15 +12,10 @@
 clientControllers.controller("roomsController", ["$scope", "$timeout", "$routeParams", "rooms", "authentication",
         function($scope, $timeout, $routeParams, rooms, authentication) {
             authentication.enforceLoggedIn();
-            $scope.rooms = rooms.toArray();
+            rooms.toArray().then(function (rooms) {
+               $scope.rooms = rooms;
+            });
             rooms.enter({_id: 1});
-
-            $timeout(function () {
-                if ($scope.rooms.length === 0) {
-                    $scope.rooms = null;
-                    $scope.$digest();
-                }
-            }, 300);
 
             $scope.checkRoom = function (roomName) {
                 $scope.roomExisting = null;

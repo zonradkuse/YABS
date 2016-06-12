@@ -96,6 +96,7 @@ module.exports = function (wsControl) {
 						var r = rooms[ i ].toObject();
 						(_roomSend)(r);
 					}
+					res.send(rooms);
 				} else if (req.isRestful) {
 					res.send(rooms);
 				}

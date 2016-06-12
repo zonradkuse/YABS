@@ -75,9 +75,11 @@ module.exports = function (wsControl) {
     });
 
     wsControl.on("room:exists", function (req, res) {
-        if ( req.params.roomId == 0 ) { // this checks whether the name is taken
+        if ( req.params.roomId === 0 ) { // this checks whether the name is taken
             roomDAO.Room.findOne({ name : req.params.name }, function (err, room) {
-                if (err) return res.setError(err).send(); 
+                if (err) {
+                    return res.setError(err).send();
+                }
                 res.send({ exists : room ? true : false }); 
             });
         } else {

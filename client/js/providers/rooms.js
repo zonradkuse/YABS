@@ -15,7 +15,17 @@ client.service("rooms", ["rpc", "$rootScope", '$q', function(rpc, $rootScope, $q
      * @returns {Room[]} - array of room objects
      */
     this.toArray = function() {
-        return rooms;
+        var deferred = $q.defer();
+        if (rooms.length === 0) {
+            // fetch rooms
+            rpc.call("user:getRooms", {}, function (rooms) {
+                self.rooms = rooms;
+                deferred.resolve(rooms);
+            });
+        } else {
+            deferred.resolve(rooms);
+        }
+        return deferred.promise;
     };
 
     /** Check if user has access to room.
